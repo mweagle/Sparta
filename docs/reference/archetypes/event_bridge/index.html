@@ -9,25 +9,25 @@
 
     <link rel="icon" href="/images/favicon.png" type="image/png">
 
-    <title>Publishing Outputs :: Sparta - AWS Lambda Microservices</title>
+    <title>EventBridge :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
+    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
+    <link href="/css/theme.css?1582422389" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582422389" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582422389"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -46,7 +46,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/decorators/publish_outputs/">
+  <body class="" data-url="/reference/archetypes/event_bridge/">
     <nav id="sidebar" class="">
 
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582422389"></script>
 
     
   </div>
@@ -642,7 +642,7 @@ pre {
   
     
     <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
-        
+        parent
         
         
         ">
@@ -666,7 +666,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item active">
         <a href="/reference/archetypes/event_bridge/">
         EventBridge
         
@@ -847,7 +847,7 @@ pre {
   
     
     <li data-nav-id="/reference/decorators/" title="" class="dd-item 
-        parent
+        
         
         
         ">
@@ -947,7 +947,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item active">
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
         <a href="/reference/decorators/publish_outputs/">
         Publishing Outputs
         
@@ -1899,7 +1899,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/decorators/publish_outputs.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/archetypes/event_bridge.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1934,7 +1934,7 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/decorators/'></a> > Publishing Outputs
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > EventBridge
           
          
           
@@ -1951,8 +1951,8 @@ pre {
     <div class="wrapper">
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#publishing-resource-ref-values">Publishing Resource Ref Values</a></li>
-    <li><a href="#publishing-resource-att-values">Publishing Resource Att Values</a></li>
+    <li><a href="#scheduled">Scheduled</a></li>
+    <li><a href="#events">Events</a></li>
   </ul>
 </nav>
     </div>
@@ -1970,7 +1970,7 @@ pre {
           
             <h1>
               
-              Publishing Outputs
+              EventBridge
             </h1>
           
 
@@ -1978,40 +1978,84 @@ pre {
 
 
 
-<p>CloudFormation stack <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html">outputs</a> can be used to advertise information about a service.</p>
-<p>Sparta provides different publishing output decorators depending on the type of CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/walkthrough-crossstackref.html">resource output</a>:</p>
-<ul>
-<li><code>Ref</code>: <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#PublishRefOutputDecorator">PublishRefOutputDecorator</a></li>
-<li><code>Fn::Att</code>: <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#PublishAttOutputDecorator">PublishAttOutputDecorator</a></li>
-</ul>
-<h2 id="publishing-resource-ref-values">Publishing Resource Ref Values</h2>
-<p>For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use
-<a href="https://godoc.org/github.com/mweagle/Sparta/decorator#PublishRefOutputDecorator">PublishRefOutputDecorator</a>
-such as:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
-<span style="color:#a6e22e">lambdaFunctionName</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;Hello World&#34;</span>
-<span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#a6e22e">lambdaFunctionName</span>,
-  <span style="color:#a6e22e">helloWorld</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<p>The EventBridge lambda <a href="https://aws.amazon.com/eventbridge/">event source</a>
+allows you to trigger lambda functions in response to either cron schedules or account events. There
+are two different archetype functions available.</p>
+<h2 id="scheduled">Scheduled</h2>
+<p>Scheduled Lambdas execute either at fixed times or periodically depending on the <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/scheduled-events.html">schedule expression</a>.</p>
+<p>To create a scheduled function use a constructor as in:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
+  <span style="color:#a6e22e">spartaArchetype</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
+)
 
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorators</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorators</span>,
-  <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">PublishRefOutputDecorator</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s FunctionName&#34;</span>, <span style="color:#a6e22e">lambdaFunctionName</span>),
-    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s Lambda ARN&#34;</span>, <span style="color:#a6e22e">lambdaFunctionName</span>)))
+<span style="color:#75715e">// EventBridge reactor function
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoEventBridgeEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">msg</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">RawMessage</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">eventData</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
+  <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">msg</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">eventData</span>)
+  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
+    <span style="color:#e6db74">&#34;error&#34;</span>:   <span style="color:#a6e22e">err</span>,
+    <span style="color:#e6db74">&#34;message&#34;</span>: <span style="color:#a6e22e">eventData</span>,
+  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;EventBridge event&#34;</span>)
+  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
 }
-</code></pre></div><h2 id="publishing-resource-att-values">Publishing Resource Att Values</h2>
-<p>For example, to publish the dynamically determined ARN for a given AWS Lambda function, use
-<a href="https://godoc.org/github.com/mweagle/Sparta/decorator#PublishAttOutputDecorator">PublishAttOutputDecorator</a>
-such as:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFunctionName</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;Hello World&#34;</span>
-<span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#a6e22e">lambdaFunctionName</span>,
-  <span style="color:#a6e22e">helloWorld</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
 
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorators</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorators</span>,
-  <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">PublishAttOutputDecorator</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s FunctionARN&#34;</span>, <span style="color:#a6e22e">lambdaFunctionName</span>),
-    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s Lambda ARN&#34;</span>, <span style="color:#a6e22e">lambdaFunctionName</span>), <span style="color:#e6db74">&#34;Arn&#34;</span>))
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">eventBridgeReactorFunc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">EventBridgeReactorFunc</span>(<span style="color:#a6e22e">echoEventBridgeEvent</span>)
+  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewEventBridgeScheduledReactor</span>(<span style="color:#a6e22e">eventBridgeReactorFunc</span>,
+    <span style="color:#e6db74">&#34;rate(1 minute)&#34;</span>,
+    <span style="color:#66d9ef">nil</span>)
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>When the scheduled event is triggered, the log statement outputs the full payload:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;error&#34;</span>: <span style="color:#66d9ef">null</span>,
+  <span style="color:#f92672">&#34;level&#34;</span>: <span style="color:#e6db74">&#34;info&#34;</span>,
+  <span style="color:#f92672">&#34;message&#34;</span>: {
+    <span style="color:#f92672">&#34;account&#34;</span>: <span style="color:#e6db74">&#34;123412341234&#34;</span>,
+    <span style="color:#f92672">&#34;detail&#34;</span>: {},
+    <span style="color:#f92672">&#34;detail-type&#34;</span>: <span style="color:#e6db74">&#34;Scheduled Event&#34;</span>,
+    <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#e6db74">&#34;f453bd1e-ccea-9df4-4e40-938097e82869&#34;</span>,
+    <span style="color:#f92672">&#34;region&#34;</span>: <span style="color:#e6db74">&#34;us-west-2&#34;</span>,
+    <span style="color:#f92672">&#34;resources&#34;</span>: [
+      <span style="color:#e6db74">&#34;arn:aws:events:us-west-2:123412341234:rule/SpartaEventBridge-0271594-EventBridgexmainechoEven-2WMCXA1LWGZY&#34;</span>
+    ],
+    <span style="color:#f92672">&#34;source&#34;</span>: <span style="color:#e6db74">&#34;aws.events&#34;</span>,
+    <span style="color:#f92672">&#34;time&#34;</span>: <span style="color:#e6db74">&#34;2020-02-23T00:47:31Z&#34;</span>,
+    <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;0&#34;</span>
+  },
+  <span style="color:#f92672">&#34;msg&#34;</span>: <span style="color:#e6db74">&#34;EventBridge event&#34;</span>,
+  <span style="color:#f92672">&#34;time&#34;</span>: <span style="color:#e6db74">&#34;2020-02-23T00:48:08Z&#34;</span>
 }
-</code></pre></div>
+</code></pre></div><p>See the <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/aws-events.html">scheduled event payload</a> documentation.</p>
+<h2 id="events">Events</h2>
+<p>Lambda functions can also be triggered via EventBridge by providing an <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eventbridge-and-event-patterns.html">event patterns</a> to
+select which events should trigger your function&rsquo;s execution.</p>
+<p>To create an event subscriber use a constructor as in:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoEventBridgeEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">msg</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">RawMessage</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">eventData</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
+  <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">msg</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">eventData</span>)
+  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
+    <span style="color:#e6db74">&#34;error&#34;</span>:   <span style="color:#a6e22e">err</span>,
+    <span style="color:#e6db74">&#34;message&#34;</span>: <span style="color:#a6e22e">eventData</span>,
+  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;EventBridge event&#34;</span>)
+  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">eventBridgeReactorFunc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">EventBridgeReactorFunc</span>(<span style="color:#a6e22e">echoEventBridgeEvent</span>)
+  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewEventBridgeEventReactor</span>(<span style="color:#a6e22e">eventBridgeReactorFunc</span>,
+    <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
+      <span style="color:#e6db74">&#34;source&#34;</span>: []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;aws.ec2&#34;</span>},
+    },
+    <span style="color:#66d9ef">nil</span>)
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>The event payload data depends on what event is being subscribed to. See the <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/filtering-examples-structure.html">event patterns</a> documentation for more information.</p>
+
 
 <footer class=" footline" >
 	
@@ -2471,6 +2515,171 @@ such as:</p>
 
     
         
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+            
+            
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
     
     
 
@@ -2563,174 +2772,6 @@ such as:</p>
 
 
     
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-
-
-        
-            
-
-
-    
-        
-        
-    
-    
-
-        
-        
-        
-
-        
-            
-
-
-    
-        
-            
-            
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-        
-    
-    
-
-        
-        
-        
-
-        
-
-
-        
-            
-
-
-    
-        
-            
-            
         
     
     
@@ -3400,10 +3441,10 @@ such as:</p>
 
 
 
-<a class="nav nav-prev" href="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/reference/archetypes/" title=""> <i class="fa fa-chevron-left"></i></a>
 
 
-<a class="nav nav-next" href="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-next" href="/reference/archetypes/codecommit/" title="CodeCommit" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 
 
 </div>

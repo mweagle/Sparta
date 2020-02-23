@@ -19,7 +19,19 @@
       <guid>/reference/operations/magefile/</guid>
       <description>Magefile To support cross platform development and usage, Sparta uses magefiles rather than Makefiles. Most projects can start with the magefile.go sample below. The Magefiles provide a discoverable CLI, but are entirely optional. go run main.go XXXX style invocation remains available as well.
 Default Sparta magefile.go This magefile.go can be used, unchanged, for most standard Sparta projects.
-// +build mage // File: magefile.go package main import ( spartaMage &amp;quot;github.com/mweagle/Sparta/magefile&amp;quot; ) // Provision the service func Provision() error { return spartaMage.</description>
+// +build mage  // File: magefile.go  package main import ( spartaMage &amp;#34;github.</description>
+    </item>
+    
+    <item>
+      <title>EventBridge</title>
+      <link>/reference/archetypes/event_bridge/</link>
+      <pubDate>Sat, 22 Feb 2020 17:36:59 +0000</pubDate>
+      
+      <guid>/reference/archetypes/event_bridge/</guid>
+      <description>The EventBridge lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are two different archetype functions available.
+Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
+To create a scheduled function use a constructor as in:
+import ( spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // EventBridge reactor function func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) { logger, _ := ctx.</description>
     </item>
     
     <item>
@@ -31,7 +43,7 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
       <description>The ApplicationLoadBalancerDecorator allows you to expose lambda functions as Application Load Balancer targets.
 This can be useful to provide HTTP(S) access to one or more Lambda functions without requiring an API-Gateway service.
 Lambda Function Application Load Balancer (ALB) lambda targets must satisfy a prescribed Lambda signature:
-import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse  See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
+import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
 An example ALB-eligible target function might look like:</description>
     </item>
     
@@ -56,7 +68,7 @@ The CloudMapServiceDecorator leverages the CloudMap service to support intra- an
       <description>The CodeCommit Lambda event source allows you to trigger lambda functions in response to CodeCommit repository events.
 Events Lambda functions triggered in response to CodeCommit evetms use a combination of events and branches to manage which state changes trigger your lambda function.
 To create an event subscriber use a constructor as in:
-// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: event, }).</description>
+// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: event, }).</description>
     </item>
     
     <item>
@@ -68,7 +80,7 @@ To create an event subscriber use a constructor as in:
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CodeCommit Events.
 Goal Assume that we&amp;rsquo;re supposed to write a Lambda function that is triggered in response to any event emitted by a CodeCommit repository.
 Getting Started Our lambda function is relatively short:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: event, }).Info(&amp;quot;Event received&amp;quot;) return &amp;amp;event, nil }  Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: event, }).Info(&amp;#34;Event received&amp;#34;) return &amp;amp;event, nil } Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
     </item>
     
     <item>
@@ -171,7 +183,7 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       <description>The CloudWatch Logs Lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are three different archetype functions available.
 Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
 To create a scheduled function use a constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</description>
     </item>
     
     <item>
@@ -181,7 +193,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/archetypes/dynamodb/</guid>
       <description>To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: dynamoEvent, }).Info(&amp;quot;DynamoDB Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;quot;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: dynamoEvent, }).Info(&amp;#34;DynamoDB Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
     </item>
     
     <item>
@@ -191,7 +203,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/archetypes/kinesis/</guid>
       <description>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: kinesisEvent, }).Info(&amp;quot;Kinesis Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;quot;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: kinesisEvent, }).Info(&amp;#34;Kinesis Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
     </item>
     
     <item>
@@ -201,7 +213,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/archetypes/kinesis_firehose/</guid>
       <description>There are two ways to create a Firehose Transform reactor that transforms a KinesisFirehoseEventRecord with a Lambda function:
- NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function  NewKinesisFirehoseTransformer  Transform using a go text/template declaration   NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Record&amp;quot;: record, }).Info(&amp;quot;Kinesis Firehose Event&amp;quot;) responseRecord = &amp;amp;awsEvents.</description>
+ NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Record&amp;#34;: record, }).Info(&amp;#34;Kinesis Firehose Event&amp;#34;) responseRecord = &amp;amp;awsEvents.</description>
     </item>
     
     <item>
@@ -234,7 +246,7 @@ To subscribe to object events created by objects with a given prefix, use the Ne
       
       <guid>/reference/archetypes/sns/</guid>
       <description>To create a SNS reactor that subscribes via an subscription configuration, use the NewSNSReactor constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: snsEvent, }).Info(&amp;quot;SNS Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;quot;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, nil) }  </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: snsEvent, }).Info(&amp;#34;SNS Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, nil) } </description>
     </item>
     
     <item>
@@ -245,7 +257,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <guid>/reference/decorators/cloudfront_distribution/</guid>
       <description>The CloudFrontDistributionDecorator associates a CloudFront Distribution with your S3-backed website. It is implemented as a ServiceDecoratorHookHandler as a single service can only provision one CloudFront distribution.
 Sample usage:
-//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;quot;mySiteSubdomain&amp;quot; // The domain managed by Route53. const domainName = &amp;quot;myRoute53ManagedDomain.net&amp;quot; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
+//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;#34;mySiteSubdomain&amp;#34; // The domain managed by Route53. const domainName = &amp;#34;myRoute53ManagedDomain.net&amp;#34; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net  // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
     </item>
     
     <item>
@@ -256,7 +268,7 @@ Sample usage:
       <guid>/reference/operations/cloudwatch_alarms/</guid>
       <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
 Sample usage:
-lambdaFn, _ := sparta.NewAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
+lambdaFn, _ := sparta.NewAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;#34;MY_SNS_ARN&amp;#34;)), } </description>
     </item>
     
     <item>
@@ -267,7 +279,7 @@ lambdaFn, _ := sparta.NewAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, 
       <guid>/reference/operations/cloudwatch_dashboard/</guid>
       <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
 Sample usage:
-func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook  workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks } A sample dashboard for the SpartaGeekwire project is:
 Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
     </item>
     
@@ -300,7 +312,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <description>CloudFormation stack outputs can be used to advertise information about a service.
 Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
  Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
-lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
+lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;#34;%s FunctionName&amp;#34;, lambdaFunctionName), fmt.</description>
     </item>
     
     <item>
@@ -311,7 +323,7 @@ lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn, _ := sparta.NewA
       <guid>/reference/decorators/s3_artifact_publisher/</guid>
       <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
 This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
-hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;quot;SomeValue&amp;quot;: gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;quot;MY-S3-BUCKETNAME&amp;quot;), gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;metadata/&amp;quot;), gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), gocf.String(&amp;quot;.json&amp;quot;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook}  </description>
+hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;#34;SomeValue&amp;#34;: gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;#34;MY-S3-BUCKETNAME&amp;#34;), gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;metadata/&amp;#34;), gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), gocf.String(&amp;#34;.json&amp;#34;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook} </description>
     </item>
     
     <item>
@@ -384,7 +396,7 @@ Getting Started Our lambda function is relatively short:</description>
       <guid>/reference/application/custom_commands/</guid>
       <description>In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
 To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
-httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;quot;httpServer&amp;quot;, Short: &amp;quot;Sample HelloWorld HTTP server&amp;quot;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
     </item>
     
     <item>
@@ -396,7 +408,8 @@ httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;quot;httpServer&amp;quot;
       <description>Some commands (eg: provision) may require additional options. For instance, your application&amp;rsquo;s provision logic may require VPC subnets or EC2 SSH Key Names.
 The default Sparta command line option flags may be extended and validated by building on the exposed Cobra command objects.
 Adding Flags To add a flag, use one of the pflag functions to register your custom flag with one of the standard CommandLineOption values.
-For example:</description>
+For example:
+// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance var SSHKeyName string func main() { // And add the SSHKeyName option to the provision step  sparta.</description>
     </item>
     
     <item>
@@ -417,7 +430,7 @@ Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details 
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaAPIGateway &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger) if loggerOk { logger.Info(&amp;quot;Hello world structured log message&amp;quot;) } // Return a message, together with the incoming input.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
     </item>
     
     <item>
@@ -450,7 +463,8 @@ This example will work through the SpartaConfig sample.</description>
       
       <guid>/reference/eventsources/s3/</guid>
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events. This overview is based on the SpartaImager sample code if you&amp;rsquo;d rather jump to the end result.
-Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</description>
+Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
     </item>
     
     <item>
@@ -526,7 +540,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       <guid>/reference/apigateway/cors/</guid>
       <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
 Sparta makes CORS support a single CORSEnabled field of the API struct:
-// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;quot;v1&amp;quot;) apiGateway := sparta.NewAPIGateway(&amp;quot;SpartaHTML&amp;quot;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
     </item>
     
     <item>
@@ -568,7 +582,7 @@ Define the Lambda Function This lambda handler is a bit more complicated than th
       <guid>/reference/operations/metrics_publisher/</guid>
       <description>AWS Lambda is tightly integrated with other AWS services and provides excellent opportunities for improving your service&amp;rsquo;s observability posture. Sparta includes a CloudWatch Metrics publisher that periodically publishes metrics to CloudWatch.
 This periodic task publishes environment-level metrics that have been detected by the gopsutil package. Metrics include:
- CPU  Percent used  Disk  Percent used  Host  Uptime (milliseconds)  Load  Load1 (no units) Load5 (no units) Load15 (no units)  Network  NetBytesSent (bytes) NetBytesRecv (bytes) NetErrin (count) NetErrout (count)   You can provide an optional map[string]string set of dimensions to which the metrics should be published.</description>
+ CPU  Percent used   Disk  Percent used   Host  Uptime (milliseconds)   Load  Load1 (no units) Load5 (no units) Load15 (no units)   Network  NetBytesSent (bytes) NetBytesRecv (bytes) NetErrin (count) NetErrout (count)    You can provide an optional map[string]string set of dimensions to which the metrics should be published.</description>
     </item>
     
     <item>
@@ -589,7 +603,7 @@ This periodic task publishes environment-level metrics that have been detected b
       <description>In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
 Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
 1. Resource Type The first step is to define a custom CloudFormation Resource Type
-//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;quot;Custom::sparta::HelloWorldResource&amp;quot;  2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
+//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;#34;Custom::sparta::HelloWorldResource&amp;#34; 2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
     </item>
     
     <item>
@@ -643,7 +657,7 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Lambda Definition We&amp;rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIGateway &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
+import ( spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
     </item>
     
     <item>
@@ -686,7 +700,7 @@ SpartaVault SpartaVault uses KMS to encrypt values into Go types that can be saf
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/limitations/</guid>
-      <description> AWS Lambda Limitations  Lambda is not yet globally available. Please view the Global Infrastructure page for the latest deployment status. There are Lambda Limits that may affect your development It&amp;rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:  https://forums.aws.amazon.com/thread.jspa?threadID=203889 https://forums.aws.amazon.com/thread.jspa?threadID=210826  Similarly, it&amp;rsquo;s not possible to set proper error response bodies.  </description>
+      <description>AWS Lambda Limitations  Lambda is not yet globally available. Please view the Global Infrastructure page for the latest deployment status. There are Lambda Limits that may affect your development It&amp;rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:  https://forums.aws.amazon.com/thread.jspa?threadID=203889 https://forums.aws.amazon.com/thread.jspa?threadID=210826   Similarly, it&amp;rsquo;s not possible to set proper error response bodies.  </description>
     </item>
     
     <item>
@@ -697,7 +711,7 @@ SpartaVault SpartaVault uses KMS to encrypt values into Go types that can be saf
       <guid>/reference/faq/</guid>
       <description>CloudFormation How do I create dynamic resource ARNs? Linking AWS resources together often requires creating dynamic ARN references. This can be achieved by using cloudformation.Join expressions.
 For instance:
-import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:s3:::&amp;quot;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;quot;/*&amp;quot;))  import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) AuthorizerURI: gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:apigateway:&amp;quot;), gocf.Ref(&amp;quot;AWS::Region&amp;quot;).String(), gocf.String(&amp;quot;:lambda:path/2015-03-31/functions/&amp;quot;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;quot;Arn&amp;quot;), gocf.String(&amp;quot;/invocations&amp;quot;)),  See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-parameters can be included in dynamic expresssions via gocf.</description>
+import ( gocf &amp;#34;github.com/mweagle/go-cloudformation&amp;#34; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;arn:aws:s3:::&amp;#34;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;#34;/*&amp;#34;)) import ( gocf &amp;#34;github.com/mweagle/go-cloudformation&amp;#34; ) AuthorizerURI: gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;arn:aws:apigateway:&amp;#34;), gocf.Ref(&amp;#34;AWS::Region&amp;#34;).String(), gocf.String(&amp;#34;:lambda:path/2015-03-31/functions/&amp;#34;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;#34;Arn&amp;#34;), gocf.String(&amp;#34;/invocations&amp;#34;)), See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-parameters can be included in dynamic expresssions via gocf.</description>
     </item>
     
     <item>
