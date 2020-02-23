@@ -82,7 +82,7 @@ func Describe(serviceName string,
 	// Setup the root object
 	writeErr := describer.writeNode(serviceName,
 		nodeColorService,
-		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation_stack.svg")
+		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/AWS-CloudFormation_Stack_light-bg.svg")
 	if writeErr != nil {
 		return writeErr
 	}
@@ -91,7 +91,7 @@ func Describe(serviceName string,
 		// Create the node...
 		writeErr = describer.writeNode(eachLambda.lambdaFunctionName(),
 			nodeColorLambda,
-			"AWSIcons/Compute/Compute_AWSLambda.svg")
+			"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
 		if writeErr != nil {
 			return writeErr
 		}

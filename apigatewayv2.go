@@ -200,7 +200,7 @@ func (apiv2 *APIV2) Describe(describer *descriptionWriter) error {
 	// Create the APIGateway virtual node && connect it to the application
 	writeErr := describer.writeNode(nodeNameAPIGateway,
 		nodeColorAPIGateway,
-		"AWSIcons/Application Services/ApplicationServices_AmazonAPIGateway.svg")
+		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
 	if writeErr != nil {
 		return writeErr
 	}
@@ -213,7 +213,7 @@ func (apiv2 *APIV2) Describe(describer *descriptionWriter) error {
 		writeErr = describer.writeNode(
 			nodeName,
 			nodeColorAPIGateway,
-			"AWSIcons/General/General_Internet.svg")
+			"AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/Internet-alt1_light-bg.svg")
 		if writeErr != nil {
 			return writeErr
 		}
