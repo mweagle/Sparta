@@ -310,7 +310,8 @@ func TestEventBridgeEvented(t *testing.T) {
 	lambdaFn, lambdaFnErr = NewEventBridgeEventReactor(EventBridgeReactorFunc(testStruct.OnEventBridgeBroadcast),
 		map[string]interface{}{
 			"source": []string{"aws.ec2"},
-		}, nil)
+		},
+		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate NewEventBridgeEventReactor: %s", lambdaFnErr.Error())
 	}
