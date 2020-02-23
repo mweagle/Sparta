@@ -199,6 +199,7 @@ func iconForAWSResource(rawEmitter interface{}) string {
 		"sns":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Notification-Service-SNS_light-bg.svg",
 		"cloudwatch": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/Amazon-CloudWatch.svg",
 		"kinesis":    "AWS-Architecture-Icons_SVG_20200131/SVG Light/Analytics/Amazon-Kinesis_light-bg.svg",
+		//lint:ignore ST1018 This is the name of the icon
 		"s3": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Storage/Amazon-Simple-Storage-Service-S3.svg",
 		"codecommit": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Developer Tools/AWS-CodeCommit_light-bg.svg",
 	}
