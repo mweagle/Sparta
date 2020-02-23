@@ -15,16 +15,13 @@ weight: 0
     <td style="width:33%" valign="top">
       <h4>
       Sparta is a framework that transforms a <i>go</i> application into a self-deploying AWS Lambda powered service.
-      <p />
-
+      </h4>
       All configuration and infrastructure requirements are expressed as <i>go</i> types for GitOps, repeatable, typesafe deployments.
       </h4>
     </td>
-
     <td style="width:66%">
       <img src="/images/sparta_ecosystem.png" alt="Sparta Ecosystem" />
     </td>
-
   </tr>
 </table>
 
@@ -88,9 +85,10 @@ weight: 0
     </td>
   </tr>
 </table>
-
 <hr />
-<a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](/images/sparta_overview.png)</a>
+<a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">
+<img src="/images/sparta_overview.png" width="50%" height="50%">
+</a>
 
 Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application. For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics. Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) and minimize resource churn during updates.
 

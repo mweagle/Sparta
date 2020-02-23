@@ -1,6 +1,6 @@
 ---
 date: 2020-02-22T17:36:59
-title: EventBridge
+title: Event Bridge
 weight: 10
 ---
 
