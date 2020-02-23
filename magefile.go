@@ -545,14 +545,6 @@ func TestCover() error {
 	return spartamage.Script(testCoverCommands)
 }
 
-// TravisBuild is the task to build in the context of a Travis CI pipeline
-func TravisBuild() error {
-	mg.SerialDeps(EnsureTravisBuildEnvironment,
-		Build,
-		Test)
-	return nil
-}
-
 // CompareAgainstMasterBranch is a convenience function to show the comparisons
 // of the current pushed branch against the master branch
 func CompareAgainstMasterBranch() error {
