@@ -33,6 +33,8 @@
       }
       ```
 
+  - Updated `describe` output to use latest [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/).
+
 - :bug: **FIXED**
   - [Handle usernames with periods](https://github.com/mweagle/Sparta/pull/161)
     - Thanks [sasanrose](https://github.com/sasanrose)

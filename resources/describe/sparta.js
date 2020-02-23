@@ -34,17 +34,16 @@ $(document).ready(function () {
     cytoscapeView = window.cytoscapeView = cytoscape({
       container: $('#cytoscapeDIVTarget'),
       elements: CYTOSCAPE_DATA,
-      style: [
-        {
+      style: [{
           selector: 'node',
           style: {
+            'shape': 'round-rectangle',
             'content': 'data(label)',
-            'padding' : '20px',
             'background-image': 'data(image)',
-            'background-width' : '90%',
-            'background-height' : '90%',
-            'background-fit' : 'cover',
-            'background-opacity' : '0',
+            'background-width': '196px',
+            'background-height': '196px',
+            'background-fit': 'cover',
+            'background-opacity': '0',
           }
         },
         {
@@ -64,18 +63,19 @@ $(document).ready(function () {
     console.log("Failed to initialize topology view: " + err)
   }
   var layoutSelectorIDs = ['#layout-breadthfirst',
-                          '#layout-dagre',
-                          '#layout-cose',
-                          '#layout-grid',
-                          '#layout-circle',
-                          '#layout-concentric'];
+    '#layout-dagre',
+    '#layout-cose',
+    '#layout-grid',
+    '#layout-circle',
+    '#layout-concentric'
+  ];
   layoutSelectorIDs.forEach(function (eachElement) {
     $(eachElement).click(function (event) {
       event.preventDefault();
       var layoutType = eachElement.split('-').pop();
       console.log("Layout type: " + layoutType);
-      cytoscapeView.makeLayout( {
-          name: layoutType,
+      cytoscapeView.makeLayout({
+        name: layoutType,
       }).run();
     });
   });
