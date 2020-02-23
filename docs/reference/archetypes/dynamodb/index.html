@@ -12,22 +12,22 @@
     <title>DynamoDB :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
-    <link href="/css/theme.css?1582422389" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422389" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422389"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422389"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:29-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1975,36 +1975,35 @@ pre {
 
 <p>To create a DynamoDB reactor that subscribes via an <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html">EventSourceMapping</a>,
 use the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewDynamoDBReactor">NewDynamoDBReactor</a> constructor as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
-  <span style="color:#a6e22e">spartaArchetype</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  awsLambdaEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+  spartaArchetype <span style="color:#a31515">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
 )
-<span style="color:#75715e">// DynamoDB reactor function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">reactorFunc</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-  <span style="color:#a6e22e">dynamoEvent</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">DynamoDBEvent</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyRequestLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Entry</span>)
+<span style="color:#008000">// DynamoDB reactor function
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> reactorFunc(ctx context.Context,
+  dynamoEvent awsLambdaEvents.DynamoDBEvent) (<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-    <span style="color:#e6db74">&#34;Event&#34;</span>: <span style="color:#a6e22e">dynamoEvent</span>,
-  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;DynamoDB Event&#34;</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;</span>, <span style="color:#66d9ef">nil</span>
+  logger.WithFields(logrus.Fields{
+    <span style="color:#a31515">&#34;Event&#34;</span>: dynamoEvent,
+  }).Info(<span style="color:#a31515">&#34;DynamoDB Event&#34;</span>)
+  <span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;</span>, <span style="color:#00f">nil</span>
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">handler</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">DynamoDBReactorFunc</span>(<span style="color:#a6e22e">reactorFunc</span>)
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewDynamoDBReactor</span>(<span style="color:#a6e22e">handler</span>,
-    <span style="color:#e6db74">&#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;</span>,
-    <span style="color:#e6db74">&#34;TRIM_HORIZON&#34;</span>,
-    <span style="color:#ae81ff">10</span>,
-    <span style="color:#66d9ef">nil</span>)
+<span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler,
+    <span style="color:#a31515">&#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;</span>,
+    <span style="color:#a31515">&#34;TRIM_HORIZON&#34;</span>,
+    10,
+    <span style="color:#00f">nil</span>)
 }
 </code></pre></div>
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3401,18 +3400,18 @@ use the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewDynamo
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

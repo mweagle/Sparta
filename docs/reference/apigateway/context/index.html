@@ -12,22 +12,22 @@
     <title>Request Context :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
-    <link href="/css/theme.css?1582422389" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422389" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422389"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422389"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:29-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1986,30 +1986,30 @@ pre {
 <h2 id="lambda-definition">Lambda Definition</h2>
 <p>Our function will examine the inbound request, lookup the user&rsquo;s IP address in the <a href="http://dev.maxmind.com/geoip/geoip2/geolite2/">GeoLite2 Database</a> and return any information to the client.</p>
 <p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">spartaAWSEvents</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
-  <span style="color:#a6e22e">spartaAPIGateway</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  spartaAWSEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
 )
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ipGeoLambda</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-  <span style="color:#a6e22e">apiRequest</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAPIGateway</span>.<span style="color:#a6e22e">Response</span>, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">parsedIP</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">ParseIP</span>(<span style="color:#a6e22e">apiRequest</span>.<span style="color:#a6e22e">Context</span>.<span style="color:#a6e22e">Identity</span>.<span style="color:#a6e22e">SourceIP</span>)
-  <span style="color:#a6e22e">record</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dbHandle</span>.<span style="color:#a6e22e">City</span>(<span style="color:#a6e22e">parsedIP</span>)
-  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+<span style="color:#00f">func</span> ipGeoLambda(ctx context.Context,
+  apiRequest spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, <span style="color:#2b91af">error</span>) {
+  parsedIP := net.ParseIP(apiRequest.Context.Identity.SourceIP)
+  record, err := dbHandle.City(parsedIP)
+  <span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+    <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, err
   }
 
 </code></pre></div><p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#a6e22e">parsedIP</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">ParseIP</span>(<span style="color:#a6e22e">lambdaEvent</span>.<span style="color:#a6e22e">Context</span>.<span style="color:#a6e22e">Identity</span>.<span style="color:#a6e22e">SourceIP</span>)
-  <span style="color:#a6e22e">record</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dbHandle</span>.<span style="color:#a6e22e">City</span>(<span style="color:#a6e22e">parsedIP</span>)
-  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
+  record, err := dbHandle.City(parsedIP)
+  <span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+    <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, err
   }
 </code></pre></div><p>Finally, marshal the data or error result and we&rsquo;re done:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#a6e22e">requestResponse</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
-    <span style="color:#e6db74">&#34;ip&#34;</span>:     <span style="color:#a6e22e">parsedIP</span>,
-    <span style="color:#e6db74">&#34;record&#34;</span>: <span style="color:#a6e22e">record</span>,
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  requestResponse := <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
+    <span style="color:#a31515">&#34;ip&#34;</span>:     parsedIP,
+    <span style="color:#a31515">&#34;record&#34;</span>: record,
   }
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spartaAPIGateway</span>.<span style="color:#a6e22e">NewResponse</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>, <span style="color:#a6e22e">requestResponse</span>), <span style="color:#66d9ef">nil</span>
+  <span style="color:#00f">return</span> spartaAPIGateway.NewResponse(http.StatusOK, requestResponse), <span style="color:#00f">nil</span>
 </code></pre></div><h2 id="sparta-integration">Sparta Integration</h2>
 <p>The next steps are to:</p>
 <ol>
@@ -2019,163 +2019,163 @@ pre {
 <li>Add a Method name to the resource.</li>
 </ol>
 <p>These four steps are managed in the service&rsquo;s <code>main()</code> function:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Main
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#a6e22e">stage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;ipgeo&#34;</span>)
-  <span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaGeoIPService&#34;</span>, <span style="color:#a6e22e">stage</span>)
-  <span style="color:#a6e22e">stackName</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;SpartaGeoIP&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// Main
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
+  stage := sparta.NewStage(<span style="color:#a31515">&#34;ipgeo&#34;</span>)
+  apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaGeoIPService&#34;</span>, stage)
+  stackName := <span style="color:#a31515">&#34;SpartaGeoIP&#34;</span>
 
-  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">ipGeoLambda</span>),
-    <span style="color:#a6e22e">ipGeoLambda</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
-  <span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGateway</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/info&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
-  <span style="color:#a6e22e">apiMethod</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;GET&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>)
-  <span style="color:#a6e22e">apiMethod</span>.<span style="color:#a6e22e">SupportedRequestContentTypes</span> = []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application/json&#34;</span>}
+  <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(ipGeoLambda),
+    ipGeoLambda,
+    sparta.IAMRoleDefinition{})
+  apiGatewayResource, _ := apiGateway.NewResource(<span style="color:#a31515">&#34;/info&#34;</span>, lambdaFn)
+  apiMethod, _ := apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK, http.StatusOK)
+  apiMethod.SupportedRequestContentTypes = []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;application/json&#34;</span>}
 
-  <span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#a6e22e">stackName</span>,
-    <span style="color:#e6db74">&#34;Sparta app supporting ip-&gt;geo mapping&#34;</span>,
-    <span style="color:#a6e22e">lambdaFunctions</span>,
-    <span style="color:#a6e22e">apiGateway</span>,
-    <span style="color:#66d9ef">nil</span>)
+  sparta.Main(stackName,
+    <span style="color:#a31515">&#34;Sparta app supporting ip-&gt;geo mapping&#34;</span>,
+    lambdaFunctions,
+    apiGateway,
+    <span style="color:#00f">nil</span>)
 }
 </code></pre></div><h2 id="provision">Provision</h2>
 <p>The next step is to provision the stack:</p>
 <pre><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; mage provision
 </code></pre><p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">INFO[0077] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">INFO[0077] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 INFO[0077]     APIGatewayURL                             Description=&#34;API Gateway URL&#34; Value=&#34;https://52a5qqqwo4.execute-api.us-west-2.amazonaws.com/ipgeo&#34;
 INFO[0077] Stack provisioned                             CreationTime=&#34;2018-12-11 14:30:01.822 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaGeoIP-mweagle/3e803cd0-fd51-11e8-9c7e-06972e890616&#34; Stack
 </code></pre></div><h2 id="verify">Verify</h2>
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl -vs https://52a5qqqwo4.execute-api.us-west-2.amazonaws.com/ipgeo/info
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">$ curl -vs https://52a5qqqwo4.execute-api.us-west-2.amazonaws.com/ipgeo/info
 *   Trying 13.32.254.81...
 * TCP_NODELAY set
-* Connected to 52a5qqqwo4.execute-api.us-west-2.amazonaws.com <span style="color:#f92672">(</span>13.32.254.81<span style="color:#f92672">)</span> port <span style="color:#ae81ff">443</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)</span>
+* Connected to 52a5qqqwo4.execute-api.us-west-2.amazonaws.com (13.32.254.81) port 443 (<span style="color:#008000">#0)</span>
 * ALPN, offering h2
 * ALPN, offering http/1.1
 * Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
 * successfully set certificate verify locations:
 *   CAfile: /etc/ssl/cert.pem
   CApath: none
-* TLSv1.2 <span style="color:#f92672">(</span>OUT<span style="color:#f92672">)</span>, TLS handshake, Client hello <span style="color:#f92672">(</span>1<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>IN<span style="color:#f92672">)</span>, TLS handshake, Server hello <span style="color:#f92672">(</span>2<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>IN<span style="color:#f92672">)</span>, TLS handshake, Certificate <span style="color:#f92672">(</span>11<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>IN<span style="color:#f92672">)</span>, TLS handshake, Server key exchange <span style="color:#f92672">(</span>12<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>IN<span style="color:#f92672">)</span>, TLS handshake, Server finished <span style="color:#f92672">(</span>14<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>OUT<span style="color:#f92672">)</span>, TLS handshake, Client key exchange <span style="color:#f92672">(</span>16<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>OUT<span style="color:#f92672">)</span>, TLS change cipher, Client hello <span style="color:#f92672">(</span>1<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>OUT<span style="color:#f92672">)</span>, TLS handshake, Finished <span style="color:#f92672">(</span>20<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>IN<span style="color:#f92672">)</span>, TLS change cipher, Client hello <span style="color:#f92672">(</span>1<span style="color:#f92672">)</span>:
-* TLSv1.2 <span style="color:#f92672">(</span>IN<span style="color:#f92672">)</span>, TLS handshake, Finished <span style="color:#f92672">(</span>20<span style="color:#f92672">)</span>:
+* TLSv1.2 (OUT), TLS handshake, Client hello (1):
+* TLSv1.2 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Client hello (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS change cipher, Client hello (1):
+* TLSv1.2 (IN), TLS handshake, Finished (20):
 * SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
 * ALPN, server accepted to use h2
 * Server certificate:
-*  subject: CN<span style="color:#f92672">=</span>*.execute-api.us-west-2.amazonaws.com
-*  start date: Oct  <span style="color:#ae81ff">9</span> 00:00:00 <span style="color:#ae81ff">2018</span> GMT
-*  expire date: Oct  <span style="color:#ae81ff">9</span> 12:00:00 <span style="color:#ae81ff">2019</span> GMT
-*  subjectAltName: host <span style="color:#e6db74">&#34;52a5qqqwo4.execute-api.us-west-2.amazonaws.com&#34;</span> matched cert<span style="color:#960050;background-color:#1e0010">&#39;</span>s <span style="color:#e6db74">&#34;*.execute-api.us-west-2.amazonaws.com&#34;</span>
-*  issuer: C<span style="color:#f92672">=</span>US; O<span style="color:#f92672">=</span>Amazon; OU<span style="color:#f92672">=</span>Server CA 1B; CN<span style="color:#f92672">=</span>Amazon
+*  subject: CN=*.execute-api.us-west-2.amazonaws.com
+*  start date: Oct  9 00:00:00 2018 GMT
+*  expire date: Oct  9 12:00:00 2019 GMT
+*  subjectAltName: host <span style="color:#a31515">&#34;52a5qqqwo4.execute-api.us-west-2.amazonaws.com&#34;</span> matched cert<span style="">&#39;</span>s <span style="color:#a31515">&#34;*.execute-api.us-west-2.amazonaws.com&#34;</span>
+*  issuer: C=US; O=Amazon; OU=Server CA 1B; CN=Amazon
 *  SSL certificate verify ok.
 * Using HTTP2, server supports multi-use
-* Connection state changed <span style="color:#f92672">(</span>HTTP/2 confirmed<span style="color:#f92672">)</span>
-* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
-* Using Stream ID: <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>easy handle 0x7f8522804200<span style="color:#f92672">)</span>
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x7f8522804200)
 &gt; GET /ipgeo/info HTTP/2
 &gt; Host: 52a5qqqwo4.execute-api.us-west-2.amazonaws.com
 &gt; User-Agent: curl/7.54.0
 &gt; Accept: */*
 &gt;
-* Connection state changed <span style="color:#f92672">(</span>MAX_CONCURRENT_STREAMS updated<span style="color:#f92672">)</span>!
-&lt; HTTP/2 <span style="color:#ae81ff">200</span>
+* Connection state changed (MAX_CONCURRENT_STREAMS updated)!
+&lt; HTTP/2 200
 &lt; content-type: application/json
-&lt; content-length: <span style="color:#ae81ff">1103</span>
-&lt; date: Tue, <span style="color:#ae81ff">11</span> Dec <span style="color:#ae81ff">2018</span> 14:32:00 GMT
+&lt; content-length: 1103
+&lt; date: Tue, 11 Dec 2018 14:32:00 GMT
 &lt; x-amzn-requestid: 851627ca-fd51-11e8-ba5d-9f30493b4ce1
-&lt; x-amz-apigw-id: RvyPBHuuPHcFx4w<span style="color:#f92672">=</span>
-&lt; x-amzn-trace-id: Root<span style="color:#f92672">=</span>1-5c0fca60-2eecbee8bad756981052608c;Sampled<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+&lt; x-amz-apigw-id: RvyPBHuuPHcFx4w=
+&lt; x-amzn-trace-id: Root=1-5c0fca60-2eecbee8bad756981052608c;Sampled=0
 &lt; x-cache: Miss from cloudfront
-&lt; via: 1.1 400e19a7f70282e0817451f6606ca8f9.cloudfront.net <span style="color:#f92672">(</span>CloudFront<span style="color:#f92672">)</span>
-&lt; x-amz-cf-id: l4gOpUjDylhS0yHwBWpMneD4BqLBv3zkWcjv6I0j2vBoQu6qD4gKyw<span style="color:#f92672">==</span>
+&lt; via: 1.1 400e19a7f70282e0817451f6606ca8f9.cloudfront.net (CloudFront)
+&lt; x-amz-cf-id: l4gOpUjDylhS0yHwBWpMneD4BqLBv3zkWcjv6I0j2vBoQu6qD4gKyw==
 &lt;
-<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;ip&#34;</span>:<span style="color:#e6db74">&#34;127.0.0.1&#34;</span>,<span style="color:#e6db74">&#34;record&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;City&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:0,<span style="color:#e6db74">&#34;Names&#34;</span>:null<span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;Continent&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Code&#34;</span>:<span style="color:#e6db74">&#34;NA&#34;</span>,<span style="color:#e6db74">&#34;GeoNameID&#34;</span>:6255149,<span style="color:#e6db74">&#34;Names&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span>:<span style="color:#e6db74">&#34;Nordamerika&#34;</span>,<span style="color:#e6db74">&#34;en&#34;</span>:<span style="color:#e6db74">&#34;North America&#34;</span>,<span style="color:#e6db74">&#34;es&#34;</span>:<span style="color:#e6db74">&#34;Norteamérica&#34;</span>,<span style="color:#e6db74">&#34;fr&#34;</span>:<span style="color:#e6db74">&#34;Amérique du Nord&#34;</span>,<span style="color:#e6db74">&#34;ja&#34;</span>:<span style="color:#e6db74">&#34;北アメリカ&#34;</span>,<span style="color:#e6db74">&#34;pt-BR&#34;</span>:<span style="color:#e6db74">&#34;América do Norte&#34;</span>,<span style="color:#e6db74">&#34;ru&#34;</span>:<span style="color:#e6db74">&#34;Северная Америка&#34;</span>,<span style="color:#e6db74">&#34;zh-CN&#34;</span>:<span style="color:#e6db74">&#34;北美洲&#34;</span><span style="color:#f92672">}}</span>,<span style="color:#e6db74">&#34;Country&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#e6db74">&#34;IsInEuropeanUnion&#34;</span>:false,<span style="color:#e6db74">&#34;IsoCode&#34;</span>:<span style="color:#e6db74">&#34;US&#34;</span>,<span style="color:#e6db74">&#34;Names&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span>:<span style="color:#e6db74">&#34;USA&#34;</span>,<span style="color:#e6db74">&#34;en&#34;</span>:<span style="color:#e6db74">&#34;United States&#34;</span>,<span style="color:#e6db74">&#34;es&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;fr&#34;</span>:<span style="color:#e6db74">&#34;États-Unis&#34;</span>,<span style="color:#e6db74">&#34;ja&#34;</span>:<span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,<span style="color:#e6db74">&#34;pt-BR&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;ru&#34;</span>:<span style="color:#e6db74">&#34;США&#34;</span>,<span style="color:#e6db74">&#34;zh-CN&#34;</span>:<span style="color:#e6db74">&#34;美国&#34;</span><span style="color:#f92672">}}</span>,<span style="color:#e6db74">&#34;Location&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;AccuracyRadius&#34;</span>:0,<span style="color:#e6db74">&#34;Latitude&#34;</span>:0,<span style="color:#e6db74">&#34;Longitude&#34;</span>:0,<span style="color:#e6db74">&#34;MetroCode&#34;</span>:0,<span style="color:#e6db74">&#34;TimeZone&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;Postal&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Code&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;RegisteredCountry&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#e6db74">&#34;IsInEuropeanUnion&#34;</span>:false,<span style="color:#e6db74">&#34;IsoCode&#34;</span>:<span style="color:#e6db74">&#34;US&#34;</span>,<span style="color:#e6db74">&#34;Names&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span>:<span style="color:#e6db74">&#34;USA&#34;</span>,<span style="color:#e6db74">&#34;en&#34;</span>:<span style="color:#e6db74">&#34;United States&#34;</span>,<span style="color:#e6db74">&#34;es&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;fr&#34;</span>:<span style="color:#e6db74">&#34;États-Unis&#34;</span>,<span style="color:#e6db74">&#34;ja&#34;</span>:<span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,<span style="color:#e6db74">&#34;pt-BR&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;ru&#34;</span>:<span style="color:#e6db74">&#34;США&#34;</span>,<span style="color:#e6db74">&#34;zh-CN&#34;</span>:<span style="color:#e6db74">&#34;美国&#34;</span><span style="color:#f92672">}}</span>,<span style="color:#e6db74">&#34;RepresentedCountry&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:0,<span style="color:#e6db74">&#34;IsInEuropeanUnion&#34;</span>:false,<span style="color:#e6db74">&#34;IsoCode&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;Names&#34;</span>:null,<span style="color:#e6db74">&#34;Type&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;Subdivisions&#34;</span>:null,<span style="color:#e6db74">&#34;Traits&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;IsAnonymousProxy&#34;</span>:false,<span style="color:#e6db74">&#34;IsSatelliteProvider&#34;</span>:false<span style="color:#f92672">}}}</span>
+{<span style="color:#a31515">&#34;ip&#34;</span>:<span style="color:#a31515">&#34;127.0.0.1&#34;</span>,<span style="color:#a31515">&#34;record&#34;</span>:{<span style="color:#a31515">&#34;City&#34;</span>:{<span style="color:#a31515">&#34;GeoNameID&#34;</span>:0,<span style="color:#a31515">&#34;Names&#34;</span>:null},<span style="color:#a31515">&#34;Continent&#34;</span>:{<span style="color:#a31515">&#34;Code&#34;</span>:<span style="color:#a31515">&#34;NA&#34;</span>,<span style="color:#a31515">&#34;GeoNameID&#34;</span>:6255149,<span style="color:#a31515">&#34;Names&#34;</span>:{<span style="color:#a31515">&#34;de&#34;</span>:<span style="color:#a31515">&#34;Nordamerika&#34;</span>,<span style="color:#a31515">&#34;en&#34;</span>:<span style="color:#a31515">&#34;North America&#34;</span>,<span style="color:#a31515">&#34;es&#34;</span>:<span style="color:#a31515">&#34;Norteamérica&#34;</span>,<span style="color:#a31515">&#34;fr&#34;</span>:<span style="color:#a31515">&#34;Amérique du Nord&#34;</span>,<span style="color:#a31515">&#34;ja&#34;</span>:<span style="color:#a31515">&#34;北アメリカ&#34;</span>,<span style="color:#a31515">&#34;pt-BR&#34;</span>:<span style="color:#a31515">&#34;América do Norte&#34;</span>,<span style="color:#a31515">&#34;ru&#34;</span>:<span style="color:#a31515">&#34;Северная Америка&#34;</span>,<span style="color:#a31515">&#34;zh-CN&#34;</span>:<span style="color:#a31515">&#34;北美洲&#34;</span>}},<span style="color:#a31515">&#34;Country&#34;</span>:{<span style="color:#a31515">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#a31515">&#34;IsInEuropeanUnion&#34;</span>:false,<span style="color:#a31515">&#34;IsoCode&#34;</span>:<span style="color:#a31515">&#34;US&#34;</span>,<span style="color:#a31515">&#34;Names&#34;</span>:{<span style="color:#a31515">&#34;de&#34;</span>:<span style="color:#a31515">&#34;USA&#34;</span>,<span style="color:#a31515">&#34;en&#34;</span>:<span style="color:#a31515">&#34;United States&#34;</span>,<span style="color:#a31515">&#34;es&#34;</span>:<span style="color:#a31515">&#34;Estados Unidos&#34;</span>,<span style="color:#a31515">&#34;fr&#34;</span>:<span style="color:#a31515">&#34;États-Unis&#34;</span>,<span style="color:#a31515">&#34;ja&#34;</span>:<span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,<span style="color:#a31515">&#34;pt-BR&#34;</span>:<span style="color:#a31515">&#34;Estados Unidos&#34;</span>,<span style="color:#a31515">&#34;ru&#34;</span>:<span style="color:#a31515">&#34;США&#34;</span>,<span style="color:#a31515">&#34;zh-CN&#34;</span>:<span style="color:#a31515">&#34;美国&#34;</span>}},<span style="color:#a31515">&#34;Location&#34;</span>:{<span style="color:#a31515">&#34;AccuracyRadius&#34;</span>:0,<span style="color:#a31515">&#34;Latitude&#34;</span>:0,<span style="color:#a31515">&#34;Longitude&#34;</span>:0,<span style="color:#a31515">&#34;MetroCode&#34;</span>:0,<span style="color:#a31515">&#34;TimeZone&#34;</span>:<span style="color:#a31515">&#34;&#34;</span>},<span style="color:#a31515">&#34;Postal&#34;</span>:{<span style="color:#a31515">&#34;Code&#34;</span>:<span style="color:#a31515">&#34;&#34;</span>},<span style="color:#a31515">&#34;RegisteredCountry&#34;</span>:{<span style="color:#a31515">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#a31515">&#34;IsInEuropeanUnion&#34;</span>:false,<span style="color:#a31515">&#34;IsoCode&#34;</span>:<span style="color:#a31515">&#34;US&#34;</span>,<span style="color:#a31515">&#34;Names&#34;</span>:{<span style="color:#a31515">&#34;de&#34;</span>:<span style="color:#a31515">&#34;USA&#34;</span>,<span style="color:#a31515">&#34;en&#34;</span>:<span style="color:#a31515">&#34;United States&#34;</span>,<span style="color:#a31515">&#34;es&#34;</span>:<span style="color:#a31515">&#34;Estados Unidos&#34;</span>,<span style="color:#a31515">&#34;fr&#34;</span>:<span style="color:#a31515">&#34;États-Unis&#34;</span>,<span style="color:#a31515">&#34;ja&#34;</span>:<span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,<span style="color:#a31515">&#34;pt-BR&#34;</span>:<span style="color:#a31515">&#34;Estados Unidos&#34;</span>,<span style="color:#a31515">&#34;ru&#34;</span>:<span style="color:#a31515">&#34;США&#34;</span>,<span style="color:#a31515">&#34;zh-CN&#34;</span>:<span style="color:#a31515">&#34;美国&#34;</span>}},<span style="color:#a31515">&#34;RepresentedCountry&#34;</span>:{<span style="color:#a31515">&#34;GeoNameID&#34;</span>:0,<span style="color:#a31515">&#34;IsInEuropeanUnion&#34;</span>:false,<span style="color:#a31515">&#34;IsoCode&#34;</span>:<span style="color:#a31515">&#34;&#34;</span>,<span style="color:#a31515">&#34;Names&#34;</span>:null,<span style="color:#a31515">&#34;Type&#34;</span>:<span style="color:#a31515">&#34;&#34;</span>},<span style="color:#a31515">&#34;Subdivisions&#34;</span>:null,<span style="color:#a31515">&#34;Traits&#34;</span>:{<span style="color:#a31515">&#34;IsAnonymousProxy&#34;</span>:false,<span style="color:#a31515">&#34;IsSatelliteProvider&#34;</span>:false}}}
 
 </code></pre></div><p>Pretty-printing the response body:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;ip&#34;</span>: <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>,
-    <span style="color:#f92672">&#34;record&#34;</span>: {
-        <span style="color:#f92672">&#34;City&#34;</span>: {
-            <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">0</span>,
-            <span style="color:#f92672">&#34;Names&#34;</span>: <span style="color:#66d9ef">null</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+    &#34;ip&#34;: <span style="color:#a31515">&#34;127.0.0.1&#34;</span>,
+    &#34;record&#34;: {
+        &#34;City&#34;: {
+            &#34;GeoNameID&#34;: 0,
+            &#34;Names&#34;: <span style="color:#00f">null</span>
         },
-        <span style="color:#f92672">&#34;Continent&#34;</span>: {
-            <span style="color:#f92672">&#34;Code&#34;</span>: <span style="color:#e6db74">&#34;NA&#34;</span>,
-            <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">6255149</span>,
-            <span style="color:#f92672">&#34;Names&#34;</span>: {
-                <span style="color:#f92672">&#34;de&#34;</span>: <span style="color:#e6db74">&#34;Nordamerika&#34;</span>,
-                <span style="color:#f92672">&#34;en&#34;</span>: <span style="color:#e6db74">&#34;North America&#34;</span>,
-                <span style="color:#f92672">&#34;es&#34;</span>: <span style="color:#e6db74">&#34;Norteamérica&#34;</span>,
-                <span style="color:#f92672">&#34;fr&#34;</span>: <span style="color:#e6db74">&#34;Amérique du Nord&#34;</span>,
-                <span style="color:#f92672">&#34;ja&#34;</span>: <span style="color:#e6db74">&#34;北アメリカ&#34;</span>,
-                <span style="color:#f92672">&#34;pt-BR&#34;</span>: <span style="color:#e6db74">&#34;América do Norte&#34;</span>,
-                <span style="color:#f92672">&#34;ru&#34;</span>: <span style="color:#e6db74">&#34;Северная Америка&#34;</span>,
-                <span style="color:#f92672">&#34;zh-CN&#34;</span>: <span style="color:#e6db74">&#34;北美洲&#34;</span>
+        &#34;Continent&#34;: {
+            &#34;Code&#34;: <span style="color:#a31515">&#34;NA&#34;</span>,
+            &#34;GeoNameID&#34;: 6255149,
+            &#34;Names&#34;: {
+                &#34;de&#34;: <span style="color:#a31515">&#34;Nordamerika&#34;</span>,
+                &#34;en&#34;: <span style="color:#a31515">&#34;North America&#34;</span>,
+                &#34;es&#34;: <span style="color:#a31515">&#34;Norteamérica&#34;</span>,
+                &#34;fr&#34;: <span style="color:#a31515">&#34;Amérique du Nord&#34;</span>,
+                &#34;ja&#34;: <span style="color:#a31515">&#34;北アメリカ&#34;</span>,
+                &#34;pt-BR&#34;: <span style="color:#a31515">&#34;América do Norte&#34;</span>,
+                &#34;ru&#34;: <span style="color:#a31515">&#34;Северная Америка&#34;</span>,
+                &#34;zh-CN&#34;: <span style="color:#a31515">&#34;北美洲&#34;</span>
             }
         },
-        <span style="color:#f92672">&#34;Country&#34;</span>: {
-            <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">6252001</span>,
-            <span style="color:#f92672">&#34;IsInEuropeanUnion&#34;</span>: <span style="color:#66d9ef">false</span>,
-            <span style="color:#f92672">&#34;IsoCode&#34;</span>: <span style="color:#e6db74">&#34;US&#34;</span>,
-            <span style="color:#f92672">&#34;Names&#34;</span>: {
-                <span style="color:#f92672">&#34;de&#34;</span>: <span style="color:#e6db74">&#34;USA&#34;</span>,
-                <span style="color:#f92672">&#34;en&#34;</span>: <span style="color:#e6db74">&#34;United States&#34;</span>,
-                <span style="color:#f92672">&#34;es&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
-                <span style="color:#f92672">&#34;fr&#34;</span>: <span style="color:#e6db74">&#34;États-Unis&#34;</span>,
-                <span style="color:#f92672">&#34;ja&#34;</span>: <span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,
-                <span style="color:#f92672">&#34;pt-BR&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
-                <span style="color:#f92672">&#34;ru&#34;</span>: <span style="color:#e6db74">&#34;США&#34;</span>,
-                <span style="color:#f92672">&#34;zh-CN&#34;</span>: <span style="color:#e6db74">&#34;美国&#34;</span>
+        &#34;Country&#34;: {
+            &#34;GeoNameID&#34;: 6252001,
+            &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
+            &#34;IsoCode&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
+            &#34;Names&#34;: {
+                &#34;de&#34;: <span style="color:#a31515">&#34;USA&#34;</span>,
+                &#34;en&#34;: <span style="color:#a31515">&#34;United States&#34;</span>,
+                &#34;es&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+                &#34;fr&#34;: <span style="color:#a31515">&#34;États-Unis&#34;</span>,
+                &#34;ja&#34;: <span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,
+                &#34;pt-BR&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+                &#34;ru&#34;: <span style="color:#a31515">&#34;США&#34;</span>,
+                &#34;zh-CN&#34;: <span style="color:#a31515">&#34;美国&#34;</span>
             }
         },
-        <span style="color:#f92672">&#34;Location&#34;</span>: {
-            <span style="color:#f92672">&#34;AccuracyRadius&#34;</span>: <span style="color:#ae81ff">0</span>,
-            <span style="color:#f92672">&#34;Latitude&#34;</span>: <span style="color:#ae81ff">0</span>,
-            <span style="color:#f92672">&#34;Longitude&#34;</span>: <span style="color:#ae81ff">0</span>,
-            <span style="color:#f92672">&#34;MetroCode&#34;</span>: <span style="color:#ae81ff">0</span>,
-            <span style="color:#f92672">&#34;TimeZone&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+        &#34;Location&#34;: {
+            &#34;AccuracyRadius&#34;: 0,
+            &#34;Latitude&#34;: 0,
+            &#34;Longitude&#34;: 0,
+            &#34;MetroCode&#34;: 0,
+            &#34;TimeZone&#34;: <span style="color:#a31515">&#34;&#34;</span>
         },
-        <span style="color:#f92672">&#34;Postal&#34;</span>: {
-            <span style="color:#f92672">&#34;Code&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+        &#34;Postal&#34;: {
+            &#34;Code&#34;: <span style="color:#a31515">&#34;&#34;</span>
         },
-        <span style="color:#f92672">&#34;RegisteredCountry&#34;</span>: {
-            <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">6252001</span>,
-            <span style="color:#f92672">&#34;IsInEuropeanUnion&#34;</span>: <span style="color:#66d9ef">false</span>,
-            <span style="color:#f92672">&#34;IsoCode&#34;</span>: <span style="color:#e6db74">&#34;US&#34;</span>,
-            <span style="color:#f92672">&#34;Names&#34;</span>: {
-                <span style="color:#f92672">&#34;de&#34;</span>: <span style="color:#e6db74">&#34;USA&#34;</span>,
-                <span style="color:#f92672">&#34;en&#34;</span>: <span style="color:#e6db74">&#34;United States&#34;</span>,
-                <span style="color:#f92672">&#34;es&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
-                <span style="color:#f92672">&#34;fr&#34;</span>: <span style="color:#e6db74">&#34;États-Unis&#34;</span>,
-                <span style="color:#f92672">&#34;ja&#34;</span>: <span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,
-                <span style="color:#f92672">&#34;pt-BR&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
-                <span style="color:#f92672">&#34;ru&#34;</span>: <span style="color:#e6db74">&#34;США&#34;</span>,
-                <span style="color:#f92672">&#34;zh-CN&#34;</span>: <span style="color:#e6db74">&#34;美国&#34;</span>
+        &#34;RegisteredCountry&#34;: {
+            &#34;GeoNameID&#34;: 6252001,
+            &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
+            &#34;IsoCode&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
+            &#34;Names&#34;: {
+                &#34;de&#34;: <span style="color:#a31515">&#34;USA&#34;</span>,
+                &#34;en&#34;: <span style="color:#a31515">&#34;United States&#34;</span>,
+                &#34;es&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+                &#34;fr&#34;: <span style="color:#a31515">&#34;États-Unis&#34;</span>,
+                &#34;ja&#34;: <span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,
+                &#34;pt-BR&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+                &#34;ru&#34;: <span style="color:#a31515">&#34;США&#34;</span>,
+                &#34;zh-CN&#34;: <span style="color:#a31515">&#34;美国&#34;</span>
             }
         },
-        <span style="color:#f92672">&#34;RepresentedCountry&#34;</span>: {
-            <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">0</span>,
-            <span style="color:#f92672">&#34;IsInEuropeanUnion&#34;</span>: <span style="color:#66d9ef">false</span>,
-            <span style="color:#f92672">&#34;IsoCode&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,
-            <span style="color:#f92672">&#34;Names&#34;</span>: <span style="color:#66d9ef">null</span>,
-            <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+        &#34;RepresentedCountry&#34;: {
+            &#34;GeoNameID&#34;: 0,
+            &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
+            &#34;IsoCode&#34;: <span style="color:#a31515">&#34;&#34;</span>,
+            &#34;Names&#34;: <span style="color:#00f">null</span>,
+            &#34;Type&#34;: <span style="color:#a31515">&#34;&#34;</span>
         },
-        <span style="color:#f92672">&#34;Subdivisions&#34;</span>: <span style="color:#66d9ef">null</span>,
-        <span style="color:#f92672">&#34;Traits&#34;</span>: {
-            <span style="color:#f92672">&#34;IsAnonymousProxy&#34;</span>: <span style="color:#66d9ef">false</span>,
-            <span style="color:#f92672">&#34;IsSatelliteProvider&#34;</span>: <span style="color:#66d9ef">false</span>
+        &#34;Subdivisions&#34;: <span style="color:#00f">null</span>,
+        &#34;Traits&#34;: {
+            &#34;IsAnonymousProxy&#34;: <span style="color:#00f">false</span>,
+            &#34;IsSatelliteProvider&#34;: <span style="color:#00f">false</span>
         }
     }
 }
@@ -2191,10 +2191,9 @@ INFO[0077] Stack provisioned                             CreationTime=&#34;2018-
 </ul>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3588,18 +3587,18 @@ INFO[0077] Stack provisioned                             CreationTime=&#34;2018-
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

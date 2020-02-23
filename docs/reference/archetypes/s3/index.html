@@ -12,22 +12,22 @@
     <title>S3 :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1987,44 +1987,43 @@ the given prefix are created.</p>
 <p>To subscribe to object events created by objects with a given prefix, use the
 <a href="http://localhost:6060/pkg/github.com/mweagle/Sparta/archetype/#NewS3ScopedReactor">NewS3ScopedReactor</a>
 constructor as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
-  <span style="color:#a6e22e">spartaArchetype</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  awsLambdaEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+  spartaArchetype <span style="color:#a31515">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
 )
-<span style="color:#75715e">// KinesisStream reactor function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">reactorFunc</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-  <span style="color:#a6e22e">s3Event</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">S3Event</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyRequestLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Entry</span>)
+<span style="color:#008000">// KinesisStream reactor function
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> reactorFunc(ctx context.Context,
+  s3Event awsLambdaEvents.S3Event) (<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-    <span style="color:#e6db74">&#34;Event&#34;</span>: <span style="color:#a6e22e">s3Event</span>,
-  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;S3 Event&#34;</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;</span>, <span style="color:#66d9ef">nil</span>
+  logger.WithFields(logrus.Fields{
+    <span style="color:#a31515">&#34;Event&#34;</span>: s3Event,
+  }).Info(<span style="color:#a31515">&#34;S3 Event&#34;</span>)
+  <span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;</span>, <span style="color:#00f">nil</span>
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">handler</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">S3ReactorFunc</span>(<span style="color:#a6e22e">reactorFunc</span>)
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewS3ScopedReactor</span>(<span style="color:#a6e22e">handler</span>,
-    <span style="color:#e6db74">&#34;S3_BUCKET_ARN_OR_CLOUDFORMATION_REF&#34;</span>,
-    <span style="color:#e6db74">&#34;/my/special/prefix&#34;</span>,
-    <span style="color:#66d9ef">nil</span>)
+<span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  handler := spartaArchetype.S3ReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewS3ScopedReactor(handler,
+    <span style="color:#a31515">&#34;S3_BUCKET_ARN_OR_CLOUDFORMATION_REF&#34;</span>,
+    <span style="color:#a31515">&#34;/my/special/prefix&#34;</span>,
+    <span style="color:#00f">nil</span>)
 }
 </code></pre></div><h2 id="all-events">All Events</h2>
 <p>To subscribe to <em>all</em> S3 bucket events, use the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewS3Reactor">NewS3Reactor</a> version:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">handler</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">S3ReactorFunc</span>(<span style="color:#a6e22e">reactorFunc</span>)
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewS3Reactor</span>(<span style="color:#a6e22e">handler</span>,
-    <span style="color:#e6db74">&#34;/my/special/prefix&#34;</span>,
-    <span style="color:#66d9ef">nil</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  handler := spartaArchetype.S3ReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewS3Reactor(handler,
+    <span style="color:#a31515">&#34;/my/special/prefix&#34;</span>,
+    <span style="color:#00f">nil</span>)
 }
 </code></pre></div>
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3421,18 +3420,18 @@ constructor as in:</p>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

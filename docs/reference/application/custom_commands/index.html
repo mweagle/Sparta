@@ -12,22 +12,22 @@
     <title>Custom Commands :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
-    <link href="/css/theme.css?1582422389" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422389" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422389"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422389"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:29-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1975,22 +1975,22 @@ pre {
 
 <p>In addition to <a href="/reference/application/custom_flags">custom flags</a>, an application may register completely new commands. For example, to support <a href="/reference/application/custom_flags">alternative topologies</a> or integrated automated acceptance tests as part of a CI/CD pipeline.</p>
 <p>To register a custom command, define a new <a href="https://github.com/spf13/cobra">cobra.Command</a> and add it to the <code>sparta.CommandLineOptions.Root</code> command value.  Ensure you use the <code>xxxxE</code> Cobra functions so that errors can be properly propagated.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">httpServerCommand</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>{
-  <span style="color:#a6e22e">Use</span>:   <span style="color:#e6db74">&#34;httpServer&#34;</span>,
-  <span style="color:#a6e22e">Short</span>: <span style="color:#e6db74">&#34;Sample HelloWorld HTTP server&#34;</span>,
-  <span style="color:#a6e22e">Long</span>:  <span style="color:#e6db74">`Sample HelloWorld HTTP server that binds to port: `</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">HTTPServerPort</span>,
-  <span style="color:#a6e22e">RunE</span>: <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>, <span style="color:#a6e22e">args</span> []<span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
-    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/&#34;</span>, <span style="color:#a6e22e">helloWorldResource</span>)
-    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;:%d&#34;</span>, <span style="color:#a6e22e">HTTPServerPort</span>), <span style="color:#66d9ef">nil</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">httpServerCommand := &amp;cobra.Command{
+  Use:   <span style="color:#a31515">&#34;httpServer&#34;</span>,
+  Short: <span style="color:#a31515">&#34;Sample HelloWorld HTTP server&#34;</span>,
+  Long:  <span style="color:#a31515">`Sample HelloWorld HTTP server that binds to port: `</span> + HTTPServerPort,
+  RunE: <span style="color:#00f">func</span>(cmd *cobra.Command, args []<span style="color:#2b91af">string</span>) <span style="color:#2b91af">error</span> {
+    http.HandleFunc(<span style="color:#a31515">&#34;/&#34;</span>, helloWorldResource)
+    <span style="color:#00f">return</span> http.ListenAndServe(fmt.Sprintf(<span style="color:#a31515">&#34;:%d&#34;</span>, HTTPServerPort), <span style="color:#00f">nil</span>)
   },
 }
-<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CommandLineOptions</span>.<span style="color:#a6e22e">Root</span>.<span style="color:#a6e22e">AddCommand</span>(<span style="color:#a6e22e">httpServerCommand</span>)
+sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)
 </code></pre></div><p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go --help
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">$ go run main.go --help
 Provision AWS Lambda and EC2 instance with same code
 
 Usage:
-  main <span style="color:#f92672">[</span>command<span style="color:#f92672">]</span>
+  main [command]
 
 Available Commands:
   delete      Delete service
@@ -2001,36 +2001,35 @@ Available Commands:
   httpServer  Sample HelloWorld HTTP server
   profile     Interactively examine service pprof output
   provision   Provision service
-  status      Produce a report <span style="color:#66d9ef">for</span> a provisioned service
+  status      Produce a report <span style="color:#00f">for</span> a provisioned service
   version     Display version information
 
 Flags:
-  -f, --format string    Log format <span style="color:#f92672">[</span>text, json<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;text&#34;</span><span style="color:#f92672">)</span>
-  -h, --help             help <span style="color:#66d9ef">for</span> main
-      --ldflags string   Go linker string definition flags <span style="color:#f92672">(</span>https://golang.org/cmd/link/<span style="color:#f92672">)</span>
-  -l, --level string     Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
+  -f, --format string    Log format [text, json] (default <span style="color:#a31515">&#34;text&#34;</span>)
+  -h, --help             help <span style="color:#00f">for</span> main
+      --ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
+  -l, --level string     Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
       --nocolor          Boolean flag to suppress colorized TTY output
-  -n, --noop             Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
-  -t, --tags string      Optional build tags <span style="color:#66d9ef">for</span> conditional compilation
+  -n, --noop             Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)
+  -t, --tags string      Optional build tags <span style="color:#00f">for</span> conditional compilation
   -z, --timestamps       Include UTC timestamp log line prefix
 </code></pre></div><p>And you can query for user-command specific usage as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">
 $ ./SpartaOmega httpServer --help
 Custom command
 
 Usage:
-  SpartaOmega httpServer <span style="color:#f92672">[</span>flags<span style="color:#f92672">]</span>
+  SpartaOmega httpServer [flags]
 
 Global Flags:
-  -l, --level string   Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
-  -n, --noop           Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
+  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)
 
 </code></pre></div>
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3424,18 +3423,18 @@ Global Flags:
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422389"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422389"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422389"></script>
-<script src="/js/jquery.sticky.js?1582422389"></script>
-<script src="/js/featherlight.min.js?1582422389"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422389"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422389"></script>
-<script src="/js/learn.js?1582422389"></script>
-<script src="/js/hugo-learn.js?1582422389"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422389" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422389"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

@@ -12,22 +12,22 @@
     <title>CloudWatch Alarms :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1975,22 +1975,21 @@ pre {
 
 <p>The <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#CloudWatchErrorAlarmDecorator">CloudWatchErrorAlarmDecorator</a> associates a CloudWatch alarm and destination with your Lambda function.</p>
 <p>Sample usage:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#e6db74">&#34;Hello World&#34;</span>,
-  <span style="color:#a6e22e">helloWorld</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+  helloWorld,
+  sparta.IAMRoleDefinition{})
 
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorators</span> = []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">TemplateDecoratorHandler</span>{
-  <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">CloudWatchErrorAlarmDecorator</span>(<span style="color:#ae81ff">1</span>,
-    <span style="color:#ae81ff">1</span>,
-    <span style="color:#ae81ff">1</span>,
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;MY_SNS_ARN&#34;</span>)),
+lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
+  spartaDecorators.CloudWatchErrorAlarmDecorator(1,
+    1,
+    1,
+    gocf.String(<span style="color:#a31515">&#34;MY_SNS_ARN&#34;</span>)),
 }
 </code></pre></div>
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3387,18 +3386,18 @@ pre {
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

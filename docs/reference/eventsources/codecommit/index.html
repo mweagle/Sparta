@@ -12,22 +12,22 @@
     <title>CodeCommit :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1988,61 +1988,61 @@ pre {
 <p>Assume that we&rsquo;re supposed to write a Lambda function that is triggered in response to any event emitted by a CodeCommit repository.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>Our lambda function is relatively short:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  awsLambdaEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
 )
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoCodeCommit</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">event</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">CodeCommitEvent</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyRequestLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Entry</span>)
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-    <span style="color:#e6db74">&#34;Event&#34;</span>: <span style="color:#a6e22e">event</span>,
-  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Event received&#34;</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">event</span>, <span style="color:#66d9ef">nil</span>
+<span style="color:#00f">func</span> echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger.WithFields(logrus.Fields{
+    <span style="color:#a31515">&#34;Event&#34;</span>: event,
+  }).Info(<span style="color:#a31515">&#34;Event received&#34;</span>)
+  <span style="color:#00f">return</span> &amp;event, <span style="color:#00f">nil</span>
 }
 </code></pre></div><p>Our lambda function doesn&rsquo;t need to do much with the repository message other than log and return it.</p>
 <h2 id="sparta-integration">Sparta Integration</h2>
 <p>With <code>echoCodeCommit()</code> defined, the next step is to integrate the <strong>go</strong> function with your application.</p>
 <p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">appendCloudWatchLogsHandler</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>,
-  <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoCodeCommit</span>),
-    <span style="color:#a6e22e">echoCodeCommit</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> appendCloudWatchLogsHandler(api *sparta.API,
+  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoCodeCommit),
+    echoCodeCommit,
+    sparta.IAMRoleDefinition{})
 </code></pre></div><p>The next step is to add a <code>CodeCommitPermission</code> value that represents the
 <a href="https://docs.aws.amazon.com/codecommit/latest/userguide/how-to-notify.html">notification settings</a>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">repositoryName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;MyTestRepository&#34;</span>)
-<span style="color:#a6e22e">codeCommitPermission</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CodeCommitPermission</span>{
-  <span style="color:#a6e22e">BasePermission</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">BasePermission</span>{
-    <span style="color:#a6e22e">SourceArn</span>: <span style="color:#a6e22e">repositoryName</span>,
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">repositoryName := gocf.String(<span style="color:#a31515">&#34;MyTestRepository&#34;</span>)
+codeCommitPermission := sparta.CodeCommitPermission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: repositoryName,
   },
-  <span style="color:#a6e22e">RepositoryName</span>: <span style="color:#a6e22e">repositoryName</span>.<span style="color:#a6e22e">String</span>(),
-  <span style="color:#a6e22e">Branches</span>:       <span style="color:#a6e22e">branches</span>, <span style="color:#75715e">// may be nil
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">Events</span>:         <span style="color:#a6e22e">events</span>,   <span style="color:#75715e">// may be nil
-</span><span style="color:#75715e"></span>}
+  RepositoryName: repositoryName.String(),
+  Branches:       branches, <span style="color:#008000">// may be nil
+</span><span style="color:#008000"></span>  Events:         events,   <span style="color:#008000">// may be nil
+</span><span style="color:#008000"></span>}
 </code></pre></div><p>The <code>sparta.CodeCommitPermission</code> struct provides fields that proxy the
 <a href="https://docs.aws.amazon.com/codecommit/latest/APIReference/API_RepositoryTrigger.html">RepositoryTrigger</a>
 values.</p>
 <h2 id="add-permission">Add Permission</h2>
 <p>With the subscription information configured, the final step is to
 add the <code>sparta.CodeCommitPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">codeCommitPermission</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.Permissions = append(lambdaFn.Permissions, codeCommitPermission)
 </code></pre></div><p>The entire function is therefore:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">appendCodeCommitHandler</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>,
-  <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> appendCodeCommitHandler(api *sparta.API,
+  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoCodeCommit</span>),
-    <span style="color:#a6e22e">echoCodeCommit</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoCodeCommit),
+    echoCodeCommit,
+    sparta.IAMRoleDefinition{})
 
-    <span style="color:#a6e22e">repositoryName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;MyTestRepository&#34;</span>)
-    <span style="color:#a6e22e">codeCommitPermission</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CodeCommitPermission</span>{
-      <span style="color:#a6e22e">BasePermission</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">BasePermission</span>{
-        <span style="color:#a6e22e">SourceArn</span>: <span style="color:#a6e22e">repositoryName</span>,
+    repositoryName := gocf.String(<span style="color:#a31515">&#34;MyTestRepository&#34;</span>)
+    codeCommitPermission := sparta.CodeCommitPermission{
+      BasePermission: sparta.BasePermission{
+        SourceArn: repositoryName,
       },
-      <span style="color:#a6e22e">RepositoryName</span>: <span style="color:#a6e22e">repositoryName</span>.<span style="color:#a6e22e">String</span>(),
+      RepositoryName: repositoryName.String(),
     }
-  <span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">codeCommitPermission</span>)
-  <span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
+  lambdaFn.Permissions = append(lambdaFn.Permissions, codeCommitPermission)
+  <span style="color:#00f">return</span> append(lambdaFunctions, lambdaFn)
 }
 </code></pre></div><h1 id="wrapping-up">Wrapping Up</h1>
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and
@@ -2064,41 +2064,40 @@ CodeCmmit-triggered lambda functions:</p>
 </li>
 <li>
 <p>Use the AWS CLI to inspect the configured triggers:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ aws codecommit get-repository-triggers --repository-name<span style="color:#f92672">=</span>TestCodeCommitRepo
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">$ aws codecommit get-repository-triggers --repository-name=TestCodeCommitRepo
 
-<span style="color:#f92672">{</span>
-    <span style="color:#e6db74">&#34;configurationId&#34;</span>: <span style="color:#e6db74">&#34;7dd7933a-a26c-4514-9ab8-ad8cc133f874&#34;</span>,
-    <span style="color:#e6db74">&#34;triggers&#34;</span>: <span style="color:#f92672">[</span>
-        <span style="color:#f92672">{</span>
-            <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;MyHelloWorldStack-mweagle_main_echoCodeCommit&#34;</span>,
-            <span style="color:#e6db74">&#34;destinationArn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-mweagle_main_echoCodeCommit&#34;</span>,
-            <span style="color:#e6db74">&#34;branches&#34;</span>: <span style="color:#f92672">[]</span>,
-            <span style="color:#e6db74">&#34;events&#34;</span>: <span style="color:#f92672">[</span>
-                <span style="color:#e6db74">&#34;all&#34;</span>
-            <span style="color:#f92672">]</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">]</span>
-<span style="color:#f92672">}</span>
+{
+    <span style="color:#a31515">&#34;configurationId&#34;</span>: <span style="color:#a31515">&#34;7dd7933a-a26c-4514-9ab8-ad8cc133f874&#34;</span>,
+    <span style="color:#a31515">&#34;triggers&#34;</span>: [
+        {
+            <span style="color:#a31515">&#34;name&#34;</span>: <span style="color:#a31515">&#34;MyHelloWorldStack-mweagle_main_echoCodeCommit&#34;</span>,
+            <span style="color:#a31515">&#34;destinationArn&#34;</span>: <span style="color:#a31515">&#34;arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-mweagle_main_echoCodeCommit&#34;</span>,
+            <span style="color:#a31515">&#34;branches&#34;</span>: [],
+            <span style="color:#a31515">&#34;events&#34;</span>: [
+                <span style="color:#a31515">&#34;all&#34;</span>
+            ]
+        }
+    ]
+}
 </code></pre></div><ul>
 <li>Use the AWS CLI to test the configured trigger:</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ aws codecommit test-repository-triggers --repository-name TestCodeCommitRepo --triggers name<span style="color:#f92672">=</span>MyHelloWorldStack-mweagle-MyHelloWorldStack-mweagle_main_echoCodeCommit,destinationArn<span style="color:#f92672">=</span>arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-mweagle_main_echoCodeCommit,branches<span style="color:#f92672">=</span>mainline,preprod,events<span style="color:#f92672">=</span>all
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">$ aws codecommit test-repository-triggers --repository-name TestCodeCommitRepo --triggers name=MyHelloWorldStack-mweagle-MyHelloWorldStack-mweagle_main_echoCodeCommit,destinationArn=arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-mweagle_main_echoCodeCommit,branches=mainline,preprod,events=all
 
-<span style="color:#f92672">{</span>
-  <span style="color:#e6db74">&#34;successfulExecutions&#34;</span>: <span style="color:#f92672">[</span>
-      <span style="color:#e6db74">&#34;MyHelloWorldStack-mweagle-MyHelloWorldStack-mweagle_main_echoCodeCommit&#34;</span>
-  <span style="color:#f92672">]</span>,
-  <span style="color:#e6db74">&#34;failedExecutions&#34;</span>: <span style="color:#f92672">[]</span>
-<span style="color:#f92672">}</span>
+{
+  <span style="color:#a31515">&#34;successfulExecutions&#34;</span>: [
+      <span style="color:#a31515">&#34;MyHelloWorldStack-mweagle-MyHelloWorldStack-mweagle_main_echoCodeCommit&#34;</span>
+  ],
+  <span style="color:#a31515">&#34;failedExecutions&#34;</span>: []
+}
 
 </code></pre></div></li>
 </ul>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3492,18 +3491,18 @@ CodeCmmit-triggered lambda functions:</p>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

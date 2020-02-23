@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2135,30 +2135,43 @@ import ( spartaAPIGateway &#34;github.com/mweagle/Sparta/aws/apigateway&#34; spa
 <p>AWS Lambda supports multiple <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html">function signatures</a>. Some supported signatures include structured types, which are JSON un/marshalable structs that are automatically managed.</p>
 <p>To simplify handling API Gateway requests, Sparta exposes the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope">APIGatewayEnvelope</a> type. This type provides an embeddable struct type whose fields and JSON serialization match up with the <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">Velocity Template</a> that&rsquo;s applied to the incoming API Gateway request.</p>
 <p>Embed the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope">APIGatewayEnvelope</a> type in your own lambda&rsquo;s request type as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FeedbackBody</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">Language</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;lang&#34;`</span>
-  <span style="color:#a6e22e">Comment</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;comment&#34;`</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> FeedbackBody <span style="color:#00f">struct</span> {
+  Language <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;lang&#34;`</span>
+  Comment  <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;comment&#34;`</span>
 }
 
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FeedbackRequest</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">spartaEvents</span>.<span style="color:#a6e22e">APIGatewayEnvelope</span>
-  <span style="color:#a6e22e">Body</span> <span style="color:#a6e22e">FeedbackBody</span> <span style="color:#e6db74">`json:&#34;body&#34;`</span>
+<span style="color:#00f">type</span> FeedbackRequest <span style="color:#00f">struct</span> {
+  spartaEvents.APIGatewayEnvelope
+  Body FeedbackBody <span style="color:#a31515">`json:&#34;body&#34;`</span>
 }
 </code></pre></div><p>Then accept your custom type in your lambda function as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">myLambdaFunction</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">apiGatewayRequest</span> <span style="color:#a6e22e">FeedbackRequest</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">language</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayRequest</span>.<span style="color:#a6e22e">Body</span>.<span style="color:#a6e22e">Language</span>
-  <span style="color:#f92672">...</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
+  language := apiGatewayRequest.Body.Language
+  ...
 }
 </code></pre></div><h2 id="response-types">Response Types</h2>
 <p>The API Gateway <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/mappings.html">response mappings</a> must make
 assumptions about the shape of the Lambda response. The default <em>application/json</em> mapping template is:</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<pre><code class="language-nohighlight" data-lang="nohighlight">$input.json('$.body')
+## Ok, parse the incoming map of headers
+## and for each one, set the override header in the context.
+## Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html#context-variable-reference
+## Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-override-request-response-parameters.html
+#set($headers = $input.path(&quot;$.headers&quot;))##
+#foreach($key in $headers.keySet())##
+#set($context.responseOverride.header[$key] = $headers[$key])##
+#end##
+## And use the code rather than integration templates so that
+## the creation time is reduced
+#if($input.path(&quot;$.code&quot;) != &quot;&quot;)##
+#set($context.responseOverride.status = $input.path(&quot;$.code&quot;))##
+#end##
+</code></pre>
 <p>This template assumes that your response type has the following JSON shape:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  <span style="color:#f92672">&#34;code&#34;</span> : <span style="color:#960050;background-color:#1e0010">int</span>,
-  <span style="color:#f92672">&#34;body&#34;</span> : {<span style="color:#960050;background-color:#1e0010">...</span>},
-  <span style="color:#f92672">&#34;headers&#34;</span>: {<span style="color:#960050;background-color:#1e0010">...</span>}
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+  &#34;code&#34; : <span style="">int</span>,
+  &#34;body&#34; : {<span style="">...</span>},
+  &#34;headers&#34;: {<span style="">...</span>}
 }
 </code></pre></div><p>The <a href="https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewResponse">apigateway.NewResponse</a> constructor
 is a utility function to produce a canonical version of this response shape. Note that <code>header</code> keys must be lower-cased.</p>
@@ -2169,22 +2182,22 @@ is a utility function to produce a canonical version of this response shape. Not
 <p>API Gateway supports returning custom HTTP headers whose values are extracted from your response. To return custom HTTP
 headers using the default VTL mappings, provide them as the optional third <code>map[string]string</code> argument to
 <a href="https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewResponse">NewResponse</a> as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-  <span style="color:#a6e22e">gatewayEvent</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAPIGateway</span>.<span style="color:#a6e22e">Response</span>, <span style="color:#66d9ef">error</span>) {
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> helloWorld(ctx context.Context,
+  gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, <span style="color:#2b91af">error</span>) {
 
-  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">loggerOk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">loggerOk</span> {
-    <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Hello world structured log message&#34;</span>)
+  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  <span style="color:#00f">if</span> loggerOk {
+    logger.Info(<span style="color:#a31515">&#34;Hello world structured log message&#34;</span>)
   }
 
-  <span style="color:#75715e">// Return a message, together with the incoming input...
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spartaAPIGateway</span>.<span style="color:#a6e22e">NewResponse</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">helloWorldResponse</span>{
-    <span style="color:#a6e22e">Message</span>: <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;Hello world 🌏&#34;</span>),
-    <span style="color:#a6e22e">Request</span>: <span style="color:#a6e22e">gatewayEvent</span>,
+  <span style="color:#008000">// Return a message, together with the incoming input...
+</span><span style="color:#008000"></span>  <span style="color:#00f">return</span> spartaAPIGateway.NewResponse(http.StatusOK, &amp;helloWorldResponse{
+    Message: fmt.Sprintf(<span style="color:#a31515">&#34;Hello world 🌏&#34;</span>),
+    Request: gatewayEvent,
   },
-    <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>{
-      <span style="color:#e6db74">&#34;X-Response&#34;</span>: <span style="color:#e6db74">&#34;Some-value&#34;</span>,
-    }), <span style="color:#66d9ef">nil</span>
+    <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">string</span>{
+      <span style="color:#a31515">&#34;X-Response&#34;</span>: <span style="color:#a31515">&#34;Some-value&#34;</span>,
+    }), <span style="color:#00f">nil</span>
 }
 </code></pre></div><h2 id="other-resources">Other Resources</h2>
 <ul>
@@ -3591,18 +3604,18 @@ headers using the default VTL mappings, provide them as the optional third <code
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

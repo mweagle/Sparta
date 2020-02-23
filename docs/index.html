@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1907,22 +1907,85 @@ pre {
 </span>
 
  
-<!-- raw HTML omitted -->
+<img src="/images/SpartaLogoNoDomain.png" width="33%" height="33%">
 <h2 id="serverless-_go_-microservices-for-aws">Serverless <em>go</em> microservices for AWS</h2>
-<!-- raw HTML omitted -->
-<pre><code>  All configuration and infrastructure requirements are expressed as &lt;i&gt;go&lt;/i&gt; types for GitOps, repeatable, typesafe deployments.
-  &lt;/h4&gt;
-&lt;/td&gt;
-
-&lt;td style=&quot;width:66%&quot;&gt;
-  &lt;img src=&quot;/images/sparta_ecosystem.png&quot; alt=&quot;Sparta Ecosystem&quot; /&gt;
-&lt;/td&gt;
-</code></pre>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<table style="width:90%">
+  <!-- Row 1 -->
+  <tr>
+    <td style="width:33%" valign="top">
+      <h4>
+      Sparta is a framework that transforms a <i>go</i> application into a self-deploying AWS Lambda powered service.
+      </h4>
+      All configuration and infrastructure requirements are expressed as <i>go</i> types for GitOps, repeatable, typesafe deployments.
+      </h4>
+    </td>
+    <td style="width:66%">
+      <img src="/images/sparta_ecosystem.png" alt="Sparta Ecosystem" />
+    </td>
+  </tr>
+</table>
+<hr />
 <h2 id="features">Features</h2>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<table style="width:90%">
+  <!-- Row 1 -->
+  <tr>
+    <td style="width:50%">
+      <h2>Unified</h2>
+      <p>Use a <i>go</i> monorepo to define and your microservice's:
+      <ul>
+        <li>Application logic</li>
+        <li>AWS infrastructure</li>
+        <li>Operational metrics</li>
+        <li>Alert conditions</li>
+        <li>Security policies</li>
+      </ul>
+    </td>
+    <td style="width:50%">
+      <h2>Complete AWS Ecosystem</h2>
+      <p>Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> such as:
+        <ul>
+          <li>DynamoDB</li>
+          <li>S3</li>
+          <li>Kinesis</li>
+          <li>SNS</li>
+          <li>SES</li>
+          <li>CloudMap</li>
+          <li>CloudWatch Events</li>
+          <li>CloudWatch Logs</li>
+          <li>Step Functions</li>
+        </ul>
+        Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource and even your own <a href="http://gosparta.io/docs/custom_resources">CustomResources</a>.
+        </p>
+    </td>
+  </tr>
+  <!-- Row 2 -->
+  <tr>
+    <td style="width:50%">
+      <h2>Security</h2>
+      <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service's attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLA</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
+      </p>
+    </td>
+    <td style="width:50%">
+      <h2>Discovery</h2>
+      <p>A service may provision dynamic AWS infrastructure, and <a href="http://gosparta.io/docs/eventsources">discover</a>, at lambda execution time, the dependent resources' AWS-assigned outputs (<code>Ref</code> &amp; <code>Fn::Att</code>).  Eliminate hardcoded <i>Magic ARNs</i> from your codebase and move towards <a href="http://chadfowler.com/2013/06/23/immutable-deployments.html">immutable infrastructure</a></p>
+    </td>
+  </tr>
+  <!-- Row 3 -->
+  <tr>
+    <td style="width:50%">
+      <h2>API Gateways</h2>
+      <p>Make your service HTTPS accessible by binding it to an <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway</a> REST API during provisioning.  Alternatively, expose a WebSocket [APIV2Gateway](https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/) API for an even more interactive experience.</p>
+    </td>
+    <td style="width:50%">
+      <h2>Static Sites</h2>
+      <p>Include a <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html">CORS-enabled</a> <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3-backed site</a> with your service.  S3-backed sites include API Gateway discovery information for turnkey deployment.</p>
+    </td>
+  </tr>
+</table>
+<hr />
+<a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">
+<img src="/images/sparta_overview.png" width="50%" height="50%">
+</a>
 <p>Sparta relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application. For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics. Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> and minimize resource churn during updates.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>To get started using Sparta, begin with the <a href="/example_service/step1/">Overview</a>.</p>
@@ -1930,19 +1993,23 @@ pre {
 <ul>
 <li>Problems? Please open an <a href="https://github.com/mweagle/Sparta/issues/new">issue</a> in GitHub.</li>
 </ul>
-<p><!-- raw HTML omitted -->
-<!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
+<p><br />
+<img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256"></p>
+<center>
+<h6>Courtesy of <a href="https://github.com/ashleymcnamara/gophers">gophers</a>
+</h6>
+</center>
+<br />
 <h2 id="questions">Questions?</h2>
 <p>Get in touch via:</p>
 <ul>
-<li><!-- raw HTML omitted -->  @mweagle<!-- raw HTML omitted --></li>
-<li><!-- raw HTML omitted -->  Gophers: <!-- raw HTML omitted -->@mweagle<!-- raw HTML omitted --><!-- raw HTML omitted -->
+<li><i class="fas fas-twitter">  @mweagle</i></li>
+<li><i class="fas fas-slack">  Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
 <ul>
 <li><a href="https://invite.slack.golangbridge.org/">Signup page</a></li>
 </ul>
 </li>
-<li><!-- raw HTML omitted -->  Serverless: <!-- raw HTML omitted -->@mweagle<!-- raw HTML omitted --><!-- raw HTML omitted -->
+<li><i class="fas fas-slack">  Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
 <ul>
 <li><a href="https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1">Signup page</a></li>
 </ul>
@@ -1968,7 +2035,7 @@ pre {
 </ul>
 <h3 id="support-sparta">Support Sparta</h3>
 <p>Help support continued Sparta development by becoming a Patreon patron!</p>
-<p><!-- raw HTML omitted -->Become a Patron!<!-- raw HTML omitted --><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a href="https://www.patreon.com/bePatron?u=12960916" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script></p>
 <h2 id="other-resources">Other resources</h2>
 <ul>
 <li><a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html">AWS SAM</a></li>
@@ -3375,18 +3442,18 @@ pre {
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

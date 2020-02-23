@@ -23,7 +23,7 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
     </item>
     
     <item>
-      <title>EventBridge</title>
+      <title>Event Bridge</title>
       <link>/reference/archetypes/event_bridge/</link>
       <pubDate>Sat, 22 Feb 2020 17:36:59 +0000</pubDate>
       

@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1980,11 +1980,11 @@ pre {
 
 
 	<p>Sparta applications delegate <code>func main()</code> responsibilities to one of Sparta&rsquo;s Main entrypoints (<a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a>, <a href="https://godoc.org/github.com/mweagle/Sparta#MainEx">MainEx</a>). This provides each application with some standard command line options as shown below:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ go run main.go --help
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-shell" data-lang="shell">$ go run main.go --help
 Simple Sparta application that demonstrates core functionality
 
 Usage:
-  main <span style="color:#f92672">[</span>command<span style="color:#f92672">]</span>
+  main [command]
 
 Available Commands:
   delete      Delete service
@@ -1994,20 +1994,20 @@ Available Commands:
   help        Help about any command
   profile     Interactively examine service pprof output
   provision   Provision service
-  status      Produce a report <span style="color:#66d9ef">for</span> a provisioned service
+  status      Produce a report <span style="color:#00f">for</span> a provisioned service
   version     Display version information
 
 Flags:
-  -f, --format string    Log format <span style="color:#f92672">[</span>text, json<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;text&#34;</span><span style="color:#f92672">)</span>
-  -h, --help             help <span style="color:#66d9ef">for</span> main
-      --ldflags string   Go linker string definition flags <span style="color:#f92672">(</span>https://golang.org/cmd/link/<span style="color:#f92672">)</span>
-  -l, --level string     Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
+  -f, --format string    Log format [text, json] (default <span style="color:#a31515">&#34;text&#34;</span>)
+  -h, --help             help <span style="color:#00f">for</span> main
+      --ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
+  -l, --level string     Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
       --nocolor          Boolean flag to suppress colorized TTY output
-  -n, --noop             Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
-  -t, --tags string      Optional build tags <span style="color:#66d9ef">for</span> conditional compilation
+  -n, --noop             Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)
+  -t, --tags string      Optional build tags <span style="color:#00f">for</span> conditional compilation
   -z, --timestamps       Include UTC timestamp log line prefix
 
-Use <span style="color:#e6db74">&#34;main [command] --help&#34;</span> <span style="color:#66d9ef">for</span> more information about a command.
+Use <span style="color:#a31515">&#34;main [command] --help&#34;</span> <span style="color:#00f">for</span> more information about a command.
 </code></pre></div><p>It&rsquo;s also possible to add <a href="/reference/application/custom_flags">custom flags</a> and/or <a href="/reference/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
 <p>These command line options are briefly described in the following sections. For the most up to date information, use the <code>--help</code> subcommand option.</p>
 <h1 id="standard-commands">Standard Commands</h1>
@@ -2029,29 +2029,29 @@ Use <span style="color:#e6db74">&#34;main [command] --help&#34;</span> <span sty
 <p>The <code>status</code> option queries AWS for the current stack status
 and produces an optionally account-id redacted report. Stack
 outputs, tags, and other metadata are included in the status report:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go status --redact
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>status UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-14T12:28:18Z&#34;</span>
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span>0001<span style="color:#f92672">]</span> StackId                                       Id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99&#34;</span>
-INFO<span style="color:#f92672">[</span>0001<span style="color:#f92672">]</span> Stack status                                  State<span style="color:#f92672">=</span>UPDATE_COMPLETE
-INFO<span style="color:#f92672">[</span>0001<span style="color:#f92672">]</span> Created                                       Time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-02 03:14:59.127 +0000 UTC&#34;</span>
-INFO<span style="color:#f92672">[</span>0001<span style="color:#f92672">]</span> Last Update                                   Time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-06 14:20:40.267 +0000 UTC&#34;</span>
-INFO<span style="color:#f92672">[</span>0001<span style="color:#f92672">]</span> Tag                                           io:gosparta:buildId<span style="color:#f92672">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">$ go run main.go status --redact
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=status UTC=<span style="color:#a31515">&#34;2018-10-14T12:28:18Z&#34;</span>
+INFO[0000] ════════════════════════════════════════════════
+INFO[0001] StackId                                       Id=<span style="color:#a31515">&#34;arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99&#34;</span>
+INFO[0001] Stack status                                  State=UPDATE_COMPLETE
+INFO[0001] Created                                       Time=<span style="color:#a31515">&#34;2018-10-02 03:14:59.127 +0000 UTC&#34;</span>
+INFO[0001] Last Update                                   Time=<span style="color:#a31515">&#34;2018-10-06 14:20:40.267 +0000 UTC&#34;</span>
+INFO[0001] Tag                                           io:gosparta:buildId=7ee3e1bc52f15c4a636e05061eaec7b748db22a9
 </code></pre></div><h2 id="version">Version</h2>
 <p>The <code>version</code> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go version
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>version UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-14T12:27:36Z&#34;</span>
-INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> ════════════════════════════════════════════════
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">$ go run main.go version
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=version UTC=<span style="color:#a31515">&#34;2018-10-14T12:27:36Z&#34;</span>
+INFO[0000] ════════════════════════════════════════════════
 </code></pre></div>
 
 
@@ -3452,18 +3452,18 @@ INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

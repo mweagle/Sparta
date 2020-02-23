@@ -12,22 +12,22 @@
     <title>CORS :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
-    <link href="/css/theme.css?1582422389" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422389" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422389"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422389"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:29-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1975,12 +1975,12 @@ pre {
 
 <p><a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross Origin Resource Sharing</a> defines a protocol by which resources on different domains may establish whether cross site operations are permissible.</p>
 <p>Sparta makes CORS support a single <code>CORSEnabled</code> field of the <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> struct:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
-<span style="color:#75715e">// Register the function with the API Gateway
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
-<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaHTML&#34;</span>, <span style="color:#a6e22e">apiStage</span>)
-<span style="color:#75715e">// Enable CORS s.t. the S3 site can access the resources
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">apiGateway</span>.<span style="color:#a6e22e">CORSEnabled</span> = <span style="color:#66d9ef">true</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<span style="color:#008000">// Register the function with the API Gateway
+</span><span style="color:#008000"></span>apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
+apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaHTML&#34;</span>, apiStage)
+<span style="color:#008000">// Enable CORS s.t. the S3 site can access the resources
+</span><span style="color:#008000"></span>apiGateway.CORSEnabled = <span style="color:#00f">true</span>
 
 </code></pre></div><p>Setting the boolean to <code>true</code> will add the necessary <code>OPTIONS</code> and mock responses to <em>all</em> resources exposed by your API.  See the <a href="/reference/s3site">SpartaHTML</a> sample for a complete example.</p>
 <h1 id="customization">Customization</h1>
@@ -1995,10 +1995,9 @@ pre {
 </ul>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3392,18 +3391,18 @@ pre {
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422389"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422389"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422389"></script>
-<script src="/js/jquery.sticky.js?1582422389"></script>
-<script src="/js/featherlight.min.js?1582422389"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422389"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422389"></script>
-<script src="/js/learn.js?1582422389"></script>
-<script src="/js/hugo-learn.js?1582422389"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422389" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422389"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

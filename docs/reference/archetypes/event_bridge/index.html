@@ -9,25 +9,25 @@
 
     <link rel="icon" href="/images/favicon.png" type="image/png">
 
-    <title>EventBridge :: Sparta - AWS Lambda Microservices</title>
+    <title>Event Bridge :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
-    <link href="/css/theme.css?1582422389" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422389" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422389"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422389"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item active">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item active">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1934,7 +1934,7 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > EventBridge
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > Event Bridge
           
          
           
@@ -1970,7 +1970,7 @@ pre {
           
             <h1>
               
-              EventBridge
+              Event Bridge
             </h1>
           
 
@@ -1984,83 +1984,82 @@ are two different archetype functions available.</p>
 <h2 id="scheduled">Scheduled</h2>
 <p>Scheduled Lambdas execute either at fixed times or periodically depending on the <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/scheduled-events.html">schedule expression</a>.</p>
 <p>To create a scheduled function use a constructor as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">spartaArchetype</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  spartaArchetype <span style="color:#a31515">&#34;github.com/mweagle/Sparta/archetype&#34;</span>
 )
 
-<span style="color:#75715e">// EventBridge reactor function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoEventBridgeEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">msg</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">RawMessage</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">eventData</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
-  <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">msg</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">eventData</span>)
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-    <span style="color:#e6db74">&#34;error&#34;</span>:   <span style="color:#a6e22e">err</span>,
-    <span style="color:#e6db74">&#34;message&#34;</span>: <span style="color:#a6e22e">eventData</span>,
-  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;EventBridge event&#34;</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+<span style="color:#008000">// EventBridge reactor function
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  <span style="color:#00f">var</span> eventData <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}
+  err := json.Unmarshal(msg, &amp;eventData)
+  logger.WithFields(logrus.Fields{
+    <span style="color:#a31515">&#34;error&#34;</span>:   err,
+    <span style="color:#a31515">&#34;message&#34;</span>: eventData,
+  }).Info(<span style="color:#a31515">&#34;EventBridge event&#34;</span>)
+  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, err
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">eventBridgeReactorFunc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">EventBridgeReactorFunc</span>(<span style="color:#a6e22e">echoEventBridgeEvent</span>)
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewEventBridgeScheduledReactor</span>(<span style="color:#a6e22e">eventBridgeReactorFunc</span>,
-    <span style="color:#e6db74">&#34;rate(1 minute)&#34;</span>,
-    <span style="color:#66d9ef">nil</span>)
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
+<span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  eventBridgeReactorFunc := spartaArchetype.EventBridgeReactorFunc(echoEventBridgeEvent)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewEventBridgeScheduledReactor(eventBridgeReactorFunc,
+    <span style="color:#a31515">&#34;rate(1 minute)&#34;</span>,
+    <span style="color:#00f">nil</span>)
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>}
 </code></pre></div><p>When the scheduled event is triggered, the log statement outputs the full payload:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  <span style="color:#f92672">&#34;error&#34;</span>: <span style="color:#66d9ef">null</span>,
-  <span style="color:#f92672">&#34;level&#34;</span>: <span style="color:#e6db74">&#34;info&#34;</span>,
-  <span style="color:#f92672">&#34;message&#34;</span>: {
-    <span style="color:#f92672">&#34;account&#34;</span>: <span style="color:#e6db74">&#34;123412341234&#34;</span>,
-    <span style="color:#f92672">&#34;detail&#34;</span>: {},
-    <span style="color:#f92672">&#34;detail-type&#34;</span>: <span style="color:#e6db74">&#34;Scheduled Event&#34;</span>,
-    <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#e6db74">&#34;f453bd1e-ccea-9df4-4e40-938097e82869&#34;</span>,
-    <span style="color:#f92672">&#34;region&#34;</span>: <span style="color:#e6db74">&#34;us-west-2&#34;</span>,
-    <span style="color:#f92672">&#34;resources&#34;</span>: [
-      <span style="color:#e6db74">&#34;arn:aws:events:us-west-2:123412341234:rule/SpartaEventBridge-0271594-EventBridgexmainechoEven-2WMCXA1LWGZY&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+  &#34;error&#34;: <span style="color:#00f">null</span>,
+  &#34;level&#34;: <span style="color:#a31515">&#34;info&#34;</span>,
+  &#34;message&#34;: {
+    &#34;account&#34;: <span style="color:#a31515">&#34;123412341234&#34;</span>,
+    &#34;detail&#34;: {},
+    &#34;detail-type&#34;: <span style="color:#a31515">&#34;Scheduled Event&#34;</span>,
+    &#34;id&#34;: <span style="color:#a31515">&#34;f453bd1e-ccea-9df4-4e40-938097e82869&#34;</span>,
+    &#34;region&#34;: <span style="color:#a31515">&#34;us-west-2&#34;</span>,
+    &#34;resources&#34;: [
+      <span style="color:#a31515">&#34;arn:aws:events:us-west-2:123412341234:rule/SpartaEventBridge-0271594-EventBridgexmainechoEven-2WMCXA1LWGZY&#34;</span>
     ],
-    <span style="color:#f92672">&#34;source&#34;</span>: <span style="color:#e6db74">&#34;aws.events&#34;</span>,
-    <span style="color:#f92672">&#34;time&#34;</span>: <span style="color:#e6db74">&#34;2020-02-23T00:47:31Z&#34;</span>,
-    <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;0&#34;</span>
+    &#34;source&#34;: <span style="color:#a31515">&#34;aws.events&#34;</span>,
+    &#34;time&#34;: <span style="color:#a31515">&#34;2020-02-23T00:47:31Z&#34;</span>,
+    &#34;version&#34;: <span style="color:#a31515">&#34;0&#34;</span>
   },
-  <span style="color:#f92672">&#34;msg&#34;</span>: <span style="color:#e6db74">&#34;EventBridge event&#34;</span>,
-  <span style="color:#f92672">&#34;time&#34;</span>: <span style="color:#e6db74">&#34;2020-02-23T00:48:08Z&#34;</span>
+  &#34;msg&#34;: <span style="color:#a31515">&#34;EventBridge event&#34;</span>,
+  &#34;time&#34;: <span style="color:#a31515">&#34;2020-02-23T00:48:08Z&#34;</span>
 }
 </code></pre></div><p>See the <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/aws-events.html">scheduled event payload</a> documentation.</p>
 <h2 id="events">Events</h2>
 <p>Lambda functions can also be triggered via EventBridge by providing an <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eventbridge-and-event-patterns.html">event patterns</a> to
 select which events should trigger your function&rsquo;s execution.</p>
 <p>To create an event subscriber use a constructor as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoEventBridgeEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">msg</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">RawMessage</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">eventData</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
-  <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">msg</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">eventData</span>)
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-    <span style="color:#e6db74">&#34;error&#34;</span>:   <span style="color:#a6e22e">err</span>,
-    <span style="color:#e6db74">&#34;message&#34;</span>: <span style="color:#a6e22e">eventData</span>,
-  }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;EventBridge event&#34;</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  <span style="color:#00f">var</span> eventData <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}
+  err := json.Unmarshal(msg, &amp;eventData)
+  logger.WithFields(logrus.Fields{
+    <span style="color:#a31515">&#34;error&#34;</span>:   err,
+    <span style="color:#a31515">&#34;message&#34;</span>: eventData,
+  }).Info(<span style="color:#a31515">&#34;EventBridge event&#34;</span>)
+  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, err
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">eventBridgeReactorFunc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">EventBridgeReactorFunc</span>(<span style="color:#a6e22e">echoEventBridgeEvent</span>)
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">lambdaFnErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaArchetype</span>.<span style="color:#a6e22e">NewEventBridgeEventReactor</span>(<span style="color:#a6e22e">eventBridgeReactorFunc</span>,
-    <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
-      <span style="color:#e6db74">&#34;source&#34;</span>: []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;aws.ec2&#34;</span>},
+<span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  eventBridgeReactorFunc := spartaArchetype.EventBridgeReactorFunc(echoEventBridgeEvent)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewEventBridgeEventReactor(eventBridgeReactorFunc,
+    <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
+      <span style="color:#a31515">&#34;source&#34;</span>: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;aws.ec2&#34;</span>},
     },
-    <span style="color:#66d9ef">nil</span>)
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
+    <span style="color:#00f">nil</span>)
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>}
 </code></pre></div><p>The event payload data depends on what event is being subscribed to. See the <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/filtering-examples-structure.html">event patterns</a> documentation for more information.</p>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3454,18 +3453,18 @@ select which events should trigger your function&rsquo;s execution.</p>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

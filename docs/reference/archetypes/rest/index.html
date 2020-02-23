@@ -12,22 +12,22 @@
     <title>REST Service :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1996,18 +1996,18 @@ These <code>struct</code> types must define one or more member functions that co
 <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html">valid function signatures</a>
 for AWS Lambda.</p>
 <p>For example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">spartaAPIGateway</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
 )
-<span style="color:#75715e">// TodoItemResource is the /todo/{id} resource
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TodoItemResource</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">spartaAccessor</span>.<span style="color:#a6e22e">S3Accessor</span>
+<span style="color:#008000">// TodoItemResource is the /todo/{id} resource
+</span><span style="color:#008000"></span><span style="color:#00f">type</span> TodoItemResource <span style="color:#00f">struct</span> {
+  spartaAccessor.S3Accessor
 }
 
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">svc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">TodoItemResource</span>) <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-  <span style="color:#a6e22e">apigRequest</span> <span style="color:#a6e22e">TodoRequest</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spartaAPIGateway</span>.<span style="color:#a6e22e">NewResponse</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>, <span style="color:#e6db74">&#34;All good!&#34;</span>), <span style="color:#66d9ef">nil</span>
+<span style="color:#00f">func</span> (svc *TodoItemResource) Get(ctx context.Context,
+  apigRequest TodoRequest) (<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  <span style="color:#00f">return</span> spartaAPIGateway.NewResponse(http.StatusOK, <span style="color:#a31515">&#34;All good!&#34;</span>), <span style="color:#00f">nil</span>
 }
 </code></pre></div><p>As the resource will be exposed over API-Gateway, the return type must be a
 struct type created by <code>spartaAPIGateway.NewResponse</code> so that the API-Gateway
@@ -2018,23 +2018,23 @@ the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype/rest#Resource
 interface. This interface defines a single function that supplies the
 binding information.</p>
 <p>For instance, the <code>TodoItemResource</code> type might define a REST resource like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// ResourceDefinition returns the Sparta REST definition for the Todo item
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">svc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">TodoItemResource</span>) <span style="color:#a6e22e">ResourceDefinition</span>() (<span style="color:#a6e22e">spartaREST</span>.<span style="color:#a6e22e">ResourceDefinition</span>, <span style="color:#66d9ef">error</span>) {
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// ResourceDefinition returns the Sparta REST definition for the Todo item
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, <span style="color:#2b91af">error</span>) {
 
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">spartaREST</span>.<span style="color:#a6e22e">ResourceDefinition</span>{
-    <span style="color:#a6e22e">URL</span>: <span style="color:#e6db74">&#34;/todo/{id}&#34;</span>,
-    <span style="color:#a6e22e">MethodHandlers</span>: <span style="color:#a6e22e">spartaREST</span>.<span style="color:#a6e22e">MethodHandlerMap</span>{
-      <span style="color:#75715e">// GET
-</span><span style="color:#75715e"></span>      <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">MethodGet</span>: <span style="color:#a6e22e">spartaREST</span>.<span style="color:#a6e22e">NewMethodHandler</span>(<span style="color:#a6e22e">svc</span>.<span style="color:#a6e22e">Get</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>).
-        <span style="color:#a6e22e">Options</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaFunctionOptions</span>{
-          <span style="color:#a6e22e">MemorySize</span>: <span style="color:#ae81ff">128</span>,
-          <span style="color:#a6e22e">Timeout</span>:    <span style="color:#ae81ff">10</span>,
+  <span style="color:#00f">return</span> spartaREST.ResourceDefinition{
+    URL: <span style="color:#a31515">&#34;/todo/{id}&#34;</span>,
+    MethodHandlers: spartaREST.MethodHandlerMap{
+      <span style="color:#008000">// GET
+</span><span style="color:#008000"></span>      http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK).
+        Options(&amp;sparta.LambdaFunctionOptions{
+          MemorySize: 128,
+          Timeout:    10,
         }).
-        <span style="color:#a6e22e">StatusCodes</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusInternalServerError</span>).
-        <span style="color:#a6e22e">Privileges</span>(<span style="color:#a6e22e">svc</span>.<span style="color:#a6e22e">S3Accessor</span>.<span style="color:#a6e22e">KeysPrivilege</span>(<span style="color:#e6db74">&#34;s3:GetObject&#34;</span>),
-          <span style="color:#a6e22e">svc</span>.<span style="color:#a6e22e">S3Accessor</span>.<span style="color:#a6e22e">BucketPrivilege</span>(<span style="color:#e6db74">&#34;s3:ListBucket&#34;</span>)),
+        StatusCodes(http.StatusInternalServerError).
+        Privileges(svc.S3Accessor.KeysPrivilege(<span style="color:#a31515">&#34;s3:GetObject&#34;</span>),
+          svc.S3Accessor.BucketPrivilege(<span style="color:#a31515">&#34;s3:ListBucket&#34;</span>)),
     },
-  }, <span style="color:#66d9ef">nil</span>
+  }, <span style="color:#00f">nil</span>
 }
 </code></pre></div><p>The <code>ResourceDefinition</code> function returns a struct that defines the:</p>
 <ul>
@@ -2057,16 +2057,15 @@ binding information.</p>
 is to supply the <code>ResourceDefinition</code> implementing instance to
 <a href="https://godoc.org/github.com/mweagle/Sparta/archetype/rest#RegisterResource">RegisterResource</a> and
 return the set of extracted <code>*LambdaAWSInfo</code> structs:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#a6e22e">todoItemResource</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">todoResources</span>.<span style="color:#a6e22e">TodoItemResource</span>{}
-  <span style="color:#a6e22e">registeredFuncs</span>, <span style="color:#a6e22e">registeredFuncsErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaREST</span>.<span style="color:#a6e22e">RegisterResource</span>(<span style="color:#a6e22e">api</span>, <span style="color:#a6e22e">todoItemResource</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  todoItemResource := &amp;todoResources.TodoItemResource{}
+  registeredFuncs, registeredFuncsErr := spartaREST.RegisterResource(api, todoItemResource)
 </code></pre></div><p>See the <a href="https://github.com/mweagle/SpartaTodoBackend">SpartaTodoBackend</a> for a complete example that
 implements the <a href="https://todobackend.com">TodoBackend</a> API in a completely serverless way!</p>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3463,18 +3462,18 @@ implements the <a href="https://todobackend.com">TodoBackend</a> API in a comple
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

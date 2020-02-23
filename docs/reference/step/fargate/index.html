@@ -12,22 +12,22 @@
     <title>Fargate :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2018,49 +2018,49 @@ for the most up-to-date version of code samples.</p>
 <p>The first step is to provide an opportunity for our application to behave
 differently when run as a Fargate task. To do this we add a new
 application subcommand option that augments the standard <code>Main</code> behavior:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Add a hook to do something
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">fargateTask</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>{
-  <span style="color:#a6e22e">Use</span>:   <span style="color:#e6db74">&#34;fargateTask&#34;</span>,
-  <span style="color:#a6e22e">Short</span>: <span style="color:#e6db74">&#34;Sample Fargate task&#34;</span>,
-  <span style="color:#a6e22e">Long</span>:  <span style="color:#e6db74">`Sample Fargate task that simply logs a message&#34;`</span>,
-  <span style="color:#a6e22e">RunE</span>: <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>, <span style="color:#a6e22e">args</span> []<span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
-    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Insert your Fargate code here! 🎉&#34;</span>)
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Add a hook to do something
+</span><span style="color:#008000"></span>fargateTask := &amp;cobra.Command{
+  Use:   <span style="color:#a31515">&#34;fargateTask&#34;</span>,
+  Short: <span style="color:#a31515">&#34;Sample Fargate task&#34;</span>,
+  Long:  <span style="color:#a31515">`Sample Fargate task that simply logs a message&#34;`</span>,
+  RunE: <span style="color:#00f">func</span>(cmd *cobra.Command, args []<span style="color:#2b91af">string</span>) <span style="color:#2b91af">error</span> {
+    fmt.Printf(<span style="color:#a31515">&#34;Insert your Fargate code here! 🎉&#34;</span>)
+    <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
   },
 }
-<span style="color:#75715e">// Register the command with the Sparta root dispatcher. This
-</span><span style="color:#75715e">// command `fargateTask` matches the command line option in the
-</span><span style="color:#75715e">// Dockerfile that is used to build the image.
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CommandLineOptions</span>.<span style="color:#a6e22e">Root</span>.<span style="color:#a6e22e">AddCommand</span>(<span style="color:#a6e22e">fargateTask</span>)
+<span style="color:#008000">// Register the command with the Sparta root dispatcher. This
+</span><span style="color:#008000">// command `fargateTask` matches the command line option in the
+</span><span style="color:#008000">// Dockerfile that is used to build the image.
+</span><span style="color:#008000"></span>sparta.CommandLineOptions.Root.AddCommand(fargateTask)
 </code></pre></div><p>This subcommand is defined in the <a href="https://github.com/mweagle/SpartaStepServicefull/blob/master/bootstrap/servicefull_task.go">servicefull_task</a>
 file. Note that the file uses <code>go</code> <a href="https://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">build tags</a>
 so that the new <strong>fargateTask</strong> subcommand is only available when the
 build target includes the <em>lambdaBinary</em> flag:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// +build lambdabinary
-</span><span style="color:#75715e"></span>
-<span style="color:#f92672">package</span> <span style="color:#a6e22e">bootstrap</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build lambdabinary
+</span><span style="color:#008000"></span>
+<span style="color:#00f">package</span> bootstrap
 </code></pre></div><p>We can now package our Task-aware executable and deploy it to the cloud.</p>
 <h2 id="package">Package</h2>
 <p>The first step is to create a version of your application that
 can support a Fargate task. This is done in the <code>ecrImageBuilderDecorator</code>
 function which delegates the compiling and image creation to Sparta:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Always build the image
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">buildErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDocker</span>.<span style="color:#a6e22e">BuildDockerImage</span>(<span style="color:#a6e22e">serviceName</span>,
-  <span style="color:#e6db74">&#34;&#34;</span>,
-  <span style="color:#a6e22e">dockerTags</span>,
-  <span style="color:#a6e22e">logger</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Always build the image
+</span><span style="color:#008000"></span>buildErr := spartaDocker.BuildDockerImage(serviceName,
+  <span style="color:#a31515">&#34;&#34;</span>,
+  dockerTags,
+  logger)
 </code></pre></div><p>The second empty argument above is an optional <em>Dockerfile</em> path. The sample
 project uses the default <em>Dockerfile</em> filename and defines that at the root
 of the repository. The full <em>Dockerfile</em> is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-docker" data-lang="docker"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> alpine:3.8</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apk update <span style="color:#f92672">&amp;&amp;</span> apk add ca-certificates <span style="color:#f92672">&amp;&amp;</span> rm -rf /var/cache/apk/*<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Sparta provides the SPARTA_DOCKER_BINARY argument to the builder</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># in order to embed the binary.</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Ref: https://docs.docker.com/engine/reference/builder/</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ARG</span> SPARTA_DOCKER_BINARY<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> $SPARTA_DOCKER_BINARY /SpartaServicefull<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;/SpartaServicefull&#34;</span>, <span style="color:#e6db74">&#34;fargateTask&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-docker" data-lang="docker"><span style="color:#00f">FROM</span><span style="color:#a31515"> alpine:3.8</span><span style="">
+</span><span style=""></span><span style="color:#00f">RUN</span> apk update &amp;&amp; apk add ca-certificates &amp;&amp; rm -rf /var/cache/apk/*<span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#008000"># Sparta provides the SPARTA_DOCKER_BINARY argument to the builder</span><span style="">
+</span><span style=""></span><span style="color:#008000"># in order to embed the binary.</span><span style="">
+</span><span style=""></span><span style="color:#008000"># Ref: https://docs.docker.com/engine/reference/builder/</span><span style="">
+</span><span style=""></span><span style="color:#00f">ARG</span> SPARTA_DOCKER_BINARY<span style="">
+</span><span style=""></span><span style="color:#00f">ADD</span> $SPARTA_DOCKER_BINARY /SpartaServicefull<span style="">
+</span><span style=""></span><span style="color:#00f">CMD</span> [<span style="color:#a31515">&#34;/SpartaServicefull&#34;</span>, <span style="color:#a31515">&#34;fargateTask&#34;</span>]<span style="">
 </span></code></pre></div><p>The <code>BuildDockerImage</code> function supplies the transient binary executable
 path to docker via the <strong>SPARTA_DOCKER_BINARY</strong> <a href="https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg">ARG</a>
 value.</p>
@@ -2099,33 +2099,33 @@ INFO[0005] Successfully tagged
 Container Registry. The push will return either the ECR URL
 which will be used as Fargate Task <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions.html#cfn-ecs-taskdefinition-containerdefinition-image">image</a>
 property or an error:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Push the image to ECR &amp; store the URL s.t. we can properly annotate
-</span><span style="color:#75715e">// the CloudFormation template
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">ecrURLPush</span>, <span style="color:#a6e22e">pushImageErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDocker</span>.<span style="color:#a6e22e">PushDockerImageToECR</span>(<span style="color:#a6e22e">buildTag</span>,
-  <span style="color:#a6e22e">ecrRepositoryName</span>,
-  <span style="color:#a6e22e">awsSession</span>,
-  <span style="color:#a6e22e">logger</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Push the image to ECR &amp; store the URL s.t. we can properly annotate
+</span><span style="color:#008000">// the CloudFormation template
+</span><span style="color:#008000"></span>ecrURLPush, pushImageErr := spartaDocker.PushDockerImageToECR(buildTag,
+  ecrRepositoryName,
+  awsSession,
+  logger)
 </code></pre></div><p>The ECR push URL is stored in the <code>context</code> variable so that a downstream
 Fargate cluster builder knows the image to use:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">context</span>[<span style="color:#a6e22e">contextKeyImageURL</span>] = <span style="color:#a6e22e">ecrURLPush</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">context[contextKeyImageURL] = ecrURLPush
 </code></pre></div><h2 id="state-machine">State Machine</h2>
 <p>The Step Function definition indirectly references the Fargate
 Task via task specific <a href="https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ecs.html">parameters</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">fargateParams</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaStep</span>.<span style="color:#a6e22e">FargateTaskParameters</span>{
-  <span style="color:#a6e22e">LaunchType</span>:     <span style="color:#e6db74">&#34;FARGATE&#34;</span>,
-  <span style="color:#a6e22e">Cluster</span>:        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">resourceNames</span>.<span style="color:#a6e22e">ECSCluster</span>).<span style="color:#a6e22e">String</span>(),
-  <span style="color:#a6e22e">TaskDefinition</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">resourceNames</span>.<span style="color:#a6e22e">ECSTaskDefinition</span>).<span style="color:#a6e22e">String</span>(),
-  <span style="color:#a6e22e">NetworkConfiguration</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">spartaStep</span>.<span style="color:#a6e22e">FargateNetworkConfiguration</span>{
-    <span style="color:#a6e22e">AWSVPCConfiguration</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ECSServiceAwsVPCConfiguration</span>{
-      <span style="color:#a6e22e">Subnets</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">StringList</span>(
-        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">resourceNames</span>.<span style="color:#a6e22e">PublicSubnetAzs</span>[<span style="color:#ae81ff">0</span>]).<span style="color:#a6e22e">String</span>(),
-        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">resourceNames</span>.<span style="color:#a6e22e">PublicSubnetAzs</span>[<span style="color:#ae81ff">1</span>]).<span style="color:#a6e22e">String</span>(),
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">fargateParams := spartaStep.FargateTaskParameters{
+  LaunchType:     <span style="color:#a31515">&#34;FARGATE&#34;</span>,
+  Cluster:        gocf.Ref(resourceNames.ECSCluster).String(),
+  TaskDefinition: gocf.Ref(resourceNames.ECSTaskDefinition).String(),
+  NetworkConfiguration: &amp;spartaStep.FargateNetworkConfiguration{
+    AWSVPCConfiguration: &amp;gocf.ECSServiceAwsVPCConfiguration{
+      Subnets: gocf.StringList(
+        gocf.Ref(resourceNames.PublicSubnetAzs[0]).String(),
+        gocf.Ref(resourceNames.PublicSubnetAzs[1]).String(),
       ),
-      <span style="color:#a6e22e">AssignPublicIP</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;ENABLED&#34;</span>),
+      AssignPublicIP: gocf.String(<span style="color:#a31515">&#34;ENABLED&#34;</span>),
     },
   },
 }
-<span style="color:#a6e22e">fargateState</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaStep</span>.<span style="color:#a6e22e">NewFargateTaskState</span>(<span style="color:#e6db74">&#34;Run Fargate Task&#34;</span>, <span style="color:#a6e22e">fargateParams</span>)
+fargateState := spartaStep.NewFargateTaskState(<span style="color:#a31515">&#34;Run Fargate Task&#34;</span>, fargateParams)
 </code></pre></div><p>The <strong>ECSCluster</strong> and <strong>ECSTaskDefinition</strong> are resources that are provisioned
 by the <code>fargateClusterDecorator</code> decorator function.</p>
 <h2 id="fargate-cluster">Fargate Cluster</h2>
@@ -2133,54 +2133,54 @@ by the <code>fargateClusterDecorator</code> decorator function.</p>
 task. This is encapsulated in the <code>fargateClusterDecorator</code> which creates
 the required set of CloudFormation resources. The set of CloudFormation
 resource names is represented in the <code>stackResourceNames</code> struct:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">stackResourceNames</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">StepFunction</span>              <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">SNSTopic</span>                  <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">ECSCluster</span>                <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">ECSRunTaskRole</span>            <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">ECSTaskDefinition</span>         <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">ECSTaskDefinitionLogGroup</span> <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">ECSTaskDefinitionRole</span>     <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">VPC</span>                       <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">InternetGateway</span>           <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">AttachGateway</span>             <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">RouteViaIgw</span>               <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">PublicRouteViaIgw</span>         <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">ECSSecurityGroup</span>          <span style="color:#66d9ef">string</span>
-  <span style="color:#a6e22e">PublicSubnetAzs</span>           []<span style="color:#66d9ef">string</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> stackResourceNames <span style="color:#00f">struct</span> {
+  StepFunction              <span style="color:#2b91af">string</span>
+  SNSTopic                  <span style="color:#2b91af">string</span>
+  ECSCluster                <span style="color:#2b91af">string</span>
+  ECSRunTaskRole            <span style="color:#2b91af">string</span>
+  ECSTaskDefinition         <span style="color:#2b91af">string</span>
+  ECSTaskDefinitionLogGroup <span style="color:#2b91af">string</span>
+  ECSTaskDefinitionRole     <span style="color:#2b91af">string</span>
+  VPC                       <span style="color:#2b91af">string</span>
+  InternetGateway           <span style="color:#2b91af">string</span>
+  AttachGateway             <span style="color:#2b91af">string</span>
+  RouteViaIgw               <span style="color:#2b91af">string</span>
+  PublicRouteViaIgw         <span style="color:#2b91af">string</span>
+  ECSSecurityGroup          <span style="color:#2b91af">string</span>
+  PublicSubnetAzs           []<span style="color:#2b91af">string</span>
 }
 </code></pre></div><p>The <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html">ECS Task Definition</a>
 is of particular interest and is where the inline created <strong>ECR_URL</strong> is used to
 define a FARGATE task.</p>
 <h3 id="ecs-task-definition">ECS Task Definition</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">imageURL</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>[<span style="color:#a6e22e">contextKeyImageURL</span>].(<span style="color:#66d9ef">string</span>)
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">imageURL</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;&#34;</span> {
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Failed to get image URL from context with key %s&#34;</span>,
-    <span style="color:#a6e22e">contextKeyImageURL</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">imageURL, _ := context[contextKeyImageURL].(<span style="color:#2b91af">string</span>)
+<span style="color:#00f">if</span> imageURL == <span style="color:#a31515">&#34;&#34;</span> {
+  <span style="color:#00f">return</span> errors.Errorf(<span style="color:#a31515">&#34;Failed to get image URL from context with key %s&#34;</span>,
+    contextKeyImageURL)
 }
-<span style="color:#f92672">...</span>
-<span style="color:#75715e">// Create the ECS task definition
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">ecsTaskDefinition</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ECSTaskDefinition</span>{
-  <span style="color:#a6e22e">ExecutionRoleArn</span>:        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">resourceNames</span>.<span style="color:#a6e22e">ECSTaskDefinitionRole</span>, <span style="color:#e6db74">&#34;Arn&#34;</span>),
-  <span style="color:#a6e22e">RequiresCompatibilities</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">StringList</span>(<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;FARGATE&#34;</span>)),
-  <span style="color:#a6e22e">CPU</span>:                     <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;256&#34;</span>),
-  <span style="color:#a6e22e">Memory</span>:                  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;512&#34;</span>),
-  <span style="color:#a6e22e">NetworkMode</span>:             <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;awsvpc&#34;</span>),
-  <span style="color:#a6e22e">ContainerDefinitions</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ECSTaskDefinitionContainerDefinitionList</span>{
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ECSTaskDefinitionContainerDefinition</span>{
-      <span style="color:#a6e22e">Image</span>:     <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">imageURL</span>),
-      <span style="color:#a6e22e">Name</span>:      <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;sparta-servicefull&#34;</span>),
-      <span style="color:#a6e22e">Essential</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
-      <span style="color:#a6e22e">LogConfiguration</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ECSTaskDefinitionLogConfiguration</span>{
-        <span style="color:#a6e22e">LogDriver</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;awslogs&#34;</span>),
-        <span style="color:#75715e">// Options Ref: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html
-</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Options</span>: <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
-          <span style="color:#e6db74">&#34;awslogs-region&#34;</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::Region&#34;</span>),
-          <span style="color:#e6db74">&#34;awslogs-group&#34;</span>: <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Join</span>([]<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;&#34;</span>,
-            <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ProperName</span>,
-            <span style="color:#a6e22e">serviceName</span>}, <span style="color:#e6db74">&#34;/&#34;</span>),
-          <span style="color:#e6db74">&#34;awslogs-stream-prefix&#34;</span>: <span style="color:#a6e22e">serviceName</span>,
-          <span style="color:#e6db74">&#34;awslogs-create-group&#34;</span>:  <span style="color:#e6db74">&#34;true&#34;</span>,
+...
+<span style="color:#008000">// Create the ECS task definition
+</span><span style="color:#008000"></span>ecsTaskDefinition := &amp;gocf.ECSTaskDefinition{
+  ExecutionRoleArn:        gocf.GetAtt(resourceNames.ECSTaskDefinitionRole, <span style="color:#a31515">&#34;Arn&#34;</span>),
+  RequiresCompatibilities: gocf.StringList(gocf.String(<span style="color:#a31515">&#34;FARGATE&#34;</span>)),
+  CPU:                     gocf.String(<span style="color:#a31515">&#34;256&#34;</span>),
+  Memory:                  gocf.String(<span style="color:#a31515">&#34;512&#34;</span>),
+  NetworkMode:             gocf.String(<span style="color:#a31515">&#34;awsvpc&#34;</span>),
+  ContainerDefinitions: &amp;gocf.ECSTaskDefinitionContainerDefinitionList{
+    gocf.ECSTaskDefinitionContainerDefinition{
+      Image:     gocf.String(imageURL),
+      Name:      gocf.String(<span style="color:#a31515">&#34;sparta-servicefull&#34;</span>),
+      Essential: gocf.Bool(<span style="color:#00f">true</span>),
+      LogConfiguration: &amp;gocf.ECSTaskDefinitionLogConfiguration{
+        LogDriver: gocf.String(<span style="color:#a31515">&#34;awslogs&#34;</span>),
+        <span style="color:#008000">// Options Ref: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html
+</span><span style="color:#008000"></span>        Options: <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
+          <span style="color:#a31515">&#34;awslogs-region&#34;</span>: gocf.Ref(<span style="color:#a31515">&#34;AWS::Region&#34;</span>),
+          <span style="color:#a31515">&#34;awslogs-group&#34;</span>: strings.Join([]<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;&#34;</span>,
+            sparta.ProperName,
+            serviceName}, <span style="color:#a31515">&#34;/&#34;</span>),
+          <span style="color:#a31515">&#34;awslogs-stream-prefix&#34;</span>: serviceName,
+          <span style="color:#a31515">&#34;awslogs-create-group&#34;</span>:  <span style="color:#a31515">&#34;true&#34;</span>,
         },
       },
     },
@@ -2189,18 +2189,18 @@ define a FARGATE task.</p>
 </code></pre></div><h2 id="configuration">Configuration</h2>
 <p>The final step is to provide the three decorators to the
 <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHooks</a> structure:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">workflowHooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{
-  <span style="color:#a6e22e">ServiceDecorators</span>: []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span>{
-    <span style="color:#a6e22e">ecrImageBuilderDecorator</span>(<span style="color:#e6db74">&#34;spartadocker&#34;</span>),
-    <span style="color:#75715e">// Then build the state machine
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">stateMachine</span>.<span style="color:#a6e22e">StateMachineDecorator</span>(),
-    <span style="color:#75715e">// Then the ECS cluster that supports the Fargate task
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fargateClusterDecorator</span>(<span style="color:#a6e22e">resourceNames</span>),
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">workflowHooks := &amp;sparta.WorkflowHooks{
+  ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
+    ecrImageBuilderDecorator(<span style="color:#a31515">&#34;spartadocker&#34;</span>),
+    <span style="color:#008000">// Then build the state machine
+</span><span style="color:#008000"></span>    stateMachine.StateMachineDecorator(),
+    <span style="color:#008000">// Then the ECS cluster that supports the Fargate task
+</span><span style="color:#008000"></span>    fargateClusterDecorator(resourceNames),
   },
 }
 </code></pre></div><h2 id="provisioning">Provisioning</h2>
 <p>The provisioning workflow for this service is the same as a Lambda-based one:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ go run main.provision --s3Bucket $MY_S3_BUCKET
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-shell" data-lang="shell">$ go run main.provision --s3Bucket $MY_S3_BUCKET
 </code></pre></div><p>Output:</p>
 <pre><code>INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.8.0
@@ -2226,10 +2226,9 @@ and SNS rather than Lambda functions:</p>
 <p><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.8.0/step_functions_fargate.jpg" alt="Step Function" title="Step Function"></p>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3626,18 +3625,18 @@ and SNS rather than Lambda functions:</p>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

@@ -12,22 +12,22 @@
     <title>Getting Started :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1969,61 +1969,61 @@ pre {
 </li>
 <li>
 <p>Configure your AWS Credentials according to the <a href="https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html#specifying-credentials">go SDK docs</a>. The most reliable approach is to use environment variables as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ env | grep AWS
-AWS_DEFAULT_REGION<span style="color:#f92672">=</span>us-xxxx-x
-AWS_SECRET_ACCESS_KEY<span style="color:#f92672">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-AWS_REGION<span style="color:#f92672">=</span>us-xxxx-x
-AWS_ACCESS_KEY_ID<span style="color:#f92672">=</span>xxxxxxxxxxxxxxxxxxxx
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-shell" data-lang="shell">$ env | grep AWS
+AWS_DEFAULT_REGION=us-xxxx-x
+AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+AWS_REGION=us-xxxx-x
+AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
 </code></pre></div></li>
 <li>
 <p>Create a sample <em>main.go</em> file as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">package</span> main
 
-<span style="color:#f92672">import</span> (
-    <span style="color:#e6db74">&#34;context&#34;</span>
-    <span style="color:#e6db74">&#34;fmt&#34;</span>
-    <span style="color:#e6db74">&#34;os&#34;</span>
+<span style="color:#00f">import</span> (
+    <span style="color:#a31515">&#34;context&#34;</span>
+    <span style="color:#a31515">&#34;fmt&#34;</span>
+    <span style="color:#a31515">&#34;os&#34;</span>
 
-    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
-    <span style="color:#a6e22e">sparta</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span>
-    <span style="color:#a6e22e">spartaCF</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/cloudformation&#34;</span>
-    <span style="color:#e6db74">&#34;github.com/sirupsen/logrus&#34;</span>
+    <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+    sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
+    spartaCF <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/cloudformation&#34;</span>
+    <span style="color:#a31515">&#34;github.com/sirupsen/logrus&#34;</span>
 )
 
-<span style="color:#75715e">// Standard AWS λ function
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-    <span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">loggerOk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">loggerOk</span> {
-        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Accessing structured logger 🙌&#34;</span>)
+<span style="color:#008000">// Standard AWS λ function
+</span><span style="color:#008000"></span>
+<span style="color:#00f">func</span> helloWorld(ctx context.Context) (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
+    logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+    <span style="color:#00f">if</span> loggerOk {
+        logger.Info(<span style="color:#a31515">&#34;Accessing structured logger 🙌&#34;</span>)
     }
-    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;</span>, <span style="color:#66d9ef">nil</span>
+    <span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;</span>, <span style="color:#00f">nil</span>
 }
 
-<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Main
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-    <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#e6db74">&#34;Hello World&#34;</span>,
-        <span style="color:#a6e22e">helloWorld</span>,
-        <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// Main
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
+    lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+        helloWorld,
+        sparta.IAMRoleDefinition{})
 
-    <span style="color:#a6e22e">sess</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Must</span>(<span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>())
-    <span style="color:#a6e22e">awsName</span>, <span style="color:#a6e22e">awsNameErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaCF</span>.<span style="color:#a6e22e">UserAccountScopedStackName</span>(<span style="color:#e6db74">&#34;MyHelloWorldStack&#34;</span>,
-        <span style="color:#a6e22e">sess</span>)
-    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">awsNameErr</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Print</span>(<span style="color:#e6db74">&#34;Failed to create stack name\n&#34;</span>)
-        <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#ae81ff">1</span>)
+    sess := session.Must(session.NewSession())
+    awsName, awsNameErr := spartaCF.UserAccountScopedStackName(<span style="color:#a31515">&#34;MyHelloWorldStack&#34;</span>,
+        sess)
+    <span style="color:#00f">if</span> awsNameErr != <span style="color:#00f">nil</span> {
+        fmt.Print(<span style="color:#a31515">&#34;Failed to create stack name\n&#34;</span>)
+        os.Exit(1)
     }
-    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-    <span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
+    <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
+    lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
-    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#a6e22e">awsName</span>,
-        <span style="color:#e6db74">&#34;Simple Sparta HelloWorld application&#34;</span>,
-        <span style="color:#a6e22e">lambdaFunctions</span>,
-        <span style="color:#66d9ef">nil</span>,
-        <span style="color:#66d9ef">nil</span>)
-    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-        <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#ae81ff">1</span>)
+    err := sparta.Main(awsName,
+        <span style="color:#a31515">&#34;Simple Sparta HelloWorld application&#34;</span>,
+        lambdaFunctions,
+        <span style="color:#00f">nil</span>,
+        <span style="color:#00f">nil</span>)
+    <span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+        os.Exit(1)
     }
 }
 </code></pre></div></li>
@@ -3425,18 +3425,18 @@ AWS_ACCESS_KEY_ID<span style="color:#f92672">=</span>xxxxxxxxxxxxxxxxxxxx
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

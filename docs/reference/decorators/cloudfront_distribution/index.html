@@ -12,22 +12,22 @@
     <title>CloudFront Distribution :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1975,44 +1975,43 @@ pre {
 
 <p>The <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#CloudFrontSiteDistributionDecorator">CloudFrontDistributionDecorator</a> associates a CloudFront Distribution with your S3-backed website. It is implemented as a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a> as a single service can only provision one CloudFront distribution.</p>
 <p>Sample usage:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
-<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// CloudFront settings
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">subdomain</span> = <span style="color:#e6db74">&#34;mySiteSubdomain&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// CloudFront settings
+</span><span style="color:#008000"></span><span style="color:#00f">const</span> subdomain = <span style="color:#a31515">&#34;mySiteSubdomain&#34;</span>
 
-<span style="color:#75715e">// The domain managed by Route53.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">domainName</span> = <span style="color:#e6db74">&#34;myRoute53ManagedDomain.net&#34;</span>
+<span style="color:#008000">// The domain managed by Route53.
+</span><span style="color:#008000"></span><span style="color:#00f">const</span> domainName = <span style="color:#a31515">&#34;myRoute53ManagedDomain.net&#34;</span>
 
-<span style="color:#75715e">// The site will be available at
-</span><span style="color:#75715e">// https://mySiteSubdomain.myRoute53ManagedDomain.net
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">// The S3 bucketname must match the subdomain.domain
-</span><span style="color:#75715e">// name pattern to serve as a CloudFront Distribution target
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bucketName</span> = <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s.%s&#34;</span>, <span style="color:#a6e22e">subdomain</span>, <span style="color:#a6e22e">domainName</span>)
+<span style="color:#008000">// The site will be available at
+</span><span style="color:#008000">// https://mySiteSubdomain.myRoute53ManagedDomain.net
+</span><span style="color:#008000"></span>
+<span style="color:#008000">// The S3 bucketname must match the subdomain.domain
+</span><span style="color:#008000">// name pattern to serve as a CloudFront Distribution target
+</span><span style="color:#008000"></span><span style="color:#00f">var</span> bucketName = fmt.Sprintf(<span style="color:#a31515">&#34;%s.%s&#34;</span>, subdomain, domainName)
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">distroHooks</span>(<span style="color:#a6e22e">s3Site</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">S3Site</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span> {
+<span style="color:#00f">func</span> distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
 
-  <span style="color:#75715e">// Commented out demonstration of how to front the site
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">// with a CloudFront distribution.
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">// Note that provisioning a distribution will incur additional
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">// costs
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">hooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{}
-  <span style="color:#a6e22e">siteHookDecorator</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">CloudFrontSiteDistributionDecorator</span>(<span style="color:#a6e22e">s3Site</span>,
-    <span style="color:#a6e22e">subdomain</span>,
-    <span style="color:#a6e22e">domainName</span>,
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Getenv</span>(<span style="color:#e6db74">&#34;SPARTA_ACM_CLOUDFRONT_ARN&#34;</span>)))
-  <span style="color:#a6e22e">hooks</span>.<span style="color:#a6e22e">ServiceDecorators</span> = []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span>{
-    <span style="color:#a6e22e">siteHookDecorator</span>,
+  <span style="color:#008000">// Commented out demonstration of how to front the site
+</span><span style="color:#008000"></span>  <span style="color:#008000">// with a CloudFront distribution.
+</span><span style="color:#008000"></span>  <span style="color:#008000">// Note that provisioning a distribution will incur additional
+</span><span style="color:#008000"></span>  <span style="color:#008000">// costs
+</span><span style="color:#008000"></span>  hooks := &amp;sparta.WorkflowHooks{}
+  siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+    subdomain,
+    domainName,
+    gocf.String(os.Getenv(<span style="color:#a31515">&#34;SPARTA_ACM_CLOUDFRONT_ARN&#34;</span>)))
+  hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+    siteHookDecorator,
   }
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hooks</span>
+  <span style="color:#00f">return</span> hooks
 }
 
 </code></pre></div>
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3409,18 +3408,18 @@ pre {
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

@@ -12,22 +12,22 @@
     <title>FAQ :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2011,30 +2011,30 @@ pre {
 <p>Linking AWS resources together often requires creating dynamic ARN
 references. This can be achieved by using <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Join">cloudformation.Join</a> expressions.</p>
 <p>For instance:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-    <span style="color:#a6e22e">gocf</span> <span style="color:#e6db74">&#34;github.com/mweagle/go-cloudformation&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+    gocf <span style="color:#a31515">&#34;github.com/mweagle/go-cloudformation&#34;</span>
 )
 
-<span style="color:#a6e22e">s3SiteBucketAllKeysResourceValue</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Join</span>(<span style="color:#e6db74">&#34;&#34;</span>,
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;arn:aws:s3:::&#34;</span>),
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">s3BucketResourceName</span>),
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;/*&#34;</span>))
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">gocf</span> <span style="color:#e6db74">&#34;github.com/mweagle/go-cloudformation&#34;</span>
+s3SiteBucketAllKeysResourceValue := gocf.Join(<span style="color:#a31515">&#34;&#34;</span>,
+    gocf.String(<span style="color:#a31515">&#34;arn:aws:s3:::&#34;</span>),
+    gocf.Ref(s3BucketResourceName),
+    gocf.String(<span style="color:#a31515">&#34;/*&#34;</span>))
+</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+	gocf <span style="color:#a31515">&#34;github.com/mweagle/go-cloudformation&#34;</span>
 )
 
- <span style="color:#a6e22e">AuthorizerURI</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Join</span>(<span style="color:#e6db74">&#34;&#34;</span>,
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;arn:aws:apigateway:&#34;</span>),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::Region&#34;</span>).<span style="color:#a6e22e">String</span>(),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;:lambda:path/2015-03-31/functions/&#34;</span>),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">myAWSLambdaInfo</span>.<span style="color:#a6e22e">LogicalResourceName</span>(), <span style="color:#e6db74">&#34;Arn&#34;</span>),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;/invocations&#34;</span>)),
+ AuthorizerURI: gocf.Join(<span style="color:#a31515">&#34;&#34;</span>,
+                        gocf.String(<span style="color:#a31515">&#34;arn:aws:apigateway:&#34;</span>),
+                        gocf.Ref(<span style="color:#a31515">&#34;AWS::Region&#34;</span>).String(),
+                        gocf.String(<span style="color:#a31515">&#34;:lambda:path/2015-03-31/functions/&#34;</span>),
+                        gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), <span style="color:#a31515">&#34;Arn&#34;</span>),
+                        gocf.String(<span style="color:#a31515">&#34;/invocations&#34;</span>)),
 </code></pre></div><p>See the CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a> docs for the set of attributes created by each
 resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">pseudo-parameters</a> can be included in dynamic expresssions via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Ref">gocf.Ref</a> expressions. For instance:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::Region&#34;</span>)
-<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::AccountId&#34;</span>)
-<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::StackId&#34;</span>)
-<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::StackName&#34;</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">gocf.Ref(<span style="color:#a31515">&#34;AWS::Region&#34;</span>)
+gocf.Ref(<span style="color:#a31515">&#34;AWS::AccountId&#34;</span>)
+gocf.Ref(<span style="color:#a31515">&#34;AWS::StackId&#34;</span>)
+gocf.Ref(<span style="color:#a31515">&#34;AWS::StackName&#34;</span>)
 </code></pre></div><h2 id="development">Development</h2>
 <h3 id="how-do-i-configure-aws-sdk-settings">How do I configure AWS SDK settings?</h3>
 <p>Sparta relies on standard AWS SDK configuration settings. See the <a href="https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html">official documentation</a> for more information.</p>
@@ -2046,39 +2046,39 @@ resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 </ul>
 <h3 id="what-are-the-minimum-iam-privileges-for-sparta-developers">What are the <em>Minimum</em> IAM Privileges for Sparta developers?</h3>
 <p>The absolute minimum set of privileges an account needs is the following <a href="https://awspolicygen.s3.amazonaws.com/policygen.html">IAM Policy</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
-    <span style="color:#f92672">&#34;Statement&#34;</span>: [
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+    &#34;Version&#34;: <span style="color:#a31515">&#34;2012-10-17&#34;</span>,
+    &#34;Statement&#34;: [
         {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;Stmt1505975332000&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;cloudformation:DescribeStacks&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:CreateStack&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:CreateChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteStack&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:GetRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRolePolicy&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:PutRolePolicy&#34;</span>
+            &#34;Sid&#34;: <span style="color:#a31515">&#34;Stmt1505975332000&#34;</span>,
+            &#34;Effect&#34;: <span style="color:#a31515">&#34;Allow&#34;</span>,
+            &#34;Action&#34;: [
+                <span style="color:#a31515">&#34;cloudformation:DescribeStacks&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:CreateStack&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:CreateChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DescribeChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DeleteChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DeleteStack&#34;</span>,
+                <span style="color:#a31515">&#34;iam:GetRole&#34;</span>,
+                <span style="color:#a31515">&#34;iam:DeleteRole&#34;</span>,
+                <span style="color:#a31515">&#34;iam:DeleteRolePolicy&#34;</span>,
+                <span style="color:#a31515">&#34;iam:PutRolePolicy&#34;</span>
             ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: [
-                <span style="color:#e6db74">&#34;*&#34;</span>
+            &#34;Resource&#34;: [
+                <span style="color:#a31515">&#34;*&#34;</span>
             ]
         },
         {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;Stmt1505975332000&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;s3:PutObject&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:GetBucketVersioning&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:DeleteObject&#34;</span>
+            &#34;Sid&#34;: <span style="color:#a31515">&#34;Stmt1505975332000&#34;</span>,
+            &#34;Effect&#34;: <span style="color:#a31515">&#34;Allow&#34;</span>,
+            &#34;Action&#34;: [
+                <span style="color:#a31515">&#34;s3:PutObject&#34;</span>,
+                <span style="color:#a31515">&#34;s3:GetBucketVersioning&#34;</span>,
+                <span style="color:#a31515">&#34;s3:DeleteObject&#34;</span>
             ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: [
-                <span style="color:#e6db74">&#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34;</span>
+            &#34;Resource&#34;: [
+                <span style="color:#a31515">&#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34;</span>
             ]
         }
     ]
@@ -2087,54 +2087,54 @@ resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 <p>You can view the exact set of AWS API calls by enabling <code>--level debug</code> log verbosity. This log level includes all AWS API calls starting with release <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0200">0.20.0</a>.</p>
 <h3 id="what-are-the-minimum-iam-privileges-to-provision-a-sparta-app-and-api-gateway">What are the minimum IAM privileges to provision a Sparta app and API Gateway</h3>
 <p>Your AWS user must have the following privileges. Ensure to update the <code>YOUR_S3_BUCKETNAME_HERE</code> value with your own S3 bucket name.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
-    <span style="color:#f92672">&#34;Statement&#34;</span>: [
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+    &#34;Version&#34;: <span style="color:#a31515">&#34;2012-10-17&#34;</span>,
+    &#34;Statement&#34;: [
         {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;VisualEditor0&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;cloudformation:CreateChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeStacks&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeStackEvents&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:CreateStack&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteStack&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:GetRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:CreateRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:PutRolePolicy&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:PassRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRolePolicy&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:CreateFunction&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:GetFunction&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:GetFunctionConfiguration&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:AddPermission&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:DeleteFunction&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:RemovePermission&#34;</span>
+            &#34;Sid&#34;: <span style="color:#a31515">&#34;VisualEditor0&#34;</span>,
+            &#34;Effect&#34;: <span style="color:#a31515">&#34;Allow&#34;</span>,
+            &#34;Action&#34;: [
+                <span style="color:#a31515">&#34;cloudformation:CreateChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DeleteChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DescribeStacks&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DescribeStackEvents&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:CreateStack&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DeleteStack&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:DescribeChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
+                <span style="color:#a31515">&#34;iam:GetRole&#34;</span>,
+                <span style="color:#a31515">&#34;iam:DeleteRole&#34;</span>,
+                <span style="color:#a31515">&#34;iam:CreateRole&#34;</span>,
+                <span style="color:#a31515">&#34;iam:PutRolePolicy&#34;</span>,
+                <span style="color:#a31515">&#34;iam:PassRole&#34;</span>,
+                <span style="color:#a31515">&#34;iam:DeleteRolePolicy&#34;</span>,
+                <span style="color:#a31515">&#34;lambda:CreateFunction&#34;</span>,
+                <span style="color:#a31515">&#34;lambda:GetFunction&#34;</span>,
+                <span style="color:#a31515">&#34;lambda:GetFunctionConfiguration&#34;</span>,
+                <span style="color:#a31515">&#34;lambda:AddPermission&#34;</span>,
+                <span style="color:#a31515">&#34;lambda:DeleteFunction&#34;</span>,
+                <span style="color:#a31515">&#34;lambda:RemovePermission&#34;</span>
             ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;*&#34;</span>
+            &#34;Resource&#34;: <span style="color:#a31515">&#34;*&#34;</span>
         },
         {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;VisualEditor1&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;apigateway:DELETE&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:PUT&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:PATCH&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:POST&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:GET&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:PutObject&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:GetObject&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:GetBucketVersioning&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:DeleteObject&#34;</span>
+            &#34;Sid&#34;: <span style="color:#a31515">&#34;VisualEditor1&#34;</span>,
+            &#34;Effect&#34;: <span style="color:#a31515">&#34;Allow&#34;</span>,
+            &#34;Action&#34;: [
+                <span style="color:#a31515">&#34;apigateway:DELETE&#34;</span>,
+                <span style="color:#a31515">&#34;apigateway:PUT&#34;</span>,
+                <span style="color:#a31515">&#34;apigateway:PATCH&#34;</span>,
+                <span style="color:#a31515">&#34;apigateway:POST&#34;</span>,
+                <span style="color:#a31515">&#34;apigateway:GET&#34;</span>,
+                <span style="color:#a31515">&#34;s3:PutObject&#34;</span>,
+                <span style="color:#a31515">&#34;s3:GetObject&#34;</span>,
+                <span style="color:#a31515">&#34;s3:GetBucketVersioning&#34;</span>,
+                <span style="color:#a31515">&#34;s3:DeleteObject&#34;</span>
             ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: [
-                <span style="color:#e6db74">&#34;arn:aws:apigateway:*::*&#34;</span>,
-                <span style="color:#e6db74">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;&#34;</span>
-                <span style="color:#e6db74">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;/*&#34;</span>
+            &#34;Resource&#34;: [
+                <span style="color:#a31515">&#34;arn:aws:apigateway:*::*&#34;</span>,
+                <span style="color:#a31515">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;&#34;</span>
+                <span style="color:#a31515">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;/*&#34;</span>
             ]
         }
     ]
@@ -2146,9 +2146,9 @@ resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 </ul>
 <h3 id="what-working-directory-should-i-use">What working directory should I use?</h3>
 <p>Your working directory should be the root of your Sparta application.  Eg, use</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">run</span> <span style="color:#a6e22e">main</span>.<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">provision</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">level</span> <span style="color:#a6e22e">info</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span> <span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET
 </code></pre></div><p>rather than</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">run</span> .<span style="color:#f92672">/</span><span style="color:#a6e22e">some</span><span style="color:#f92672">/</span><span style="color:#a6e22e">child</span><span style="color:#f92672">/</span><span style="color:#a6e22e">path</span><span style="color:#f92672">/</span><span style="color:#a6e22e">main</span>.<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">provision</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">level</span> <span style="color:#a6e22e">info</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span> <span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run ./some/child/path/main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET
 </code></pre></div><p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
 <h3 id="how-can-i-make-provision-faster">How can I make <code>provision</code> faster?</h3>
 <p>Starting with Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0112">v0.11.2</a>, you can supply an optional
@@ -2160,21 +2160,21 @@ application code.</p>
 requested update operation.</p>
 <p><em>NOTE</em>: The <em>inplace</em> argument implies that your service state is not reflected in CloudFormation.</p>
 <h2 id="event-sources---ses">Event Sources - SES</h2>
-<!-- raw HTML omitted -->
+<hr />
 <h3 id="where-does-the-_spartaruleset_-come-from">Where does the <em>SpartaRuleSet</em> come from?</h3>
 <p>SES only permits a single <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html">active receipt rule</a>.  Additionally, it&rsquo;s possible that multiple Sparta-based services are handing different SES recipients.</p>
 <p>All Sparta-based services share the <em>SpartaRuleSet</em> SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html">ReceiptRule</a>.</p>
 <h3 id="why-does-provision-not-always-enable-the-_spartaruleset_">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h3>
 <p>Initial <em>SpartaRuleSet</em> will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&rsquo;t attempt to override the user setting.</p>
 <h2 id="operations">Operations</h2>
-<!-- raw HTML omitted -->
+<hr />
 <h3 id="how-can-i-provision-a-service-dashboard">How can I provision a service dashboard?</h3>
 <p>Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">v0.13.0</a> adds support for the provisioning of a
 CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s topology. The dashboard
 is attached to the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Setup the DashboardDecorator lambda hook
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">workflowHooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{
-	<span style="color:#a6e22e">ServiceDecorator</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">DashboardDecorator</span>(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#ae81ff">60</span>),
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Setup the DashboardDecorator lambda hook
+</span><span style="color:#008000"></span>workflowHooks := &amp;sparta.WorkflowHooks{
+	ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
 }
 </code></pre></div><p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning a dashboard as below:</p>
 <p><img src="/images/faq/CloudWatchDashboard.jpg" alt="CloudWatchDashboard"></p>
@@ -2182,39 +2182,39 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <p>If you plan on using your Lambdas in production, you&rsquo;ll probably want to be made aware of any excessive errors.</p>
 <p>You can easily do this by adding a CloudWatch alarm to your Lambda, in the decorator method.</p>
 <p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">lambdaDecorator</span>(<span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">lambdaResourceName</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">lambdaResource</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">LambdaFunction</span>,
-	<span style="color:#a6e22e">resourceMetadata</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-	<span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">cfTemplate</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
-	<span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-	<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) <span style="color:#66d9ef">error</span> {
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> lambdaDecorator(serviceName <span style="color:#2b91af">string</span>,
+	lambdaResourceName <span style="color:#2b91af">string</span>,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
+	S3Bucket <span style="color:#2b91af">string</span>,
+	S3Key <span style="color:#2b91af">string</span>,
+	buildID <span style="color:#2b91af">string</span>,
+	cfTemplate *gocf.Template,
+	context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
+	logger *logrus.Logger) <span style="color:#2b91af">error</span> {
 
-	<span style="color:#75715e">// setup CloudWatch alarm
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">alarmDimensions</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchMetricDimensionList</span>
-	<span style="color:#a6e22e">alarmDimension</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchMetricDimension</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;FunctionName&#34;</span>), <span style="color:#a6e22e">Value</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">lambdaResourceName</span>).<span style="color:#a6e22e">String</span>()}
-	<span style="color:#a6e22e">alarmDimensions</span> = []<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchMetricDimension</span>{<span style="color:#a6e22e">alarmDimension</span>}
+	<span style="color:#008000">// setup CloudWatch alarm
+</span><span style="color:#008000"></span>	<span style="color:#00f">var</span> alarmDimensions gocf.CloudWatchMetricDimensionList
+	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String(<span style="color:#a31515">&#34;FunctionName&#34;</span>), Value: gocf.Ref(lambdaResourceName).String()}
+	alarmDimensions = []gocf.CloudWatchMetricDimension{alarmDimension}
 
-	<span style="color:#a6e22e">lambdaErrorsAlarm</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchAlarm</span>{
-		<span style="color:#a6e22e">ActionsEnabled</span>:     <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
-		<span style="color:#a6e22e">AlarmActions</span>:       <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">StringList</span>(<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span>)),
-		<span style="color:#a6e22e">AlarmName</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;LambdaErrorAlarm&#34;</span>),
-		<span style="color:#a6e22e">ComparisonOperator</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;GreaterThanOrEqualToThreshold&#34;</span>),
-		<span style="color:#a6e22e">Dimensions</span>:         <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">alarmDimensions</span>,
-		<span style="color:#a6e22e">EvaluationPeriods</span>:  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;1&#34;</span>),
-		<span style="color:#a6e22e">Period</span>:             <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;300&#34;</span>),
-		<span style="color:#a6e22e">MetricName</span>:         <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Errors&#34;</span>),
-		<span style="color:#a6e22e">Namespace</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;AWS/Lambda&#34;</span>),
-		<span style="color:#a6e22e">Statistic</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Sum&#34;</span>),
-		<span style="color:#a6e22e">Threshold</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;3.0&#34;</span>),
-		<span style="color:#a6e22e">Unit</span>:               <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Count&#34;</span>),
+	lambdaErrorsAlarm := &amp;gocf.CloudWatchAlarm{
+		ActionsEnabled:     gocf.Bool(<span style="color:#00f">true</span>),
+		AlarmActions:       gocf.StringList(gocf.String(<span style="color:#a31515">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span>)),
+		AlarmName:          gocf.String(<span style="color:#a31515">&#34;LambdaErrorAlarm&#34;</span>),
+		ComparisonOperator: gocf.String(<span style="color:#a31515">&#34;GreaterThanOrEqualToThreshold&#34;</span>),
+		Dimensions:         &amp;alarmDimensions,
+		EvaluationPeriods:  gocf.String(<span style="color:#a31515">&#34;1&#34;</span>),
+		Period:             gocf.String(<span style="color:#a31515">&#34;300&#34;</span>),
+		MetricName:         gocf.String(<span style="color:#a31515">&#34;Errors&#34;</span>),
+		Namespace:          gocf.String(<span style="color:#a31515">&#34;AWS/Lambda&#34;</span>),
+		Statistic:          gocf.String(<span style="color:#a31515">&#34;Sum&#34;</span>),
+		Threshold:          gocf.String(<span style="color:#a31515">&#34;3.0&#34;</span>),
+		Unit:               gocf.String(<span style="color:#a31515">&#34;Count&#34;</span>),
 	}
-	<span style="color:#a6e22e">cfTemplate</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#e6db74">&#34;LambdaErrorAlaram&#34;</span>, <span style="color:#a6e22e">lambdaErrorsAlarm</span>)
+	cfTemplate.AddResource(<span style="color:#a31515">&#34;LambdaErrorAlaram&#34;</span>, lambdaErrorsAlarm)
 
-	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+	<span style="color:#00f">return</span> <span style="color:#00f">nil</span>
 }
 </code></pre></div><h3 id="where-can-i-view-my-functions-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
 <p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
@@ -2235,19 +2235,19 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <h3 id="does-sparta-support-versioning--aliasing">Does Sparta support Versioning &amp; Aliasing?</h3>
 <p>Yes.</p>
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">autoIncrementingInfo</span>, <span style="color:#a6e22e">autoIncrementingInfoErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaCF</span>.<span style="color:#a6e22e">AddAutoIncrementingLambdaVersionResource</span>(<span style="color:#a6e22e">serviceName</span>,
-  <span style="color:#a6e22e">lambdaResourceName</span>,
-  <span style="color:#a6e22e">cfTemplate</span>,
-  <span style="color:#a6e22e">logger</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+  lambdaResourceName,
+  cfTemplate,
+  logger)
 </code></pre></div><p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">aliasResourceName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudFormationResourceName</span>(<span style="color:#e6db74">&#34;Alias&#34;</span>, <span style="color:#a6e22e">lambdaResourceName</span>)
-<span style="color:#a6e22e">aliasResource</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">LambdaAlias</span>{
-    <span style="color:#a6e22e">Name</span>:            <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;MostRecentVersion&#34;</span>),
-    <span style="color:#a6e22e">FunctionName</span>:    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">lambdaResourceName</span>).<span style="color:#a6e22e">String</span>(),
-    <span style="color:#a6e22e">FunctionVersion</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">autoIncrementingInfo</span>.<span style="color:#a6e22e">CurrentVersionResourceName</span>, <span style="color:#e6db74">&#34;Version&#34;</span>).<span style="color:#a6e22e">String</span>(),
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
+</span><span style="color:#008000"></span>aliasResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;Alias&#34;</span>, lambdaResourceName)
+aliasResource := &amp;gocf.LambdaAlias{
+    Name:            gocf.String(<span style="color:#a31515">&#34;MostRecentVersion&#34;</span>),
+    FunctionName:    gocf.Ref(lambdaResourceName).String(),
+    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, <span style="color:#a31515">&#34;Version&#34;</span>).String(),
 }
-<span style="color:#a6e22e">cfTemplate</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#a6e22e">aliasResourceName</span>, <span style="color:#a6e22e">aliasResource</span>)
+cfTemplate.AddResource(aliasResourceName, aliasResource)
 </code></pre></div><h3 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h3>
 <p>Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics <code>putMetric</code> privileges.  Your lambda code can call <code>putMetric</code> with application-specific data.</p>
 <h3 id="how-do-i-setup-alerts-on-additional-metrics">How do I setup alerts on additional metrics?</h3>
@@ -2257,10 +2257,9 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <h2 id="future">Future</h2>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3653,18 +3652,18 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

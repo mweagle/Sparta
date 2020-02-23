@@ -12,22 +12,22 @@
     <title>Overview :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422389" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422389" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422389" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422389" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422389" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422389" rel="stylesheet">
-    <link href="/css/theme.css?1582422389" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422389" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422389" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422389"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422389" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422389"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422389"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422389"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422389"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:29-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1977,9 +1977,9 @@ pre {
 <p>Note that you must use an AWS region that supports Lambda. Consult the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">Global Infrastructure</a> page for the most up to date release information.</p>
 <h1 id="lambda-definition">Lambda Definition</h1>
 <p>The first place to start is with the lambda function definition.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Standard AWS λ function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>, <span style="color:#66d9ef">nil</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Standard AWS λ function
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(ctx context.Context) (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
+  <span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World!&#34;</span>, <span style="color:#00f">nil</span>
 }
 </code></pre></div><p>The <code>ctx</code> parameter includes the following entries:</p>
 <ul>
@@ -1989,10 +1989,10 @@ pre {
 </ul>
 <h1 id="creation">Creation</h1>
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-<span style="color:#a6e22e">helloWorldFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#e6db74">&#34;Hello World&#34;</span>,
-  <span style="color:#a6e22e">helloWorld</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
+helloWorldFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+  helloWorld,
+  sparta.IAMRoleDefinition{})
 </code></pre></div><p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended. The next step is to register a new lambda target via <a href="https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda">NewAWSLambda</a>. <code>NewAWSLambda</code> accepts three parameters:</p>
 <ul>
 <li><code>string</code>: The function name. A sanitized version of this value is used as the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname">FunctionName</a>.</li>
@@ -2005,11 +2005,11 @@ pre {
 </ul>
 <h1 id="delegation">Delegation</h1>
 <p>The final step is to define a Sparta service under your application&rsquo;s <code>main</code> package and provide the non-empty slice of lambda functions:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;MyHelloWorldStack&#34;</span>,
-  <span style="color:#e6db74">&#34;Simple Sparta application that demonstrates core functionality&#34;</span>,
-  <span style="color:#a6e22e">lambdaFunctions</span>,
-  <span style="color:#66d9ef">nil</span>,
-  <span style="color:#66d9ef">nil</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">sparta.Main(<span style="color:#a31515">&#34;MyHelloWorldStack&#34;</span>,
+  <span style="color:#a31515">&#34;Simple Sparta application that demonstrates core functionality&#34;</span>,
+  lambdaFunctions,
+  <span style="color:#00f">nil</span>,
+  <span style="color:#00f">nil</span>)
 </code></pre></div><p><code>sparta.Main</code> accepts five parameters:</p>
 <ul>
 <li><code>serviceName</code> : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
@@ -2034,31 +2034,31 @@ pre {
 <p>Delegating <code>main()</code> to <code>Sparta.Main()</code> transforms the set of lambda functions into a standalone executable with several command line options. Run <code>go run main.go --help</code> to see the available options.</p>
 <h1 id="putting-it-together">Putting It Together</h1>
 <p>Putting everything together, and including the necessary imports, we have:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// File: main.go
-</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// File: main.go
+</span><span style="color:#008000"></span><span style="color:#00f">package</span> main
 
-<span style="color:#f92672">import</span> (
-  <span style="color:#e6db74">&#34;context&#34;</span>
+<span style="color:#00f">import</span> (
+  <span style="color:#a31515">&#34;context&#34;</span>
 
-  <span style="color:#a6e22e">sparta</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span>
+  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
 )
 
-<span style="color:#75715e">// Standard AWS λ function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>, <span style="color:#66d9ef">nil</span>
+<span style="color:#008000">// Standard AWS λ function
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(ctx context.Context) (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
+  <span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World!&#34;</span>, <span style="color:#00f">nil</span>
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-  <span style="color:#a6e22e">helloWorldFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#e6db74">&#34;Hello World&#34;</span>,
-    <span style="color:#a6e22e">helloWorld</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
-  <span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">helloWorldFn</span>)
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;MyHelloWorldStack&#34;</span>,
-    <span style="color:#e6db74">&#34;Simple Sparta application that demonstrates core functionality&#34;</span>,
-    <span style="color:#a6e22e">lambdaFunctions</span>,
-    <span style="color:#66d9ef">nil</span>,
-    <span style="color:#66d9ef">nil</span>)
+<span style="color:#00f">func</span> main() {
+  <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
+  helloWorldFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+    helloWorld,
+    sparta.IAMRoleDefinition{})
+  lambdaFunctions = append(lambdaFunctions, helloWorldFn)
+  sparta.Main(<span style="color:#a31515">&#34;MyHelloWorldStack&#34;</span>,
+    <span style="color:#a31515">&#34;Simple Sparta application that demonstrates core functionality&#34;</span>,
+    lambdaFunctions,
+    <span style="color:#00f">nil</span>,
+    <span style="color:#00f">nil</span>)
 }
 </code></pre></div><h1 id="running-it">Running It</h1>
 <p>Next download the Sparta dependencies via:</p>
@@ -2157,10 +2157,9 @@ deeper into what&rsquo;s going on under the hood as well as how to integrate you
 <p>Walkthrough what Sparta actually does to deploy your application in the <a href="/reference/intro_example/step2/">next section</a>.</p>
 
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3550,18 +3549,18 @@ deeper into what&rsquo;s going on under the hood as well as how to integrate you
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422389"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422389"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422389"></script>
-<script src="/js/jquery.sticky.js?1582422389"></script>
-<script src="/js/featherlight.min.js?1582422389"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422389"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422389"></script>
-<script src="/js/learn.js?1582422389"></script>
-<script src="/js/hugo-learn.js?1582422389"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422389" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422389"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

@@ -12,22 +12,22 @@
     <title>CloudMap Service Discovery :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582422390" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582422390" rel="stylesheet">
-    <link href="/css/hybrid.css?1582422390" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582422390" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582422390" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582422390" rel="stylesheet">
-    <link href="/css/theme.css?1582422390" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582422390" rel="stylesheet">
+    <link href="/css/nucleus.css?1582423766" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1582423766" rel="stylesheet">
+    <link href="/css/hybrid.css?1582423766" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1582423766" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1582423766" rel="stylesheet">
+    <link href="/css/auto-complete.css?1582423766" rel="stylesheet">
+    <link href="/css/theme.css?1582423766" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1582423766" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582422390" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1582423766" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582422390"></script>
+    <script src="/js/jquery-3.3.1.min.js?1582423766"></script>
     
-    <link href="/css/vs.css?1582422390" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582422390"></script>
+    <link href="/css/vs.css?1582423766" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1582423766"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582422390"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582422390"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1582423766"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1582423766"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582422390"></script>
+<script type="text/javascript" src="/js/search.js?1582423766"></script>
 
     
   </div>
@@ -666,9 +666,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/event_bridge/" title="EventBridge" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/event_bridge/" title="Event Bridge" class="dd-item ">
         <a href="/reference/archetypes/event_bridge/">
-        EventBridge
+        Event Bridge
         
         </a>
     </li>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/aa91501c">aa91501c</a><p/>
-  Date: 2020-02-22T17:46:30-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/74072c14">74072c14</a><p/>
+  Date: 2020-02-22T18:09:26-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1991,88 +1991,88 @@ pre {
 <p>The <code>CloudMapServiceDecorator</code> leverages the <a href="https://aws.amazon.com/cloud-map/">CloudMap</a> service to support intra- and inter-service resource discovery.</p>
 <h2 id="definition">Definition</h2>
 <p>The first step is to create an instance of the <code>CloudMapServiceDecorator</code> type that can be used to register additional resources.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">spartaDecorators</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/decorator&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  spartaDecorators <span style="color:#a31515">&#34;github.com/mweagle/Sparta/decorator&#34;</span>
 )
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+<span style="color:#00f">func</span> main() {
 
-  <span style="color:#f92672">...</span>
-  <span style="color:#a6e22e">cloudMapDecorator</span>, <span style="color:#a6e22e">cloudMapDecoratorErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">NewCloudMapServiceDecorator</span>(<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;SpartaServices&#34;</span>),
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;SpartaSampleCloudMapService&#34;</span>))
-<span style="color:#f92672">...</span>
+  ...
+  cloudMapDecorator, cloudMapDecoratorErr := spartaDecorators.NewCloudMapServiceDecorator(gocf.String(<span style="color:#a31515">&#34;SpartaServices&#34;</span>),
+    gocf.String(<span style="color:#a31515">&#34;SpartaSampleCloudMapService&#34;</span>))
+...
 }
 </code></pre></div><p>The first argument is the <a href="https://docs.aws.amazon.com/cloud-map/latest/dg/working-with-namespaces.html">Cloud Map Namespace ID</a> value to which the service (<em>MyService</em>) will publish.</p>
 <p>The decorator satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a>. The instance should be provided as a <code>WorkflowHooks.ServiceDecorators</code> element to <code>MainEx</code> as in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">cloudMapDecorator</span>, <span style="color:#a6e22e">cloudMapDecoratorErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">NewCloudMapServiceDecorator</span>(<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;SpartaServices&#34;</span>),
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;SpartaSampleCloudMapService&#34;</span>))
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  cloudMapDecorator, cloudMapDecoratorErr := spartaDecorators.NewCloudMapServiceDecorator(gocf.String(<span style="color:#a31515">&#34;SpartaServices&#34;</span>),
+    gocf.String(<span style="color:#a31515">&#34;SpartaSampleCloudMapService&#34;</span>))
     
-  <span style="color:#a6e22e">workflowHooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{
-    <span style="color:#a6e22e">ServiceDecorators</span>: []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span>{
-      <span style="color:#a6e22e">cloudMapDecorator</span>,
+  workflowHooks := &amp;sparta.WorkflowHooks{
+    ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
+      cloudMapDecorator,
     },
   }
 
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">MainEx</span>(<span style="color:#a6e22e">awsName</span>,
-    <span style="color:#e6db74">&#34;Simple Sparta application that demonstrates core functionality&#34;</span>,
-    <span style="color:#a6e22e">lambdaFunctions</span>,
-    <span style="color:#66d9ef">nil</span>,
-    <span style="color:#66d9ef">nil</span>,
-    <span style="color:#a6e22e">workflowHooks</span>,
-    <span style="color:#66d9ef">false</span>)
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>  err := sparta.MainEx(awsName,
+    <span style="color:#a31515">&#34;Simple Sparta application that demonstrates core functionality&#34;</span>,
+    lambdaFunctions,
+    <span style="color:#00f">nil</span>,
+    <span style="color:#00f">nil</span>,
+    workflowHooks,
+    <span style="color:#00f">false</span>)
 }
 </code></pre></div><h2 id="registering">Registering</h2>
 <p>The returned <code>CloudMapServiceDecorator</code> instance satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a> interface. When invoked, it updates the content of you CloudFormation template with the resources and permissions as described below. <code>CloudMapServiceDecorator</code> implicitly creates a new <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicediscovery-service.html">AWS::ServiceDiscovery::Service</a> resource to which your resources will be published.</p>
 <h3 id="lambda-functions">Lambda Functions</h3>
 <p>The <code>CloudMapServiceDecorator.PublishLambda</code> function publishes Lambda function information to the <em>(NamespaceID, ServiceID)</em> pair.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#e6db74">&#34;Hello World&#34;</span>,
-    <span style="color:#a6e22e">helloWorld</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
-<span style="color:#a6e22e">cloudMapDecorator</span>.<span style="color:#a6e22e">PublishLambda</span>(<span style="color:#e6db74">&#34;lambdaDiscoveryName&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#66d9ef">nil</span>)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+    helloWorld,
+    sparta.IAMRoleDefinition{})
+cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscoveryName&#34;</span>, lambdaFn, <span style="color:#00f">nil</span>)
 </code></pre></div><p>The default properties published include the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html">Lambda Outputs</a> and Type information:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;Id&#34;</span>: <span style="color:#e6db74">&#34;CloudMapResbe2b7c536074312c-VuIPjfjuFaoc&#34;</span>,
-    <span style="color:#f92672">&#34;Attributes&#34;</span>: {
-        <span style="color:#f92672">&#34;Arn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-123412341234_Hello_World&#34;</span>,
-        <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;lambdaDiscoveryName&#34;</span>,
-        <span style="color:#f92672">&#34;Ref&#34;</span>: <span style="color:#e6db74">&#34;MyHelloWorldStack-123412341234_Hello_World&#34;</span>,
-        <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;AWS::Lambda::Function&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+    &#34;Id&#34;: <span style="color:#a31515">&#34;CloudMapResbe2b7c536074312c-VuIPjfjuFaoc&#34;</span>,
+    &#34;Attributes&#34;: {
+        &#34;Arn&#34;: <span style="color:#a31515">&#34;arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-123412341234_Hello_World&#34;</span>,
+        &#34;Name&#34;: <span style="color:#a31515">&#34;lambdaDiscoveryName&#34;</span>,
+        &#34;Ref&#34;: <span style="color:#a31515">&#34;MyHelloWorldStack-123412341234_Hello_World&#34;</span>,
+        &#34;Type&#34;: <span style="color:#a31515">&#34;AWS::Lambda::Function&#34;</span>
     }
 }
 </code></pre></div><h3 id="other-resources">Other Resources</h3>
 <p>The <code>CloudMapServiceDecorator.PublishResource</code> function publishes arbitrary CloudFormation resource outputs information to the <em>(NamespaceID, ServiceID)</em> pair.</p>
 <p>For instance, to publish SQS information in the context of a standard <code>ServiceDecorator</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createSQSResourceDecorator</span>(<span style="color:#a6e22e">cloudMapDecorator</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">CloudMapServiceDecorator</span>) <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span> {
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookFunc</span>(<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-    <span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">template</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
-    <span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
-    <span style="color:#a6e22e">noop</span> <span style="color:#66d9ef">bool</span>,
-    <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) <span style="color:#66d9ef">error</span> {
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> createSQSResourceDecorator(cloudMapDecorator *spartaDecorators.CloudMapServiceDecorator) sparta.ServiceDecoratorHookHandler {
+  <span style="color:#00f">return</span> sparta.ServiceDecoratorHookFunc(<span style="color:#00f">func</span>(context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
+    serviceName <span style="color:#2b91af">string</span>,
+    template *gocf.Template,
+    S3Bucket <span style="color:#2b91af">string</span>,
+    S3Key <span style="color:#2b91af">string</span>,
+    buildID <span style="color:#2b91af">string</span>,
+    awsSession *session.Session,
+    noop <span style="color:#2b91af">bool</span>,
+    logger *logrus.Logger) <span style="color:#2b91af">error</span> {
 
-    <span style="color:#a6e22e">sqsResource</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">SQSQueue</span>{}
-    <span style="color:#a6e22e">template</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#e6db74">&#34;SQSResource&#34;</span>, <span style="color:#a6e22e">sqsResource</span>)
-    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">cloudMapDecorator</span>.<span style="color:#a6e22e">PublishResource</span>(<span style="color:#e6db74">&#34;SQSResource&#34;</span>,
-      <span style="color:#e6db74">&#34;SQSResource&#34;</span>,
-      <span style="color:#a6e22e">sqsResource</span>,
-      <span style="color:#66d9ef">nil</span>)
+    sqsResource := &amp;gocf.SQSQueue{}
+    template.AddResource(<span style="color:#a31515">&#34;SQSResource&#34;</span>, sqsResource)
+    <span style="color:#00f">return</span> cloudMapDecorator.PublishResource(<span style="color:#a31515">&#34;SQSResource&#34;</span>,
+      <span style="color:#a31515">&#34;SQSResource&#34;</span>,
+      sqsResource,
+      <span style="color:#00f">nil</span>)
   })
 }
 </code></pre></div><p>The default properties published include the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS Outputs</a> and Type information:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;Id&#34;</span>: <span style="color:#e6db74">&#34;CloudMapRes21cf275e8bbbe136-CqWZ27gdLHf8&#34;</span>,
-    <span style="color:#f92672">&#34;Attributes&#34;</span>: {
-        <span style="color:#f92672">&#34;Arn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
-        <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;SQSResource&#34;</span>,
-        <span style="color:#f92672">&#34;QueueName&#34;</span>: <span style="color:#e6db74">&#34;MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
-        <span style="color:#f92672">&#34;Ref&#34;</span>: <span style="color:#e6db74">&#34;https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
-        <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;AWS::SQS::Queue&#34;</span>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+    &#34;Id&#34;: <span style="color:#a31515">&#34;CloudMapRes21cf275e8bbbe136-CqWZ27gdLHf8&#34;</span>,
+    &#34;Attributes&#34;: {
+        &#34;Arn&#34;: <span style="color:#a31515">&#34;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
+        &#34;Name&#34;: <span style="color:#a31515">&#34;SQSResource&#34;</span>,
+        &#34;QueueName&#34;: <span style="color:#a31515">&#34;MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
+        &#34;Ref&#34;: <span style="color:#a31515">&#34;https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
+        &#34;Type&#34;: <span style="color:#a31515">&#34;AWS::SQS::Queue&#34;</span>
     }
 }
 </code></pre></div><h2 id="enabling">Enabling</h2>
@@ -2084,62 +2084,61 @@ pre {
 <li><em>servicediscovery:GetService</em></li>
 </ul>
 <p>For instance:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>
-  <span style="color:#a6e22e">lambdaFn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAWSLambda</span>(<span style="color:#e6db74">&#34;Hello World&#34;</span>,
-      <span style="color:#a6e22e">helloWorld</span>,
-      <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>
+  lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+      helloWorld,
+      sparta.IAMRoleDefinition{})
 
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>
-  <span style="color:#a6e22e">cloudMapDecorator</span>.<span style="color:#a6e22e">EnableDiscoverySupport</span>(<span style="color:#a6e22e">lambdaFn</span>)
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>
+  cloudMapDecorator.EnableDiscoverySupport(lambdaFn)
   
-  <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
+  <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>}
 
 </code></pre></div><h2 id="invoking">Invoking</h2>
 <p>With the resources published and the lambda role properly updated, the last step is to dynamically discover the provisioned resources via CloudMap. Call <code>DiscoverInstancesWithContext</code> with the the set of key-value pairs to use for discovery as below:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>
-  <span style="color:#a6e22e">props</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>{
-    <span style="color:#e6db74">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;AWS::SQS::Queue&#34;</span>,
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<span style="color:#00f">func</span> helloWorld(ctx context.Context) (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
+    <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>
+  props := <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">string</span>{
+    <span style="color:#a31515">&#34;Type&#34;</span>: <span style="color:#a31515">&#34;AWS::SQS::Queue&#34;</span>,
   }
-  <span style="color:#a6e22e">results</span>, <span style="color:#a6e22e">resultsErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">DiscoverInstancesWithContext</span>(<span style="color:#a6e22e">ctx</span>,
-    <span style="color:#a6e22e">props</span>,
-    <span style="color:#a6e22e">logger</span>)
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-    <span style="color:#e6db74">&#34;Instances&#34;</span>: <span style="color:#a6e22e">results</span>,
-    <span style="color:#e6db74">&#34;Error&#34;</span>:     <span style="color:#a6e22e">resultsErr</span>,
-    }).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Discovered instances!&#34;</span>)
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
+  results, resultsErr := spartaDecorators.DiscoverInstancesWithContext(ctx,
+    props,
+    logger)
+  logger.WithFields(logrus.Fields{
+    <span style="color:#a31515">&#34;Instances&#34;</span>: results,
+    <span style="color:#a31515">&#34;Error&#34;</span>:     resultsErr,
+    }).Info(<span style="color:#a31515">&#34;Discovered instances!&#34;</span>)
+    <span style="color:#008000">// ...
+</span><span style="color:#008000"></span>}
 </code></pre></div><p>Given the previous example of a single lambda function and an SQS-queue provisioning decorator, the <code>DiscoverInstancesWithContext</code> would return the matching instance with data similar to:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  <span style="color:#f92672">&#34;Instances&#34;</span>: [
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+  &#34;Instances&#34;: [
     {
-      <span style="color:#f92672">&#34;Attributes&#34;</span>: {
-        <span style="color:#f92672">&#34;Arn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
-        <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;SQSResource&#34;</span>,
-        <span style="color:#f92672">&#34;QueueName&#34;</span>: <span style="color:#e6db74">&#34;MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
-        <span style="color:#f92672">&#34;Ref&#34;</span>: <span style="color:#e6db74">&#34;https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
-        <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;AWS::SQS::Queue&#34;</span>
+      &#34;Attributes&#34;: {
+        &#34;Arn&#34;: <span style="color:#a31515">&#34;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
+        &#34;Name&#34;: <span style="color:#a31515">&#34;SQSResource&#34;</span>,
+        &#34;QueueName&#34;: <span style="color:#a31515">&#34;MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
+        &#34;Ref&#34;: <span style="color:#a31515">&#34;https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
+        &#34;Type&#34;: <span style="color:#a31515">&#34;AWS::SQS::Queue&#34;</span>
       },
-      <span style="color:#f92672">&#34;HealthStatus&#34;</span>: <span style="color:#e6db74">&#34;HEALTHY&#34;</span>,
-      <span style="color:#f92672">&#34;InstanceId&#34;</span>: <span style="color:#e6db74">&#34;CloudMapResd1a507076543ccd0-Fln1ITi5cf0y&#34;</span>,
-      <span style="color:#f92672">&#34;NamespaceName&#34;</span>: <span style="color:#e6db74">&#34;SpartaServices&#34;</span>,
-      <span style="color:#f92672">&#34;ServiceName&#34;</span>: <span style="color:#e6db74">&#34;SpartaSampleCloudMapService&#34;</span>
+      &#34;HealthStatus&#34;: <span style="color:#a31515">&#34;HEALTHY&#34;</span>,
+      &#34;InstanceId&#34;: <span style="color:#a31515">&#34;CloudMapResd1a507076543ccd0-Fln1ITi5cf0y&#34;</span>,
+      &#34;NamespaceName&#34;: <span style="color:#a31515">&#34;SpartaServices&#34;</span>,
+      &#34;ServiceName&#34;: <span style="color:#a31515">&#34;SpartaSampleCloudMapService&#34;</span>
     }
   ]
 }
 </code></pre></div>
 
-<footer class=" footline" >
+<footer class="footline">
 	
 </footer>
-
 
 
 </div> 
@@ -3536,18 +3535,18 @@ pre {
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.min.js?1582422390"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582422390"></script>
-<script src="/js/jquery.sticky.js?1582422390"></script>
-<script src="/js/featherlight.min.js?1582422390"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582422390"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582422390"></script>
-<script src="/js/learn.js?1582422390"></script>
-<script src="/js/hugo-learn.js?1582422390"></script>
+<script src="/js/clipboard.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.min.js?1582423766"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1582423766"></script>
+<script src="/js/jquery.sticky.js?1582423766"></script>
+<script src="/js/featherlight.min.js?1582423766"></script>
+<script src="/js/html5shiv-printshiv.min.js?1582423766"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1582423766"></script>
+<script src="/js/learn.js?1582423766"></script>
+<script src="/js/hugo-learn.js?1582423766"></script>
 
-<link href="/mermaid/mermaid.css?1582422390" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582422390"></script>
+<link href="/mermaid/mermaid.css?1582423766" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1582423766"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>
