@@ -1022,5 +1022,6 @@ func UserScopedStackName(basename string) string {
 		return basename
 	}
 	userName := strings.Replace(platformUserName, " ", "-", -1)
+	userName = strings.Replace(userName, ".", "-", -1)
 	return fmt.Sprintf("%s-%s", basename, userName)
 }
