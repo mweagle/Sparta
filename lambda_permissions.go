@@ -940,7 +940,6 @@ func (rule EventBridgeRule) MarshalJSON() ([]byte, error) {
 ////////////////////////////////////////////////////////////////////////////////
 // START - EventBridgePermission
 //
-var eventBridgeSourceArnParts = []gocf.Stringable{}
 
 // EventBridgePermission struct implies that the EventBridge sources
 // should be configured as part of provisioning.  The BasePermission.SourceArn
