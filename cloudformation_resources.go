@@ -15,7 +15,7 @@ func marshalInterface(item interface{}) interface{} {
 	if item != nil {
 		return item
 	}
-	return item
+	return nil
 }
 
 // Utility function to marshal an int
