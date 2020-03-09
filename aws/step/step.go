@@ -919,7 +919,7 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 			},
 		}
 		var iamRoleResourceName string
-		if len(lambdaFunctionResourceNames) != 0 {
+		if len(lambdaFunctionResourceNames) != 0 && sm.roleArn == nil {
 			statesIAMRole := &gocf.IAMRole{
 				AssumeRolePolicyDocument: AssumePolicyDocument,
 			}
