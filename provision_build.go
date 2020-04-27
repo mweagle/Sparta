@@ -1616,6 +1616,11 @@ func Provision(noop bool,
 			ctx.logger.WithFields(logrus.Fields{
 				"Duration (s)": fmt.Sprintf("%.f", elapsed.Seconds()),
 			}).Info("Total elapsed time")
+			curTime := time.Now()
+			ctx.logger.WithFields(logrus.Fields{
+				"Time (UTC)":   curTime.UTC().Format(time.RFC3339),
+				"Time (Local)": curTime.Format(time.RFC3339),
+			}).Info("Complete")
 			break
 		} else {
 			step = next

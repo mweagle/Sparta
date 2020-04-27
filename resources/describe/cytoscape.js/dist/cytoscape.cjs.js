@@ -12668,9 +12668,10 @@ elesfn$u.json = function (obj) {
         }
       } else {
         // parent is immutable via data()
+        var newParentValSpecd = 'parent' in obj.data;
         var parent = obj.data.parent;
 
-        if ((parent != null || _data2.parent != null) && parent != _data2.parent) {
+        if (newParentValSpecd && (parent != null || _data2.parent != null) && parent != _data2.parent) {
           if (parent === undefined) {
             // can't set undefined imperatively, so use null
             parent = null;
@@ -28743,11 +28744,11 @@ CRp$2.drawArrowShape = function (edge, context, fill, edgeWidth, shape, x, y, an
     }
   }
 
-  if (context.beginPath) {
-    context.beginPath();
-  }
-
   if (!pathCacheHit) {
+    if (context.beginPath) {
+      context.beginPath();
+    }
+
     if (usePaths) {
       // store in the path cache with values easily manipulated later
       shapeImpl.draw(context, 1, 0, {
@@ -28757,10 +28758,10 @@ CRp$2.drawArrowShape = function (edge, context, fill, edgeWidth, shape, x, y, an
     } else {
       shapeImpl.draw(context, size, angle, translation, edgeWidth);
     }
-  }
 
-  if (context.closePath) {
-    context.closePath();
+    if (context.closePath) {
+      context.closePath();
+    }
   }
 
   context = canvasContext;
@@ -31410,7 +31411,7 @@ sheetfn.appendToStyle = function (style) {
   return style;
 };
 
-var version = "3.13.1";
+var version = "3.13.3";
 
 var cytoscape = function cytoscape(options) {
   // if no options specified, use default

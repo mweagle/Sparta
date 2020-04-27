@@ -1,5 +1,13 @@
 # Change Notes
 
+## v1.15.0 - The Daylight Savings Edition 🕑
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `--inputExtensions` command line argument to the _Explore_ command to support filtering eligible assets for interactive testing.
+- :bug: **FIXED**
+  - [Avoid creating default state machine role when an external role is set](https://github.com/mweagle/Sparta/pull/170)
+
 ## v1.14.0 - The post:Invent Edition 🎰
 
 - :warning: **BREAKING**

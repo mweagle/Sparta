@@ -249,11 +249,12 @@ func MainEx(serviceName string,
 				return validateErr
 			}
 
-			return Explore(serviceName,
+			return ExploreWithInputFilter(serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
 				api,
 				site,
+				optionsExplore.InputExtensions,
 				optionsDescribe.S3Bucket,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,

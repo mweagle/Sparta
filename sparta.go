@@ -794,6 +794,79 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	return info.cachedLambdaFunctionName
 }
 
+// NewDescriptionTriplet returns a decription triplet where this lambda
+// is either a sink or a source
+func (info *LambdaAWSInfo) NewDescriptionTriplet(nodeName string, lambdaIsTarget bool) *DescriptionTriplet {
+
+	if lambdaIsTarget {
+		return &DescriptionTriplet{
+			SourceNodeName: nodeName,
+			TargetNodeName: info.lambdaFunctionName(),
+		}
+	}
+	return &DescriptionTriplet{
+		SourceNodeName: info.lambdaFunctionName(),
+		TargetNodeName: nodeName,
+	}
+}
+
+// Description satisfies the Describable interface
+func (info *LambdaAWSInfo) Description(targetNodeName string) ([]*DescriptionTriplet, error) {
+
+	descriptionNodes := make([]*DescriptionTriplet, 0)
+	descriptionNodes = append(descriptionNodes, &DescriptionTriplet{
+		SourceNodeName: info.lambdaFunctionName(),
+		DisplayInfo: &DescriptionDisplayInfo{
+			SourceIcon: &DescriptionIcon{
+				Category: "Compute",
+				Name:     "AWS-Lambda.svg",
+			},
+		},
+		TargetNodeName: targetNodeName,
+	})
+	// What about the permissions?
+	for _, eachPermission := range info.Permissions {
+		nodes, err := eachPermission.descriptionInfo()
+		if nil != err {
+			return nil, err
+		}
+
+		for _, eachNode := range nodes {
+			name := strings.TrimSpace(eachNode.Name)
+			arc := strings.TrimSpace(eachNode.Relation)
+			descriptionNodes = append(descriptionNodes, &DescriptionTriplet{
+				SourceNodeName: name,
+				DisplayInfo: &DescriptionDisplayInfo{
+					SourceNodeColor: nodeColorEventSource,
+					SourceIcon:      iconForAWSResource(name),
+				},
+				ArcLabel:       arc,
+				TargetNodeName: info.lambdaFunctionName(),
+			})
+		}
+	}
+
+	// Finally, event sources...
+	for index, eachEventSourceMapping := range info.EventSourceMappings {
+		dynamicArn := spartaCF.DynamicValueToStringExpr(eachEventSourceMapping.EventSourceArn)
+		jsonBytes, jsonBytesErr := json.Marshal(dynamicArn)
+		if jsonBytesErr != nil {
+			jsonBytes = []byte(fmt.Sprintf("%s-EventSourceMapping[%d]",
+				info.lambdaFunctionName(),
+				index))
+		}
+		nodeName := string(jsonBytes)
+		descriptionNodes = append(descriptionNodes, &DescriptionTriplet{
+			SourceNodeName: nodeName,
+			DisplayInfo: &DescriptionDisplayInfo{
+				SourceIcon: iconForAWSResource(dynamicArn),
+			},
+			TargetNodeName: info.lambdaFunctionName(),
+		})
+	}
+	return descriptionNodes, nil
+}
+
 // RequireCustomResource adds a Lambda-backed CustomResource entry to the CloudFormation
 // template. This function will be made a dependency of the owning Lambda function.
 // The returned string is the custom resource's CloudFormation logical resource
@@ -1170,6 +1243,14 @@ func sanitizedName(input string) string {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
+// AWSLambdaProvider is an interface that represents a struct that
+// encapsulates a Lambda function
+type AWSLambdaProvider interface {
+	Handler() interface{}
+	Name() string
+	Role() interface{}
+}
+
 // CloudFormationResourceName returns a name suitable as a logical
 // CloudFormation resource value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 // for more information.  The `prefix` value should provide a hint as to the
@@ -1184,6 +1265,14 @@ func CloudFormationResourceName(prefix string, parts ...string) string {
 func LambdaName(handlerSymbol interface{}) string {
 	funcPtr := runtime.FuncForPC(reflect.ValueOf(handlerSymbol).Pointer())
 	return funcPtr.Name()
+}
+
+// NewAWSLambdaFromProvider is a utility function to return
+// an LambdaAWSInfo from an AWSLambdaProvider
+func NewAWSLambdaFromProvider(provider AWSLambdaProvider) (*LambdaAWSInfo, error) {
+	return NewAWSLambda(provider.Name(),
+		provider.Handler(),
+		provider.Role())
 }
 
 /*

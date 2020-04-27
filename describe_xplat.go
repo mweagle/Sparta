@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"net/url"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -24,9 +25,14 @@ const (
 	nodeNameAPIGateway   = "API Gateway"
 )
 
+// This is the `go` type that's shuttled through the JSON data
+// and parsed by the sparta.js script that's executed in the browser
 type cytoscapeData struct {
 	ID               string `json:"id"`
+	Parent           string `json:"parent"`
 	Image            string `json:"image"`
+	Width            string `json:"width"`
+	Height           string `json:"height"`
 	BackgroundColor  string `json:"backgroundColor,omitempty"`
 	Source           string `json:"source,omitempty"`
 	Target           string `json:"target,omitempty"`
@@ -60,9 +66,10 @@ type descriptionWriter struct {
 	logger *logrus.Logger
 }
 
-func (dw *descriptionWriter) writeNode(nodeName string,
+func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
 	nodeColor string,
-	nodeImage string) error {
+	nodeImage string,
+	nodeParent string) error {
 
 	nodeID, nodeErr := cytoscapeNodeID(nodeName)
 	if nodeErr != nil {
@@ -70,21 +77,41 @@ func (dw *descriptionWriter) writeNode(nodeName string,
 			"Failed to create nodeID for entry: %s",
 			nodeName)
 	}
+	parentID := ""
+	if nodeParent != "" {
+		tmpParentID, tmpParentIDErr := cytoscapeNodeID(nodeParent)
+		if tmpParentIDErr != nil {
+			return errors.Wrapf(nodeErr,
+				"Failed to create nodeID for entry: %s",
+				nodeParent)
+		}
+		parentID = tmpParentID
+	}
 	appendNode := &cytoscapeNode{
 		Data: cytoscapeData{
-			ID:    nodeID,
-			Label: strings.Trim(nodeName, "\""),
+			ID:     nodeID,
+			Parent: parentID,
+			Width:  "128",
+			Height: "128",
+			Label:  strings.Trim(nodeName, "\""),
 		},
 	}
 	if nodeImage != "" {
 		resourceItem := templateResourceForKey(nodeImage, dw.logger)
 		if resourceItem != nil {
-			appendNode.Data.Image = fmt.Sprintf("data:image/svg+xml;base64,%s",
-				base64.StdEncoding.EncodeToString([]byte(resourceItem.Data)))
+			encoded := url.QueryEscape(resourceItem.Data)
+			appendNode.Data.Image = fmt.Sprintf("data:image/svg+xml;utf8,%s",
+				encoded)
 		}
 	}
 	dw.nodes = append(dw.nodes, appendNode)
 	return nil
+}
+
+func (dw *descriptionWriter) writeNode(nodeName string,
+	nodeColor string,
+	nodeImage string) error {
+	return dw.writeNodeWithParent(nodeName, nodeColor, nodeImage, "")
 }
 
 func (dw *descriptionWriter) writeEdge(fromNode string,
@@ -179,7 +206,8 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 	resources := templateResourcesForKeys(images, logger)
 	imageMap := make(map[string]string)
 	for _, eachResource := range resources {
-		imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
+		//imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
+		imageMap[eachResource.KeyName] = eachResource.Data
 	}
 	return imageMap
 }
@@ -187,27 +215,62 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 // TODO - this should really be smarter, including
 // looking at the referred resource to understand it's
 // type
-func iconForAWSResource(rawEmitter interface{}) string {
-	jsonBytes, jsonBytesErr := json.Marshal(rawEmitter)
-	if jsonBytesErr != nil {
-		jsonBytes = make([]byte, 0)
-	}
-	canonicalRaw := strings.ToLower(string(jsonBytes))
-	iconMappings := map[string]string{
-		"dynamodb":   "AWS-Architecture-Icons_SVG_20200131/SVG Light/Database/Amazon-DynamoDB_Table_light-bg.svg",
-		"sqs":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Queue-Service-SQS_light-bg.svg",
-		"sns":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Notification-Service-SNS_light-bg.svg",
-		"cloudwatch": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/Amazon-CloudWatch.svg",
-		"kinesis":    "AWS-Architecture-Icons_SVG_20200131/SVG Light/Analytics/Amazon-Kinesis_light-bg.svg",
-		//lint:ignore ST1018 This is the name of the icon
-		"s3": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Storage/Amazon-Simple-Storage-Service-S3.svg",
-		"codecommit": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Developer Tools/AWS-CodeCommit_light-bg.svg",
-	}
-	// Return it if we have it...
-	for eachKey, eachPath := range iconMappings {
-		if strings.Contains(canonicalRaw, eachKey) {
-			return eachPath
-		}
-	}
-	return "AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/General_light-bg.svg"
+func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
+	return nil
+	// jsonBytes, jsonBytesErr := json.Marshal(rawEmitter)
+	// if jsonBytesErr != nil {
+	// 	jsonBytes = make([]byte, 0)
+	// }
+	// canonicalRaw := strings.ToLower(string(jsonBytes))
+	// iconMappings := map[string]string{
+	// 	"dynamodb":   "AWS-Architecture-Icons_SVG_20200131/SVG Light/Database/Amazon-DynamoDB_Table_light-bg.svg",
+	// 	"sqs":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Queue-Service-SQS_light-bg.svg",
+	// 	"sns":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Notification-Service-SNS_light-bg.svg",
+	// 	"cloudwatch": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/Amazon-CloudWatch.svg",
+	// 	"kinesis":    "AWS-Architecture-Icons_SVG_20200131/SVG Light/Analytics/Amazon-Kinesis_light-bg.svg",
+	// 	//lint:ignore ST1018 This is the name of the icon
+	// 	"s3": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Storage/Amazon-Simple-Storage-Service-S3.svg",
+	// 	"codecommit": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Developer Tools/AWS-CodeCommit_light-bg.svg",
+	// }
+	// // Return it if we have it...
+	// for eachKey, eachPath := range iconMappings {
+	// 	if strings.Contains(canonicalRaw, eachKey) {
+	// 		return eachPath
+	// 	}
+	// }
+	// return "AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/General_light-bg.svg"
+}
+
+// DescriptionIcon is the struct that contains the category & icon
+// to use when rendering a ndoe
+type DescriptionIcon struct {
+	Category string
+	Name     string
+}
+
+// DescriptionDisplayInfo encapsulates information that is for display only
+type DescriptionDisplayInfo struct {
+	SourceNodeColor string
+	SourceIcon      *DescriptionIcon
+}
+
+// DescriptionTriplet is a node that should be included in the final
+// describe output.
+type DescriptionTriplet struct {
+	SourceNodeName string
+	ArcLabel       string
+	DisplayInfo    *DescriptionDisplayInfo
+	TargetNodeName string
+}
+
+// DescriptionInfo is the set of information that represents a DescribeableResource
+type DescriptionInfo struct {
+	Name  string
+	Nodes []*DescriptionTriplet
+}
+
+// Describable represents the interface for something that can
+// provide a description
+type Describable interface {
+	Description(targetNodeName string) (*DescriptionInfo, error)
 }

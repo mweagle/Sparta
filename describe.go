@@ -7,14 +7,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"strings"
 	"text/template"
 	"time"
 
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
+
+func workflowHooksDescriptionNodes(serviceName string, hooks *WorkflowHooks) ([]*DescriptionInfo, error) {
+	if hooks == nil {
+		return nil, nil
+	}
+	workflowDescInfo := make([]*DescriptionInfo, 0)
+	for _, eachServiceDecorator := range hooks.ServiceDecorators {
+		describable, isDescribable := eachServiceDecorator.(Describable)
+		if isDescribable {
+			descInfos, descInfosErr := describable.Description(serviceName)
+			if descInfosErr != nil {
+				return nil, descInfosErr
+			}
+			workflowDescInfo = append(workflowDescInfo, descInfos)
+		}
+	}
+	return workflowDescInfo, nil
+}
 
 // Describe produces a graphical representation of a service's Lambda and data sources.  Typically
 // automatically called as part of a compiled golang binary via the `describe` command
@@ -79,82 +95,79 @@ func Describe(serviceName string,
 	// https://github.com/cytoscape/cytoscape.js-tutorial-demo/blob/gh-pages/stylesheets/fancy.json
 	// Which is dynamically updated at: https://cytoscape.github.io/cytoscape.js-tutorial-demo/
 
+	fullIconPath := func(descriptionNode *DescriptionIcon) string {
+		if descriptionNode == nil {
+			descriptionNode = &DescriptionIcon{
+				Category: "_General",
+				Name:     "General.svg",
+			}
+		}
+
+		return fmt.Sprintf("AWS-Architecture-Icons_SVG_20200131/SVG Light/%s/%s",
+			descriptionNode.Category,
+			descriptionNode.Name)
+	}
+
 	// Setup the root object
-	writeErr := describer.writeNode(serviceName,
+	writeErr := describer.writeNodeWithParent(serviceName,
 		nodeColorService,
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/AWS-CloudFormation_Stack_light-bg.svg")
+		fullIconPath(&DescriptionIcon{
+			Category: "Management & Governance",
+			Name:     "AWS-CloudFormation_Stack_light-bg.svg",
+		}),
+		"")
 	if writeErr != nil {
 		return writeErr
 	}
+
+	parentMap := make(map[string]bool)
+	writeNodes := func(parent string, descriptionNodes []*DescriptionTriplet) error {
+		if parent != "" {
+			_, exists := parentMap[parent]
+			if !exists {
+				writeErr = describer.writeNodeWithParent(parent,
+					"#FF0000",
+					fullIconPath(nil),
+					"")
+				if writeErr != nil {
+					return writeErr
+				}
+				parentMap[parent] = true
+			}
+		}
+
+		for _, eachDescNode := range descriptionNodes {
+			descDisplayInfo := eachDescNode.DisplayInfo
+			if descDisplayInfo == nil {
+				descDisplayInfo = &DescriptionDisplayInfo{}
+			}
+			writeErr = describer.writeNodeWithParent(eachDescNode.SourceNodeName,
+				descDisplayInfo.SourceNodeColor,
+				fullIconPath(descDisplayInfo.SourceIcon),
+				parent)
+			if writeErr != nil {
+				return writeErr
+			}
+			writeErr = describer.writeEdge(eachDescNode.SourceNodeName,
+				eachDescNode.TargetNodeName,
+				eachDescNode.ArcLabel)
+			if writeErr != nil {
+				return writeErr
+			}
+		}
+		return nil
+	}
+
 	for _, eachLambda := range lambdaAWSInfos {
-		// Other cytoscape nodes
-		// Create the node...
-		writeErr = describer.writeNode(eachLambda.lambdaFunctionName(),
-			nodeColorLambda,
-			"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
+		descriptionNodes, descriptionNodesErr := eachLambda.Description(serviceName)
+		if descriptionNodesErr != nil {
+			return descriptionNodesErr
+		}
+		writeErr := writeNodes("Lambda", descriptionNodes)
 		if writeErr != nil {
 			return writeErr
 		}
-		writeErr = describer.writeEdge(eachLambda.lambdaFunctionName(),
-			serviceName,
-			"")
-		if writeErr != nil {
-			return writeErr
-		}
-		// Create permission & event mappings
-		// functions declared in this
-		for _, eachPermission := range eachLambda.Permissions {
-			nodes, err := eachPermission.descriptionInfo()
-			if nil != err {
-				return err
-			}
 
-			for _, eachNode := range nodes {
-				name := strings.TrimSpace(eachNode.Name)
-				link := strings.TrimSpace(eachNode.Relation)
-				// Style it to have the Amazon color
-				nodeColor := eachNode.Color
-				if nodeColor == "" {
-					nodeColor = nodeColorEventSource
-				}
-
-				writeErr = describer.writeNode(name,
-					nodeColor,
-					iconForAWSResource(eachNode.Name))
-				if writeErr != nil {
-					return writeErr
-				}
-				writeErr = describer.writeEdge(
-					name,
-					eachLambda.lambdaFunctionName(),
-					link)
-				if writeErr != nil {
-					return writeErr
-				}
-			}
-		}
-		for index, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			dynamicArn := spartaCF.DynamicValueToStringExpr(eachEventSourceMapping.EventSourceArn)
-			jsonBytes, jsonBytesErr := json.Marshal(dynamicArn)
-			if jsonBytesErr != nil {
-				jsonBytes = []byte(fmt.Sprintf("%s-EventSourceMapping[%d]",
-					eachLambda.lambdaFunctionName(),
-					index))
-			}
-			nodeName := string(jsonBytes)
-			writeErr = describer.writeNode(nodeName,
-				nodeColorEventSource,
-				iconForAWSResource(dynamicArn))
-			if writeErr != nil {
-				return writeErr
-			}
-			writeErr = describer.writeEdge(nodeName,
-				eachLambda.lambdaFunctionName(),
-				"")
-			if writeErr != nil {
-				return writeErr
-			}
-		}
 	}
 	// The API needs to know how to describe itself. So for that it needs an object that
 	// encapsulates writing the nodes and links...so let's go ahead
@@ -168,10 +181,25 @@ func Describe(serviceName string,
 			return writeErr
 		}
 	}
+	// What about everything else...
+	workflowDescription, workflowDescriptionErr := workflowHooksDescriptionNodes(serviceName, workflowHooks)
+	if workflowDescriptionErr != nil {
+		return workflowDescriptionErr
+	}
+	for _, eachWorkflowDesc := range workflowDescription {
+		groupName := eachWorkflowDesc.Name
+		if groupName == "" {
+			groupName = "WorkflowHooks"
+		}
+		workflowDescriptionErr = writeNodes(groupName, eachWorkflowDesc.Nodes)
+	}
+
+	// Write it out...
 	cytoscapeBytes, cytoscapeBytesErr := json.MarshalIndent(describer.nodes, "", " ")
 	if cytoscapeBytesErr != nil {
 		return errors.Wrapf(cytoscapeBytesErr, "Failed to marshal cytoscape data")
 	}
+
 	params := struct {
 		SpartaVersion          string
 		ServiceName            string
