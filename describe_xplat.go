@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"net/url"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -99,9 +98,8 @@ func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
 	if nodeImage != "" {
 		resourceItem := templateResourceForKey(nodeImage, dw.logger)
 		if resourceItem != nil {
-			encoded := url.QueryEscape(resourceItem.Data)
-			appendNode.Data.Image = fmt.Sprintf("data:image/svg+xml;utf8,%s",
-				encoded)
+			appendNode.Data.Image = fmt.Sprintf("data:image/svg+xml;base64,%s",
+				base64.StdEncoding.EncodeToString([]byte(resourceItem.Data)))
 		}
 	}
 	dw.nodes = append(dw.nodes, appendNode)
@@ -206,8 +204,7 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 	resources := templateResourcesForKeys(images, logger)
 	imageMap := make(map[string]string)
 	for _, eachResource := range resources {
-		//imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
-		imageMap[eachResource.KeyName] = eachResource.Data
+		imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
 	}
 	return imageMap
 }

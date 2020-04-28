@@ -167,7 +167,6 @@ func Describe(serviceName string,
 		if writeErr != nil {
 			return writeErr
 		}
-
 	}
 	// The API needs to know how to describe itself. So for that it needs an object that
 	// encapsulates writing the nodes and links...so let's go ahead
@@ -175,8 +174,11 @@ func Describe(serviceName string,
 
 	// API?
 	if nil != api {
-		// TODO - delegate
-		writeErr := api.Describe(&describer)
+		descriptionInfo, descriptionInfoErr := api.Description(serviceName)
+		if descriptionInfoErr != nil {
+			return descriptionInfoErr
+		}
+		writeErr := writeNodes(descriptionInfo.Name, descriptionInfo.Nodes)
 		if writeErr != nil {
 			return writeErr
 		}
