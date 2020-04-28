@@ -26,7 +26,7 @@ type APIGateway interface {
 		template *gocf.Template,
 		noop bool,
 		logger *logrus.Logger) error
-	Describe(writer *descriptionWriter) error
+	Description(targetNodeName string) (*DescriptionInfo, error)
 }
 
 var defaultCORSHeaders = map[string]interface{}{
@@ -476,8 +476,8 @@ type API struct {
 	stage *Stage
 	// Existing API to CloneFrom
 	CloneFrom string
-	// API Description
-	Description string
+	// APIDescription is the user defined description
+	APIDescription string
 	// Non-empty map of urlPaths->Resource definitions
 	resources map[string]*Resource
 	// Should CORS be enabled for this API?
@@ -509,42 +509,49 @@ func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
 
-// Describe writes the API to a graph for visualization
-func (api *API) Describe(describer *descriptionWriter) error {
+// Description returns the API for description
+func (api *API) Description(targetNodeName string) (*DescriptionInfo, error) {
+	descInfo := &DescriptionInfo{
+		Name:  "APIGateway",
+		Nodes: make([]*DescriptionTriplet, 0),
+	}
+
+	descInfo.Nodes = append(descInfo.Nodes, &DescriptionTriplet{
+		SourceNodeName: nodeNameAPIGateway,
+		DisplayInfo: &DescriptionDisplayInfo{
+			SourceNodeColor: nodeColorAPIGateway,
+			SourceIcon: &DescriptionIcon{
+				Category: "Mobile",
+				Name:     "Amazon-API-Gateway_light-bg.svg",
+			},
+		},
+		TargetNodeName: targetNodeName,
+	})
 
 	// Create the APIGateway virtual node && connect it to the application
-	writeErr := describer.writeNode(nodeNameAPIGateway,
-		nodeColorAPIGateway,
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
-	if writeErr != nil {
-		return writeErr
-	}
 	for _, eachResource := range api.resources {
 		for eachMethod := range eachResource.Methods {
 			// Create the PATH node
 			var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
-			writeErr = describer.writeNode(
-				nodeName,
-				nodeColorAPIGateway,
-				"AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/Internet-alt1_light-bg.svg")
-			if writeErr != nil {
-				return writeErr
-			}
-			writeErr = describer.writeEdge(nodeNameAPIGateway,
-				nodeName,
-				"")
-			if writeErr != nil {
-				return writeErr
-			}
-			writeErr = describer.writeEdge(nodeName,
-				eachResource.parentLambda.lambdaFunctionName(),
-				"")
-			if writeErr != nil {
-				return writeErr
-			}
+			descInfo.Nodes = append(descInfo.Nodes,
+				&DescriptionTriplet{
+					SourceNodeName: nodeName,
+					DisplayInfo: &DescriptionDisplayInfo{
+						SourceNodeColor: nodeColorAPIGateway,
+						SourceIcon: &DescriptionIcon{
+							Category: "_General",
+							Name:     "Internet-alt1_light-bg.svg",
+						},
+					},
+					TargetNodeName: nodeNameAPIGateway,
+				},
+				&DescriptionTriplet{
+					SourceNodeName: nodeName,
+					TargetNodeName: eachResource.parentLambda.lambdaFunctionName(),
+				})
 		}
 	}
-	return nil
+	return descInfo, nil
 }
 
 // Marshal marshals the API data to a CloudFormation compatible representation
@@ -565,17 +572,17 @@ func (api *API) Marshal(serviceName string,
 
 	// Create an API gateway entry
 	apiGatewayRes := &gocf.APIGatewayRestAPI{
-		Description:    gocf.String(api.Description),
+		Description:    gocf.String(api.APIDescription),
 		FailOnWarnings: gocf.Bool(false),
 		Name:           gocf.String(api.name),
 	}
 	if api.CloneFrom != "" {
 		apiGatewayRes.CloneFrom = gocf.String(api.CloneFrom)
 	}
-	if api.Description == "" {
+	if api.APIDescription == "" {
 		apiGatewayRes.Description = gocf.String(fmt.Sprintf("%s RestApi", serviceName))
 	} else {
-		apiGatewayRes.Description = gocf.String(api.Description)
+		apiGatewayRes.Description = gocf.String(api.APIDescription)
 	}
 	apiGatewayResName := api.LogicalResourceName()
 	// Is there an endpoint type?

@@ -31,7 +31,7 @@ type APIV2 struct {
 	routeSelectionExpression  string
 	stage                     *APIV2Stage
 	APIKeySelectionExpression string
-	Description               string
+	APIDescription            string
 	DisableSchemaValidation   bool
 	Tags                      map[string]interface{}
 	Version                   string
@@ -195,42 +195,49 @@ func (apiv2 *APIV2) LogicalResourceName() string {
 }
 
 // Describe satisfies the API interface
-func (apiv2 *APIV2) Describe(describer *descriptionWriter) error {
-	// Create the API v2 Object
-	// Create the APIGateway virtual node && connect it to the application
-	writeErr := describer.writeNode(nodeNameAPIGateway,
-		nodeColorAPIGateway,
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
-	if writeErr != nil {
-		return writeErr
+func (apiv2 *APIV2) Description(targetNodeName string) (*DescriptionInfo, error) {
+	descInfo := &DescriptionInfo{
+		Name:  "APIGatewayV2",
+		Nodes: make([]*DescriptionTriplet, 0),
 	}
+
+	descInfo.Nodes = append(descInfo.Nodes, &DescriptionTriplet{
+		SourceNodeName: nodeNameAPIGateway,
+		DisplayInfo: &DescriptionDisplayInfo{
+			SourceNodeColor: nodeColorAPIGateway,
+			SourceIcon: &DescriptionIcon{
+				Category: "Mobile",
+				Name:     "Amazon-API-Gateway_light-bg.svg",
+			},
+		},
+		TargetNodeName: targetNodeName,
+	})
+
 	for eachRouteExpr, eachRoute := range apiv2.routes {
 		opName := ""
 		if eachRoute.OperationName != "" {
 			opName = fmt.Sprintf(" - %s", eachRoute.OperationName)
 		}
 		var nodeName = fmt.Sprintf("%s%s", eachRouteExpr, opName)
-		writeErr = describer.writeNode(
-			nodeName,
-			nodeColorAPIGateway,
-			"AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/Internet-alt1_light-bg.svg")
-		if writeErr != nil {
-			return writeErr
-		}
-		writeErr = describer.writeEdge(nodeNameAPIGateway,
-			nodeName,
-			"")
-		if writeErr != nil {
-			return writeErr
-		}
-		writeErr = describer.writeEdge(nodeName,
-			eachRoute.lambdaFn.lambdaFunctionName(),
-			"")
-		if writeErr != nil {
-			return writeErr
-		}
+
+		descInfo.Nodes = append(descInfo.Nodes,
+			&DescriptionTriplet{
+				SourceNodeName: nodeNameAPIGateway,
+				DisplayInfo: &DescriptionDisplayInfo{
+					SourceNodeColor: nodeColorAPIGateway,
+					SourceIcon: &DescriptionIcon{
+						Category: "_General",
+						Name:     "Internet-alt1_light-bg.svg",
+					},
+				},
+				TargetNodeName: nodeName,
+			},
+			&DescriptionTriplet{
+				SourceNodeName: nodeName,
+				TargetNodeName: eachRoute.lambdaFn.lambdaFunctionName(),
+			})
 	}
-	return nil
+	return descInfo, nil
 }
 
 // Marshal marshals the API V2 Gateway instance to the given template instance
@@ -246,7 +253,7 @@ func (apiv2 *APIV2) Marshal(serviceName string,
 
 	apiV2Entry := &gocf.APIGatewayV2API{
 		APIKeySelectionExpression: marshalString(apiv2.APIKeySelectionExpression),
-		Description:               marshalString(apiv2.Description),
+		Description:               marshalString(apiv2.APIDescription),
 		DisableSchemaValidation:   marshalBool(apiv2.DisableSchemaValidation),
 		Name:                      marshalString(apiv2.name),
 		ProtocolType:              marshalString(string(Websocket)),
