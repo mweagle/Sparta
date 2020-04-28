@@ -33,8 +33,7 @@ $(document).ready(function () {
     cytoscapeView = window.cytoscapeView = cytoscape({
       container: $("#cytoscapeDIVTarget"),
       elements: CYTOSCAPE_DATA,
-      style: [
-        {
+      style: [{
           selector: "node",
           style: {
             shape: "round-rectangle",
