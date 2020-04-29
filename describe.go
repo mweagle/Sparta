@@ -22,7 +22,7 @@ func workflowHooksDescriptionNodes(serviceName string, hooks *WorkflowHooks) ([]
 	for _, eachServiceDecorator := range hooks.ServiceDecorators {
 		describable, isDescribable := eachServiceDecorator.(Describable)
 		if isDescribable {
-			descInfos, descInfosErr := describable.Description(serviceName)
+			descInfos, descInfosErr := describable.Describe(serviceName)
 			if descInfosErr != nil {
 				return nil, descInfosErr
 			}
@@ -96,14 +96,14 @@ func Describe(serviceName string,
 	// Which is dynamically updated at: https://cytoscape.github.io/cytoscape.js-tutorial-demo/
 
 	fullIconPath := func(descriptionNode *DescriptionIcon) string {
+		// Use an empty PNG if we don't have an image
 		if descriptionNode == nil {
-			descriptionNode = &DescriptionIcon{
-				Category: "_General",
-				Name:     "General.svg",
-			}
+			// Because the style uses data(image) we need to ensure that
+			// empty nodes have some sort of image, else the Cytoscape JS
+			// won't render
+			return "AWS-Architecture-Icons_PNG_20200131/empty-image.png"
 		}
-
-		return fmt.Sprintf("AWS-Architecture-Icons_SVG_20200131/SVG Light/%s/%s",
+		return fmt.Sprintf("AWS-Architecture-Icons_PNG_20200131/PNG Light/%s/%s",
 			descriptionNode.Category,
 			descriptionNode.Name)
 	}
@@ -113,7 +113,7 @@ func Describe(serviceName string,
 		nodeColorService,
 		fullIconPath(&DescriptionIcon{
 			Category: "Management & Governance",
-			Name:     "AWS-CloudFormation_Stack_light-bg.svg",
+			Name:     "AWS-CloudFormation_Stack_light-bg@4x.png",
 		}),
 		"")
 	if writeErr != nil {
@@ -174,7 +174,7 @@ func Describe(serviceName string,
 
 	// API?
 	if nil != api {
-		descriptionInfo, descriptionInfoErr := api.Description(serviceName)
+		descriptionInfo, descriptionInfoErr := api.Describe(serviceName)
 		if descriptionInfoErr != nil {
 			return descriptionInfoErr
 		}

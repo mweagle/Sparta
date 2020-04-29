@@ -98,7 +98,7 @@ func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
 	if nodeImage != "" {
 		resourceItem := templateResourceForKey(nodeImage, dw.logger)
 		if resourceItem != nil {
-			appendNode.Data.Image = fmt.Sprintf("data:image/svg+xml;base64,%s",
+			appendNode.Data.Image = fmt.Sprintf("data:image/png;base64,%s",
 				base64.StdEncoding.EncodeToString([]byte(resourceItem.Data)))
 		}
 	}
@@ -164,6 +164,7 @@ func templateResourceForKey(resourceKeyName string, logger *logrus.Logger) *temp
 	}
 	return resource
 }
+
 func templateResourcesForKeys(resourceKeyNames []string, logger *logrus.Logger) []*templateResource {
 	var resources []*templateResource
 
@@ -198,8 +199,8 @@ func templateJSFiles(logger *logrus.Logger) []*templateResource {
 
 func templateImageMap(logger *logrus.Logger) map[string]string {
 	images := []string{"SpartaHelmet256.png",
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Compute/AWS-Lambda_Lambda-Function_light-bg.svg",
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/AWS-CloudFormation_light-bg.svg",
+		"AWS-Architecture-Icons_PNG_20200131/PNG Light/Compute/AWS-Lambda_Lambda-Function_light-bg@4x.png",
+		"AWS-Architecture-Icons_PNG_20200131/PNG Light/Management & Governance/AWS-CloudFormation_light-bg@4x.png",
 	}
 	resources := templateResourcesForKeys(images, logger)
 	imageMap := make(map[string]string)
@@ -269,5 +270,5 @@ type DescriptionInfo struct {
 // Describable represents the interface for something that can
 // provide a description
 type Describable interface {
-	Description(targetNodeName string) (*DescriptionInfo, error)
+	Describe(targetNodeName string) (*DescriptionInfo, error)
 }

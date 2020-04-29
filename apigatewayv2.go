@@ -31,7 +31,7 @@ type APIV2 struct {
 	routeSelectionExpression  string
 	stage                     *APIV2Stage
 	APIKeySelectionExpression string
-	APIDescription            string
+	Description               string
 	DisableSchemaValidation   bool
 	Tags                      map[string]interface{}
 	Version                   string
@@ -195,7 +195,7 @@ func (apiv2 *APIV2) LogicalResourceName() string {
 }
 
 // Describe satisfies the API interface
-func (apiv2 *APIV2) Description(targetNodeName string) (*DescriptionInfo, error) {
+func (apiv2 *APIV2) Describe(targetNodeName string) (*DescriptionInfo, error) {
 	descInfo := &DescriptionInfo{
 		Name:  "APIGatewayV2",
 		Nodes: make([]*DescriptionTriplet, 0),
@@ -207,7 +207,7 @@ func (apiv2 *APIV2) Description(targetNodeName string) (*DescriptionInfo, error)
 			SourceNodeColor: nodeColorAPIGateway,
 			SourceIcon: &DescriptionIcon{
 				Category: "Mobile",
-				Name:     "Amazon-API-Gateway_light-bg.svg",
+				Name:     "Amazon-API-Gateway_light-bg@4x.png",
 			},
 		},
 		TargetNodeName: targetNodeName,
@@ -227,7 +227,7 @@ func (apiv2 *APIV2) Description(targetNodeName string) (*DescriptionInfo, error)
 					SourceNodeColor: nodeColorAPIGateway,
 					SourceIcon: &DescriptionIcon{
 						Category: "_General",
-						Name:     "Internet-alt1_light-bg.svg",
+						Name:     "Internet-alt1_light-bg@4x.png",
 					},
 				},
 				TargetNodeName: nodeName,
@@ -253,7 +253,7 @@ func (apiv2 *APIV2) Marshal(serviceName string,
 
 	apiV2Entry := &gocf.APIGatewayV2API{
 		APIKeySelectionExpression: marshalString(apiv2.APIKeySelectionExpression),
-		Description:               marshalString(apiv2.APIDescription),
+		Description:               marshalString(apiv2.Description),
 		DisableSchemaValidation:   marshalBool(apiv2.DisableSchemaValidation),
 		Name:                      marshalString(apiv2.name),
 		ProtocolType:              marshalString(string(Websocket)),

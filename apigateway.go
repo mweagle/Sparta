@@ -26,7 +26,7 @@ type APIGateway interface {
 		template *gocf.Template,
 		noop bool,
 		logger *logrus.Logger) error
-	Description(targetNodeName string) (*DescriptionInfo, error)
+	Describe(targetNodeName string) (*DescriptionInfo, error)
 }
 
 var defaultCORSHeaders = map[string]interface{}{
@@ -477,7 +477,7 @@ type API struct {
 	// Existing API to CloneFrom
 	CloneFrom string
 	// APIDescription is the user defined description
-	APIDescription string
+	Description string
 	// Non-empty map of urlPaths->Resource definitions
 	resources map[string]*Resource
 	// Should CORS be enabled for this API?
@@ -509,20 +509,19 @@ func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
 
-// Description returns the API for description
-func (api *API) Description(targetNodeName string) (*DescriptionInfo, error) {
+// Describe returns the API for description
+func (api *API) Describe(targetNodeName string) (*DescriptionInfo, error) {
 	descInfo := &DescriptionInfo{
 		Name:  "APIGateway",
 		Nodes: make([]*DescriptionTriplet, 0),
 	}
-
 	descInfo.Nodes = append(descInfo.Nodes, &DescriptionTriplet{
 		SourceNodeName: nodeNameAPIGateway,
 		DisplayInfo: &DescriptionDisplayInfo{
 			SourceNodeColor: nodeColorAPIGateway,
 			SourceIcon: &DescriptionIcon{
 				Category: "Mobile",
-				Name:     "Amazon-API-Gateway_light-bg.svg",
+				Name:     "Amazon-API-Gateway_light-bg@4x.png",
 			},
 		},
 		TargetNodeName: targetNodeName,
@@ -540,7 +539,7 @@ func (api *API) Description(targetNodeName string) (*DescriptionInfo, error) {
 						SourceNodeColor: nodeColorAPIGateway,
 						SourceIcon: &DescriptionIcon{
 							Category: "_General",
-							Name:     "Internet-alt1_light-bg.svg",
+							Name:     "Internet-alt1_light-bg@4x.png",
 						},
 					},
 					TargetNodeName: nodeNameAPIGateway,
@@ -572,17 +571,17 @@ func (api *API) Marshal(serviceName string,
 
 	// Create an API gateway entry
 	apiGatewayRes := &gocf.APIGatewayRestAPI{
-		Description:    gocf.String(api.APIDescription),
+		Description:    gocf.String(api.Description),
 		FailOnWarnings: gocf.Bool(false),
 		Name:           gocf.String(api.name),
 	}
 	if api.CloneFrom != "" {
 		apiGatewayRes.CloneFrom = gocf.String(api.CloneFrom)
 	}
-	if api.APIDescription == "" {
+	if api.Description == "" {
 		apiGatewayRes.Description = gocf.String(fmt.Sprintf("%s RestApi", serviceName))
 	} else {
-		apiGatewayRes.Description = gocf.String(api.APIDescription)
+		apiGatewayRes.Description = gocf.String(api.Description)
 	}
 	apiGatewayResName := api.LogicalResourceName()
 	// Is there an endpoint type?
