@@ -194,6 +194,9 @@ func Describe(serviceName string,
 			groupName = "WorkflowHooks"
 		}
 		workflowDescriptionErr = writeNodes(groupName, eachWorkflowDesc.Nodes)
+		if workflowDescriptionErr != nil {
+			return workflowDescriptionErr
+		}
 	}
 
 	// Write it out...

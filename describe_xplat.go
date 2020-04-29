@@ -106,11 +106,11 @@ func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
 	return nil
 }
 
-func (dw *descriptionWriter) writeNode(nodeName string,
-	nodeColor string,
-	nodeImage string) error {
-	return dw.writeNodeWithParent(nodeName, nodeColor, nodeImage, "")
-}
+// func (dw *descriptionWriter) writeNode(nodeName string,
+// 	nodeColor string,
+// 	nodeImage string) error {
+// 	return dw.writeNodeWithParent(nodeName, nodeColor, nodeImage, "")
+// }
 
 func (dw *descriptionWriter) writeEdge(fromNode string,
 	toNode string,
