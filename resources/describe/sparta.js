@@ -48,9 +48,14 @@ $(document).ready(function () {
           selector: 'edge',
           style: {
             content: 'data(label)',
-            width: 5,
+            width: 3,
             'curve-style': 'taxi',
-            'mid-target-arrow-shape': 'triangle'
+            'mid-target-arrow-shape': 'triangle',
+            'target-arrow-shape' : 'triangle',
+            'line-dash-pattern' : [9, 3],
+            'line-fill' : 'linear-gradient',
+            'line-gradient-stop-colors' : 'gainsboro slategray black',
+            'target-arrow-color' : 'black'
           }
         }
       ],
