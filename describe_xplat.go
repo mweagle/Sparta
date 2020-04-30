@@ -199,8 +199,8 @@ func templateJSFiles(logger *logrus.Logger) []*templateResource {
 
 func templateImageMap(logger *logrus.Logger) map[string]string {
 	images := []string{"SpartaHelmet256.png",
-		"AWS-Architecture-Icons_PNG_20200131/PNG Light/Compute/AWS-Lambda_Lambda-Function_light-bg@4x.png",
-		"AWS-Architecture-Icons_PNG_20200131/PNG Light/Management & Governance/AWS-CloudFormation_light-bg@4x.png",
+		"AWS-Architecture-Icons_PNG/PNG Light/Compute/AWS-Lambda_Lambda-Function_light-bg@4x.png",
+		"AWS-Architecture-Icons_PNG/PNG Light/Management & Governance/AWS-CloudFormation_light-bg@4x.png",
 	}
 	resources := templateResourcesForKeys(images, logger)
 	imageMap := make(map[string]string)

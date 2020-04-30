@@ -101,9 +101,9 @@ func Describe(serviceName string,
 			// Because the style uses data(image) we need to ensure that
 			// empty nodes have some sort of image, else the Cytoscape JS
 			// won't render
-			return "AWS-Architecture-Icons_PNG_20200131/empty-image.png"
+			return "AWS-Architecture-Icons_PNG/empty-image.png"
 		}
-		return fmt.Sprintf("AWS-Architecture-Icons_PNG_20200131/PNG Light/%s/%s",
+		return fmt.Sprintf("AWS-Architecture-Icons_PNG/PNG Light/%s/%s",
 			descriptionNode.Category,
 			descriptionNode.Name)
 	}

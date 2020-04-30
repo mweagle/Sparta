@@ -44,7 +44,7 @@ $(document).ready(function () {
           'background-opacity': '0'
         }
       },
-        {
+      {
           selector: 'edge',
           style: {
             content: 'data(label)',
@@ -57,6 +57,12 @@ $(document).ready(function () {
             'line-gradient-stop-colors' : 'gainsboro slategray black',
             'target-arrow-color' : 'black'
           }
+        },
+        {
+          selector: 'label',
+          style: {
+            'font-family' : '"Open Sans", Avenir, sans-serif'
+          },
         }
       ],
       layout: {
