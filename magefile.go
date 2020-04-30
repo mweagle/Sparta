@@ -28,8 +28,10 @@ import (
 )
 
 const (
-	localWorkDir = "./.sparta"
-	hugoVersion  = "0.65.2"
+	localWorkDir      = "./.sparta"
+	hugoVersion       = "0.65.2"
+	archIconsRootPath = "resources/describe/AWS-Architecture-Icons_PNG"
+	archIconsTreePath = "resources/describe/AWS-Architecture-Icons.tree.txt"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -319,7 +321,12 @@ const SpartaGitHash = "%s"
 // for both local and AWS Lambda execution
 func GenerateConstants() error {
 	generateCommands := [][]string{
-		// Create the embedded version
+		// Remove the tree output
+		{"rm",
+			"-fv",
+			xplatPath(archIconsTreePath),
+		},
+		//Create the embedded version
 		{"esc",
 			"-o",
 			"./CONSTANTS.go",
@@ -347,6 +354,13 @@ func GenerateConstants() error {
 			"./cmd/insertTags/main.go",
 			"./CONSTANTS_AWSBINARY",
 			"lambdabinary"},
+		// Create the tree output
+		{"tree",
+			"-Q",
+			"-o",
+			xplatPath(archIconsTreePath),
+			xplatPath(archIconsRootPath),
+		},
 		{"git",
 			"commit",
 			"-a",
