@@ -217,7 +217,7 @@ var _escData = map[string]*_escFile{
 		name:    "README.md",
 		local:   "./resources/awsbinary/README.md",
 		size:    184,
-		modtime: 1558591067,
+		modtime: 1544981078,
 		compressed: `
 H4sIAAAAAAAC/yTMQWrDMBAF0L1O8aHr5g6hmwZadyFDl2UifxGBrBGaEcS3L8QHeO8NizpDWB/FkEsl
 ikFbPTCNG1yRBsUJAS29J927eLlX4uNniet1WeNf/Lx9xxO/UNaB62/El+z3TbCxVz12Nr/glnHohJEo
