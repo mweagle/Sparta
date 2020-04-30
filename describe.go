@@ -163,7 +163,7 @@ func Describe(serviceName string,
 		if descriptionNodesErr != nil {
 			return descriptionNodesErr
 		}
-		writeErr := writeNodes("Lambda", descriptionNodes)
+		writeErr := writeNodes("Lambdas", descriptionNodes)
 		if writeErr != nil {
 			return writeErr
 		}
