@@ -61,7 +61,8 @@ $(document).ready(function () {
         {
           selector: 'label',
           style: {
-            'font-family' : '"Open Sans", Avenir, sans-serif'
+            'font-family' : '"Open Sans", Avenir, sans-serif',
+            'font-weight' : 'data(labelWeight)'
           },
         }
       ],

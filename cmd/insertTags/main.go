@@ -42,7 +42,7 @@ func main() {
 %s`,
 		tagString,
 		fileContents)
-	err = ioutil.WriteFile(absPath, []byte(updatedContents), 0644)
+	err = ioutil.WriteFile(absPath, []byte(updatedContents), 0600)
 	if nil != err {
 		panic(err)
 	}

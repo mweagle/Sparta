@@ -22,6 +22,9 @@ const (
 	nodeColorLambda      = "#F35B05"
 	nodeColorAPIGateway  = "#06B5F5"
 	nodeNameAPIGateway   = "API Gateway"
+
+	labelWeightNormal = "normal"
+	labelWeightBold   = "bolder"
 )
 
 // This is the `go` type that's shuttled through the JSON data
@@ -36,6 +39,7 @@ type cytoscapeData struct {
 	Source           string `json:"source,omitempty"`
 	Target           string `json:"target,omitempty"`
 	Label            string `json:"label,omitempty"`
+	LabelWeight      string `json:"labelWeight,omitempty"`
 	DegreeCentrality int    `json:"degreeCentrality"`
 }
 type cytoscapeNode struct {
@@ -68,7 +72,8 @@ type descriptionWriter struct {
 func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
 	nodeColor string,
 	nodeImage string,
-	nodeParent string) error {
+	nodeParent string,
+	labelWeight string) error {
 
 	nodeID, nodeErr := cytoscapeNodeID(nodeName)
 	if nodeErr != nil {
@@ -86,13 +91,17 @@ func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
 		}
 		parentID = tmpParentID
 	}
+	if labelWeight == "" {
+		labelWeight = labelWeightNormal
+	}
 	appendNode := &cytoscapeNode{
 		Data: cytoscapeData{
-			ID:     nodeID,
-			Parent: parentID,
-			Width:  "128",
-			Height: "128",
-			Label:  strings.Trim(nodeName, "\""),
+			ID:          nodeID,
+			Parent:      parentID,
+			Width:       "128",
+			Height:      "128",
+			Label:       strings.Trim(nodeName, "\""),
+			LabelWeight: labelWeight,
 		},
 	}
 	if nodeImage != "" {

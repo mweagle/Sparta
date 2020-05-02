@@ -14,6 +14,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// workflowHooksDescriptionNodes returns the set of []*DescriptionInfo
+// entries that summarizes the WorkflowNodes
 func workflowHooksDescriptionNodes(serviceName string, hooks *WorkflowHooks) ([]*DescriptionInfo, error) {
 	if hooks == nil {
 		return nil, nil
@@ -115,7 +117,8 @@ func Describe(serviceName string,
 			Category: "Management & Governance",
 			Name:     "AWS-CloudFormation_Stack_light-bg@4x.png",
 		}),
-		"")
+		"",
+		labelWeightBold)
 	if writeErr != nil {
 		return writeErr
 	}
@@ -128,7 +131,8 @@ func Describe(serviceName string,
 				writeErr = describer.writeNodeWithParent(parent,
 					"#FF0000",
 					fullIconPath(nil),
-					"")
+					"",
+					labelWeightBold)
 				if writeErr != nil {
 					return writeErr
 				}
@@ -144,7 +148,8 @@ func Describe(serviceName string,
 			writeErr = describer.writeNodeWithParent(eachDescNode.SourceNodeName,
 				descDisplayInfo.SourceNodeColor,
 				fullIconPath(descDisplayInfo.SourceIcon),
-				parent)
+				parent,
+				labelWeightNormal)
 			if writeErr != nil {
 				return writeErr
 			}

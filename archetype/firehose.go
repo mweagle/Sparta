@@ -72,8 +72,10 @@ func NewKinesisFirehoseLambdaTransformer(reactor KinesisFirehoseReactor,
 				len(kinesisFirehoseEvent.Records)),
 		}
 
+		var responseRecord *awsEvents.KinesisFirehoseResponseRecord
+		var responseRecordErr error
 		for eachIndex, eachRecord := range kinesisFirehoseEvent.Records {
-			responseRecord, responseRecordErr := reactor.OnKinesisFirehoseRecord(ctx, &eachRecord)
+			responseRecord, responseRecordErr = reactor.OnKinesisFirehoseRecord(ctx, &eachRecord)
 			if responseRecordErr != nil {
 				return nil, errors.Wrapf(responseRecordErr, "Failed to transform record")
 			}
@@ -139,7 +141,15 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		if fileReaderErr != nil {
 			return errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
 		}
-		defer fileReader.Close()
+		defer func() {
+			closeErr := fileReader.Close()
+
+			if closeErr != nil {
+				logger.WithFields(logrus.Fields{
+					"error": closeErr,
+				}).Warn("Failed to close file reader")
+			}
+		}()
 
 		fileHeader, fileHeaderErr := zip.FileInfoHeader(fileInfo)
 		if fileHeaderErr != nil {
