@@ -223,29 +223,49 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 // looking at the referred resource to understand it's
 // type
 func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
+	jsonBytes, jsonBytesErr := json.Marshal(rawEmitter)
+	if jsonBytesErr != nil {
+		jsonBytes = make([]byte, 0)
+	}
+	canonicalRaw := strings.ToLower(string(jsonBytes))
+	iconMappings := map[string]*DescriptionIcon{
+		"dynamodb": {
+			Category: "Database",
+			Name:     "Amazon-DynamoDB@4x.png",
+		},
+		"sqs": {
+			Category: "Application Integration",
+			Name:     "Amazon-Simple-Queue-Service-SQS@4x.png",
+		},
+		"sns": {
+			Category: "Application Integration",
+			Name:     "Amazon-Simple-Notification-Service-SNS@4x.png",
+		},
+		"cloudwatch": {
+			Category: "Management & Governance",
+			Name:     "Amazon-Simple-Notification-Service-SNS@4x.png",
+		},
+		"kinesis": {
+			Category: "Analytics",
+			Name:     "Amazon-Kinesis@4x.png",
+		},
+		//lint:ignore ST1018 This is the name of the icon
+		"s3": {
+			Category: "Storage",
+			Name:     "Amazon-Simple-Storage-Service-S3@4x.png",
+		},
+		"codecommit": {
+			Category: "Developer Tools",
+			Name:     "AWS-CodeCommit_light-bg.svg",
+		},
+	}
+	// Return it if we have it...
+	for eachKey, eachIcon := range iconMappings {
+		if strings.Contains(canonicalRaw, eachKey) {
+			return eachIcon
+		}
+	}
 	return nil
-	// jsonBytes, jsonBytesErr := json.Marshal(rawEmitter)
-	// if jsonBytesErr != nil {
-	// 	jsonBytes = make([]byte, 0)
-	// }
-	// canonicalRaw := strings.ToLower(string(jsonBytes))
-	// iconMappings := map[string]string{
-	// 	"dynamodb":   "AWS-Architecture-Icons_SVG_20200131/SVG Light/Database/Amazon-DynamoDB_Table_light-bg.svg",
-	// 	"sqs":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Queue-Service-SQS_light-bg.svg",
-	// 	"sns":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Notification-Service-SNS_light-bg.svg",
-	// 	"cloudwatch": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/Amazon-CloudWatch.svg",
-	// 	"kinesis":    "AWS-Architecture-Icons_SVG_20200131/SVG Light/Analytics/Amazon-Kinesis_light-bg.svg",
-	// 	//lint:ignore ST1018 This is the name of the icon
-	// 	"s3": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Storage/Amazon-Simple-Storage-Service-S3.svg",
-	// 	"codecommit": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Developer Tools/AWS-CodeCommit_light-bg.svg",
-	// }
-	// // Return it if we have it...
-	// for eachKey, eachPath := range iconMappings {
-	// 	if strings.Contains(canonicalRaw, eachKey) {
-	// 		return eachPath
-	// 	}
-	// }
-	// return "AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/General_light-bg.svg"
 }
 
 // DescriptionIcon is the struct that contains the category & icon
