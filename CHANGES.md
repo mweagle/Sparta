@@ -4,6 +4,8 @@
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Added [sparta.AWSLambdaProvider](https://godoc.org/github.com/mweagle/Sparta#AWSLambdaProvider) to encapsulate an AWS Lambda compatible instance.
+    - Existing `*sparta.LambdaAWSInfo` objects can be constructed from a `AWSLambdaProvider` via [sparta.NewAWSLambdaFromProvider](https://godoc.org/github.com/mweagle/Sparta#AWSLambdaProvider).
   - Added `--inputExtensions` command line argument to the _Explore_ command to support filtering eligible assets for interactive testing.
   - Updated `describe` output format and layout
     - See the [SpartaCast example](https://raw.githubusercontent.com/mweagle/SpartaCast/master/site/describe.jpeg)
