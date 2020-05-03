@@ -4,6 +4,7 @@ graph.html
 tags
 .atom-build.json
 resources/provision/node_modules/*
+resources/describe/AWS-Architecture-Icons_PNG/*
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o

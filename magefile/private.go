@@ -15,17 +15,18 @@ func sourceFilesOfType(extension string, ignoreGlobs []string) ([]string, error)
 
 	files := make([]string, 0)
 	walker := func(path string, info os.FileInfo, err error) error {
-		contains := false
+		rejectFile := false
 		for _, eachComponent := range ignoreGlobs {
 			matched, matchErr := filepath.Match(eachComponent, path)
 			if matchErr != nil {
 				return nil
 			}
 			if matched {
+				rejectFile = true
 				break
 			}
 		}
-		if !contains && (filepath.Ext(path) == testExtension) {
+		if !rejectFile && (filepath.Ext(path) == testExtension) {
 			files = append(files, path)
 		}
 		return nil

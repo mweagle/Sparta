@@ -70,7 +70,7 @@ var RootCmd = &cobra.Command{
 			return errors.Wrapf(stackInfoErr, "Failed to describe stacks")
 		}
 		outputFilepath := filepath.Join(optionsLink.OutputDirectory, fmt.Sprintf("%s.json", optionsLink.StackName))
-		err = ioutil.WriteFile(outputFilepath, stackInfo, 0644)
+		err = ioutil.WriteFile(outputFilepath, stackInfo, 0600)
 		if nil != err {
 			return errors.Wrap(err, "Attempting to write output file")
 		}

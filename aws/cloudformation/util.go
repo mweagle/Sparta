@@ -110,6 +110,8 @@ func (converter *templateConverter) parseData() *templateConverter {
 	if converter.conversionError != nil {
 		return converter
 	}
+	// TODO - parse this better... 🤔
+	// First see if it's JSON...if so, just walk it
 	reAWSProp := regexp.MustCompile("\\{\\s*\"\\s*(Ref|Fn::GetAtt|Fn::FindInMap)")
 	splitData := strings.Split(converter.expandedTemplate, "\n")
 	splitDataLineCount := len(splitData)
@@ -493,7 +495,11 @@ func WaitForStackOperationComplete(stackID string,
 	startTime := time.Now()
 
 	// Startup a spinner...
-	charSetIndex := 7
+	// TODO: special case iTerm per https://github.com/briandowns/spinner/issues/64
+	charSetIndex := 39
+	if strings.Contains(os.Getenv("LC_TERMINAL"), "iTerm") {
+		charSetIndex = 7
+	}
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex],
 		333*time.Millisecond)
 	spinnerErr := cliSpinner.Color("red", "bold")

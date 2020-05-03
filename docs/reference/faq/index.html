@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.65.2" />
+    <meta name="generator" content="Hugo 0.69.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>FAQ :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1582502100" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1582502100" rel="stylesheet">
-    <link href="/css/hybrid.css?1582502100" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1582502100" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1582502100" rel="stylesheet">
-    <link href="/css/auto-complete.css?1582502100" rel="stylesheet">
-    <link href="/css/theme.css?1582502100" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1582502100" rel="stylesheet">
+    <link href="/css/nucleus.css?1588464711" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1588464711" rel="stylesheet">
+    <link href="/css/hybrid.css?1588464711" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1588464711" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1588464711" rel="stylesheet">
+    <link href="/css/auto-complete.css?1588464711" rel="stylesheet">
+    <link href="/css/theme.css?1588464711" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1588464711" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1582502100" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1588464711" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1582502100"></script>
+    <script src="/js/jquery-3.3.1.min.js?1588464711"></script>
     
-    <link href="/css/vs.css?1582502100" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1582502100"></script>
+    <link href="/css/vs.css?1588464711" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1588464711"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1582502100"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1582502100"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1588464711"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1588464711"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1582502100"></script>
+<script type="text/javascript" src="/js/search.js?1588464711"></script>
 
     
   </div>
@@ -1874,8 +1874,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/21b5553d">21b5553d</a><p/>
-  Date: 2020-02-23T15:55:00-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/46463572">46463572</a><p/>
+  Date: 2020-05-02T17:11:51-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1953,28 +1953,28 @@ pre {
     <li><a href="#development">Development</a>
       <ul>
         <li><a href="#how-do-i-configure-aws-sdk-settings">How do I configure AWS SDK settings?</a></li>
-        <li><a href="#what-are-the-minimum-iam-privileges-for-sparta-developers">What are the Minimum IAM Privileges for Sparta developers?</a></li>
+        <li><a href="#what-are-the-minimum-iam-privileges-for-sparta-developers">What are the <em>Minimum</em> IAM Privileges for Sparta developers?</a></li>
         <li><a href="#what-are-the-minimum-iam-privileges-to-provision-a-sparta-app-and-api-gateway">What are the minimum IAM privileges to provision a Sparta app and API Gateway</a></li>
         <li><a href="#what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</a></li>
         <li><a href="#what-working-directory-should-i-use">What working directory should I use?</a></li>
-        <li><a href="#how-can-i-make-provision-faster">How can I make provision faster?</a></li>
+        <li><a href="#how-can-i-make-provision-faster">How can I make <code>provision</code> faster?</a></li>
       </ul>
     </li>
     <li><a href="#event-sources---ses">Event Sources - SES</a>
       <ul>
-        <li><a href="#where-does-the-_spartaruleset_-come-from">Where does the SpartaRuleSet come from?</a></li>
-        <li><a href="#why-does-provision-not-always-enable-the-_spartaruleset_">Why does provision not always enable the SpartaRuleSet?</a></li>
+        <li><a href="#where-does-the-_spartaruleset_-come-from">Where does the <em>SpartaRuleSet</em> come from?</a></li>
+        <li><a href="#why-does-provision-not-always-enable-the-_spartaruleset_">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</a></li>
       </ul>
     </li>
     <li><a href="#operations">Operations</a>
       <ul>
         <li><a href="#how-can-i-provision-a-service-dashboard">How can I provision a service dashboard?</a></li>
         <li><a href="#how-can-i-monitor-my-lambda-function">How can I monitor my Lambda function?</a></li>
-        <li><a href="#where-can-i-view-my-functions-logger-output">Where can I view my function&rsquo;s *logger output?</a></li>
+        <li><a href="#where-can-i-view-my-functions-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
         <li><a href="#where-can-i-view-spartas-golang-spawn-metrics">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
         <li><a href="#how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</a></li>
         <li><a href="#how-can-i-provide-environment-variables-to-lambda-functions">How can I provide environment variables to lambda functions?</a></li>
-        <li><a href="#does-sparta-support-versioning--aliasing">Does Sparta support Versioning & Aliasing?</a></li>
+        <li><a href="#does-sparta-support-versioning--aliasing">Does Sparta support Versioning &amp; Aliasing?</a></li>
         <li><a href="#how-do-i-forward-additional-metrics">How do I forward additional metrics?</a></li>
         <li><a href="#how-do-i-setup-alerts-on-additional-metrics">How do I setup alerts on additional metrics?</a></li>
         <li><a href="#how-can-i-determine-the-outputs-available-in-spartadiscover-for-dynamic-aws-resources">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
@@ -3652,18 +3652,18 @@ cfTemplate.AddResource(aliasResourceName, aliasResource)
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1582502100"></script>
-<script src="/js/perfect-scrollbar.min.js?1582502100"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1582502100"></script>
-<script src="/js/jquery.sticky.js?1582502100"></script>
-<script src="/js/featherlight.min.js?1582502100"></script>
-<script src="/js/html5shiv-printshiv.min.js?1582502100"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1582502100"></script>
-<script src="/js/learn.js?1582502100"></script>
-<script src="/js/hugo-learn.js?1582502100"></script>
+<script src="/js/clipboard.min.js?1588464711"></script>
+<script src="/js/perfect-scrollbar.min.js?1588464711"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1588464711"></script>
+<script src="/js/jquery.sticky.js?1588464711"></script>
+<script src="/js/featherlight.min.js?1588464711"></script>
+<script src="/js/html5shiv-printshiv.min.js?1588464711"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1588464711"></script>
+<script src="/js/learn.js?1588464711"></script>
+<script src="/js/hugo-learn.js?1588464711"></script>
 
-<link href="/mermaid/mermaid.css?1582502100" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1582502100"></script>
+<link href="/mermaid/mermaid.css?1588464711" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1588464711"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

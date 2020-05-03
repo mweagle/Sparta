@@ -195,42 +195,49 @@ func (apiv2 *APIV2) LogicalResourceName() string {
 }
 
 // Describe satisfies the API interface
-func (apiv2 *APIV2) Describe(describer *descriptionWriter) error {
-	// Create the API v2 Object
-	// Create the APIGateway virtual node && connect it to the application
-	writeErr := describer.writeNode(nodeNameAPIGateway,
-		nodeColorAPIGateway,
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
-	if writeErr != nil {
-		return writeErr
+func (apiv2 *APIV2) Describe(targetNodeName string) (*DescriptionInfo, error) {
+	descInfo := &DescriptionInfo{
+		Name:  "APIGatewayV2",
+		Nodes: make([]*DescriptionTriplet, 0),
 	}
+
+	descInfo.Nodes = append(descInfo.Nodes, &DescriptionTriplet{
+		SourceNodeName: nodeNameAPIGateway,
+		DisplayInfo: &DescriptionDisplayInfo{
+			SourceNodeColor: nodeColorAPIGateway,
+			SourceIcon: &DescriptionIcon{
+				Category: "Mobile",
+				Name:     "Amazon-API-Gateway_light-bg@4x.png",
+			},
+		},
+		TargetNodeName: targetNodeName,
+	})
+
 	for eachRouteExpr, eachRoute := range apiv2.routes {
 		opName := ""
 		if eachRoute.OperationName != "" {
 			opName = fmt.Sprintf(" - %s", eachRoute.OperationName)
 		}
 		var nodeName = fmt.Sprintf("%s%s", eachRouteExpr, opName)
-		writeErr = describer.writeNode(
-			nodeName,
-			nodeColorAPIGateway,
-			"AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/Internet-alt1_light-bg.svg")
-		if writeErr != nil {
-			return writeErr
-		}
-		writeErr = describer.writeEdge(nodeNameAPIGateway,
-			nodeName,
-			"")
-		if writeErr != nil {
-			return writeErr
-		}
-		writeErr = describer.writeEdge(nodeName,
-			eachRoute.lambdaFn.lambdaFunctionName(),
-			"")
-		if writeErr != nil {
-			return writeErr
-		}
+
+		descInfo.Nodes = append(descInfo.Nodes,
+			&DescriptionTriplet{
+				SourceNodeName: nodeNameAPIGateway,
+				DisplayInfo: &DescriptionDisplayInfo{
+					SourceNodeColor: nodeColorAPIGateway,
+					SourceIcon: &DescriptionIcon{
+						Category: "_General",
+						Name:     "Internet-alt1_light-bg@4x.png",
+					},
+				},
+				TargetNodeName: nodeName,
+			},
+			&DescriptionTriplet{
+				SourceNodeName: nodeName,
+				TargetNodeName: eachRoute.lambdaFn.lambdaFunctionName(),
+			})
 	}
-	return nil
+	return descInfo, nil
 }
 
 // Marshal marshals the API V2 Gateway instance to the given template instance

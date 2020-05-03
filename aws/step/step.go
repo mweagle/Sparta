@@ -703,6 +703,7 @@ func NewWaitUntilState(stateName string, waitUntil time.Time) *WaitUntil {
 type WaitDynamicUntil struct {
 	baseInnerState
 	TimestampPath string
+	SecondsPath   string
 }
 
 // Name returns the WaitDelay name
@@ -745,7 +746,12 @@ func (wdu *WaitDynamicUntil) WithOutputPath(outputPath string) TransitionState {
 // MarshalJSON for custom marshalling
 func (wdu *WaitDynamicUntil) MarshalJSON() ([]byte, error) {
 	additionalParams := make(map[string]interface{})
-	additionalParams["TimestampPath"] = wdu.TimestampPath
+	if wdu.TimestampPath != "" {
+		additionalParams["TimestampPath"] = wdu.TimestampPath
+	}
+	if wdu.SecondsPath != "" {
+		additionalParams["SecondsPath"] = wdu.SecondsPath
+	}
 	return wdu.marshalStateJSON("Wait", additionalParams)
 }
 
@@ -757,6 +763,17 @@ func NewWaitDynamicUntilState(stateName string, timestampPath string) *WaitDynam
 			id:   rand.Int63(),
 		},
 		TimestampPath: timestampPath,
+	}
+}
+
+// NewDynamicWaitDurationState returns a new WaitDynamicUntil pointer instance
+func NewDynamicWaitDurationState(stateName string, secondsPath string) *WaitDynamicUntil {
+	return &WaitDynamicUntil{
+		baseInnerState: baseInnerState{
+			name: stateName,
+			id:   rand.Int63(),
+		},
+		SecondsPath: secondsPath,
 	}
 }
 
@@ -795,7 +812,7 @@ type StateMachine struct {
 	stateDefinitionError error
 	machineType          string
 	loggingConfiguration *gocf.StepFunctionsStateMachineLoggingConfiguration
-	startAt              TransitionState
+	startAt              MachineState
 	uniqueStates         map[string]MachineState
 	roleArn              gocf.Stringable
 	// internal flag to suppress the automatic "End" property
@@ -1005,22 +1022,32 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 
 func createStateMachine(stateMachineName string,
 	machineType string,
-	startState TransitionState) *StateMachine {
+	startState MachineState) *StateMachine {
 	uniqueStates := make(map[string]MachineState)
 	pendingStates := []MachineState{startState}
+	// Map of basename to nodeID to check for duplicates
 	duplicateStateNames := make(map[string]bool)
+
+	// TODO - check duplicate names
 
 	nodeVisited := func(node MachineState) bool {
 		if node == nil {
 			return true
 		}
-		_, visited := uniqueStates[node.Name()]
+		existingNode, visited := uniqueStates[node.Name()]
+		if visited && existingNode.nodeID() != node.nodeID() {
+			// Check for different nodeids.
+			duplicateStateNames[node.Name()] = true
+		}
 		return visited
 	}
 
 	for len(pendingStates) != 0 {
 		headState, tailStates := pendingStates[0], pendingStates[1:]
-		uniqueStates[headState.Name()] = headState
+
+		// Does this already exist?
+		headStateName := headState.Name()
+		uniqueStates[headStateName] = headState
 
 		switch stateNode := headState.(type) {
 		case *ChoiceState:
@@ -1055,7 +1082,12 @@ func createStateMachine(stateMachineName string,
 	}
 	// Store duplicate state names
 	if len(duplicateStateNames) != 0 {
-		sm.stateDefinitionError = fmt.Errorf("duplicate state names: %#v", duplicateStateNames)
+		duplicateNames := []string{}
+		for eachKey := range duplicateStateNames {
+			duplicateNames = append(duplicateNames, eachKey)
+		}
+		sm.stateDefinitionError = fmt.Errorf("duplicate state names: %s",
+			strings.Join(duplicateNames, ","))
 	}
 	return sm
 
@@ -1076,8 +1108,7 @@ func NewExpressStateMachine(stateMachineName string,
 }
 
 // NewStateMachine returns a new StateMachine instance
-func NewStateMachine(stateMachineName string,
-	startState TransitionState) *StateMachine {
+func NewStateMachine(stateMachineName string, startState MachineState) *StateMachine {
 
 	return createStateMachine(stateMachineName,
 		stateMachineStandard,

@@ -26,7 +26,7 @@ type APIGateway interface {
 		template *gocf.Template,
 		noop bool,
 		logger *logrus.Logger) error
-	Describe(writer *descriptionWriter) error
+	Describe(targetNodeName string) (*DescriptionInfo, error)
 }
 
 var defaultCORSHeaders = map[string]interface{}{
@@ -476,7 +476,7 @@ type API struct {
 	stage *Stage
 	// Existing API to CloneFrom
 	CloneFrom string
-	// API Description
+	// APIDescription is the user defined description
 	Description string
 	// Non-empty map of urlPaths->Resource definitions
 	resources map[string]*Resource
@@ -509,42 +509,48 @@ func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
 
-// Describe writes the API to a graph for visualization
-func (api *API) Describe(describer *descriptionWriter) error {
+// Describe returns the API for description
+func (api *API) Describe(targetNodeName string) (*DescriptionInfo, error) {
+	descInfo := &DescriptionInfo{
+		Name:  "APIGateway",
+		Nodes: make([]*DescriptionTriplet, 0),
+	}
+	descInfo.Nodes = append(descInfo.Nodes, &DescriptionTriplet{
+		SourceNodeName: nodeNameAPIGateway,
+		DisplayInfo: &DescriptionDisplayInfo{
+			SourceNodeColor: nodeColorAPIGateway,
+			SourceIcon: &DescriptionIcon{
+				Category: "Mobile",
+				Name:     "Amazon-API-Gateway_light-bg@4x.png",
+			},
+		},
+		TargetNodeName: targetNodeName,
+	})
 
 	// Create the APIGateway virtual node && connect it to the application
-	writeErr := describer.writeNode(nodeNameAPIGateway,
-		nodeColorAPIGateway,
-		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Mobile/Amazon-API-Gateway_light-bg.svg")
-	if writeErr != nil {
-		return writeErr
-	}
 	for _, eachResource := range api.resources {
 		for eachMethod := range eachResource.Methods {
 			// Create the PATH node
 			var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
-			writeErr = describer.writeNode(
-				nodeName,
-				nodeColorAPIGateway,
-				"AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/Internet-alt1_light-bg.svg")
-			if writeErr != nil {
-				return writeErr
-			}
-			writeErr = describer.writeEdge(nodeNameAPIGateway,
-				nodeName,
-				"")
-			if writeErr != nil {
-				return writeErr
-			}
-			writeErr = describer.writeEdge(nodeName,
-				eachResource.parentLambda.lambdaFunctionName(),
-				"")
-			if writeErr != nil {
-				return writeErr
-			}
+			descInfo.Nodes = append(descInfo.Nodes,
+				&DescriptionTriplet{
+					SourceNodeName: nodeName,
+					DisplayInfo: &DescriptionDisplayInfo{
+						SourceNodeColor: nodeColorAPIGateway,
+						SourceIcon: &DescriptionIcon{
+							Category: "_General",
+							Name:     "Internet-alt1_light-bg@4x.png",
+						},
+					},
+					TargetNodeName: nodeNameAPIGateway,
+				},
+				&DescriptionTriplet{
+					SourceNodeName: nodeName,
+					TargetNodeName: eachResource.parentLambda.lambdaFunctionName(),
+				})
 		}
 	}
-	return nil
+	return descInfo, nil
 }
 
 // Marshal marshals the API data to a CloudFormation compatible representation

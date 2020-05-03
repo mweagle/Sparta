@@ -28,8 +28,10 @@ import (
 )
 
 const (
-	localWorkDir = "./.sparta"
-	hugoVersion  = "0.65.2"
+	localWorkDir      = "./.sparta"
+	hugoVersion       = "0.69.2"
+	archIconsRootPath = "resources/describe/AWS-Architecture-Icons_PNG"
+	archIconsTreePath = "resources/describe/AWS-Architecture-Icons.tree.txt"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -62,6 +64,11 @@ func markdownSourceApply(commandParts ...string) error {
 }
 func goSourceApply(commandParts ...string) error {
 	return spartamage.ApplyToSource("go", ignoreSubdirectoryPaths, commandParts...)
+}
+
+func goFilteredSourceApply(ignorePatterns []string, commandParts ...string) error {
+	ignorePatterns = append(ignorePatterns, ignoreSubdirectoryPaths...)
+	return spartamage.ApplyToSource("go", ignorePatterns, commandParts...)
 }
 
 func gitCommit(shortVersion bool) (string, error) {
@@ -319,7 +326,12 @@ const SpartaGitHash = "%s"
 // for both local and AWS Lambda execution
 func GenerateConstants() error {
 	generateCommands := [][]string{
-		// Create the embedded version
+		// Remove the tree output
+		{"rm",
+			"-fv",
+			xplatPath(archIconsTreePath),
+		},
+		//Create the embedded version
 		{"esc",
 			"-o",
 			"./CONSTANTS.go",
@@ -347,6 +359,13 @@ func GenerateConstants() error {
 			"./cmd/insertTags/main.go",
 			"./CONSTANTS_AWSBINARY",
 			"lambdabinary"},
+		// Create the tree output
+		{"tree",
+			"-Q",
+			"-o",
+			xplatPath(archIconsTreePath),
+			xplatPath(archIconsRootPath),
+		},
 		{"git",
 			"commit",
 			"-a",
@@ -381,8 +400,11 @@ func EnsureMarkdownSpelling() error {
 
 // EnsureSpelling ensures that there are no misspellings in the source
 func EnsureSpelling() error {
+	ignoreFiles := []string{
+		"CONSTANTS*",
+	}
 	goSpelling := func() error {
-		return goSourceApply("misspell", "-error")
+		return goFilteredSourceApply(ignoreFiles, "misspell", "-error")
 	}
 	mg.SerialDeps(
 		goSpelling,
@@ -438,6 +460,7 @@ func EnsureFormatted() error {
 // EnsureStaticChecks ensures that the source code passes static code checks
 func EnsureStaticChecks() error {
 	// https://staticcheck.io/
+	excludeChecks := "-exclude=G204,G505,G401,G601"
 	staticCheckErr := sh.Run("staticcheck",
 		"github.com/mweagle/Sparta/...")
 	if staticCheckErr != nil {
@@ -446,11 +469,11 @@ func EnsureStaticChecks() error {
 	// https://github.com/securego/gosec
 	if mg.Verbose() {
 		return sh.Run("gosec",
-			"-exclude=G204,G505,G401",
+			excludeChecks,
 			"./...")
 	}
 	return sh.Run("gosec",
-		"-exclude=G204,G505,G401",
+		excludeChecks,
 		"-quiet",
 		"./...")
 }

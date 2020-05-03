@@ -220,7 +220,15 @@ func downloaderTask(profileType string,
 				err: outputFileErr,
 			}
 		}
-		defer outputFile.Close()
+		defer func() {
+			closeErr := outputFile.Close()
+			if closeErr != nil {
+				logger.WithFields(logrus.Fields{
+					"error": closeErr,
+				}).Warn("Failed to close output file writer")
+			}
+		}()
+
 		_, downloadErr := downloader.Download(outputFile, downloadInput)
 		// If we're all good, delete the one on s3...
 		if downloadErr == nil {
@@ -330,7 +338,6 @@ func syncStackProfileSnapshots(profileType string,
 		if profileInputErr != nil {
 			return nil, profileInputErr
 		}
-		defer profileInput.Close()
 		parsedProfile, parsedProfileErr := profile.Parse(profileInput)
 		// Ignore broken profiles
 		if parsedProfileErr != nil {
@@ -343,6 +350,12 @@ func syncStackProfileSnapshots(profileType string,
 				"Input": profileFile,
 			}).Info("Aggregating profile")
 			accumulatedProfiles = append(accumulatedProfiles, parsedProfile)
+			profileInputCloseErr := profileInput.Close()
+			if profileInputCloseErr != nil {
+				logger.WithFields(logrus.Fields{
+					"error": profileInputCloseErr,
+				}).Warn("Failed to close profile file writer")
+			}
 		}
 	}
 	logger.WithFields(logrus.Fields{
@@ -377,7 +390,7 @@ func syncStackProfileSnapshots(profileType string,
 		return nil, errors.Wrapf(writeErr,
 			"failed to write profile: %s", consolidatedPath)
 	}
-	defer outputFile.Close()
+
 	// Delete all the other ones, just return the consolidated one...
 	for _, eachResult := range results {
 		unlinkErr := os.Remove(eachResult.(string))
@@ -386,6 +399,12 @@ func syncStackProfileSnapshots(profileType string,
 				"File":  consolidatedPath,
 				"Error": unlinkErr,
 			}).Info("Failed to delete file")
+		}
+		outputFileErr := outputFile.Close()
+		if outputFileErr != nil {
+			logger.WithFields(logrus.Fields{
+				"Error": outputFileErr,
+			}).Info("Failed to close output file")
 		}
 	}
 	return []string{consolidatedPath}, nil

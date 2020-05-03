@@ -171,6 +171,7 @@ func newEventInputSelector(awsSession *session.Session,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
+	inputExtensionsFilters []string,
 	functionSelectedBroadcaster broadcast.Broadcaster,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
@@ -197,11 +198,13 @@ func newEventInputSelector(awsSession *session.Session,
 	}
 	jsonFiles := []string{}
 	walkerFunc := func(path string, info os.FileInfo, err error) error {
-		if strings.ToLower(filepath.Ext(path)) == ".json" &&
-			!strings.Contains(path, ScratchDirectory) {
-			relPath := strings.TrimPrefix(path, curDir)
-			jsonFiles = append(jsonFiles, relPath)
-			logger.WithField("RelativePath", relPath).Debug("Event file found")
+		for _, eachMatch := range inputExtensionsFilters {
+			if strings.HasSuffix(strings.ToLower(filepath.Ext(path)), eachMatch) &&
+				!strings.Contains(path, ScratchDirectory) {
+				relPath := strings.TrimPrefix(path, curDir)
+				jsonFiles = append(jsonFiles, relPath)
+				logger.WithField("RelativePath", relPath).Debug("Event file found")
+			}
 		}
 		return nil
 	}

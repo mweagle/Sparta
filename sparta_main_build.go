@@ -219,7 +219,15 @@ func MainEx(serviceName string,
 			if fileWriterErr != nil {
 				return fileWriterErr
 			}
-			defer fileWriter.Close()
+			defer func() {
+				closeErr := fileWriter.Close()
+				if closeErr != nil {
+					OptionsGlobal.Logger.WithFields(logrus.Fields{
+						"error": closeErr,
+					}).Warn("Failed to close describe output writer")
+				}
+			}()
+
 			describeErr := Describe(serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
@@ -249,11 +257,12 @@ func MainEx(serviceName string,
 				return validateErr
 			}
 
-			return Explore(serviceName,
+			return ExploreWithInputFilter(serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
 				api,
 				site,
+				optionsExplore.InputExtensions,
 				optionsDescribe.S3Bucket,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,

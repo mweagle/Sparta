@@ -358,8 +358,13 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 	// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator,
 	// pass that to the S3Site
 	// if it's defined, and then merge it with the normal output map.-
-	for _, eachServiceHook := range serviceHooks {
-		hookName := runtime.FuncForPC(reflect.ValueOf(eachServiceHook).Pointer()).Name()
+	for eachIndex, eachServiceHook := range serviceHooks {
+		funcPtr := reflect.ValueOf(eachServiceHook).Pointer()
+		funcForPC := runtime.FuncForPC(funcPtr)
+		hookName := funcForPC.Name()
+		if hookName == "" {
+			hookName = fmt.Sprintf("ServiceHook[%d]", eachIndex)
+		}
 		ctx.logger.WithFields(logrus.Fields{
 			"ServiceDecoratorHook": hookName,
 			"WorkflowHookContext":  ctx.context.workflowHooksContext,
@@ -1616,6 +1621,11 @@ func Provision(noop bool,
 			ctx.logger.WithFields(logrus.Fields{
 				"Duration (s)": fmt.Sprintf("%.f", elapsed.Seconds()),
 			}).Info("Total elapsed time")
+			curTime := time.Now()
+			ctx.logger.WithFields(logrus.Fields{
+				"Time (UTC)":   curTime.UTC().Format(time.RFC3339),
+				"Time (Local)": curTime.Format(time.RFC822),
+			}).Info("Complete")
 			break
 		} else {
 			step = next

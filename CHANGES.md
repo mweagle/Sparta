@@ -1,5 +1,23 @@
 # Change Notes
 
+## v1.15.0 - The Daylight Savings Edition 🕑
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added [sparta.AWSLambdaProvider](https://godoc.org/github.com/mweagle/Sparta#AWSLambdaProvider) to encapsulate an AWS Lambda compatible instance.
+    - Existing `*sparta.LambdaAWSInfo` objects can be constructed from a `AWSLambdaProvider` via [sparta.NewAWSLambdaFromProvider](https://godoc.org/github.com/mweagle/Sparta#AWSLambdaProvider).
+  - Added `--inputExtensions` command line argument to the _Explore_ command to support filtering eligible assets for interactive testing.
+  - Updated `describe` output format and layout
+    - See the [SpartaCast example](https://raw.githubusercontent.com/mweagle/SpartaCast/master/site/describe.jpeg)
+  - Added `sparta.Describable` interface to allow for user-supplied decorators to provide nodes and edges to the layout.
+    - [ServiceDecoratorHookHandler](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler]) instances that implement _Describable_ are eligible to be included in the layout.
+  - Added a `Complete` log statement to the end of log output.
+    - Example: `INFO[0044] Complete Time (Local)="02 May 20 05:38 PDT" Time (UTC)="2020-05-02T12:38:54Z"`
+  - Add `step.NewDynamicWaitDurationState` to allow for [input-dependent wait](https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-wait-state.html) functions.
+- :bug: **FIXED**
+  - [Avoid creating default state machine role when an external role is set](https://github.com/mweagle/Sparta/pull/170)
+  - Moved to PNG [AWS Architecture icons](https://aws.amazon.com/architecture/icons/) for `describe` output to elimniate [data-uri SVG rendering issues](https://github.com/cytoscape/cytoscape.js/issues/1684).
+
 ## v1.14.0 - The post:Invent Edition 🎰
 
 - :warning: **BREAKING**

@@ -13,6 +13,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func testStepProvisionAssertError(t *testing.T,
+	lambdaFns []*sparta.LambdaAWSInfo,
+	stateMachine *StateMachine) {
+
+	// Add the state machine to the deployment...
+	workflowHooks := &sparta.WorkflowHooks{
+		ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
+			stateMachine.StateMachineDecorator(),
+		},
+	}
+	spartaTesting.ProvisionEx(t,
+		lambdaFns,
+		nil,
+		nil,
+		workflowHooks,
+		false,
+		spartaTesting.AssertError("Failed to reject duplicate named tasks"))
+}
+
 func testStepProvision(t *testing.T,
 	lambdaFns []*sparta.LambdaAWSInfo,
 	stateMachine *StateMachine) {
@@ -68,6 +87,30 @@ func TestAWSStepFunction(t *testing.T) {
 	startMachine := NewStateMachine("SampleStepFunction", lambdaTaskState)
 
 	testStepProvision(t,
+		[]*sparta.LambdaAWSInfo{lambdaFn},
+		startMachine)
+}
+
+func TestAWSStepFunctionDuplicateStateName(t *testing.T) {
+
+	// Normal Sparta lambda function
+	lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
+		helloWorld,
+		sparta.IAMRoleDefinition{})
+
+	// // Create a Choice state
+	lambdaTaskState := NewLambdaTaskState("task1", lambdaFn)
+	lambdaTaskState2 := NewLambdaTaskState("task1", lambdaFn)
+	successState := NewSuccessState("success")
+
+	// Hook them up..
+	lambdaTaskState.Next(lambdaTaskState2)
+	lambdaTaskState2.Next(successState)
+
+	// Startup the machine.
+	startMachine := NewStateMachine("DuplicateStatesStepFunction", lambdaTaskState)
+
+	testStepProvisionAssertError(t,
 		[]*sparta.LambdaAWSInfo{lambdaFn},
 		startMachine)
 }

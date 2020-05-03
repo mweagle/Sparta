@@ -1,8 +1,7 @@
 var SERVICE_NAME = 'TBD'
-var cytoscapeView = null;
+var cytoscapeView = null
 
-
-function showView(newElementID) {
+function showView (newElementID) {
   $('#view-container').children().hide()
   $('#navBarItems').children().removeClass('active')
   // Set the tab active, the view active
@@ -22,9 +21,9 @@ $(document).ready(function () {
       ERROR: e.toString()
     }
   }
-  var jsonString = JSON.stringify(cloudformationTemplate, null, 4);
+  var jsonString = JSON.stringify(cloudformationTemplate, null, 4)
   $('#rawTemplateContent').text(jsonString)
-  hljs.initHighlightingOnLoad();
+  hljs.initHighlightingOnLoad()
   $('pre code').each(function (i, block) {
     hljs.highlightBlock(block)
   })
@@ -35,49 +34,64 @@ $(document).ready(function () {
       container: $('#cytoscapeDIVTarget'),
       elements: CYTOSCAPE_DATA,
       style: [{
-          selector: 'node',
+        selector: 'node',
+        style: {
+          shape: 'round-rectangle',
+          content: 'data(label)',
+          'background-image': 'data(image)',
+          'background-width': '100%',
+          'background-height': '100%',
+          'background-opacity': '0'
+        }
+      },
+      {
+          selector: 'edge',
           style: {
-            'shape': 'round-rectangle',
-            'content': 'data(label)',
-            'background-image': 'data(image)',
-            'background-width': '196px',
-            'background-height': '196px',
-            'background-fit': 'cover',
-            'background-opacity': '0',
+            content: 'data(label)',
+            width: 3,
+            'curve-style': 'taxi',
+            'mid-target-arrow-shape': 'triangle',
+            'target-arrow-shape' : 'triangle',
+            'line-dash-pattern' : [9, 3],
+            'line-fill' : 'linear-gradient',
+            'line-gradient-stop-colors' : 'gainsboro slategray black',
+            'target-arrow-color' : 'black'
           }
         },
         {
-          selector: 'edge',
+          selector: 'label',
           style: {
-            'content': 'data(label)',
-            'width': 3,
-            'mid-target-arrow-shape': 'triangle',
-          }
+            'font-family' : '"Open Sans", Avenir, sans-serif',
+            'font-weight' : 'data(labelWeight)'
+          },
         }
       ],
       layout: {
-        name: 'breadthfirst',
+        name: 'breadthfirst'
       }
-    });
+    })
   } catch (err) {
-    console.log("Failed to initialize topology view: " + err)
+    console.log('Failed to initialize topology view: ' + err)
   }
-  var layoutSelectorIDs = ['#layout-breadthfirst',
+  var layoutSelectorIDs = [
+    '#layout-breadthfirst',
     '#layout-dagre',
     '#layout-cose',
     '#layout-grid',
     '#layout-circle',
     '#layout-concentric'
-  ];
+  ]
   layoutSelectorIDs.forEach(function (eachElement) {
     $(eachElement).click(function (event) {
-      event.preventDefault();
-      var layoutType = eachElement.split('-').pop();
-      console.log("Layout type: " + layoutType);
-      cytoscapeView.makeLayout({
-        name: layoutType,
-      }).run();
-    });
-  });
-  showView('lambda');
+      event.preventDefault()
+      var layoutType = eachElement.split('-').pop()
+      console.log('Layout type: ' + layoutType)
+      cytoscapeView
+        .makeLayout({
+          name: layoutType
+        })
+        .run()
+    })
+  })
+  showView('lambda')
 })

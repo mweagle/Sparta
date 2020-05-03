@@ -149,6 +149,7 @@ var optionsDescribe optionsDescribeStruct
 /*============================================================================*/
 // Explore options?
 type optionsExploreStruct struct {
+	InputExtensions []string `validate:"-"`
 }
 
 var optionsExplore optionsExploreStruct
@@ -297,6 +298,11 @@ func init() {
 		Long:         `Startup a local CLI GUI to explore and trigger your AWS service`,
 		SilenceUsage: true,
 	}
+	CommandLineOptions.Explore.Flags().StringArrayVarP(&optionsExplore.InputExtensions,
+		"inputExtension",
+		"e",
+		[]string{},
+		"One or more file extensions to include as sample inputs")
 
 	// Profile
 	CommandLineOptions.Profile = &cobra.Command{

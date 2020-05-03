@@ -57,7 +57,7 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		logger.WithFields(logrus.Fields{
 			"Source": info.Name(),
 			"Header": fileHeader,
-		}).Info("Adding ZIP")
+		}).Debug("Adding ZIP")
 
 		// File info for the binary executable
 		binaryWriter, binaryWriterErr := zipWriter.CreateHeader(fileHeader)
@@ -113,7 +113,15 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		if err != nil {
 			return errors.Wrapf(err, "Failed to open file: %s", path)
 		}
-		defer file.Close()
+		defer func() {
+			closeErr := file.Close()
+			if closeErr != nil {
+				logger.WithFields(logrus.Fields{
+					"error": closeErr,
+				}).Warn("Failed to close zip writer")
+			}
+		}()
+
 		_, err = io.Copy(writer, file)
 		if err != nil {
 			return errors.Wrapf(err, "Failed to copy file contents")

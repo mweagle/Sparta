@@ -22,14 +22,14 @@ const (
 // Public
 //
 
-// Explore is an interactive command that brings up a GUI to test
-// lambda functions previously deployed into AWS lambda. It's not supported in the
-// AWS binary build
-func Explore(serviceName string,
+// ExploreWithInputFilter allows the caller to provide additional filters
+// for the source files that will be used as inputs
+func ExploreWithInputFilter(serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api APIGateway,
 	site *S3Site,
+	inputExtensions []string,
 	s3BucketName string,
 	buildTags string,
 	linkerFlags string,
@@ -77,6 +77,7 @@ func Explore(serviceName string,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
+		inputExtensions,
 		channelMap[broadcasterFunctionSelect],
 		logger)
 	outputView, outputViewFocusable := newCloudWatchLogTailView(awsSession,
@@ -137,4 +138,30 @@ func Explore(serviceName string,
 		return event
 	})
 	return application.Run()
+
+}
+
+// Explore is an interactive command that brings up a GUI to test
+// lambda functions previously deployed into AWS lambda. It's not supported in the
+// AWS binary build
+func Explore(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api APIGateway,
+	site *S3Site,
+	s3BucketName string,
+	buildTags string,
+	linkerFlags string,
+	logger *logrus.Logger) error {
+
+	return ExploreWithInputFilter(serviceName,
+		serviceDescription,
+		lambdaAWSInfos,
+		api,
+		site,
+		[]string{"json"},
+		s3BucketName,
+		buildTags,
+		linkerFlags,
+		logger)
 }
