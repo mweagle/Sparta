@@ -249,7 +249,6 @@ func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
 			Category: "Analytics",
 			Name:     "Amazon-Kinesis@4x.png",
 		},
-		//lint:ignore ST1018 This is the name of the icon
 		"s3": {
 			Category: "Storage",
 			Name:     "Amazon-Simple-Storage-Service-S3@4x.png",

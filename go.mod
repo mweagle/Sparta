@@ -12,6 +12,7 @@ require (
 	github.com/aws/aws-lambda-go v1.17.0
 	github.com/aws/aws-sdk-go v1.32.2
 	github.com/aws/aws-xray-sdk-go v1.1.0
+	github.com/awslabs/goformation v1.4.1 // indirect
 	github.com/briandowns/spinner v1.11.1
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
@@ -38,6 +39,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
 	github.com/mweagle/go-cloudformation v0.0.0-20200503000230-7b355618fec9

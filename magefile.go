@@ -460,7 +460,7 @@ func EnsureFormatted() error {
 // EnsureStaticChecks ensures that the source code passes static code checks
 func EnsureStaticChecks() error {
 	// https://staticcheck.io/
-	excludeChecks := "-exclude=G204,G505,G401,G601"
+	excludeChecks := "-exclude=G204,G505,G401,G404,G601"
 	staticCheckErr := sh.Run("staticcheck",
 		"github.com/mweagle/Sparta/...")
 	if staticCheckErr != nil {
