@@ -29,7 +29,7 @@ import (
 
 const (
 	localWorkDir      = "./.sparta"
-	hugoVersion       = "0.69.2"
+	hugoVersion       = "0.72.0"
 	archIconsRootPath = "resources/describe/AWS-Architecture-Icons_PNG"
 	archIconsTreePath = "resources/describe/AWS-Architecture-Icons.tree.txt"
 )
