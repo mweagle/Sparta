@@ -127,12 +127,6 @@ Get in touch via:
 - [ssm-cache](https://github.com/mweagle/ssm-cache)
   - Lightweight cache for [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
 
-### Support Sparta
-
-Help support continued Sparta development by becoming a Patreon patron!
-
-<a href="https://www.patreon.com/bePatron?u=12960916" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
-
 ## Other resources
 
 - [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html)
