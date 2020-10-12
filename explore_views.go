@@ -256,9 +256,6 @@ func newEventInputSelector(awsSession *session.Session,
 	submitButton.SetBackgroundColor(tcell.ColorGray)
 	submitButton.SetLabelColor(tcell.ColorDarkGreen)
 	submitButton.SetSelectedFunc(func() {
-		if activeFunction == "" {
-			return
-		}
 		// Submit it to lambda
 		if activeFunction != "" {
 			lambdaInput := &lambda.InvokeInput{
