@@ -95,8 +95,13 @@ func BuildGoBinary(serviceName string,
 		cmd = exec.Command("go", "generate", "-v", "-x")
 	}
 	cmd.Env = os.Environ()
-	commandString := fmt.Sprintf("%s", cmd.Args)
-	logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
+
+	logger.WithFields(logrus.Fields{
+		"Command": strings.Join(cmd.Args, " "),
+	}).Info("Build command")
+
+	//	commandString := fmt.Sprintf("%s", cmd.Args)
+	//logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
 	goGenerateErr := RunOSCommand(cmd, logger)
 	if nil != goGenerateErr {
 		return goGenerateErr
@@ -265,14 +270,14 @@ func BuildGoBinary(serviceName string,
 		cmd.Env = os.Environ()
 		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 		logger.WithFields(logrus.Fields{
-			"Name": executableOutput,
+			"Path": executableOutput,
 		}).Info("Compiling binary")
 		cmdError = RunOSCommand(cmd, logger)
 	}
 	return cmdError
 }
 
-// TemporaryFile creates a stable temporary filename in the current working
+// TemporaryFile creates a stable temporary filename in the provided working
 // directory
 func TemporaryFile(scratchDir string, name string) (*os.File, error) {
 	workingDir, err := os.Getwd()
@@ -292,6 +297,5 @@ func TemporaryFile(scratchDir string, name string) (*os.File, error) {
 	if err != nil {
 		return nil, errors.New("Failed to create temporary file: " + err.Error())
 	}
-
 	return tmpFile, nil
 }
