@@ -46,7 +46,7 @@ require (
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
-	github.com/mweagle/go-cloudformation v0.0.0-20200503000230-7b355618fec9
+	github.com/mweagle/go-cloudformation v0.0.0-20201115225219-d51cfb7c4fd2
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/otiai10/copy v1.2.0
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
@@ -58,6 +58,7 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect
+	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0 // indirect

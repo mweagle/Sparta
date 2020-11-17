@@ -9,7 +9,7 @@ func lambdaHelloWorld(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World!")
 }
 
-func ExampleHandleAWSLambda_preexistingIAMRoleName() {
+func ExampleNewAWSLambda_preexistingIAMRoleName() {
 	helloWorldLambda, _ := NewAWSLambda(LambdaName(lambdaHelloWorld),
 		lambdaHelloWorld,
 		IAMRoleDefinition{})

@@ -105,6 +105,25 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 	return errors.New("Delete not supported for this binary")
 }
 
+// Build is not available in the AWS Lambda binary
+func Build(noop bool,
+	serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api APIGateway,
+	site *S3Site,
+	useCGO bool,
+	buildID string,
+	outputDirectory string,
+	buildTags string,
+	linkerFlags string,
+	templateWriter io.Writer,
+	workflowHooks *WorkflowHooks,
+	logger *logrus.Logger) error {
+	logger.Error("Build() not supported in AWS Lambda binary")
+	return errors.New("Build not supported for this binary")
+}
+
 // Provision is not available in the AWS Lambda binary
 func Provision(noop bool,
 	serviceName string,

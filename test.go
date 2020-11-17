@@ -3,7 +3,6 @@ package sparta
 import (
 	"bytes"
 	"context"
-	"os"
 	"testing"
 )
 
@@ -137,14 +136,12 @@ func testProvisionEx(t *testing.T,
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
 	var templateWriter bytes.Buffer
-	err := Provision(true,
+	err := Build(true,
 		"SampleProvision",
 		"",
 		lambdaAWSInfos,
 		nil,
 		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
 		false,
 		"testBuildID",
 		"",

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	validator "gopkg.in/go-playground/validator.v9"
@@ -91,6 +92,7 @@ func MainEx(serviceName string,
 		SpartaVersion)
 	CommandLineOptions.Root.Long = serviceDescription
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+
 		// Save the ServiceName in case a custom command wants it
 		OptionsGlobal.ServiceName = serviceName
 		OptionsGlobal.ServiceDescription = serviceDescription
@@ -127,20 +129,72 @@ func MainEx(serviceName string,
 
 		// Header information...
 		displayPrettyHeader(headerDivider, disableColors, logger)
+
 		// Metadata about the build...
 		logger.WithFields(logrus.Fields{
 			"Option":    cmd.Name(),
 			"UTC":       (time.Now().UTC().Format(time.RFC3339)),
 			"LinkFlags": OptionsGlobal.LinkerFlags,
 		}).Info(welcomeMessage)
-		logger.Info(headerDivider)
 
+		logger.Info(headerDivider)
 		return nil
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Version
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Version)
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Build
+	CommandLineOptions.Build.PreRunE = func(cmd *cobra.Command, args []string) error {
+		validateErr := validate.Struct(optionsBuild)
+
+		OptionsGlobal.Logger.WithFields(logrus.Fields{
+			"validateErr":      validateErr,
+			"optionsProvision": optionsProvision,
+		}).Debug("Build validation results")
+		return validateErr
+	}
+
+	if nil == CommandLineOptions.Build.RunE {
+		CommandLineOptions.Build.RunE = func(cmd *cobra.Command, args []string) error {
+			buildID, buildIDErr := computeBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
+			if nil != buildIDErr {
+				return buildIDErr
+			}
+
+			// Save the BuildID
+			StampedBuildID = buildID
+
+			// Ok, for this we're going some way to tell the Build Command
+			// where to write the output...I suppose we could just use a TeeWriter...
+			sanitizedServiceName := sanitizedName(serviceName)
+			templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
+
+			templateFilePath := filepath.Join(optionsProvision.OutputDir, templateName)
+			templateFile, templateFileErr := os.Create(templateFilePath)
+			if templateFileErr != nil {
+				return templateFileErr
+			}
+			defer templateFile.Close()
+			return Build(OptionsGlobal.Noop,
+				serviceName,
+				serviceDescription,
+				lambdaAWSInfos,
+				api,
+				site,
+				useCGO,
+				buildID,
+				optionsBuild.OutputDir,
+				OptionsGlobal.BuildTags,
+				OptionsGlobal.LinkerFlags,
+				templateFile,
+				workflowHooks,
+				OptionsGlobal.Logger)
+		}
+	}
+	CommandLineOptions.Root.AddCommand(CommandLineOptions.Build)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Provision
@@ -156,27 +210,62 @@ func MainEx(serviceName string,
 
 	if nil == CommandLineOptions.Provision.RunE {
 		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
-			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
+			buildID, buildIDErr := computeBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
 			if nil != buildIDErr {
 				return buildIDErr
 			}
-			// Save the BuildID
 			StampedBuildID = buildID
-			return Provision(OptionsGlobal.Noop,
+
+			// Ok, for this we're going some way to tell the Build Command
+			// where to write the output...I suppose we could just use a TeeWriter...
+			sanitizedServiceName := sanitizedName(serviceName)
+			templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
+			templateFilePath := filepath.Join(optionsProvision.OutputDir, templateName)
+			templateFile, templateFileErr := os.Create(templateFilePath)
+			if templateFileErr != nil {
+				return templateFileErr
+			}
+
+			// TODO: Build, then Provision
+			buildErr := Build(OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
 				api,
 				site,
-				optionsProvision.S3Bucket,
 				useCGO,
-				optionsProvision.InPlace,
 				buildID,
-				optionsProvision.PipelineTrigger,
+				optionsProvision.OutputDir,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,
-				nil,
+				templateFile,
 				workflowHooks,
+				OptionsGlobal.Logger)
+			templateFile.Close()
+
+			if buildErr != nil {
+				return buildErr
+			}
+			// So for this, we need to take command
+			// line params and turn them into a map...
+			parseErr := optionsProvision.parseParams()
+			if parseErr != nil {
+				return parseErr
+			}
+			OptionsGlobal.Logger.WithFields(logrus.Fields{
+				"params": optionsProvision.stackParams,
+			}).Debug("ParseParams")
+
+			// We don't need to walk the params because we
+			// put values in the Metadata block for them all...
+			// Save the BuildID
+
+			return Provision(true || OptionsGlobal.Noop,
+				templateFile.Name(),
+				optionsProvision.stackParams,
+				optionsProvision.stackTags,
+				optionsProvision.InPlace,
+				optionsProvision.PipelineTrigger,
 				OptionsGlobal.Logger)
 		}
 	}

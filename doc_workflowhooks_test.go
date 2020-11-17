@@ -26,22 +26,22 @@ func helloZipLambda(ctx context.Context,
 	return "Event processed", nil
 }
 
-func archiveHook(context map[string]interface{},
+func archiveHook(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *logrus.Logger) (context.Context, error) {
 
 	logger.Info("Adding userResource")
 	resourceFileName := "userResource.json"
 	binaryWriter, binaryWriterErr := zipWriter.Create(resourceFileName)
 	if nil != binaryWriterErr {
-		return binaryWriterErr
+		return ctx, binaryWriterErr
 	}
 	userdataReader := strings.NewReader(userdataResourceContents)
 	_, copyErr := io.Copy(binaryWriter, userdataReader)
-	return copyErr
+	return ctx, copyErr
 }
 
 func ExampleWorkflowHooks() {

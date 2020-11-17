@@ -258,7 +258,7 @@ func TestProvisionID(t *testing.T) {
 		"DEFAULT_VALUE",
 	}
 	for _, eachTestValue := range testUserValues {
-		buildID, buildIDErr := provisionBuildID(eachTestValue, logger)
+		buildID, buildIDErr := computeBuildID(eachTestValue, logger)
 		if buildIDErr != nil {
 			t.Fatalf("Failed to compute buildID: %s", buildIDErr)
 		}

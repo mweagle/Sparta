@@ -243,9 +243,7 @@ func (apiv2 *APIV2) Describe(targetNodeName string) (*DescriptionInfo, error) {
 // Marshal marshals the API V2 Gateway instance to the given template instance
 func (apiv2 *APIV2) Marshal(serviceName string,
 	session *session.Session,
-	S3Bucket string,
-	S3Key string,
-	S3Version string,
+	s3CodeResource *gocf.LambdaFunctionCode,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
 	noop bool,

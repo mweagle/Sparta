@@ -17,7 +17,7 @@ func lambdaHelloWorld2(ctx context.Context,
 	Logger().Info("Event received")
 	return nil
 }
-func ExampleHandleAWSLambda_iAMRoleDefinition() {
+func ExampleNewAWSLambda_iAMRoleDefinition() {
 	roleDefinition := IAMRoleDefinition{}
 	roleDefinition.Privileges = append(roleDefinition.Privileges, IAMRolePrivilege{
 		Actions: []string{"s3:GetObject",

@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -76,6 +77,7 @@ func InstanceID() string {
 var CommandLineOptions = struct {
 	Root      *cobra.Command
 	Version   *cobra.Command
+	Build     *cobra.Command
 	Provision *cobra.Command
 	Delete    *cobra.Command
 	Execute   *cobra.Command
@@ -86,18 +88,14 @@ var CommandLineOptions = struct {
 }{}
 
 /*============================================================================*/
-// Provision options
+// Build options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
-type optionsProvisionStruct struct {
-	S3Bucket        string `validate:"required"`
-	BuildID         string `validate:"-"` // non-whitespace
-	PipelineTrigger string `validate:"-"`
-	InPlace         bool   `validate:"-"`
+type optionsBuildStruct struct {
+	BuildID   string `validate:"-"` // non-whitespace
+	OutputDir string `validate:"-"` // non-whitespace
 }
 
-var optionsProvision optionsProvisionStruct
-
-func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, error) {
+func computeBuildID(userSuppliedValue string, logger *logrus.Logger) (string, error) {
 	buildID := userSuppliedValue
 	if buildID == "" {
 		// That's cool, let's see if we can find a git SHA
@@ -136,6 +134,61 @@ func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, 
 	}
 	return buildID, nil
 }
+
+var optionsBuild optionsBuildStruct
+
+/*============================================================================*/
+// Provision options
+// Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
+type optionsProvisionStruct struct {
+	optionsBuildStruct
+	StackParams     []string
+	StackTags       []string
+	S3Bucket        string `validate:"required"`
+	PipelineTrigger string `validate:"-"`
+	InPlace         bool   `validate:"-"`
+	stackParams     map[string]string
+	stackTags       map[string]string
+}
+
+func (ops *optionsProvisionStruct) parseParams() error {
+
+	splitter := func(eachVal string) []string {
+		parts := strings.SplitN(eachVal, "=", 2)
+		keyName := parts[0]
+		paramVal := ""
+		if len(parts) > 1 {
+			// TODO , wat?
+			unquoteVal, unquoteValErr := strconv.Unquote(parts[1])
+			if unquoteValErr == nil {
+				paramVal = unquoteVal
+			} else {
+				paramVal = parts[1]
+			}
+		}
+		return []string{keyName, paramVal}
+	}
+
+	ops.stackParams = make(map[string]string)
+	for _, eachPair := range ops.StackParams {
+		pairVals := splitter(eachPair)
+		ops.stackParams[pairVals[0]] = pairVals[1]
+	}
+	// Special affordance for S3 bucket
+	ops.stackParams[StackParamS3CodeBucketName] = ops.S3Bucket
+
+	// Tags, including user defined
+	ops.stackTags = map[string]string{
+		SpartaTagBuildIDKey: StampedBuildID,
+	}
+	for _, eachPair := range ops.StackTags {
+		pairVals := splitter(eachPair)
+		ops.stackTags[pairVals[0]] = pairVals[1]
+	}
+	return nil
+}
+
+var optionsProvision optionsProvisionStruct
 
 /*============================================================================*/
 // Describe options
@@ -229,6 +282,24 @@ func init() {
 
 		},
 	}
+	// Build
+	CommandLineOptions.Build = &cobra.Command{
+		Use:          "build",
+		Short:        "Build service",
+		Long:         `Builds the binary and associated CloudFormation parameterized template`,
+		SilenceUsage: true,
+	}
+	CommandLineOptions.Build.Flags().StringVarP(&optionsBuild.BuildID,
+		"buildID",
+		"i",
+		"",
+		"Optional BuildID to use")
+	CommandLineOptions.Build.Flags().StringVarP(&optionsBuild.OutputDir,
+		"outputDir",
+		"o",
+		ScratchDirectory,
+		"Optional output directory for artifacts")
+
 	// Provision
 	CommandLineOptions.Provision = &cobra.Command{
 		Use:          "provision",
@@ -236,6 +307,16 @@ func init() {
 		Long:         `Provision the service (either create or update) via CloudFormation`,
 		SilenceUsage: true,
 	}
+	CommandLineOptions.Provision.Flags().StringArrayVarP(&optionsProvision.StackParams,
+		"param",
+		"m",
+		[]string{},
+		"List of params in A=B format")
+	CommandLineOptions.Provision.Flags().StringArrayVarP(&optionsProvision.StackTags,
+		"tag",
+		"g",
+		[]string{},
+		"List of Stack Tags in A=B format")
 	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.S3Bucket,
 		"s3Bucket",
 		"s",
@@ -256,7 +337,11 @@ func init() {
 		"c",
 		false,
 		"If the provision operation results in *only* function updates, bypass CloudFormation")
-
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.OutputDir,
+		"outputDir",
+		"o",
+		ScratchDirectory,
+		"Optional output directory for artifacts")
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
 		Use:          "delete",
@@ -411,6 +496,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 	// Then add the standard Sparta ones...
 	spartaCommands := []*cobra.Command{
 		CommandLineOptions.Version,
+		CommandLineOptions.Build,
 		CommandLineOptions.Provision,
 		CommandLineOptions.Delete,
 		CommandLineOptions.Execute,
@@ -421,9 +507,15 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 	}
 	for _, eachCommand := range spartaCommands {
 		eachCommand.PreRunE = func(cmd *cobra.Command, args []string) error {
-			if eachCommand == CommandLineOptions.Provision {
+			switch eachCommand {
+			case CommandLineOptions.Build:
+				StampedBuildID = optionsBuild.BuildID
+			case CommandLineOptions.Provision:
 				StampedBuildID = optionsProvision.BuildID
+			default:
+				// NOP
 			}
+
 			if handler != nil {
 				return handler(eachCommand)
 			}

@@ -19,9 +19,7 @@ type APIGateway interface {
 	LogicalResourceName() string
 	Marshal(serviceName string,
 		session *session.Session,
-		S3Bucket string,
-		S3Key string,
-		S3Version string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		roleNameMap map[string]*gocf.StringExpr,
 		template *gocf.Template,
 		noop bool,
@@ -556,9 +554,7 @@ func (api *API) Describe(targetNodeName string) (*DescriptionInfo, error) {
 // Marshal marshals the API data to a CloudFormation compatible representation
 func (api *API) Marshal(serviceName string,
 	session *session.Session,
-	S3Bucket string,
-	S3Key string,
-	S3Version string,
+	s3CodeResource *gocf.LambdaFunctionCode,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
 	noop bool,

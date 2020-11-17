@@ -546,6 +546,18 @@ func Publish() error {
 	return spartamage.Script(describeCommands)
 }
 
+// UnitTest only runs the unit tests
+func UnitTest() error {
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	testCommand := [][]string{
+		{"go", "test", verboseFlag, "-cover", "-race", "./..."},
+	}
+	return spartamage.Script(testCommand)
+}
+
 // Test runs the Sparta tests
 func Test() error {
 	mg.SerialDeps(

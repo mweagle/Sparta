@@ -32,8 +32,7 @@ type LambdaPermissionExporter interface {
 		lambdaFunctionDisplayName string,
 		lambdaLogicalCFResourceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		logger *logrus.Logger) (string, error)
 	// Return a `describe` compatible output for the given permission.  Return
 	// value is a list of tuples for node, edgeLabel
@@ -77,8 +76,7 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	lambdaPermission := gocf.LambdaPermission{
@@ -146,8 +144,7 @@ func (perm S3Permission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String("s3.amazonaws.com"),
@@ -155,8 +152,7 @@ func (perm S3Permission) export(serviceName string,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != err {
@@ -170,8 +166,7 @@ func (perm S3Permission) export(serviceName string,
 		sourceArnExpression,
 		[]string{},
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != err {
@@ -258,8 +253,7 @@ func (perm SNSPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
@@ -268,8 +262,7 @@ func (perm SNSPermission) export(serviceName string,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 	if nil != err {
 		return "", errors.Wrap(err, "Failed to export SNS permission")
@@ -281,8 +274,7 @@ func (perm SNSPermission) export(serviceName string,
 		sourceArnExpression,
 		[]string{},
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != err {
@@ -387,8 +379,7 @@ func (storage *MessageBodyStorage) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	if storage.cloudFormationS3BucketResourceName != "" {
@@ -585,8 +576,7 @@ func (perm SESPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
@@ -596,8 +586,7 @@ func (perm SESPermission) export(serviceName string,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 	if nil != err {
 		return "", errors.Wrap(err, "Failed to export SES permission")
@@ -610,8 +599,7 @@ func (perm SESPermission) export(serviceName string,
 			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
 			template,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			logger)
 		if nil != s3PolicyErr {
 			return "", s3PolicyErr
@@ -627,8 +615,7 @@ func (perm SESPermission) export(serviceName string,
 		sourceArnExpression,
 		dependsOn,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != err {
@@ -787,8 +774,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	// There needs to be at least one rule to apply
@@ -831,8 +817,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
 			template,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			logger)
 
 		if nil != exportErr {
@@ -958,8 +943,7 @@ func (perm EventBridgePermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	// There needs to be at least one rule to apply
@@ -989,8 +973,7 @@ func (perm EventBridgePermission) export(serviceName string,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != exportErr {
@@ -1089,8 +1072,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	// If there aren't any expressions to register with?
@@ -1119,8 +1101,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 	if nil != err {
 		return "", errors.Wrap(err, "Exporting regional CloudWatch log permission")
@@ -1154,8 +1135,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 			cloudWatchLogsArn,
 			[]string{},
 			template,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			logger)
 		if nil != ensureCustomHandlerError {
 			return "", errors.Wrap(err, "Ensuring CloudWatch permissions handler")
@@ -1251,8 +1231,7 @@ func (perm CodeCommitPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	logger *logrus.Logger) (string, error) {
 
 	principal := gocf.Join("",
@@ -1267,8 +1246,7 @@ func (perm CodeCommitPermission) export(serviceName string,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != err {
@@ -1281,8 +1259,7 @@ func (perm CodeCommitPermission) export(serviceName string,
 		sourceArnExpression,
 		[]string{},
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		logger)
 
 	if nil != err {

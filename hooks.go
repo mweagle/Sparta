@@ -2,6 +2,7 @@ package sparta
 
 import (
 	"archive/zip"
+	"context"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -21,66 +22,61 @@ import (
 // See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html and
 // http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html for
 // more information.
-type TemplateDecorator func(serviceName string,
+type TemplateDecorator func(ctx context.Context,
+	serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // TemplateDecoratorHookFunc is the adapter to transform an existing
 // TemplateHook into a TemplateDecoratorHandler satisfier
-type TemplateDecoratorHookFunc func(serviceName string,
+type TemplateDecoratorHookFunc func(ctx context.Context,
+	serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // DecorateTemplate calls tdhf(...) to satisfy TemplateDecoratorHandler
-func (tdhf TemplateDecoratorHookFunc) DecorateTemplate(serviceName string,
+func (tdhf TemplateDecoratorHookFunc) DecorateTemplate(ctx context.Context,
+	serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error {
-	return tdhf(serviceName,
+	logger *logrus.Logger) (context.Context, error) {
+	return tdhf(ctx,
+		serviceName,
 		lambdaResourceName,
 		lambdaResource,
 		resourceMetadata,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		buildID,
 		template,
-		context,
 		logger)
 }
 
 // TemplateDecoratorHandler is the interface type to indicate a template
 // decoratorHook
 type TemplateDecoratorHandler interface {
-	DecorateTemplate(serviceName string,
+	DecorateTemplate(ctx context.Context,
+		serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		context map[string]interface{},
-		logger *logrus.Logger) error
+		logger *logrus.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,33 +86,33 @@ type TemplateDecoratorHandler interface {
 // point in the larger Sparta workflow. The first argument is a map that
 // is shared across all LifecycleHooks and which Sparta treats as an opaque
 // value.
-type WorkflowHook func(context map[string]interface{},
+type WorkflowHook func(ctx context.Context,
 	serviceName string,
-	S3Bucket string,
+	S3Bucket gocf.Stringable,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // WorkflowHookFunc is the adapter to transform an existing
 // WorkflowHook into a WorkflowHookHandler satisfier
-type WorkflowHookFunc func(context map[string]interface{},
+type WorkflowHookFunc func(ctx context.Context,
 	serviceName string,
-	S3Bucket string,
+	S3Bucket gocf.Stringable,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // DecorateWorkflow calls whf(...) to satisfy WorkflowHookHandler
-func (whf WorkflowHookFunc) DecorateWorkflow(context map[string]interface{},
+func (whf WorkflowHookFunc) DecorateWorkflow(ctx context.Context,
 	serviceName string,
-	S3Bucket string,
+	S3Bucket gocf.Stringable,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
-	return whf(context,
+	logger *logrus.Logger) (context.Context, error) {
+	return whf(ctx,
 		serviceName,
 		S3Bucket,
 		buildID,
@@ -128,13 +124,13 @@ func (whf WorkflowHookFunc) DecorateWorkflow(context map[string]interface{},
 // WorkflowHookHandler is the interface type to indicate a workflow
 // hook
 type WorkflowHookHandler interface {
-	DecorateWorkflow(context map[string]interface{},
+	DecorateWorkflow(ctx context.Context,
 		serviceName string,
-		S3Bucket string,
+		S3Bucket gocf.Stringable,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error
+		logger *logrus.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,30 +140,30 @@ type WorkflowHookHandler interface {
 
 // ArchiveHook provides callers an opportunity to insert additional
 // files into the ZIP archive deployed to S3
-type ArchiveHook func(context map[string]interface{},
+type ArchiveHook func(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // ArchiveHookFunc is the adapter to transform an existing
 // ArchiveHook into a WorkflowHookHandler satisfier
-type ArchiveHookFunc func(context map[string]interface{},
+type ArchiveHookFunc func(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // DecorateArchive calls whf(...) to satisfy ArchiveHookHandler
-func (ahf ArchiveHookFunc) DecorateArchive(context map[string]interface{},
+func (ahf ArchiveHookFunc) DecorateArchive(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
-	return ahf(context,
+	logger *logrus.Logger) (context.Context, error) {
+	return ahf(ctx,
 		serviceName,
 		zipWriter,
 		awsSession,
@@ -178,12 +174,12 @@ func (ahf ArchiveHookFunc) DecorateArchive(context map[string]interface{},
 // ArchiveHookHandler is the interface type to indicate a workflow
 // hook
 type ArchiveHookHandler interface {
-	DecorateArchive(context map[string]interface{},
+	DecorateArchive(ctx context.Context,
 		serviceName string,
 		zipWriter *zip.Writer,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error
+		logger *logrus.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,43 +187,39 @@ type ArchiveHookHandler interface {
 
 // ServiceDecoratorHook defines a user function that is called a single
 // time in the marshall workflow.
-type ServiceDecoratorHook func(context map[string]interface{},
+type ServiceDecoratorHook func(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // ServiceDecoratorHookFunc is the adapter to transform an existing
 // ArchiveHook into a WorkflowHookHandler satisfier
-type ServiceDecoratorHookFunc func(context map[string]interface{},
+type ServiceDecoratorHookFunc func(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // DecorateService calls sdhf(...) to satisfy ServiceDecoratorHookHandler
-func (sdhf ServiceDecoratorHookFunc) DecorateService(context map[string]interface{},
+func (sdhf ServiceDecoratorHookFunc) DecorateService(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
-	return sdhf(context,
+	logger *logrus.Logger) (context.Context, error) {
+	return sdhf(ctx,
 		serviceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		buildID,
 		awsSession,
 		noop,
@@ -237,15 +229,14 @@ func (sdhf ServiceDecoratorHookFunc) DecorateService(context map[string]interfac
 // ServiceDecoratorHookHandler is the interface type to indicate a workflow
 // hook
 type ServiceDecoratorHookHandler interface {
-	DecorateService(context map[string]interface{},
+	DecorateService(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error
+		logger *logrus.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -254,43 +245,39 @@ type ServiceDecoratorHookHandler interface {
 // ServiceValidationHook defines a user function that is called a single
 // after all template annotations have been performed. It is where
 // policies should be applied
-type ServiceValidationHook func(context map[string]interface{},
+type ServiceValidationHook func(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // ServiceValidationHookFunc is the adapter to transform an existing
 // ArchiveHook into a WorkflowHookHandler satisfier
-type ServiceValidationHookFunc func(context map[string]interface{},
+type ServiceValidationHookFunc func(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error
+	logger *logrus.Logger) (context.Context, error)
 
 // ValidateService calls sdhf(...) to satisfy ServiceValidationHookHandler
-func (sdhf ServiceValidationHookFunc) ValidateService(context map[string]interface{},
+func (sdhf ServiceValidationHookFunc) ValidateService(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
-	return sdhf(context,
+	logger *logrus.Logger) (context.Context, error) {
+	return sdhf(ctx,
 		serviceName,
 		template,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		buildID,
 		awsSession,
 		noop,
@@ -300,15 +287,14 @@ func (sdhf ServiceValidationHookFunc) ValidateService(context map[string]interfa
 // ServiceValidationHookHandler is the interface type to indicate a workflow
 // hook
 type ServiceValidationHookHandler interface {
-	ValidateService(context map[string]interface{},
+	ValidateService(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error
+		logger *logrus.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -316,7 +302,7 @@ type ServiceValidationHookHandler interface {
 
 // RollbackHook provides callers an opportunity to handle failures
 // associated with failing to perform the requested operation
-type RollbackHook func(context map[string]interface{},
+type RollbackHook func(ctx context.Context,
 	serviceName string,
 	awsSession *session.Session,
 	noop bool,
@@ -324,32 +310,32 @@ type RollbackHook func(context map[string]interface{},
 
 // RollbackHookFunc the adapter to transform an existing
 // RollbackHook into a RollbackHookHandler satisfier
-type RollbackHookFunc func(context map[string]interface{},
+type RollbackHookFunc func(ctx context.Context,
 	serviceName string,
 	awsSession *session.Session,
 	noop bool,
 	logger *logrus.Logger)
 
 // Rollback calls sdhf(...) to satisfy ArchiveHookHandler
-func (rhf RollbackHookFunc) Rollback(context map[string]interface{},
+func (rhf RollbackHookFunc) Rollback(ctx context.Context,
 	serviceName string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
-	rhf(context,
+	logger *logrus.Logger) (context.Context, error) {
+	rhf(ctx,
 		serviceName,
 		awsSession,
 		noop,
 		logger)
-	return nil
+	return ctx, nil
 }
 
 // RollbackHookHandler is the interface type to indicate a workflow
 // hook
 type RollbackHookHandler interface {
-	Rollback(context map[string]interface{},
+	Rollback(ctx context.Context,
 		serviceName string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error
+		logger *logrus.Logger) (context.Context, error)
 }

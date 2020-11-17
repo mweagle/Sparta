@@ -50,20 +50,19 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 		nil,
 		nil)
 
-	lambdaFn.Decorator = func(serviceName string,
+	lambdaFn.Decorator = func(ctx context.Context,
+		serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		cfTemplate *gocf.Template,
-		context map[string]interface{},
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 
 		// Pass CustomResource outputs to the λ function
 		resourceMetadata["CustomResource"] = gocf.GetAtt(cfResName, "CustomResourceResult")
-		return nil
+		return ctx, nil
 	}
 
 	var lambdaFunctions []*LambdaAWSInfo

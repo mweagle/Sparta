@@ -1,5 +1,19 @@
 # Change Notes
 
+## v2.0.0 - The Breaking Edition 🍳
+
+- Decouple build from provision
+- Build:
+  - Saves intermediate binary
+- Provision
+
+  - Parameters for bucket, code, archive so that out of band changes allowed
+
+- Removed `HandleAWSLambda`
+
+- TODO:
+  - Workflow hooks return (context, error) for more go idiomatic
+
 ## v1.15.0 - The Daylight Savings Edition 🕑
 
 - :warning: **BREAKING**

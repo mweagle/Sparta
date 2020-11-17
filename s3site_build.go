@@ -30,9 +30,9 @@ const (
 // export marshals the API data to a CloudFormation compatible representation
 func (s3Site *S3Site) export(serviceName string,
 	binaryName string,
-	S3Bucket string,
-	S3Key string,
-	S3ResourcesKey string,
+	s3TargetBucket gocf.Stringable,
+	s3CodeResource *gocf.LambdaFunctionCode,
+	s3ResourcesKey gocf.Stringable,
 	apiGatewayOutputs map[string]*gocf.Output,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
@@ -140,9 +140,9 @@ func (s3Site *S3Site) export(serviceName string,
 		Effect: "Allow",
 		Resource: gocf.Join("",
 			gocf.String("arn:aws:s3:::"),
-			gocf.String(S3Bucket),
+			s3CodeResource.S3Bucket,
 			gocf.String("/"),
-			gocf.String(S3ResourcesKey)),
+			s3ResourcesKey.String()),
 	})
 
 	iamPolicyList := gocf.IAMRolePolicyList{}
@@ -191,8 +191,9 @@ func (s3Site *S3Site) export(serviceName string,
 	}
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
-			S3Bucket: gocf.String(S3Bucket),
-			S3Key:    gocf.String(S3Key),
+			S3Bucket:        s3CodeResource.S3Bucket,
+			S3Key:           s3CodeResource.S3Key,
+			S3ObjectVersion: s3CodeResource.S3ObjectVersion,
 		},
 		Description: gocf.String(customResourceDescription(serviceName,
 			"S3 static site")),
@@ -226,8 +227,8 @@ func (s3Site *S3Site) export(serviceName string,
 		return errors.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
 	}
 	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
-	zipResource.SrcKeyName = gocf.String(S3ResourcesKey)
-	zipResource.SrcBucket = gocf.String(S3Bucket)
+	zipResource.SrcKeyName = s3ResourcesKey.String()
+	zipResource.SrcBucket = s3TargetBucket.String()
 	zipResource.DestBucket = gocf.Ref(s3BucketResourceName).String()
 
 	// Build the manifest data with any output info...
