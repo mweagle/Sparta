@@ -105,6 +105,12 @@ func Test() error {
 	return sh.Run("go", "test", verboseFlag, ".")
 }
 
+// Build deploys the given service
+func Build() error {
+	// Get the bucketName
+	return SpartaCommand("build")
+}
+
 // Provision deploys the given service
 func Provision() error {
 	// Get the bucketName
