@@ -1,6 +1,7 @@
 package decorator
 
 import (
+	"context"
 	"time"
 
 	sparta "github.com/mweagle/Sparta"
@@ -12,16 +13,15 @@ import (
 // that is responsible for including a versioning resource
 // with the given lambda function
 func LambdaVersioningDecorator() sparta.TemplateDecoratorHookFunc {
-	return func(serviceName string,
+	return func(ctx context.Context,
+		serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		context map[string]interface{},
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 
 		lambdaResName := sparta.CloudFormationResourceName("LambdaVersion",
 			buildID,
@@ -32,6 +32,6 @@ func LambdaVersioningDecorator() sparta.TemplateDecoratorHookFunc {
 		lambdaVersionRes := template.AddResource(lambdaResName, versionResource)
 		lambdaVersionRes.DeletionPolicy = "Retain"
 		// That's it...
-		return nil
+		return ctx, nil
 	}
 }
