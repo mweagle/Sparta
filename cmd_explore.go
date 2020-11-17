@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	broadcast "github.com/dustin/go-broadcast"
-	"github.com/gdamore/tcell"
+	tcell "github.com/gdamore/tcell/v2"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rivo/tview"
 	"github.com/sirupsen/logrus"

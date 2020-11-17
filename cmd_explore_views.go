@@ -19,7 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	broadcast "github.com/dustin/go-broadcast"
-	"github.com/gdamore/tcell"
+	tcell "github.com/gdamore/tcell/v2"
 	prettyjson "github.com/hokaccha/go-prettyjson"
 	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatch/logs"
 	"github.com/pkg/errors"
