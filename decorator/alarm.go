@@ -1,6 +1,7 @@
 package decorator
 
 import (
+	"context"
 	"fmt"
 
 	sparta "github.com/mweagle/Sparta"
@@ -19,16 +20,15 @@ func CloudWatchErrorAlarmDecorator(periodWindow int,
 	minutesPerPeriod int,
 	thresholdGreaterThanOrEqualToValue int,
 	snsTopic gocf.Stringable) sparta.TemplateDecoratorHookFunc {
-	alarmDecorator := func(serviceName string,
+	alarmDecorator := func(ctx context.Context,
+		serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		context map[string]interface{},
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 
 		periodInSeconds := minutesPerPeriod * 60
 
@@ -69,7 +69,7 @@ func CloudWatchErrorAlarmDecorator(periodWindow int,
 		alarmResourceName := sparta.CloudFormationResourceName("Alarm",
 			lambdaResourceName)
 		template.AddResource(alarmResourceName, alarm)
-		return nil
+		return ctx, nil
 	}
 	return sparta.TemplateDecoratorHookFunc(alarmDecorator)
 }

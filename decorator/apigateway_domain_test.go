@@ -19,7 +19,7 @@ func TestAPIGatewayCustomDomain(t *testing.T) {
 	}
 	lambdaFuncs := func(api *sparta.API) []*sparta.LambdaAWSInfo {
 		var lambdaFunctions []*sparta.LambdaAWSInfo
-		lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
 			helloWorld,
 			sparta.IAMRoleDefinition{})
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
@@ -77,7 +77,7 @@ func ExampleAPIGatewayDomainDecorator() {
 	}
 	lambdaFuncs := func(api *sparta.API) []*sparta.LambdaAWSInfo {
 		var lambdaFunctions []*sparta.LambdaAWSInfo
-		lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
 			helloWorld,
 			sparta.IAMRoleDefinition{})
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)

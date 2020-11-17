@@ -1,6 +1,7 @@
 package decorator
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -79,15 +80,14 @@ func (lad *LogAggregatorDecorator) KinesisLogicalResourceName() string {
 }
 
 // DecorateService annotates the service with the Kinesis hook
-func (lad *LogAggregatorDecorator) DecorateService(context map[string]interface{},
+func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 	serviceName string,
 	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *logrus.Logger) (context.Context, error) {
 
 	// Create the Kinesis Stream
 	template.AddResource(lad.kinesisStreamResourceName, lad.kinesisResource)
@@ -127,20 +127,18 @@ func (lad *LogAggregatorDecorator) DecorateService(context map[string]interface{
 	}
 	template.AddResource(lad.iamRoleNameResourceName, iamLogAggregatorRole)
 
-	return nil
+	return ctx, nil
 }
 
 // DecorateTemplate annotates the lambda with the log forwarding sink info
-func (lad *LogAggregatorDecorator) DecorateTemplate(serviceName string,
+func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context, serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error {
+	logger *logrus.Logger) (context.Context, error) {
 
 	// The relay function should consume the stream
 	if lad.logRelay.LogicalResourceName() == lambdaResourceName {
@@ -168,7 +166,7 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(serviceName string,
 		}
 		template.AddResource(subscriptionName, subscriptionFilterRes)
 	}
-	return nil
+	return ctx, nil
 }
 
 // NewLogAggregatorDecorator returns a ServiceDecoratorHook that registers a Kinesis

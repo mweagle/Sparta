@@ -1,6 +1,7 @@
 package decorator
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -18,15 +19,14 @@ func S3ArtifactPublisherDecorator(bucket gocf.Stringable,
 	data map[string]interface{}) sparta.ServiceDecoratorHookHandler {
 
 	// Setup the CF distro
-	artifactDecorator := func(context map[string]interface{},
+	artifactDecorator := func(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 
 		// Ensure the custom action handler...
 		sourceArnExpr := gocf.Join("",
@@ -39,12 +39,11 @@ func S3ArtifactPublisherDecorator(bucket gocf.Stringable,
 			sourceArnExpr,
 			[]string{},
 			template,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			logger)
 
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
 		// Create the invocation of the custom action...
@@ -61,7 +60,7 @@ func S3ArtifactPublisherDecorator(bucket gocf.Stringable,
 
 		// Add it
 		template.AddResource(resourceInvokerName, s3PublishResource)
-		return nil
+		return ctx, nil
 	}
 	return sparta.ServiceDecoratorHookFunc(artifactDecorator)
 }

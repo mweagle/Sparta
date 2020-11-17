@@ -2,6 +2,7 @@ package decorator
 
 import (
 	"bytes"
+	"context"
 	"regexp"
 	"text/template"
 
@@ -129,15 +130,14 @@ var templateFuncMap = template.FuncMap{
 // can be attached the workflow to create a dashboard
 func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 	timeSeriesPeriod int) sparta.ServiceDecoratorHookFunc {
-	return func(context map[string]interface{},
+	return func(ctx context.Context,
 		serviceName string,
 		cfTemplate *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 
 		lambdaFunctions := make([]*LambdaTemplateData, len(lambdaAWSInfo))
 		for index, eachLambda := range lambdaAWSInfo {
@@ -165,12 +165,12 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 			Funcs(templateFuncMap).
 			Parse(dashboardTemplate)
 		if nil != dashboardTmplErr {
-			return dashboardTmplErr
+			return ctx, dashboardTmplErr
 		}
 		var templateResults bytes.Buffer
 		evalResultErr := dashboardTmpl.Execute(&templateResults, dashboardTemplateData)
 		if nil != evalResultErr {
-			return evalResultErr
+			return ctx, evalResultErr
 		}
 
 		// Raw template output
@@ -182,7 +182,7 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 		// the Fn::Joined JSON will be malformed
 		reReplace, reReplaceErr := regexp.Compile("\n")
 		if nil != reReplaceErr {
-			return reReplaceErr
+			return ctx, reReplaceErr
 		}
 		escapedBytes := reReplace.ReplaceAll(templateResults.Bytes(), []byte(""))
 		logger.WithFields(logrus.Fields{
@@ -194,7 +194,7 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 		templateReader := bytes.NewReader(escapedBytes)
 		templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
 		if nil != templateExprErr {
-			return templateExprErr
+			return ctx, templateExprErr
 		}
 
 		dashboardResource := gocf.CloudWatchDashboard{}
@@ -214,6 +214,6 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 				gocf.String("#dashboards:name="),
 				gocf.Ref(dashboardName)),
 		}
-		return nil
+		return ctx, nil
 	}
 }
