@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -19,15 +20,14 @@ import (
 // step.
 func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 
-	driftDetector := func(context map[string]interface{},
+	driftDetector := func(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 		// Create a cloudformation service.
 		cfSvc := cloudformation.New(awsSession)
 		detectStackDrift, detectStackDriftErr := cfSvc.DetectStackDrift(&cloudformation.DetectStackDriftInput{
@@ -36,9 +36,9 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 		if detectStackDriftErr != nil {
 			// If it doesn't exist, then no worries...
 			if strings.Contains(detectStackDriftErr.Error(), "does not exist") {
-				return nil
+				return ctx, nil
 			}
-			return errors.Wrapf(detectStackDriftErr, "attempting to determine stack drift")
+			return ctx, errors.Wrapf(detectStackDriftErr, "attempting to determine stack drift")
 		}
 
 		// Poll until it's done...
@@ -65,7 +65,7 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 			}
 		}
 		if !detectionComplete {
-			return errors.Errorf("Stack drift detection did not complete in time")
+			return ctx, errors.Errorf("Stack drift detection did not complete in time")
 		}
 
 		golangFuncName := func(logicalResourceID string) string {
@@ -124,7 +124,7 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 		for {
 			driftResults, driftResultsErr := cfSvc.DescribeStackResourceDrifts(input)
 			if driftResultsErr != nil {
-				return errors.Wrapf(driftResultsErr, "attempting to describe stack drift")
+				return ctx, errors.Wrapf(driftResultsErr, "attempting to describe stack drift")
 			}
 			stackResourceDrifts = append(stackResourceDrifts, driftResults.StackResourceDrifts...)
 			if driftResults.NextToken == nil {
@@ -134,7 +134,7 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 			// If there is more than 10 (1k total) something is seriously wrong...
 			if loopCounter >= 10 {
 				logDrifts(stackResourceDrifts)
-				return errors.Errorf("Exceeded maximum number of Stack resource drifts: %d", len(stackResourceDrifts))
+				return ctx, errors.Errorf("Exceeded maximum number of Stack resource drifts: %d", len(stackResourceDrifts))
 			}
 
 			input = &cloudformation.DescribeStackResourceDriftsInput{
@@ -147,9 +147,9 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 		// Log them
 		logDrifts(stackResourceDrifts)
 		if len(stackResourceDrifts) == 0 || !errorOnDrift {
-			return nil
+			return ctx, nil
 		}
-		return errors.Errorf("stack %s operation prevented due to stack drift", serviceName)
+		return ctx, errors.Errorf("stack %s operation prevented due to stack drift", serviceName)
 	}
 	return sparta.ServiceValidationHookFunc(driftDetector)
 }
