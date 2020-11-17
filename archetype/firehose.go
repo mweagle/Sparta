@@ -125,21 +125,21 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 
 	// Create the decorator that adds the file to the ZIP archive using
 	// the transform name...
-	archiveDecorator := func(context map[string]interface{},
+	archiveDecorator := func(ctx context.Context,
 		serviceName string,
 		zipWriter *zip.Writer,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *logrus.Logger) (context.Context, error) {
 		fileInfo, fileInfoErr := os.Stat(xformFilePath)
 		if fileInfoErr != nil {
-			return errors.Wrapf(fileInfoErr, "Failed to get fileInfo for Kinesis Firehose transform")
+			return ctx, errors.Wrapf(fileInfoErr, "Failed to get fileInfo for Kinesis Firehose transform")
 		}
 		// G304: Potential file inclusion via variable
 		/* #nosec */
 		fileReader, fileReaderErr := os.Open(xformFilePath)
 		if fileReaderErr != nil {
-			return errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
+			return ctx, errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
 		}
 		defer func() {
 			closeErr := fileReader.Close()
@@ -153,7 +153,7 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 
 		fileHeader, fileHeaderErr := zip.FileInfoHeader(fileInfo)
 		if fileHeaderErr != nil {
-			return errors.Wrapf(fileHeaderErr, "Failed to detect ZIP header for Kinesis Firehose transform")
+			return ctx, errors.Wrapf(fileHeaderErr, "Failed to detect ZIP header for Kinesis Firehose transform")
 		}
 
 		fileHeader.Name = archiveEntryName
@@ -162,10 +162,10 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		// Copy it...
 		writer, writerErr := zipWriter.CreateHeader(fileHeader)
 		if writerErr != nil {
-			return errors.Wrapf(fileHeaderErr, "Failed to create ZIP header for Kinesis Firehose transform")
+			return ctx, errors.Wrapf(fileHeaderErr, "Failed to create ZIP header for Kinesis Firehose transform")
 		}
 		_, copyErr := io.Copy(writer, fileReader)
-		return copyErr
+		return ctx, copyErr
 	}
 	// Done...
 	hooks.Archives = append(hooks.Archives, sparta.ArchiveHookFunc(archiveDecorator))
