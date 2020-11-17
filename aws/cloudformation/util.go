@@ -196,6 +196,7 @@ func cloudformationPollingDelay() time.Duration {
 func updateStackViaChangeSet(serviceName string,
 	cfTemplate *gocf.Template,
 	cfTemplateURL string,
+	stackParameters []*cloudformation.Parameter,
 	awsTags []*cloudformation.Tag,
 	awsCloudFormation *cloudformation.CloudFormation,
 	logger *logrus.Logger) error {
@@ -206,6 +207,7 @@ func updateStackViaChangeSet(serviceName string,
 		serviceName,
 		cfTemplate,
 		cfTemplateURL,
+		stackParameters,
 		awsTags,
 		awsCloudFormation,
 		logger)
@@ -683,6 +685,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 	serviceName string,
 	cfTemplate *gocf.Template,
 	templateURL string,
+	stackParameters []*cloudformation.Parameter,
 	awsTags []*cloudformation.Tag,
 	awsCloudFormation *cloudformation.CloudFormation,
 	logger *logrus.Logger) (*cloudformation.DescribeChangeSetOutput, error) {
@@ -695,6 +698,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 		Description:   aws.String(fmt.Sprintf("Change set for service: %s", serviceName)),
 		StackName:     aws.String(serviceName),
 		TemplateURL:   aws.String(templateURL),
+		Parameters:    stackParameters,
 	}
 	if len(awsTags) != 0 {
 		changeSetInput.Tags = awsTags
@@ -830,6 +834,7 @@ func ListStacks(session *session.Session,
 func ConvergeStackState(serviceName string,
 	cfTemplate *gocf.Template,
 	templateURL string,
+	stackParameters map[string]string,
 	tags map[string]string,
 	startTime time.Time,
 	operationTimeout time.Duration,
@@ -838,9 +843,21 @@ func ConvergeStackState(serviceName string,
 	dividerWidth int,
 	logger *logrus.Logger) (*cloudformation.Stack, error) {
 
+	logger.WithFields(logrus.Fields{
+		"TAGS": tags,
+	}).Info("Stack tags")
+
 	awsCloudFormation := cloudformation.New(awsSession)
+	// Create the parameter values.
+	var cloudFormationParameters []*cloudformation.Parameter
+	for eachKey, eachValue := range stackParameters {
+		cloudFormationParameters = append(cloudFormationParameters, &cloudformation.Parameter{
+			ParameterKey:   aws.String(eachKey),
+			ParameterValue: aws.String(eachValue),
+		})
+	}
 	// Update the tags
-	awsTags := make([]*cloudformation.Tag, 0)
+	awsTags := []*cloudformation.Tag{}
 	if nil != tags {
 		for eachKey, eachValue := range tags {
 			awsTags = append(awsTags,
@@ -859,6 +876,7 @@ func ConvergeStackState(serviceName string,
 		updateErr := updateStackViaChangeSet(serviceName,
 			cfTemplate,
 			templateURL,
+			cloudFormationParameters,
 			awsTags,
 			awsCloudFormation,
 			logger)
@@ -875,6 +893,7 @@ func ConvergeStackState(serviceName string,
 			TimeoutInMinutes: aws.Int64(int64(operationTimeout.Minutes())),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
 			Capabilities:     stackCapabilities(cfTemplate),
+			Parameters:       cloudFormationParameters,
 		}
 		if len(awsTags) != 0 {
 			createStackInput.Tags = awsTags
@@ -886,7 +905,11 @@ func ConvergeStackState(serviceName string,
 		logger.WithFields(logrus.Fields{
 			"StackID": *createStackResponse.StackId,
 		}).Info("Creating stack")
-
+		for eachKey, eachVal := range stackParameters {
+			logger.WithFields(logrus.Fields{
+				eachKey: eachVal,
+			}).Info("Stack parameter")
+		}
 		stackID = *createStackResponse.StackId
 	}
 	// Wait for the operation to succeed

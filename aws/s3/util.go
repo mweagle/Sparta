@@ -66,8 +66,9 @@ func UploadLocalFileToS3(localPath string,
 	/* #nosec */
 	reader, err := os.Open(localPath)
 	if nil != err {
-		return "", fmt.Errorf("failed to open local archive for S3 upload: %s", err.Error())
+		return "", fmt.Errorf("failed to open file for S3 upload: %s", err.Error())
 	}
+	defer reader.Close()
 	uploadInput := &s3manager.UploadInput{
 		Bucket:      &S3Bucket,
 		Key:         &S3KeyName,
@@ -94,7 +95,7 @@ func UploadLocalFileToS3(localPath string,
 		"Bucket": S3Bucket,
 		"Key":    S3KeyName,
 		"Size":   humanize.Bytes(uint64(stat.Size())),
-	}).Info("Uploading local file to S3")
+	}).Info("Uploading")
 
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
