@@ -25,7 +25,7 @@ import (
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // userdata is user-supplied, code related values
@@ -88,22 +88,25 @@ type buildContext struct {
 func callArchiveHook(lambdaArchive *zip.Writer,
 	userdata *userdata,
 	buildContext *buildContext,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	if userdata.workflowHooks == nil {
 		return nil
 	}
 	archiveHooks := userdata.workflowHooks.Archives
 	if userdata.workflowHooks.Archive != nil {
-		logger.Warn("DEPRECATED: Single ArchiveHook hook superseded by ArchiveHooks slice")
+		logger.Warn().
+			Msg("DEPRECATED: Single ArchiveHook hook superseded by ArchiveHooks slice")
+
 		archiveHooks = append(archiveHooks,
 			ArchiveHookFunc(userdata.workflowHooks.Archive))
 	}
 	for _, eachArchiveHook := range archiveHooks {
 		// Run the hook
-		logger.WithFields(logrus.Fields{
-			"WorkflowHookContext": buildContext.workflowHooksContext,
-		}).Info("Calling ArchiveHook")
+		logger.Info().
+			Interface("WorkflowHookContext", buildContext.workflowHooksContext).
+			Msg("Calling ArchiveHook")
+
 		hookCtx, hookErr := eachArchiveHook.DecorateArchive(buildContext.workflowHooksContext,
 			userdata.serviceName,
 			lambdaArchive,
@@ -140,20 +143,22 @@ func callWorkflowHook(hookPhase string,
 	hooks []WorkflowHookHandler,
 	userdata *userdata,
 	buildContext *buildContext,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	if hook != nil {
-		logger.Warn(fmt.Sprintf("DEPRECATED: Single %s hook superseded by %ss slice",
-			hookPhase,
-			hookPhase))
+		logger.Warn().
+			Msgf("DEPRECATED: Single %s hook superseded by %ss slice",
+				hookPhase,
+				hookPhase)
+
 		hooks = append(hooks, WorkflowHookFunc(hook))
 	}
 	for _, eachHook := range hooks {
 		// Run the hook
-		logger.WithFields(logrus.Fields{
-			"Phase":               hookPhase,
-			"WorkflowHookContext": buildContext.workflowHooksContext,
-		}).Info("Calling WorkflowHook")
+		logger.Info().
+			Str("Phase", hookPhase).
+			Interface("WorkflowHookContext", buildContext.workflowHooksContext).
+			Msg("Calling WorkflowHook")
 
 		hookCtx, hookErr := eachHook.DecorateWorkflow(buildContext.workflowHooksContext,
 			userdata.serviceName,
@@ -174,13 +179,13 @@ func callWorkflowHook(hookPhase string,
 func callServiceDecoratorHook(lambdaFunctionCode *gocf.LambdaFunctionCode,
 	userdata *userdata,
 	buildContext *buildContext,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 	if userdata.workflowHooks == nil {
 		return nil
 	}
 	serviceHooks := userdata.workflowHooks.ServiceDecorators
 	if userdata.workflowHooks.ServiceDecorator != nil {
-		logger.Warn("DEPRECATED: Single ServiceDecorator hook superseded by ServiceDecorators slice")
+		logger.Warn().Msg("DEPRECATED: Single ServiceDecorator hook superseded by ServiceDecorators slice")
 		serviceHooks = append(serviceHooks,
 			ServiceDecoratorHookFunc(userdata.workflowHooks.ServiceDecorator))
 	}
@@ -196,10 +201,10 @@ func callServiceDecoratorHook(lambdaFunctionCode *gocf.LambdaFunctionCode,
 		if hookName == "" {
 			hookName = fmt.Sprintf("ServiceHook[%d]", eachIndex)
 		}
-		logger.WithFields(logrus.Fields{
-			"ServiceDecoratorHook": hookName,
-			"WorkflowHookContext":  buildContext.workflowHooksContext,
-		}).Info("Calling WorkflowHook")
+		logger.Info().
+			Str("ServiceDecoratorHook", hookName).
+			Interface("WorkflowHookContext", buildContext.workflowHooksContext).
+			Msg("Calling WorkflowHook")
 
 		serviceTemplate := gocf.NewTemplate()
 		decoratorCtx, decoratorError := eachServiceHook.DecorateService(buildContext.workflowHooksContext,
@@ -228,7 +233,7 @@ func callValidationHooks(validationHooks []ServiceValidationHookHandler,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	userdata *userdata,
 	buildContext *buildContext,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	var marshaledTemplate []byte
 	if len(validationHooks) != 0 {
@@ -241,10 +246,10 @@ func callValidationHooks(validationHooks []ServiceValidationHookHandler,
 
 	for _, eachHook := range validationHooks {
 		// Run the hook
-		logger.WithFields(logrus.Fields{
-			"Phase":                 "Validation",
-			"ValidationHookContext": buildContext.workflowHooksContext,
-		}).Info("Calling WorkflowHook")
+		logger.Info().
+			Str("Phase", "Validation").
+			Interface("ValidationHookContext", buildContext.workflowHooksContext).
+			Msg("Calling WorkflowHook")
 
 		var loopTemplate gocf.Template
 		unmarshalErr := json.Unmarshal(marshaledTemplate, &loopTemplate)
@@ -277,11 +282,11 @@ type validatePreconditionsOp struct {
 	userdata *userdata
 }
 
-func (vpo *validatePreconditionsOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (vpo *validatePreconditionsOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
 
-func (vpo *validatePreconditionsOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (vpo *validatePreconditionsOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	var errorText []string
 	collisionMemo := make(map[string]int)
 
@@ -299,7 +304,7 @@ func (vpo *validatePreconditionsOp) Invoke(ctx context.Context, logger *logrus.L
 		if vpo.userdata.workflowHooks == nil {
 			return errors.New("No lambda functions were provided to Sparta.Provision(). WorkflowHooks are undefined")
 		}
-		logger.Warn("No lambda functions provided to Sparta.Provision()")
+		logger.Warn().Msg("No lambda functions provided to Sparta.Provision()")
 	}
 
 	// 0 - check for nil
@@ -331,17 +336,17 @@ func (vpo *validatePreconditionsOp) Invoke(ctx context.Context, logger *logrus.L
 		// Duplicates?
 		for eachLambdaName, eachCount := range collisionMemo {
 			if eachCount > 1 {
-				logger.WithFields(logrus.Fields{
-					"CollisionCount": eachCount,
-					"Name":           eachLambdaName,
-				}).Error("NewAWSLambda")
+				logger.Error().
+					Int("CollisionCount", eachCount).
+					Str("Name", eachLambdaName).
+					Msg("NewAWSLambda")
 				errorText = append(errorText,
 					fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
 			}
 		}
-		logger.WithFields(logrus.Fields{
-			"CollisionMap": collisionMemo,
-		}).Debug("Lambda collision map")
+		logger.Debug().
+			Interface("CollisionMap", collisionMemo).
+			Msg("Lambda collision map")
 	}
 	if len(errorText) != 0 {
 		return errors.New(strings.Join(errorText[:], "\n"))
@@ -354,7 +359,7 @@ type verifyIAMRolesOp struct {
 	buildContext *buildContext
 }
 
-func (viro *verifyIAMRolesOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (viro *verifyIAMRolesOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	// The map is either a literal Arn from a pre-existing role name
 	// or a gocf.RefFunc() value.
 	// Don't verify them, just create them...
@@ -430,7 +435,7 @@ func (viro *verifyIAMRolesOp) Invoke(ctx context.Context, logger *logrus.Logger)
 				RoleName: aws.String(eachRoleName),
 			}
 
-			logger.Debug("Checking IAM RoleName: ", eachRoleName)
+			logger.Debug().Msgf("Checking IAM RoleName: %s", eachRoleName)
 			resp, err := iamSvc.GetRole(params)
 			if err != nil {
 				return err
@@ -441,14 +446,14 @@ func (viro *verifyIAMRolesOp) Invoke(ctx context.Context, logger *logrus.Logger)
 		}
 	}
 
-	logger.WithFields(logrus.Fields{
-		"GetRoleCount": totalRemoteChecks,
-		"Total":        len(viro.buildContext.lambdaIAMRoleNameMap),
-	}).Info("Verified IAM Roles")
+	logger.Info().
+		Int("GetRoleCount", totalRemoteChecks).
+		Int("Total", len(viro.buildContext.lambdaIAMRoleNameMap)).
+		Msg("Verified IAM Roles")
 	return nil
 }
 
-func (viro *verifyIAMRolesOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (viro *verifyIAMRolesOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
 
@@ -462,7 +467,7 @@ type verifyAWSPreconditionsOp struct {
 	buildContext *buildContext
 }
 
-func (vapo *verifyAWSPreconditionsOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (vapo *verifyAWSPreconditionsOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	// If there are codePipeline environments defined, warn if they don't include
 	// the same keysets
 	if nil != codePipelineEnvironments {
@@ -497,11 +502,11 @@ func (vapo *verifyAWSPreconditionsOp) Invoke(ctx context.Context, logger *logrus
 		}
 		if !keysEqual {
 			// Setup an interface with the fields so that the log message
-			fields := make(logrus.Fields, len(codePipelineEnvironments))
+			logEntry := logger.Warn()
 			for eachEnv, eachEnvMap := range codePipelineEnvironments {
-				fields[eachEnv] = eachEnvMap
+				logEntry = logEntry.Interface(eachEnv, eachEnvMap)
 			}
-			logger.WithFields(fields).Warn("CodePipeline environments do not define equivalent environment keys")
+			logEntry.Msg("CodePipeline environments do not define equivalent environment keys")
 		}
 	}
 	return nil
@@ -512,11 +517,11 @@ type createPackageOp struct {
 	buildContext *buildContext
 }
 
-func (cpo *createPackageOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (cpo *createPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
 
-func (cpo *createPackageOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 
 	// PreBuild Hook
 	if cpo.userdata.workflowHooks != nil {
@@ -589,9 +594,10 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *logrus.Logger) e
 		if zipCloseErr != nil {
 			return errors.Wrapf(zipCloseErr, "Failed to close S3 site ZIP archive")
 		}
-		logger.WithFields(logrus.Fields{
-			"Path": zipOutputFile.Name(),
-		}).Info("Created S3Site archive")
+		logger.Info().
+			Str("Path", zipOutputFile.Name()).
+			Msg("Created S3Site archive")
+
 		// Put the path into the template metadata, include the stack parameter...
 		cpo.buildContext.cfTemplate.Metadata[MetadataParamS3SiteArchivePath] = zipOutputFile.Name()
 
@@ -676,9 +682,9 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *logrus.Logger) e
 	if zipCloseErr != nil {
 		return errors.Wrapf(zipCloseErr, "Failed to close code ZIP archive")
 	}
-	logger.WithFields(logrus.Fields{
-		"Path": zipOutputFile.Name(),
-	}).Info("Code Archive")
+	logger.Info().
+		Str("Path", zipOutputFile.Name()).
+		Msg("Code Archive")
 	return nil
 }
 
@@ -687,10 +693,10 @@ type createTemplateOp struct {
 	buildContext *buildContext
 }
 
-func (cto *createTemplateOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (cto *createTemplateOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context, logger *logrus.Logger) (map[string]gocf.Stringable, error) {
+func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context, logger *zerolog.Logger) (map[string]gocf.Stringable, error) {
 	// Code archive...
 	if cto.buildContext.cfTemplate.Parameters == nil {
 		cto.buildContext.cfTemplate.Parameters = make(map[string]*gocf.Parameter)
@@ -745,7 +751,7 @@ func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context, logge
 	return paramRefMap, nil
 }
 
-func (cto *createTemplateOp) ensureDiscoveryInfo(ctx context.Context, logger *logrus.Logger) error {
+func (cto *createTemplateOp) ensureDiscoveryInfo(ctx context.Context, logger *zerolog.Logger) error {
 	validateErrs := make([]error, 0)
 
 	requiredEnvVars := []string{envVarDiscoveryInformation,
@@ -785,7 +791,7 @@ func (cto *createTemplateOp) ensureDiscoveryInfo(ctx context.Context, logger *lo
 	return nil
 }
 
-func (cto *createTemplateOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 
 	// PreMarshall Hook
 	if cto.userdata.workflowHooks != nil {
@@ -900,10 +906,10 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *logrus.Logger) 
 			if discoveryInfoErr != nil {
 				return discoveryInfoErr
 			}
-			logger.WithFields(logrus.Fields{
-				"Discovery": discoveryInfo,
-				"Resource":  eachCustomResource.logicalName(),
-			}).Info("Annotating discovery info for custom resource")
+			logger.Info().
+				Interface("Discovery", discoveryInfo).
+				Str("Resource", eachCustomResource.logicalName()).
+				Msg("Annotating discovery info for custom resource")
 
 			// Update the env map
 			eachCustomResource.options.Environment[envVarDiscoveryInformation] = discoveryInfo
@@ -974,7 +980,9 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *logrus.Logger) 
 	// Generate it & write it out...
 	cfTemplateJSON, cfTemplateJSONErr := json.Marshal(cto.buildContext.cfTemplate)
 	if cfTemplateJSONErr != nil {
-		logger.Error("Failed to Marshal CloudFormation template: ", cfTemplateJSONErr)
+		logger.Error().
+			Err(cfTemplateJSONErr).
+			Msg("Failed to Marshal CloudFormation template")
 		return cfTemplateJSONErr
 	}
 
@@ -985,12 +993,12 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *logrus.Logger) 
 			return writeErr
 		}
 	}
-	if logger.Level <= logrus.DebugLevel {
+	if logger.GetLevel() <= zerolog.DebugLevel {
 		formatted, formattedErr := json.Marshal(string(cfTemplateJSON))
 		if formattedErr == nil {
-			logger.WithFields(logrus.Fields{
-				"Body": string(formatted),
-			}).Debug("CloudFormation template body")
+			logger.Debug().
+				Str("Body", string(formatted)).
+				Msg("CloudFormation template body")
 		}
 	}
 	return nil
@@ -1028,7 +1036,7 @@ func Build(noop bool,
 	linkerFlags string,
 	templateWriter io.Writer,
 	workflowHooks *WorkflowHooks,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Mutable data
 	userdata := &userdata{
@@ -1069,13 +1077,13 @@ func Build(noop bool,
 		}
 	}
 
-	logger.WithFields(logrus.Fields{
-		"BuildID":             buildID,
-		"NOOP":                noop,
-		"Tags":                userdata.buildTags,
-		"CodePipelineTrigger": userdata.codePipelineTrigger,
-		"InPlaceUpdates":      userdata.inPlace,
-	}).Info("Building service")
+	logger.Info().
+		Str("BuildID", buildID).
+		Bool("NOOP", noop).
+		Str("Tags", userdata.buildTags).
+		Str("CodePipelineTrigger", userdata.codePipelineTrigger).
+		Bool("InPlaceUpdates", userdata.inPlace).
+		Msg("Building service")
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Workflow
@@ -1115,8 +1123,8 @@ func Build(noop bool,
 	if buildErr != nil {
 		return buildErr
 	}
-	logger.WithFields(logrus.Fields{
-		"Duration": humanize.Time(buildPipeline.startTime),
-	}).Info("Build complete")
+	logger.Info().
+		Str("Duration", humanize.Time(buildPipeline.startTime)).
+		Msg("Build complete")
 	return nil
 }

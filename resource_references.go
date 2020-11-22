@@ -9,7 +9,7 @@ import (
 
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type resourceRefType int
@@ -110,7 +110,7 @@ func isResolvedResourceType(resource *resourceRef,
 func visitResolvedEventSourceMapping(visitor resolvedResourceVisitor,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	//
 	// BEGIN

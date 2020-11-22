@@ -4,27 +4,33 @@ import (
 	"io"
 	"os/exec"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
+
+type zerologWriter struct {
+	targetLog *zerolog.Logger
+}
+
+func (zw *zerologWriter) Write(p []byte) (n int, err error) {
+	zw.targetLog.Info().Msg(string(p))
+	return len(p), nil
+}
 
 // RunOSCommand properly executes a system command
 // and writes the output to the provided logger
-func RunOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
-	logger.WithFields(logrus.Fields{
-		"Arguments": cmd.Args,
-		"Dir":       cmd.Dir,
-		"Path":      cmd.Path,
-		"Env":       cmd.Env,
-	}).Debug("Running Command")
-	outputWriter := logger.Writer()
+func RunOSCommand(cmd *exec.Cmd, logger *zerolog.Logger) error {
+	logger.Debug().
+		Interface("Arguments", cmd.Args).
+		Str("Dir", cmd.Dir).
+		Str("Path", cmd.Path).
+		Interface("Env", cmd.Env).
+		Msg("Running Command")
+
+	outputWriter := &zerologWriter{targetLog: logger}
 	cmdErr := RunAndCaptureOSCommand(cmd,
 		outputWriter,
 		outputWriter,
 		logger)
-	closeErr := outputWriter.Close()
-	if closeErr != nil {
-		logger.WithField("closeError", closeErr).Warn("Failed to close OS command writer")
-	}
 	return cmdErr
 }
 
@@ -33,13 +39,13 @@ func RunOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 func RunAndCaptureOSCommand(cmd *exec.Cmd,
 	stdoutWriter io.Writer,
 	stderrWriter io.Writer,
-	logger *logrus.Logger) error {
-	logger.WithFields(logrus.Fields{
-		"Arguments": cmd.Args,
-		"Dir":       cmd.Dir,
-		"Path":      cmd.Path,
-		"Env":       cmd.Env,
-	}).Debug("Running Command")
+	logger *zerolog.Logger) error {
+	logger.Debug().
+		Interface("Arguments", cmd.Args).
+		Str("Dir", cmd.Dir).
+		Str("Path", cmd.Path).
+		Interface("Env", cmd.Env).
+		Msg("Running Command")
 	cmd.Stdout = stdoutWriter
 	cmd.Stderr = stderrWriter
 	return cmd.Run()

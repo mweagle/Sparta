@@ -82,10 +82,10 @@ const (
 type contextKey int
 
 const (
-	// ContextKeyLogger is the request-independent *logrus.Logger
+	// ContextKeyLogger is the request-independent *zerolog.Logger
 	// instance common to all requests
 	ContextKeyLogger contextKey = iota
-	// ContextKeyRequestLogger is the *logrus.Entry instance
+	// ContextKeyRequestLogger is the *zerolog.Logger instance
 	// that is annotated with request-identifying
 	// information extracted from the AWS context object
 	ContextKeyRequestLogger

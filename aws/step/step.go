@@ -15,7 +15,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Types of state machines per
@@ -527,7 +527,7 @@ func NewLambdaTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *Lambd
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		cfTemplate *gocf.Template,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 		passCtx := ctx
 		if ts.preexistingDecorator != nil {
 			preexistingCtx, preexistingLambdaDecoratorErr := ts.preexistingDecorator(ctx,
@@ -868,7 +868,7 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		machineErrors := sm.validate()
 		if len(machineErrors) != 0 {
@@ -971,9 +971,9 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 		if jsonBytesErr != nil {
 			return ctx, errors.Errorf("Failed to marshal: %s", jsonBytesErr.Error())
 		}
-		logger.WithFields(logrus.Fields{
-			"StateMachine": string(jsonBytes),
-		}).Debug("State machine definition")
+		logger.Debug().
+			RawJSON("StateMachine", jsonBytes).
+			Msg("State machine definition")
 
 		// Super, now parse this into an Fn::Join representation
 		// so that we can get inline expansion of the AWS pseudo params

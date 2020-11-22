@@ -8,7 +8,7 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // S3ArtifactPublisherDecorator returns a ServiceDecoratorHookHandler
@@ -26,7 +26,7 @@ func S3ArtifactPublisherDecorator(bucket gocf.Stringable,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		// Ensure the custom action handler...
 		sourceArnExpr := gocf.Join("",

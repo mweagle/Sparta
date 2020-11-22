@@ -9,7 +9,7 @@ import (
 	tcell "github.com/gdamore/tcell/v2"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rivo/tview"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -33,7 +33,7 @@ func ExploreWithInputFilter(serviceName string,
 	s3BucketName string,
 	buildTags string,
 	linkerFlags string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Great - everybody get's an aws session
 	awsSession := spartaAWS.NewSession(logger)
@@ -115,11 +115,11 @@ func ExploreWithInputFilter(serviceName string,
 	application.SetRoot(flex, true).SetFocus(flex)
 	currentIndex := 0
 	application.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		logger.WithFields(logrus.Fields{
-			"Key":      event.Key(),
-			"Name":     event.Name(),
-			"Modifier": event.Modifiers(),
-		}).Debug("Input key")
+		logger.Debug().
+			Interface("Key", event.Key()).
+			Interface("Name", event.Name()).
+			Interface("Modifier", event.Modifiers()).
+			Msg("Input key")
 
 		switch event.Key() {
 		case tcell.KeyTab,
@@ -152,7 +152,7 @@ func Explore(serviceName string,
 	s3BucketName string,
 	buildTags string,
 	linkerFlags string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	return ExploreWithInputFilter(serviceName,
 		serviceDescription,

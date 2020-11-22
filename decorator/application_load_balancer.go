@@ -8,7 +8,7 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type targetGroupEntry struct {
@@ -85,7 +85,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	portScopedResourceName := func(prefix string, parts ...string) string {
 		return sparta.CloudFormationResourceName(fmt.Sprintf("%s%d", prefix, albd.port),

@@ -6,7 +6,7 @@ import (
 
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // LambdaVersioningDecorator returns a TemplateDecorator
@@ -21,7 +21,7 @@ func LambdaVersioningDecorator() sparta.TemplateDecoratorHookFunc {
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		lambdaResName := sparta.CloudFormationResourceName("LambdaVersion",
 			buildID,

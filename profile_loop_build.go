@@ -22,7 +22,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type userAnswers struct {
@@ -145,7 +145,7 @@ func objectKeysForProfileType(profileType string,
 	s3BucketName string,
 	maxCount int64,
 	awsSession *session.Session,
-	logger *logrus.Logger) ([]string, error) {
+	logger *zerolog.Logger) ([]string, error) {
 	// http://weagle.s3.amazonaws.com/gosparta.io/pprof/SpartaPPropStack/profiles/cpu/cpu.42.profile
 
 	// gosparta.io/pprof/SpartaPPropStack/profiles/cpu/cpu.42.profile
@@ -165,10 +165,10 @@ func objectKeysForProfileType(profileType string,
 			return nil, errors.Wrapf(listItemResultsErr, "Attempting to list bucket: %s", s3BucketName)
 		}
 		for _, eachEntry := range listItemResults.Contents {
-			logger.WithFields(logrus.Fields{
-				"FoundItem": *eachEntry.Key,
-				"Size":      *eachEntry.Size,
-			}).Debug("Profile file")
+			logger.Debug().
+				Str("FoundItem", *eachEntry.Key).
+				Int64("Size", *eachEntry.Size).
+				Msg("Profile file")
 		}
 
 		for _, eachItem := range listItemResults.Contents {
@@ -206,7 +206,7 @@ func downloaderTask(profileType string,
 	downloadKey string,
 	s3Service *s3.S3,
 	downloader *s3manager.Downloader,
-	logger *logrus.Logger) taskFunc {
+	logger *zerolog.Logger) taskFunc {
 
 	return func() workResult {
 		downloadInput := &s3.GetObjectInput{
@@ -223,9 +223,9 @@ func downloaderTask(profileType string,
 		defer func() {
 			closeErr := outputFile.Close()
 			if closeErr != nil {
-				logger.WithFields(logrus.Fields{
-					"error": closeErr,
-				}).Warn("Failed to close output file writer")
+				logger.Warn().
+					Err(closeErr).
+					Msg("Failed to close output file writer")
 			}
 		}()
 
@@ -238,14 +238,14 @@ func downloaderTask(profileType string,
 			}
 			_, deleteErr := s3Service.DeleteObject(deleteObjectInput)
 			if deleteErr != nil {
-				logger.WithFields(logrus.Fields{
-					"Error": deleteErr,
-				}).Warn("Failed to delete S3 profile snapshot")
+				logger.Warn().
+					Err(deleteErr).
+					Msg("Failed to delete S3 profile snapshot")
 			} else {
-				logger.WithFields(logrus.Fields{
-					"Bucket": bucketName,
-					"Key":    downloadKey,
-				}).Debug("Deleted S3 profile")
+				logger.Debug().
+					Str("Bucket", bucketName).
+					Str("Key", downloadKey).
+					Msg("Deleted S3 profile")
 			}
 		}
 		return &downloadResult{
@@ -261,15 +261,15 @@ func syncStackProfileSnapshots(profileType string,
 	stackInstance string,
 	s3BucketName string,
 	awsSession *session.Session,
-	logger *logrus.Logger) ([]string, error) {
+	logger *zerolog.Logger) ([]string, error) {
 	s3KeyRoot := profileSnapshotRootKeypathForType(profileType, stackName)
 
 	if !refreshSnapshots {
 		cachedProfilePath := cachedAggregatedProfilePath(profileType)
 		// Just used the cached ones...
-		logger.WithFields(logrus.Fields{
-			"CachedProfile": cachedProfilePath,
-		}).Info("Using cached profiles")
+		logger.Info().
+			Str("CachedProfile", cachedProfilePath).
+			Msg("Using cached profiles")
 
 		// Make sure they exist...
 		_, cachedInfoErr := os.Stat(cachedProfilePath)
@@ -280,13 +280,13 @@ func syncStackProfileSnapshots(profileType string,
 	}
 	// Rebuild the cache...
 	cacheRoot := cacheDirectoryForProfileType(profileType, stackName)
-	logger.WithFields(logrus.Fields{
-		"StackName":      stackName,
-		"S3Bucket":       s3BucketName,
-		"ProfileRootKey": s3KeyRoot,
-		"Type":           profileType,
-		"CacheRoot":      cacheRoot,
-	}).Info("Refreshing cached profiles")
+	logger.Info().
+		Str("StackName", stackName).
+		Str("S3Bucket", s3BucketName).
+		Str("ProfileRootKey", s3KeyRoot).
+		Str("Type", profileType).
+		Str("CacheRoot", cacheRoot).
+		Msg("Refreshing cached profiles")
 
 	removeErr := os.RemoveAll(cacheRoot)
 	if removeErr != nil {
@@ -341,26 +341,26 @@ func syncStackProfileSnapshots(profileType string,
 		parsedProfile, parsedProfileErr := profile.Parse(profileInput)
 		// Ignore broken profiles
 		if parsedProfileErr != nil {
-			logger.WithFields(logrus.Fields{
-				"Path":  eachResult,
-				"Error": parsedProfileErr,
-			}).Warn("Invalid cached profile")
+			logger.Warn().
+				Interface("Path", eachResult).
+				Interface("Error", parsedProfileErr).
+				Msg("Invalid cached profile")
 		} else {
-			logger.WithFields(logrus.Fields{
-				"Input": profileFile,
-			}).Info("Aggregating profile")
+			logger.Info().
+				Str("Input", profileFile).
+				Msg("Aggregating profile")
 			accumulatedProfiles = append(accumulatedProfiles, parsedProfile)
 			profileInputCloseErr := profileInput.Close()
 			if profileInputCloseErr != nil {
-				logger.WithFields(logrus.Fields{
-					"error": profileInputCloseErr,
-				}).Warn("Failed to close profile file writer")
+				logger.Warn().
+					Err(profileInputCloseErr).
+					Msg("Failed to close profile file writer")
 			}
 		}
 	}
-	logger.WithFields(logrus.Fields{
-		"ProfileCount": len(accumulatedProfiles),
-	}).Info("Consolidating profiles")
+	logger.Info().
+		Int("ProfileCount", len(accumulatedProfiles)).
+		Msg("Consolidating profiles")
 
 	if len(accumulatedProfiles) <= 0 {
 		return nil, fmt.Errorf("unable to find %s snapshots in s3://%s for profile type: %s",
@@ -376,9 +376,9 @@ func syncStackProfileSnapshots(profileType string,
 	}
 	// Write it out as the "canonical" path...
 	consolidatedPath := cachedAggregatedProfilePath(profileType)
-	logger.WithFields(logrus.Fields{
-		"ConsolidatedProfile": consolidatedPath,
-	}).Info("Creating consolidated profile")
+	logger.Info().
+		Interface("ConsolidatedProfile", consolidatedPath).
+		Msg("Creating consolidated profile")
 
 	outputFile, outputFileErr := os.Create(consolidatedPath)
 	if outputFileErr != nil {
@@ -395,16 +395,16 @@ func syncStackProfileSnapshots(profileType string,
 	for _, eachResult := range results {
 		unlinkErr := os.Remove(eachResult.(string))
 		if unlinkErr != nil {
-			logger.WithFields(logrus.Fields{
-				"File":  consolidatedPath,
-				"Error": unlinkErr,
-			}).Info("Failed to delete file")
+			logger.Info().
+				Str("File", consolidatedPath).
+				Interface("Error", unlinkErr).
+				Msg("Failed to delete file")
 		}
 		outputFileErr := outputFile.Close()
 		if outputFileErr != nil {
-			logger.WithFields(logrus.Fields{
-				"Error": outputFileErr,
-			}).Info("Failed to close output file")
+			logger.Warn().
+				Err(outputFileErr).
+				Msg("Failed to close output file")
 		}
 	}
 	return []string{consolidatedPath}, nil
@@ -416,7 +416,7 @@ func Profile(serviceName string,
 	serviceDescription string,
 	s3BucketName string,
 	httpPort int,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	awsSession := spartaAWS.NewSession(logger)
 
@@ -451,7 +451,9 @@ func Profile(serviceName string,
 		return tempFilePathsErr
 	}
 	// We can't hook the PProf webserver, so put some friendly output
-	logger.Info(fmt.Sprintf("Starting pprof webserver on http://localhost:%d. Enter Ctrl+C to exit.", httpPort))
+	logger.Info().
+		Msgf("Starting pprof webserver on http://localhost:%d. Enter Ctrl+C to exit.",
+			httpPort)
 
 	// Startup a server we manage s.t we can gracefully exit..
 	newArgs := []string{os.Args[0]}
@@ -477,12 +479,12 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 	// Stack name info as reseved environment variables into the function
 	// execution context so that the AWS lambda version of this function
 	// can quickly lookup the StackName and instance information ...
-	profileDecorator = func(stackName string, info *LambdaAWSInfo, S3Bucket string, logger *logrus.Logger) error {
+	profileDecorator = func(stackName string, info *LambdaAWSInfo, S3Bucket string, logger *zerolog.Logger) error {
 		// If we have a role definition, ensure the function has rights to upload
 		// to that bucket, with the limited ARN key
-		logger.WithFields(logrus.Fields{
-			"Function": info.lambdaFunctionName(),
-		}).Info("Instrumenting function for profiling")
+		logger.Info().
+			Str("Function", info.lambdaFunctionName()).
+			Msg("Instrumenting function for profiling")
 
 		// The bucket is either a literal or a gocf.StringExpr - which one?
 		var bucketValue gocf.Stringable

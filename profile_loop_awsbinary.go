@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	spartaAWS "github.com/mweagle/Sparta/aws"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 var currentSlot int
@@ -63,7 +63,7 @@ func uploadFileTask(uploader *s3manager.Uploader,
 	profileType string,
 	uploadSlot int,
 	localFilePath string,
-	logger *logrus.Logger) taskFunc {
+	logger *zerolog.Logger) taskFunc {
 	return func() workResult {
 		fileReader, fileReaderErr := os.Open(localFilePath)
 		if fileReaderErr != nil {
@@ -97,10 +97,10 @@ func snapshotProfiles(s3BucketArchive interface{},
 
 	publishProfiles := func(cpuProfilePath string) {
 
-		profileLogger.WithFields(logrus.Fields{
-			"CPUProfilePath": cpuProfilePath,
-			"Types":          profileTypes,
-		}).Info("Publishing CPU profile")
+		profileLogger.Info().
+			Str("CPUProfilePath", cpuProfilePath).
+			Interface("Types", profileTypes).
+			Msg("Publishing CPU profile")
 
 		uploadSlot := nextUploadSlot()
 		sess := spartaAWS.NewSession(profileLogger)
@@ -120,9 +120,10 @@ func snapshotProfiles(s3BucketArchive interface{},
 			if namedProfile != nil {
 				outputProfile, outputFileErr := profileOutputFile(eachProfileType)
 				if outputFileErr != nil {
-					profileLogger.WithFields(logrus.Fields{
-						"Error": outputFileErr,
-					}).Error("Failed to CPU profile file")
+
+					profileLogger.Error().
+						Err(outputFileErr).
+						Msg("Failed to CPU profile file")
 				} else {
 					namedProfile.WriteTo(outputProfile, 0)
 					outputProfile.Close()
@@ -146,21 +147,26 @@ func snapshotProfiles(s3BucketArchive interface{},
 	if cpuProfileDuration != 0 {
 		outputFile, outputFileErr := profileOutputFile("cpu")
 		if outputFileErr != nil {
-			profileLogger.Warn("Failed to create cpu profile path: %s\n",
-				outputFileErr.Error())
+			profileLogger.Warn().
+				Err(outputFileErr).
+				Msg("Failed to create cpu profile path")
 			return
 		}
 		startErr := pprof.StartCPUProfile(outputFile)
 		if startErr != nil {
-			profileLogger.Warn("Failed to start CPU profile: %s\n", startErr.Error())
+			profileLogger.Warn().
+				Err(startErr).
+				Msg("Failed to start CPU profile")
 		}
-		profileLogger.Info("Opened CPU profile")
+		profileLogger.Info().Msg("Opened CPU profile")
 		time.AfterFunc(cpuProfileDuration, func() {
 			pprof.StopCPUProfile()
-			profileLogger.Info("Opened CPU profile")
+			profileLogger.Info().Msg("Opened CPU profile")
 			closeErr := outputFile.Close()
 			if closeErr != nil {
-				profileLogger.Warn("Failed to close CPU profile output: %s\n", closeErr.Error())
+				profileLogger.Warn().
+					Err(closeErr).
+					Msg("Failed to close CPU profile output")
 			} else {
 				publishProfiles(outputFile.Name())
 			}

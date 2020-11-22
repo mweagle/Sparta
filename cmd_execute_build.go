@@ -5,7 +5,7 @@ package sparta
 import (
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // StampedBuildID is the buildID stamped into the binary. For the case of a
@@ -17,7 +17,7 @@ var StampedBuildID string
 // called via Main() via command line arguments.
 func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 	// Execute no longer supported in non AWS binaries...
 	return errors.Errorf("Execute not supported outside of AWS Lambda environment")
 }

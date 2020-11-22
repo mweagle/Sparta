@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // codeDeployLambdaUpdateDecorator is the per-function decorator
@@ -23,7 +23,7 @@ func codeDeployLambdaUpdateDecorator(updateType string,
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		safeDeployResourceName := func(resType string) string {
 			return sparta.CloudFormationResourceName(serviceName,
@@ -128,7 +128,7 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 		// So what we really need to do is walk over all the lambda functions in the template
 		// and setup all the Deployment groups...
 		codeDeployApplication := &gocf.CodeDeployApplication{

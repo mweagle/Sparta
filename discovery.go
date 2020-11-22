@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Dynamically assigned discover function that is set by Main
@@ -66,7 +66,7 @@ func Discover() (*DiscoveryInfo, error) {
 	return discoverImpl()
 }
 
-func initializeDiscovery(logger *logrus.Logger) {
+func initializeDiscovery(logger *zerolog.Logger) {
 	// Setup the discoveryImpl reference
 	discoverImpl = func() (*DiscoveryInfo, error) {
 		// Cached info?
@@ -79,19 +79,19 @@ func initializeDiscovery(logger *logrus.Logger) {
 		// Get the serialized discovery info the environment string
 		discoveryInfo := os.Getenv(envVarDiscoveryInformation)
 		decoded, decodedErr := base64.StdEncoding.DecodeString(discoveryInfo)
-		logger.WithFields(logrus.Fields{
-			"DecodeData":  string(decoded),
-			"DecodeError": decodedErr,
-		}).Debug("Decode result")
+		logger.Debug().
+			Interface("DecodeData", string(decoded)).
+			Interface("DecodeError", decodedErr).
+			Msg("Decode result")
 		if decodedErr == nil {
 			// Unmarshal it...
 			unmarshalErr := json.Unmarshal(decoded, cachedDiscoveryInfo)
 			if unmarshalErr != nil {
-				logger.WithFields(logrus.Fields{
-					"Raw":           string(decoded),
-					"DiscoveryInfo": cachedDiscoveryInfo,
-					"Error":         unmarshalErr,
-				}).Error("Failed to unmarshal discovery info")
+				logger.Error().
+					Str("Raw", string(decoded)).
+					Interface("DiscoveryInfo", cachedDiscoveryInfo).
+					Interface("Error", unmarshalErr).
+					Msg("Failed to unmarshal discovery info")
 			}
 			decodedErr = unmarshalErr
 		}

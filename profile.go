@@ -5,10 +5,10 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
-type profileLambdaDecorator func(stackName string, info *LambdaAWSInfo, S3Bucket string, logger *logrus.Logger) error
+type profileLambdaDecorator func(stackName string, info *LambdaAWSInfo, S3Bucket string, logger *zerolog.Logger) error
 
 var profileDecorator profileLambdaDecorator
 

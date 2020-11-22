@@ -8,7 +8,7 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // CloudFrontSiteDistributionDecorator returns a CloudFrontSiteDecorator with
@@ -53,7 +53,7 @@ func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		// Computed name
 		bucketName := domainName

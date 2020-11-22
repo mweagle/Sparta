@@ -4,16 +4,15 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/sirupsen/logrus"
 )
 
 func sesLambdaProcessor(ctx context.Context,
 	props map[string]interface{}) (map[string]interface{}, error) {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return props, nil
 }
 

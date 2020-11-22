@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // describeInfoValue is a utility function that accepts
@@ -151,9 +151,9 @@ func (p *workerPool) work() {
 
 func logSectionHeader(text string,
 	dividerWidth int,
-	logger *logrus.Logger) {
+	logger *zerolog.Logger) {
 	// Add a nice divider if there are Stack specific output
 	outputHeader := fmt.Sprintf("%s ", text)
 	suffix := strings.Repeat("▬", dividerWidth-len(outputHeader))
-	logger.Info(fmt.Sprintf("%s%s", outputHeader, suffix))
+	logger.Info().Msgf("%s%s", outputHeader, suffix)
 }

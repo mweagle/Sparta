@@ -7,7 +7,7 @@ import (
 	"text/template"
 
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Utility function to marshal an interface
@@ -65,7 +65,7 @@ func marshalBool(boolValue bool) *gocf.BoolExpr {
 // set of CloudFormation outputs for a given resource type.
 func resourceOutputs(resourceName string,
 	resource gocf.ResourceProperties,
-	logger *logrus.Logger) ([]string, error) {
+	logger *zerolog.Logger) ([]string, error) {
 
 	outputProps := []string{}
 	switch typedResource := resource.(type) {
@@ -95,19 +95,21 @@ func resourceOutputs(resourceName string,
 		*gocf.SQSQueue:
 		outputProps = append(outputProps, "Arn", "QueueName")
 	default:
-		logger.WithFields(logrus.Fields{
-			"ResourceType": fmt.Sprintf("%T", typedResource),
-		}).Warn("Discovery information for dependency not yet implemented")
+		logger.Warn().
+			Str("ResourceType", fmt.Sprintf("%T", typedResource)).
+			Msg("Discovery information for dependency not yet implemented")
 	}
 	return outputProps, nil
 }
 
-func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf.ResourceProperties, error) {
+func newCloudFormationResource(resourceType string, logger *zerolog.Logger) (gocf.ResourceProperties, error) {
 	resProps := gocf.NewResourceByType(resourceType)
 	if nil == resProps {
-		logger.WithFields(logrus.Fields{
-			"Type": resourceType,
-		}).Fatal("Failed to create CloudFormation CustomResource!")
+
+		logger.Fatal().
+			Str("Type", resourceType).
+			Msg("Failed to create CloudFormation CustomResource!")
+
 		return nil, fmt.Errorf("unsupported CustomResourceType: %s", resourceType)
 	}
 	return resProps, nil
@@ -132,7 +134,7 @@ var discoveryDataForResourceDependency = `
 
 func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 	logicalResourceName string,
-	logger *logrus.Logger) ([]byte, error) {
+	logger *zerolog.Logger) ([]byte, error) {
 
 	item, ok := cfTemplate.Resources[logicalResourceName]
 	if !ok {

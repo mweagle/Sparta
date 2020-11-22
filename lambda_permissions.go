@@ -10,7 +10,7 @@ import (
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ type LambdaPermissionExporter interface {
 		lambdaLogicalCFResourceName string,
 		template *gocf.Template,
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
-		logger *logrus.Logger) (string, error)
+		logger *zerolog.Logger) (string, error)
 	// Return a `describe` compatible output for the given permission.  Return
 	// value is a list of tuples for node, edgeLabel
 	descriptionInfo() ([]descriptionNode, error)
@@ -77,7 +77,7 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	lambdaPermission := gocf.LambdaPermission{
 		Action:       gocf.String("lambda:InvokeFunction"),
@@ -145,7 +145,7 @@ func (perm S3Permission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String("s3.amazonaws.com"),
 		s3SourceArnParts,
@@ -254,7 +254,7 @@ func (perm SNSPermission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
 	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String(SNSPrincipal),
@@ -380,7 +380,7 @@ func (storage *MessageBodyStorage) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	if storage.cloudFormationS3BucketResourceName != "" {
 		s3Bucket := &gocf.S3Bucket{
@@ -399,9 +399,9 @@ func (storage *MessageBodyStorage) export(serviceName string,
 			safeAppendDependency(lambdaResource, storage.cloudFormationS3BucketResourceName)
 		}
 
-		logger.WithFields(logrus.Fields{
-			"LogicalResourceName": storage.cloudFormationS3BucketResourceName,
-		}).Info("Service will orphan S3 Bucket on deletion")
+		logger.Info().
+			Str("LogicalResourceName", storage.cloudFormationS3BucketResourceName).
+			Msg("Service will orphan S3 Bucket on deletion")
 
 		// Save the output
 		template.Outputs[storage.cloudFormationS3BucketResourceName] = &gocf.Output{
@@ -577,7 +577,7 @@ func (perm SESPermission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
@@ -775,7 +775,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// There needs to be at least one rule to apply
 	if len(perm.Rules) <= 0 {
@@ -785,9 +785,9 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for this.
 	if nil != perm.BasePermission.SourceArn &&
 		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...).String() != wildcardArn.String() {
-		logger.WithFields(logrus.Fields{
-			"Arn": perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...),
-		}).Warn("CloudWatchEvents do not support literal ARN values")
+		logger.Warn().
+			Interface("Arn", perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...)).
+			Msg("CloudWatchEvents do not support literal ARN values")
 	}
 
 	arnPermissionForRuleName := func(ruleName string) *gocf.StringExpr {
@@ -944,7 +944,7 @@ func (perm EventBridgePermission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// There needs to be at least one rule to apply
 	if perm.Rule == nil {
@@ -959,9 +959,9 @@ func (perm EventBridgePermission) export(serviceName string,
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for this.
 	if nil != perm.BasePermission.SourceArn &&
 		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...).String() != wildcardArn.String() {
-		logger.WithFields(logrus.Fields{
-			"Arn": perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...),
-		}).Warn("EventBridge Events do not support literal ARN values")
+		logger.Warn().
+			Interface("Arn", perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...)).
+			Msg("EventBridge Events do not support literal ARN values")
 	}
 
 	// Add the permission
@@ -1073,7 +1073,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// If there aren't any expressions to register with?
 	if len(perm.Filters) <= 0 {
@@ -1090,9 +1090,9 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	// this.
 	if nil != perm.BasePermission.SourceArn &&
 		perm.BasePermission.sourceArnExpr(cloudformationLogsSourceArnParts...).String() != wildcardArn.String() {
-		logger.WithFields(logrus.Fields{
-			"Arn": perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...),
-		}).Warn("CloudWatchLogs do not support literal ARN values")
+		logger.Warn().
+			Interface("Arn", perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...)).
+			Msg("CloudWatchLogs do not support literal ARN values")
 	}
 
 	// Make sure we grant InvokeFunction privileges to CloudWatchLogs
@@ -1232,7 +1232,7 @@ func (perm CodeCommitPermission) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	principal := gocf.Join("",
 		gocf.String("codecommit."),

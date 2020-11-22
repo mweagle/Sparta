@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Utility discovery information that is necessary for compilation
@@ -66,7 +66,7 @@ func cytoscapeNodeID(rawData interface{}) (string, error) {
 
 type descriptionWriter struct {
 	nodes  []*cytoscapeNode
-	logger *logrus.Logger
+	logger *zerolog.Logger
 }
 
 func (dw *descriptionWriter) writeNodeWithParent(nodeName string,
@@ -149,7 +149,7 @@ func (dw *descriptionWriter) writeEdge(fromNode string,
 	return nil
 }
 
-func templateResourceForKey(resourceKeyName string, logger *logrus.Logger) *templateResource {
+func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *templateResource {
 	var resource *templateResource
 	resourcePath := fmt.Sprintf("/resources/describe/%s",
 		strings.TrimLeft(resourceKeyName, "/"))
@@ -161,20 +161,20 @@ func templateResourceForKey(resourceKeyName string, logger *logrus.Logger) *temp
 			KeyName: keyName,
 			Data:    data,
 		}
-		logger.WithFields(logrus.Fields{
-			"Path":    resourcePath,
-			"KeyName": keyName,
-		}).Debug("Embedded resource")
+		logger.Debug().
+			Str("Path", resourcePath).
+			Str("KeyName", keyName).
+			Msg("Embedded resource")
 
 	} else {
-		logger.WithFields(logrus.Fields{
-			"Path": resourcePath,
-		}).Warn("Failed to embed resource")
+		logger.Warn().
+			Str("Path", resourcePath).
+			Msg("Failed to embed resource")
 	}
 	return resource
 }
 
-func templateResourcesForKeys(resourceKeyNames []string, logger *logrus.Logger) []*templateResource {
+func templateResourcesForKeys(resourceKeyNames []string, logger *zerolog.Logger) []*templateResource {
 	var resources []*templateResource
 
 	for _, eachKey := range resourceKeyNames {
@@ -186,14 +186,14 @@ func templateResourcesForKeys(resourceKeyNames []string, logger *logrus.Logger) 
 	return resources
 }
 
-func templateCSSFiles(logger *logrus.Logger) []*templateResource {
+func templateCSSFiles(logger *zerolog.Logger) []*templateResource {
 	cssFiles := []string{"bootstrap-4.0.0/dist/css/bootstrap.min.css",
 		"highlight.js/styles/xcode.css",
 	}
 	return templateResourcesForKeys(cssFiles, logger)
 }
 
-func templateJSFiles(logger *logrus.Logger) []*templateResource {
+func templateJSFiles(logger *zerolog.Logger) []*templateResource {
 	jsFiles := []string{"jquery/jquery-3.3.1.min.js",
 		"popper/popper.min.js",
 		"bootstrap-4.0.0/dist/js/bootstrap.min.js",
@@ -206,7 +206,7 @@ func templateJSFiles(logger *logrus.Logger) []*templateResource {
 	return templateResourcesForKeys(jsFiles, logger)
 }
 
-func templateImageMap(logger *logrus.Logger) map[string]string {
+func templateImageMap(logger *zerolog.Logger) map[string]string {
 	images := []string{"SpartaHelmet256.png",
 		"AWS-Architecture-Icons_PNG/PNG Light/Compute/AWS-Lambda_Lambda-Function_light-bg@4x.png",
 		"AWS-Architecture-Icons_PNG/PNG Light/Management & Governance/AWS-CloudFormation_light-bg@4x.png",

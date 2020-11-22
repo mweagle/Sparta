@@ -9,7 +9,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	spartaIAMBuilder "github.com/mweagle/Sparta/aws/iam/builder"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // LogAggregatorAssumePolicyDocument is the document for LogSubscription filters
@@ -87,7 +87,7 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	// Create the Kinesis Stream
 	template.AddResource(lad.kinesisStreamResourceName, lad.kinesisResource)
@@ -138,7 +138,7 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context, service
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	// The relay function should consume the stream
 	if lad.logRelay.LogicalResourceName() == lambdaResourceName {

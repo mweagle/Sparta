@@ -6,7 +6,7 @@ import (
 
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type cloudFormationProvisionTestResource struct {
@@ -42,7 +42,7 @@ func templateDecorator(ctx context.Context,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	cfTemplate *gocf.Template,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	// Add an empty resource
 	newResource, err := newCloudFormationResource("Custom::ProvisionTestEmpty", logger)

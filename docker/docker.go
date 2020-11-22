@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/mweagle/Sparta/system"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ func BuildDockerImageWithFlags(serviceName string,
 	dockerTags map[string]string,
 	buildTags string,
 	linkFlags string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// BEGIN DOCKER PRECONDITIONS
 	// Ensure that serviceName and tags are lowercase to make Docker happy
@@ -77,10 +77,10 @@ func BuildDockerImageWithFlags(serviceName string,
 	defer func() {
 		removeErr := os.Remove(executableOutput)
 		if removeErr != nil {
-			logger.WithFields(logrus.Fields{
-				"Path":  executableOutput,
-				"Error": removeErr,
-			}).Warn("Failed to delete temporary Docker binary")
+			logger.Warn().
+				Str("Path", executableOutput).
+				Interface("Error", removeErr).
+				Msg("Failed to delete temporary Docker binary")
 		}
 	}()
 
@@ -99,9 +99,9 @@ func BuildDockerImageWithFlags(serviceName string,
 	}
 	// Add the latest tag
 	// dockerArgs = append(dockerArgs, "--tag", fmt.Sprintf("sparta/%s:latest", serviceName))
-	logger.WithFields(logrus.Fields{
-		"Tags": dockerTags,
-	}).Info("Creating Docker image")
+	logger.Info().
+		Interface("Tags", dockerTags).
+		Msg("Creating Docker image")
 
 	for eachKey, eachValue := range dockerTags {
 		dockerArgs = append(dockerArgs, "--tag", fmt.Sprintf("%s:%s",
@@ -119,7 +119,7 @@ func BuildDockerImageWithFlags(serviceName string,
 func BuildDockerImage(serviceName string,
 	dockerFilepath string,
 	tags map[string]string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	return BuildDockerImageWithFlags(serviceName,
 		dockerFilepath,
@@ -133,7 +133,7 @@ func BuildDockerImage(serviceName string,
 func PushDockerImageToECR(localImageTag string,
 	ecrRepoName string,
 	awsSession *session.Session,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	stsSvc := sts.New(awsSession)
 	ecrSvc := ecr.New(awsSession)
@@ -166,9 +166,9 @@ func PushDockerImageToECR(localImageTag string,
 	dockerPushCmd := exec.Command("docker", "push", ecrTagValue)
 	pushError = system.RunOSCommand(dockerPushCmd, logger)
 	if pushError != nil {
-		logger.WithFields(logrus.Fields{
-			"Error": pushError,
-		}).Info("ECR push failed - reauthorizing")
+		logger.Info().
+			Err(pushError).
+			Msg("ECR push failed - reauthorizing")
 		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
 		if ecrAuthTokenResultErr != nil {
 			pushError = ecrAuthTokenResultErr

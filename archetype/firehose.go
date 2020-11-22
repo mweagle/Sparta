@@ -21,7 +21,7 @@ import (
 	"github.com/mweagle/Sparta/archetype/xformer"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func dropError() error {
@@ -130,7 +130,7 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		zipWriter *zip.Writer,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 		fileInfo, fileInfoErr := os.Stat(xformFilePath)
 		if fileInfoErr != nil {
 			return ctx, errors.Wrapf(fileInfoErr, "Failed to get fileInfo for Kinesis Firehose transform")
@@ -145,9 +145,9 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 			closeErr := fileReader.Close()
 
 			if closeErr != nil {
-				logger.WithFields(logrus.Fields{
-					"error": closeErr,
-				}).Warn("Failed to close file reader")
+				logger.Warn().
+					Err(closeErr).
+					Msg("Failed to close file reader")
 			}
 		}()
 
@@ -178,9 +178,9 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 	templateBytes []byte,
 	kinesisEvent awsEvents.KinesisFirehoseEvent) (*awsEvents.KinesisFirehoseResponse, error) {
 
-	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 	if loggerOk {
-		logger.Info("Hello world structured log message")
+		logger.Info().Msg("Hello world structured log message")
 	}
 
 	funcMap := sprig.TxtFuncMap()
@@ -230,11 +230,11 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 			} else if xform.Error() != nil {
 				xformedRecord.Result = awsEvents.KinesisFirehoseTransformedStateProcessingFailed
 			} else {
-				if loggerOk && logger.IsLevelEnabled(logrus.DebugLevel) {
-					logger.WithFields(logrus.Fields{
-						"input":  eachRecord.Data,
-						"output": outputBuffer.Bytes(),
-					}).Debug("Transformation result")
+				if loggerOk && logger.GetLevel() >= (zerolog.DebugLevel) {
+					logger.Debug().
+						Str("input", string(eachRecord.Data)).
+						Str("output", string(outputBuffer.Bytes())).
+						Msg("Transformation result")
 				}
 
 				xformedRecord.Data = outputBuffer.Bytes()

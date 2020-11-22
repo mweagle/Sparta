@@ -19,7 +19,7 @@ import (
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type cloudFormationLambdaCustomResource struct {
@@ -52,17 +52,17 @@ func noopMessage(operationName string) string {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	ServiceName        string         `validate:"required"`
-	ServiceDescription string         `validate:"-"`
-	Noop               bool           `validate:"-"`
-	LogLevel           string         `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
-	LogFormat          string         `validate:"eq=txt|eq=text|eq=json"`
-	TimeStamps         bool           `validate:"-"`
-	Logger             *logrus.Logger `validate:"-"`
-	Command            string         `validate:"-"`
-	BuildTags          string         `validate:"-"`
-	LinkerFlags        string         `validate:"-"` // no requirements
-	DisableColors      bool           `validate:"-"`
+	ServiceName        string          `validate:"required"`
+	ServiceDescription string          `validate:"-"`
+	Noop               bool            `validate:"-"`
+	LogLevel           string          `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
+	LogFormat          string          `validate:"eq=txt|eq=text|eq=json"`
+	TimeStamps         bool            `validate:"-"`
+	Logger             *zerolog.Logger `validate:"-"`
+	Command            string          `validate:"-"`
+	BuildTags          string          `validate:"-"`
+	LinkerFlags        string          `validate:"-"` // no requirements
+	DisableColors      bool            `validate:"-"`
 }
 
 // OptionsGlobal stores the global command line options
@@ -363,7 +363,7 @@ type IAMRoleDefinition struct {
 
 func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*EventSourceMapping,
 	options *LambdaFunctionOptions,
-	logger *logrus.Logger) gocf.IAMRole {
+	logger *zerolog.Logger) gocf.IAMRole {
 
 	statements := CommonIAMStatements.Core
 	for _, eachPrivilege := range roleDefinition.Privileges {
@@ -441,7 +441,7 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	targetLambdaArn *gocf.StringExpr,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
@@ -520,7 +520,7 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Is this valid
 	invalidErr := ensureValidSignature(resourceInfo.userFunctionName,
@@ -928,12 +928,13 @@ func (info *LambdaAWSInfo) applyDecorators(ctx context.Context,
 	serviceName string,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	decorators := info.Decorators
 	if info.Decorator != nil {
-		logger.Debug("Decorator found for Lambda: ", info.lambdaFunctionName())
-		logger.Warn("DEPRECATED: Single `Decorator` field is superseded by `Decorators` slice")
+		logger.Debug().
+			Msgf("Decorator found for Lambda: %s",
+				info.lambdaFunctionName())
 		decorators = append(decorators, TemplateDecoratorHookFunc(info.Decorator))
 	}
 
@@ -987,7 +988,7 @@ func (info *LambdaAWSInfo) export(ctx context.Context,
 	buildID string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	// Let's make sure the handler has the proper signature...This is basically
 	// copy-pasted from the SDK
@@ -1061,7 +1062,7 @@ func (info *LambdaAWSInfo) export(ctx context.Context,
 		info.Options.Environment = make(map[string]*gocf.StringExpr)
 	}
 	info.Options.Environment[envVarLogLevel] =
-		gocf.String(logger.Level.String())
+		gocf.String(logger.GetLevel().String())
 
 	lambdaResource.Environment = &gocf.LambdaFunctionEnvironment{
 		Variables: info.Options.Environment,
@@ -1135,7 +1136,7 @@ func (info *LambdaAWSInfo) export(ctx context.Context,
 
 	// Log any deprecation notices
 	for _, eachDeprecation := range info.deprecationNotices {
-		logger.Warn(eachDeprecation)
+		logger.Warn().Msg(eachDeprecation)
 	}
 	return responseCtx, nil
 }

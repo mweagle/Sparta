@@ -9,7 +9,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -36,7 +36,7 @@ func (s3Site *S3Site) export(serviceName string,
 	apiGatewayOutputs map[string]*gocf.Output,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	if s3Site.WebsiteConfiguration == nil {
 		s3Site.WebsiteConfiguration = &s3.WebsiteConfiguration{
@@ -174,9 +174,9 @@ func (s3Site *S3Site) export(serviceName string,
 	// EnsureCustomResourceHandler, but due to the more complex IAM rules
 	// there's a bit of duplication
 	//	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
-	logger.WithFields(logrus.Fields{
-		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
-	}).Debug("Sparta CloudFormation custom resource handler info")
+	logger.Debug().
+		Interface("CustomResourceType", cfCustomResources.ZipToS3Bucket).
+		Msg("Sparta CloudFormation custom resource handler info")
 
 	// Since this is a custom resource command, stuff the type in the environment
 	userDispatchMap := map[string]*gocf.StringExpr{

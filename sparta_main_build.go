@@ -9,14 +9,13 @@ import (
 	"path/filepath"
 	"time"
 
-	validator "gopkg.in/go-playground/validator.v9"
-
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
-func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
+func platformLogSysInfo(lambdaFunc string, logger *zerolog.Logger) {
 	// NOP
 }
 
@@ -34,29 +33,6 @@ func RegisterCodePipelineEnvironment(environmentName string,
 	}
 	codePipelineEnvironments[environmentName] = environmentVariables
 	return nil
-}
-
-// NewLoggerWithFormatter returns a logger with the given formatter. If formatter
-// is nil, a TTY-aware formatter is used
-func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
-	logger := logrus.New()
-	// If there is an environment override, use that
-	envLogLevel := os.Getenv(envVarLogLevel)
-	if envLogLevel != "" {
-		level = envLogLevel
-	}
-
-	logLevel, err := logrus.ParseLevel(level)
-	if err != nil {
-		return nil, err
-	}
-
-	logger.Level = logLevel
-	if nil != formatter {
-		logger.Formatter = formatter
-	}
-	logger.Out = os.Stdout
-	return logger, nil
 }
 
 // Main defines the primary handler for transforming an application into a Sparta package.  The
@@ -105,18 +81,9 @@ func MainEx(serviceName string,
 		// Format?
 		// Running in AWS?
 		disableColors := OptionsGlobal.DisableColors || isRunningInAWS()
-		var formatter logrus.Formatter
-		switch OptionsGlobal.LogFormat {
-		case "text", "txt":
-			formatter = &logrus.TextFormatter{
-				DisableColors: disableColors,
-				FullTimestamp: OptionsGlobal.TimeStamps,
-			}
-		case "json":
-			formatter = &logrus.JSONFormatter{}
-			disableColors = true
-		}
-		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
+		logger, loggerErr := NewLoggerForOutput(OptionsGlobal.LogLevel,
+			OptionsGlobal.LogFormat,
+			disableColors)
 		if nil != loggerErr {
 			return loggerErr
 		}
@@ -131,13 +98,12 @@ func MainEx(serviceName string,
 		displayPrettyHeader(headerDivider, disableColors, logger)
 
 		// Metadata about the build...
-		logger.WithFields(logrus.Fields{
-			"Option":    cmd.Name(),
-			"UTC":       (time.Now().UTC().Format(time.RFC3339)),
-			"LinkFlags": OptionsGlobal.LinkerFlags,
-		}).Info(welcomeMessage)
-
-		logger.Info(headerDivider)
+		logger.Info().
+			Str("Option", cmd.Name()).
+			Str("LinkFlags", OptionsGlobal.LinkerFlags).
+			Str("UTC", time.Now().UTC().Format(time.RFC3339)).
+			Msg(welcomeMessage)
+		logger.Info().Msg(headerDivider)
 		return nil
 	}
 
@@ -150,10 +116,10 @@ func MainEx(serviceName string,
 	CommandLineOptions.Build.PreRunE = func(cmd *cobra.Command, args []string) error {
 		validateErr := validate.Struct(optionsBuild)
 
-		OptionsGlobal.Logger.WithFields(logrus.Fields{
-			"validateErr":      validateErr,
-			"optionsProvision": optionsProvision,
-		}).Debug("Build validation results")
+		OptionsGlobal.Logger.Debug().
+			Interface("ValidateErr", validateErr).
+			Interface("OptionsProvision", optionsProvision).
+			Msg("Build validation results")
 		return validateErr
 	}
 
@@ -201,10 +167,10 @@ func MainEx(serviceName string,
 	CommandLineOptions.Provision.PreRunE = func(cmd *cobra.Command, args []string) error {
 		validateErr := validate.Struct(optionsProvision)
 
-		OptionsGlobal.Logger.WithFields(logrus.Fields{
-			"validateErr":      validateErr,
-			"optionsProvision": optionsProvision,
-		}).Debug("Provision validation results")
+		OptionsGlobal.Logger.Debug().
+			Interface("validateErr", validateErr).
+			Interface("optionsProvision", optionsProvision).
+			Msg("Provision validation results")
 		return validateErr
 	}
 
@@ -252,9 +218,9 @@ func MainEx(serviceName string,
 			if parseErr != nil {
 				return parseErr
 			}
-			OptionsGlobal.Logger.WithFields(logrus.Fields{
-				"params": optionsProvision.stackParams,
-			}).Debug("ParseParams")
+			OptionsGlobal.Logger.Debug().
+				Interface("params", optionsProvision.stackParams).
+				Msg("ParseParams")
 
 			// We don't need to walk the params because we
 			// put values in the Metadata block for them all...
@@ -283,8 +249,6 @@ func MainEx(serviceName string,
 	// Execute
 	if nil == CommandLineOptions.Execute.RunE {
 		CommandLineOptions.Execute.RunE = func(cmd *cobra.Command, args []string) error {
-
-			OptionsGlobal.Logger.Formatter = new(logrus.JSONFormatter)
 			// Ensure the discovery service is initialized
 			initializeDiscovery(OptionsGlobal.Logger)
 
@@ -311,9 +275,9 @@ func MainEx(serviceName string,
 			defer func() {
 				closeErr := fileWriter.Close()
 				if closeErr != nil {
-					OptionsGlobal.Logger.WithFields(logrus.Fields{
-						"error": closeErr,
-					}).Warn("Failed to close describe output writer")
+					OptionsGlobal.Logger.Warn().
+						Err(closeErr).
+						Msg("Failed to close describe output writer")
 				}
 			}()
 
@@ -400,7 +364,8 @@ func MainEx(serviceName string,
 			newLogger, newLoggerErr := NewLogger("info")
 			if newLoggerErr != nil {
 				fmt.Printf("Failed to create new logger: %v", newLoggerErr)
-				newLogger = logrus.New()
+				zLogger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+				newLogger = &zLogger
 			}
 			OptionsGlobal.Logger = newLogger
 		}
@@ -408,17 +373,19 @@ func MainEx(serviceName string,
 			validationErr, validationErrOk := executeErr.(validator.ValidationErrors)
 			if validationErrOk {
 				for _, eachError := range validationErr {
-					OptionsGlobal.Logger.Error(eachError)
+					OptionsGlobal.Logger.Error().
+						Interface("Error", eachError).
+						Msg("Validation error")
 				}
 				// Only show the usage if there were input validation errors
 				if executedCmd != nil {
 					usageErr := executedCmd.Usage()
 					if usageErr != nil {
-						OptionsGlobal.Logger.Error(usageErr)
+						OptionsGlobal.Logger.Error().Err(usageErr).Msg("Usage error")
 					}
 				}
 			} else {
-				OptionsGlobal.Logger.Error(executeErr)
+				OptionsGlobal.Logger.Error().Err(executeErr).Msg("Failed to execute command")
 			}
 		} else {
 			log.Printf("ERROR: %s", executeErr)

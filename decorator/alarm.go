@@ -6,7 +6,7 @@ import (
 
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // CloudWatchErrorAlarmDecorator returns a TemplateDecoratorHookFunc
@@ -28,7 +28,7 @@ func CloudWatchErrorAlarmDecorator(periodWindow int,
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		periodInSeconds := minutesPerPeriod * 60
 

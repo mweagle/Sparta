@@ -4,17 +4,16 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/sirupsen/logrus"
 )
 
 func cloudWatchEventProcessor(ctx context.Context,
 	event map[string]interface{}) (map[string]interface{}, error) {
 
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID": lambdaCtx.AwsRequestID,
-	}).Info("Request received")
-	Logger().Info("CloudWatch Event received")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Msg("Request received")
+	Logger().Info().Msg("CloudWatch Event received")
 	return nil, nil
 }
 

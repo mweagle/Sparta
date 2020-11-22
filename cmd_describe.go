@@ -10,7 +10,7 @@ import (
 	"text/template"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // workflowHooksDescriptionNodes returns the set of []*DescriptionInfo
@@ -46,7 +46,7 @@ func Describe(serviceName string,
 	linkFlags string,
 	outputWriter io.Writer,
 	workflowHooks *WorkflowHooks,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// TODO - BUILD, not provision
 

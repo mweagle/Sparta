@@ -10,14 +10,14 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // eventSourceMappingPoliciesForResource returns the IAM specific privileges for each
 // type of supported AWS Lambda EventSourceMapping
 func eventSourceMappingPoliciesForResource(resource *resourceRef,
 	template *gocf.Template,
-	logger *logrus.Logger) ([]spartaIAM.PolicyStatement, error) {
+	logger *zerolog.Logger) ([]spartaIAM.PolicyStatement, error) {
 
 	policyStatements := []spartaIAM.PolicyStatement{}
 
@@ -28,9 +28,9 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 	} else if isResolvedResourceType(resource, template, ":sqs:", &gocf.SQSQueue{}) {
 		policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
 	} else {
-		logger.WithFields(logrus.Fields{
-			"Resource": resource,
-		}).Debug("No additional EventSource IAM permissions found for event type")
+		logger.Debug().
+			Interface("Resource", resource).
+			Msg("No additional EventSource IAM permissions found for event type")
 	}
 	return policyStatements, nil
 }
@@ -39,12 +39,12 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 // called to stich the template together
 type annotationFunc func(lambdaAWSInfos []*LambdaAWSInfo,
 	template *gocf.Template,
-	logger *logrus.Logger) error
+	logger *zerolog.Logger) error
 
 func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
 	template *gocf.Template,
 	buildID string,
-	logger *logrus.Logger) (*gocf.Template, error) {
+	logger *zerolog.Logger) (*gocf.Template, error) {
 
 	// Add the build id s.t. the logger can get stamped...
 	if lambdaAWSInfo.Options == nil {
@@ -59,7 +59,7 @@ func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
 
 func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 	template *gocf.Template,
-	logger *logrus.Logger) (*gocf.Template, error) {
+	logger *zerolog.Logger) (*gocf.Template, error) {
 	depMap := make(map[string]string)
 
 	// Update the metdata with a reference to the output of each
@@ -90,7 +90,7 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 	return template, nil
 }
 
-func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
+func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *zerolog.Logger) {
 	if nil != codePipelineEnvironments {
 		if nil == lambdaAWSInfo.Options {
 			lambdaAWSInfo.Options = defaultLambdaFunctionOptions()
@@ -100,10 +100,10 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logr
 		}
 		for _, eachEnvironment := range codePipelineEnvironments {
 
-			logger.WithFields(logrus.Fields{
-				"Environment":    eachEnvironment,
-				"LambdaFunction": lambdaAWSInfo.lambdaFunctionName(),
-			}).Debug("Annotating Lambda environment for CodePipeline")
+			logger.Debug().
+				Interface("Environment", eachEnvironment).
+				Interface("LambdaFunction", lambdaAWSInfo.lambdaFunctionName()).
+				Msg("Annotating Lambda environment for CodePipeline")
 
 			for eachKey := range eachEnvironment {
 				lambdaAWSInfo.Options.Environment[eachKey] = gocf.Ref(eachKey).String()
@@ -114,7 +114,7 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logr
 
 func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	//
 	// BEGIN
@@ -216,16 +216,16 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 func annotateMaterializedTemplate(
 	lambdaAWSInfos []*LambdaAWSInfo,
 	template *gocf.Template,
-	logger *logrus.Logger) (*gocf.Template, error) {
+	logger *zerolog.Logger) (*gocf.Template, error) {
 	// Setup the annotation functions
 	annotationFuncs := []annotationFunc{
 		annotateEventSourceMappings,
 	}
 	for _, eachAnnotationFunc := range annotationFuncs {
 		funcName := runtime.FuncForPC(reflect.ValueOf(eachAnnotationFunc).Pointer()).Name()
-		logger.WithFields(logrus.Fields{
-			"Annotator": funcName,
-		}).Debug("Evaluating annotator")
+		logger.Debug().
+			Str("Annotator", funcName).
+			Msg("Evaluating annotator")
 
 		annotationErr := eachAnnotationFunc(lambdaAWSInfos,
 			template,

@@ -26,7 +26,7 @@ import (
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -127,7 +127,7 @@ type provisionContext struct {
 func callRollbackHook(wg *sync.WaitGroup,
 	userdata *userdata,
 	buildContext *buildContext,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 		// TODO - run this if the pipeline fails...
 
@@ -146,7 +146,7 @@ func callRollbackHook(wg *sync.WaitGroup,
 			serviceName string,
 			awsSession *session.Session,
 			noop bool,
-			logger *logrus.Logger) {
+			logger *zerolog.Logger) {
 			// Decrement the counter when the goroutine completes.
 			defer wg.Done()
 			rollbackErr := handler.Rollback(context,
@@ -173,7 +173,7 @@ func callRollbackHook(wg *sync.WaitGroup,
 // of resources that it provisions. In general the timeout
 // is short with an exception made for CloudFront
 // distributions
-func maximumStackOperationTimeout(template *gocf.Template, logger *logrus.Logger) time.Duration {
+func maximumStackOperationTimeout(template *gocf.Template, logger *zerolog.Logger) time.Duration {
 	stackOperationTimeout := 20 * time.Minute
 	// If there is a CloudFront distributon in there then
 	// let's give that a bit more time to settle down...In general
@@ -184,7 +184,9 @@ func maximumStackOperationTimeout(template *gocf.Template, logger *logrus.Logger
 			break
 		}
 	}
-	logger.WithField("OperationTimeout", stackOperationTimeout).Debug("Computed operation timeout value")
+	logger.Debug().
+		Dur("OperationTimeout", stackOperationTimeout).
+		Msg("Computed operation timeout value")
 	return stackOperationTimeout
 }
 
@@ -193,7 +195,7 @@ func maximumStackOperationTimeout(template *gocf.Template, logger *logrus.Logger
 // has versioning enabled
 func versionAwareS3KeyName(s3DefaultKey string,
 	s3VersioningEnabled bool,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 	versionKeyName := s3DefaultKey
 	if !s3VersioningEnabled {
 		var extension = path.Ext(s3DefaultKey)
@@ -210,12 +212,12 @@ func versionAwareS3KeyName(s3DefaultKey string,
 			hex.EncodeToString(hash.Sum(nil)),
 			extension)
 
-		logger.WithFields(logrus.Fields{
-			"Default":      s3DefaultKey,
-			"Extension":    extension,
-			"PrefixString": prefixString,
-			"Unique":       versionKeyName,
-		}).Debug("Created unique S3 keyname")
+		logger.Debug().
+			Str("Default", s3DefaultKey).
+			Str("Extension", extension).
+			Str("PrefixString", prefixString).
+			Str("Unique", versionKeyName).
+			Msg("Created unique S3 keyname")
 	}
 	return versionKeyName, nil
 }
@@ -230,7 +232,7 @@ func uploadLocalFileToS3(awsSession *session.Session,
 	s3ObjectBucket string,
 	isVersionAwareBucket bool,
 	noop bool,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// If versioning is enabled, use a stable name, otherwise use a name
 	// that's dynamically created. By default assume that the bucket is
@@ -252,12 +254,13 @@ func uploadLocalFileToS3(awsSession *session.Session,
 		if statErr == nil {
 			filesize = stat.Size()
 		}
-		logger.WithFields(logrus.Fields{
-			"Bucket": s3ObjectBucket,
-			"Key":    s3ObjectKey,
-			"File":   filepath.Base(localPath),
-			"Size":   humanize.Bytes(uint64(filesize)),
-		}).Info(noopMessage("S3 upload"))
+		logger.Info().
+			Str("Bucket", s3ObjectBucket).
+			Str("Key", s3ObjectKey).
+			Str("File", filepath.Base(localPath)).
+			Str("Size", humanize.Bytes(uint64(filesize))).
+			Msg(noopMessage("S3 upload"))
+
 		s3URL = fmt.Sprintf("https://%s-s3.amazonaws.com/%s",
 			s3ObjectBucket,
 			s3ObjectKey)
@@ -306,11 +309,11 @@ type ensureProvisionPreconditionsOp struct {
 	provisionWorkflowOp
 }
 
-func (eppo *ensureProvisionPreconditionsOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (eppo *ensureProvisionPreconditionsOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
 
-func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	// So the first thing we need to do is turn all the stack parameters
 	// into variables. If there is a parameter value we'll use that. If not, we
 	// need to use the default template value. Based on that we can do the
@@ -331,10 +334,10 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 
 	// Update the servicename
 	serviceName, serviceNameErr := eppo.MetadataString(MetadataParamServiceName)
-	logger.WithFields(logrus.Fields{
-		"serviceName":    serviceName,
-		"serviceNameErr": serviceNameErr,
-	}).Debug("ServiceName")
+	logger.Debug().
+		Str("serviceName", serviceName).
+		Interface("serviceNameErr", serviceNameErr).
+		Msg("ServiceName")
 	if serviceNameErr == nil {
 		eppo.provisionContext.serviceName = serviceName
 	}
@@ -351,11 +354,11 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 
 	// If this a NOOP, assume that versioning is not enabled
 	if eppo.provisionContext.noop {
-		logger.WithFields(logrus.Fields{
-			"VersioningEnabled": false,
-			"Bucket":            eppo.provisionContext.s3Bucket,
-			"Region":            *eppo.provisionContext.awsSession.Config.Region,
-		}).Info(noopMessage("S3 preconditions check"))
+		logger.Info().
+			Bool("VersioningEnabled", false).
+			Str("Bucket", eppo.provisionContext.s3Bucket).
+			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
+			Msg(noopMessage("S3 preconditions check"))
 	} else if len(eppo.provisionContext.s3Bucket) != 0 {
 
 		// CodePipelineTrigger
@@ -376,10 +379,10 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 				eppo.provisionContext.s3Bucket,
 				bucketRegionErr)
 		}
-		logger.WithFields(logrus.Fields{
-			"Bucket": eppo.provisionContext.s3Bucket,
-			"Region": bucketRegion,
-		}).Info("Checking S3 region")
+		logger.Info().
+			Str("Bucket", eppo.provisionContext.s3Bucket).
+			Str("Region", bucketRegion).
+			Msg("Checking S3 region")
 		if bucketRegion != *eppo.provisionContext.awsSession.Config.Region {
 			return fmt.Errorf("region (%s) does not match bucket region (%s)",
 				*eppo.provisionContext.awsSession.Config.Region,
@@ -394,17 +397,17 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		if nil != versioningPolicyErr {
 			return versioningPolicyErr
 		}
-		logger.WithFields(logrus.Fields{
-			"VersioningEnabled": isEnabled,
-			"Bucket":            eppo.provisionContext.s3Bucket,
-			"Region":            *eppo.provisionContext.awsSession.Config.Region,
-		}).Info("Checking S3 versioning")
+		logger.Info().
+			Bool("VersioningEnabled", isEnabled).
+			Str("Bucket", eppo.provisionContext.s3Bucket).
+			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
+			Msg("Checking S3 versioning")
 		eppo.provisionContext.isVersionAwareBucket = isEnabled
 
 		// Nothing else to do...
-		logger.WithFields(logrus.Fields{
-			"Region": bucketRegion,
-		}).Debug("Confirmed S3 region match")
+		logger.Debug().
+			Str("Region", bucketRegion).
+			Msg("Confirmed S3 region match")
 	} else {
 		// We don't have an S3 bucket, so that seems bad...
 	}
@@ -419,7 +422,7 @@ type uploadPackageOp struct {
 	// Local path, target S3 path, logger
 }
 
-func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	var uploadTasks []*workTask
 
 	// Keys in the metadata to ZIP files that shoudl be uploaded
@@ -496,7 +499,7 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *logrus.Logger) e
 	}
 	return nil
 }
-func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
 
@@ -508,10 +511,10 @@ type codePipelineTriggerOp struct {
 	provisionWorkflowOp
 }
 
-func (cpto *codePipelineTriggerOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (cpto *codePipelineTriggerOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	/*
 		tmpFile, err := system.TemporaryFile(ScratchDirectory, ctx.userdata.codePipelineTrigger)
 		if err != nil {
@@ -595,10 +598,10 @@ type inPlaceUpdatesOp struct {
 	provisionWorkflowOp
 }
 
-func (ipuo *inPlaceUpdatesOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (ipuo *inPlaceUpdatesOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	// Code bucket
 	codeArtifactURL, codeArtifactURLExists := ipuo.provisionContext.s3Uploads[MetadataParamCodeArchivePath]
 	if !codeArtifactURLExists {
@@ -649,12 +652,12 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *logrus.Logger)
 		return fmt.Errorf("unsupported in-place operations detected:\n\t%s", strings.Join(invalidInPlaceRequests, ",\n\t"))
 	}
 
-	logger.WithFields(logrus.Fields{
-		"FunctionCount": len(updateCodeRequests),
-	}).Info("Updating Lambda function code")
-	logger.WithFields(logrus.Fields{
-		"Updates": updateCodeRequests,
-	}).Debug("Update requests")
+	logger.Info().
+		Int("FunctionCount", len(updateCodeRequests)).
+		Msg("Updating Lambda function code")
+	logger.Debug().
+		Interface("Updates", updateCodeRequests).
+		Msg("Update requests")
 
 	updateTaskMaker := func(lambdaSvc *lambda.Lambda, request *lambda.UpdateFunctionCodeInput) taskFunc {
 		return func() workResult {
@@ -704,10 +707,10 @@ type cloudformationStackUpdateOp struct {
 	provisionWorkflowOp
 }
 
-func (cfsu *cloudformationStackUpdateOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (cfsu *cloudformationStackUpdateOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (cfsu *cloudformationStackUpdateOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (cfsu *cloudformationStackUpdateOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	operationTimeout := maximumStackOperationTimeout(cfsu.provisionContext.cfTemplate, logger)
 	startTime := time.Now()
 
@@ -739,16 +742,16 @@ type outputStackInfoOp struct {
 	provisionWorkflowOp
 }
 
-func (osi *outputStackInfoOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (osi *outputStackInfoOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (osi *outputStackInfoOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (osi *outputStackInfoOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	if osi.provisionContext.stack != nil {
-		logger.WithFields(logrus.Fields{
-			"StackName":    *osi.provisionContext.stack.StackName,
-			"StackId":      *osi.provisionContext.stack.StackId,
-			"CreationTime": *osi.provisionContext.stack.CreationTime,
-		}).Info("Stack provisioned")
+		logger.Info().
+			Str("StackName", *osi.provisionContext.stack.StackName).
+			Str("StackId", *osi.provisionContext.stack.StackId).
+			Time("CreationTime", *osi.provisionContext.stack.CreationTime).
+			Msg("Stack provisioned")
 	}
 	return nil
 }
@@ -757,10 +760,10 @@ type validatePostConditionOp struct {
 	provisionWorkflowOp
 }
 
-func (vpco *validatePostConditionOp) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (vpco *validatePostConditionOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (vpco *validatePostConditionOp) Invoke(ctx context.Context, logger *logrus.Logger) error {
+func (vpco *validatePostConditionOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
 
@@ -828,7 +831,7 @@ func applyCloudFormationOperation(ctx *provisionWorkflowContext) (workflowStep, 
 	return nil, nil
 }
 */
-func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) error {
+func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *zerolog.Logger) error {
 
 	return nil
 }
@@ -853,15 +856,15 @@ func Provision(noop bool,
 	stackTags map[string]string,
 	inPlaceUpdates bool,
 	codePipelineTrigger string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
-	logger.WithFields(logrus.Fields{
-		"NOOP":           noop,
-		"InPlaceUpdates": inPlaceUpdates,
-		"Template":       templatePath,
-		"Params":         stackParamValues,
-		"Tags":           stackTags,
-	}).Info("Provisioning service")
+	logger.Info().
+		Bool("NOOP", noop).
+		Bool("InPlaceUpdates", inPlaceUpdates).
+		Str("Template", templatePath).
+		Interface("Params", stackParamValues).
+		Interface("Tags", stackTags).
+		Msg("Provisioning service")
 
 	pc := &provisionContext{
 		awsSession:          spartaAWS.NewSession(logger),

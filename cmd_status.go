@@ -10,14 +10,14 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Status produces a status report for the given stack
 func Status(serviceName string,
 	serviceDescription string,
 	redact bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	awsSession := spartaAWS.NewSession(logger)
 	cfSvc := cloudformation.New(awsSession)
@@ -29,7 +29,7 @@ func Status(serviceName string,
 
 	if describeStacksResponseErr != nil {
 		if strings.Contains(describeStacksResponseErr.Error(), "does not exist") {
-			logger.WithField("Region", *awsSession.Config.Region).Info("Stack does not exist")
+			logger.Info().Str("Region", *awsSession.Config.Region).Msg("Stack does not exist")
 			return nil
 		}
 		return describeStacksResponseErr
@@ -63,46 +63,46 @@ func Status(serviceName string,
 	// Report on what's up with the stack...
 	logSectionHeader("Stack Summary", dividerLength, logger)
 	stackInfo := describeStacksResponse.Stacks[0]
-	logger.WithField("Id", redactor(*stackInfo.StackId)).Info("StackId")
-	logger.WithField("Description", redactor(*stackInfo.Description)).Info("Description")
-	logger.WithField("State", *stackInfo.StackStatus).Info("Status")
+	logger.Info().Str("Id", redactor(*stackInfo.StackId)).Msg("StackId")
+	logger.Info().Str("Description", redactor(*stackInfo.Description)).Msg("Description")
+	logger.Info().Str("State", *stackInfo.StackStatus).Msg("Status")
 	if stackInfo.StackStatusReason != nil {
-		logger.WithField("Reason", *stackInfo.StackStatusReason).Info("Reason")
+		logger.Info().Str("Reason", *stackInfo.StackStatusReason).Msg("Reason")
 	}
-	logger.WithField("Time", stackInfo.CreationTime.UTC().String()).Info("Created")
+	logger.Info().Str("Time", stackInfo.CreationTime.UTC().String()).Msg("Created")
 	if stackInfo.LastUpdatedTime != nil {
-		logger.WithField("Time", stackInfo.LastUpdatedTime.UTC().String()).Info("Last Update")
+		logger.Info().Str("Time", stackInfo.LastUpdatedTime.UTC().String()).Msg("Last Update")
 	}
 	if stackInfo.DeletionTime != nil {
-		logger.WithField("Time", stackInfo.DeletionTime.UTC().String()).Info("Deleted")
+		logger.Info().Str("Time", stackInfo.DeletionTime.UTC().String()).Msg("Deleted")
 	}
 
 	logger.Info()
 	if len(stackInfo.Parameters) != 0 {
 		logSectionHeader("Parameters", dividerLength, logger)
 		for _, eachParam := range stackInfo.Parameters {
-			logger.WithField("Value",
-				redactor(*eachParam.ParameterValue)).Info(*eachParam.ParameterKey)
+			logger.Info().Str("Value",
+				redactor(*eachParam.ParameterValue)).Msg(*eachParam.ParameterKey)
 		}
-		logger.Info()
+		logger.Info().Msg("")
 	}
 	if len(stackInfo.Tags) != 0 {
 		logSectionHeader("Tags", dividerLength, logger)
 		for _, eachTag := range stackInfo.Tags {
-			logger.WithField("Value",
-				redactor(*eachTag.Value)).Info(*eachTag.Key)
+			logger.Info().Str("Value",
+				redactor(*eachTag.Value)).Msg(*eachTag.Key)
 		}
-		logger.Info()
+		logger.Info().Msg("")
 	}
 	if len(stackInfo.Outputs) != 0 {
 		logSectionHeader("Outputs", dividerLength, logger)
 		for _, eachOutput := range stackInfo.Outputs {
-			statement := logger.WithField("Value",
+			statement := logger.Info().Str("Value",
 				redactor(*eachOutput.OutputValue))
 			if eachOutput.ExportName != nil {
-				statement.WithField("ExportName", *eachOutput.ExportName)
+				statement.Str("ExportName", *eachOutput.ExportName)
 			}
-			statement.Info(*eachOutput.OutputKey)
+			statement.Msg(*eachOutput.OutputKey)
 		}
 		logger.Info()
 	}

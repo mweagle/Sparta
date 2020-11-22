@@ -2,11 +2,12 @@ package cloudformation
 
 import (
 	"encoding/json"
+	"os"
 	"strings"
 	"testing"
 
 	spartaAWS "github.com/mweagle/Sparta/aws"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 var conversionParams = map[string]interface{}{
@@ -153,8 +154,8 @@ func TestUserScopedStackName(t *testing.T) {
 	}
 }
 func TestPlatformScopedName(t *testing.T) {
-	logger := &logrus.Logger{}
-	awsSession := spartaAWS.NewSession(logger)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	awsSession := spartaAWS.NewSession(&logger)
 	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsSession)
 	if stackNameErr != nil {
 		t.Fatalf("Failed to create AWS account based stack name: %s", stackNameErr)

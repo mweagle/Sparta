@@ -7,12 +7,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Delete ensures that the provided serviceName is deleted.
 // Failing to delete a non-existent service is considered a success.
-func Delete(serviceName string, logger *logrus.Logger) error {
+func Delete(serviceName string, logger *zerolog.Logger) error {
 	session := spartaAWS.NewSession(logger)
 	awsCloudFormation := cloudformation.New(session)
 
@@ -20,10 +20,10 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 	if nil != err {
 		return err
 	}
-	logger.WithFields(logrus.Fields{
-		"Exists": exists,
-		"Name":   serviceName,
-	}).Info("Stack existence check")
+	logger.Info().
+		Bool("Exists", exists).
+		Str("Name", serviceName).
+		Msg("Stack existence check")
 
 	if exists {
 
@@ -32,12 +32,12 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 		}
 		resp, err := awsCloudFormation.DeleteStack(params)
 		if nil != resp {
-			logger.WithFields(logrus.Fields{
-				"Response": resp,
-			}).Info("Delete request submitted")
+			logger.Info().
+				Interface("Response", resp).
+				Msg("Delete request submitted")
 		}
 		return err
 	}
-	logger.Info("Stack does not exist")
+	logger.Info().Msg("Stack does not exist")
 	return nil
 }

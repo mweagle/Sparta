@@ -10,7 +10,7 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -137,7 +137,7 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		lambdaFunctions := make([]*LambdaTemplateData, len(lambdaAWSInfo))
 		for index, eachLambda := range lambdaAWSInfo {
@@ -174,9 +174,9 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 		}
 
 		// Raw template output
-		logger.WithFields(logrus.Fields{
-			"Dashboard": templateResults.String(),
-		}).Debug("CloudWatch Dashboard template result")
+		logger.Debug().
+			Str("Dashboard", templateResults.String()).
+			Msg("CloudWatch Dashboard template result")
 
 		// Replace any multiline backtick newlines with nothing, since otherwise
 		// the Fn::Joined JSON will be malformed
@@ -185,9 +185,10 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 			return ctx, reReplaceErr
 		}
 		escapedBytes := reReplace.ReplaceAll(templateResults.Bytes(), []byte(""))
-		logger.WithFields(logrus.Fields{
-			"Dashboard": string(escapedBytes),
-		}).Debug("CloudWatch Dashboard post cleanup")
+
+		logger.Debug().
+			Str("Dashboard", string(escapedBytes)).
+			Msg("CloudWatch Dashboard post cleanup")
 
 		// Super, now parse this into an Fn::Join representation
 		// so that we can get inline expansion of the AWS pseudo params

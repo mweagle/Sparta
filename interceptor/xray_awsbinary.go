@@ -42,7 +42,7 @@ func (xri *xrayInterceptor) BeforeSetup(ctx context.Context, msg json.RawMessage
 
 func (xri *xrayInterceptor) AfterSetup(ctx context.Context, msg json.RawMessage) context.Context {
 	if xri.mode&XRayModeErrCaptureLogs != 0 {
-		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 		if loggerOk {
 			// So we need a loggerWrapper that has the debug level turned on.
 			// This filtering formatter will put everything in a logring and

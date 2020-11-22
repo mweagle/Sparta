@@ -6,7 +6,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
@@ -14,11 +14,11 @@ import (
 func echoAPIGatewayHTTPEvent(ctx context.Context,
 	props map[string]interface{}) error {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	logger, _ := ctx.Value(ContextKeyLogger).(*logrus.Logger)
-	logger.WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	logger, _ := ctx.Value(ContextKeyLogger).(*zerolog.Logger)
+	logger.Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return nil
 }
 

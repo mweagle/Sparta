@@ -10,7 +10,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -34,7 +34,7 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		domainParts := strings.Split(domainName, ".")
 		if len(domainParts) != 3 {

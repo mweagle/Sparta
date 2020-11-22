@@ -11,7 +11,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -45,7 +45,7 @@ type discoveryDataTemplateData struct {
 func lambdaFunctionEnvironment(userEnvMap map[string]*gocf.StringExpr,
 	resourceID string,
 	deps map[string]string,
-	logger *logrus.Logger) (*gocf.LambdaFunctionEnvironment, error) {
+	logger *zerolog.Logger) (*gocf.LambdaFunctionEnvironment, error) {
 	// Merge everything, add the deps
 	envMap := make(map[string]interface{})
 	for eachKey, eachValue := range userEnvMap {
@@ -55,7 +55,7 @@ func lambdaFunctionEnvironment(userEnvMap map[string]*gocf.StringExpr,
 	if discoveryInfoErr != nil {
 		return nil, errors.Wrapf(discoveryInfoErr, "Failed to calculate dependency info")
 	}
-	envMap[envVarLogLevel] = logger.Level.String()
+	envMap[envVarLogLevel] = logger.GetLevel().String()
 	envMap[envVarDiscoveryInformation] = discoveryInfo
 	return &gocf.LambdaFunctionEnvironment{
 		Variables: envMap,
@@ -112,7 +112,7 @@ func EnsureCustomResourceHandler(serviceName string,
 	dependsOn []string,
 	template *gocf.Template,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// Ok, we need a way to round trip this type as the AWS lambda function name.
 	// The problem with this is that the full CustomResource::Type value isn't an
@@ -159,11 +159,11 @@ func EnsureCustomResourceHandler(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// Custom Resource Lambda Handler
 	// Insert it into the template resources...
-	logger.WithFields(logrus.Fields{
-		"CloudFormationResourceType": customResourceCloudFormationTypeName,
-		"Resource":                   customResourceTypeName,
-		"TypeOf":                     commandType.String(),
-	}).Info("Including Lambda CustomResource")
+	logger.Info().
+		Str("CloudFormationResourceType", customResourceCloudFormationTypeName).
+		Str("Resource", customResourceTypeName).
+		Str("TypeOf", commandType.String()).
+		Msg("Including Lambda CustomResource")
 
 	// Don't forget the discovery info...
 	userDispatchMap := map[string]*gocf.StringExpr{
@@ -204,7 +204,7 @@ func EnsureCustomResourceHandler(serviceName string,
 func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceCommand,
 	sourceArn *gocf.StringExpr,
 	template *gocf.Template,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// What's the stable IAMRoleName?
 	commandName := fmt.Sprintf("%T", command)
@@ -224,10 +224,10 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 	// Create a new Role
 	var existingIAMRole *gocf.IAMRole
 	existingResource, exists := template.Resources[stableRoleName]
-	logger.WithFields(logrus.Fields{
-		"PrincipalActions": privileges,
-		"SourceArn":        sourceArn,
-	}).Debug("Ensuring IAM Role results")
+	logger.Debug().
+		Interface("PrincipalActions", privileges).
+		Interface("SourceArn", sourceArn).
+		Msg("Ensuring IAM Role results")
 
 	if !exists {
 		// Insert the IAM role here.  We'll walk the policies data in the next section
@@ -252,9 +252,9 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 		template.AddResource(stableRoleName, existingIAMRole)
 
 		// Create a new IAM Role resource
-		logger.WithFields(logrus.Fields{
-			"RoleName": stableRoleName,
-		}).Debug("Inserting IAM Role")
+		logger.Debug().
+			Str("RoleName", stableRoleName).
+			Msg("Inserting IAM Role")
 	} else {
 		existingIAMRole = existingResource.Properties.(*gocf.IAMRole)
 	}
@@ -277,20 +277,20 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 			for _, eachStatement := range statements.([]spartaIAM.PolicyStatement) {
 				if sourceArn.String() == eachStatement.Resource.String() {
 
-					logger.WithFields(logrus.Fields{
-						"RoleName":  stableRoleName,
-						"SourceArn": sourceArn.String(),
-					}).Debug("SourceArn already exists for IAM Policy")
+					logger.Debug().
+						Str("RoleName", stableRoleName).
+						Interface("SourceArn", sourceArn.String()).
+						Msg("SourceArn already exists for IAM Policy")
 					return stableRoleName, nil
 				}
 			}
 		}
 
-		logger.WithFields(logrus.Fields{
-			"RoleName": stableRoleName,
-			"Action":   privileges,
-			"Resource": sourceArn,
-		}).Debug("Inserting Actions for configuration ARN")
+		logger.Debug().
+			Str("RoleName", stableRoleName).
+			Interface("Action", privileges).
+			Interface("Resource", sourceArn).
+			Msg("Inserting Actions for configuration ARN")
 
 		// Add this statement to the first policy, iff the actions are non-empty
 		if len(privileges) > 0 {

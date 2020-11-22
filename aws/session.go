@@ -1,37 +1,39 @@
 package aws
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type logrusProxy struct {
-	logger *logrus.Logger
+	logger *zerolog.Logger
 }
 
 // Log is a utility function to comply with the AWS signature
 func (proxy *logrusProxy) Log(args ...interface{}) {
-	proxy.logger.Info(args...)
+	proxy.logger.Info().Msg(fmt.Sprintf("%v", args))
 }
 
 // NewSessionWithConfig returns an awsSession that includes the user supplied
 // configuration information
-func NewSessionWithConfig(awsConfig *aws.Config, logger *logrus.Logger) *session.Session {
+func NewSessionWithConfig(awsConfig *aws.Config, logger *zerolog.Logger) *session.Session {
 	return NewSessionWithConfigLevel(awsConfig, aws.LogDebugWithRequestErrors, logger)
 }
 
 // NewSession that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
-func NewSession(logger *logrus.Logger) *session.Session {
+func NewSession(logger *zerolog.Logger) *session.Session {
 	return NewSessionWithLevel(aws.LogDebugWithRequestErrors, logger)
 }
 
 // NewSessionWithLevel returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
-func NewSessionWithLevel(level aws.LogLevelType, logger *logrus.Logger) *session.Session {
+func NewSessionWithLevel(level aws.LogLevelType, logger *zerolog.Logger) *session.Session {
 	awsConfig := &aws.Config{
 		CredentialsChainVerboseErrors: aws.Bool(true),
 	}
@@ -43,7 +45,7 @@ func NewSessionWithLevel(level aws.LogLevelType, logger *logrus.Logger) *session
 // sharing the session value.
 func NewSessionWithConfigLevel(awsConfig *aws.Config,
 	level aws.LogLevelType,
-	logger *logrus.Logger) *session.Session {
+	logger *zerolog.Logger) *session.Session {
 	if nil == awsConfig {
 		awsConfig = &aws.Config{
 			CredentialsChainVerboseErrors: aws.Bool(true),
@@ -51,29 +53,30 @@ func NewSessionWithConfigLevel(awsConfig *aws.Config,
 	}
 
 	// Log AWS calls if needed
-	switch logger.Level {
-	case logrus.DebugLevel:
+	switch logger.GetLevel() {
+	case zerolog.DebugLevel:
 		awsConfig.LogLevel = aws.LogLevel(level)
 	}
 	awsConfig.Logger = &logrusProxy{logger}
 	sess, sessErr := session.NewSession(awsConfig)
 	if sessErr != nil {
-		logger.WithField("Error", sessErr).Warn("Failed to create AWS Session")
+		logger.Warn().
+			Interface("Error", sessErr).
+			Msg("Failed to create AWS Session")
 	} else {
 		sess.Handlers.Send.PushFront(func(r *request.Request) {
-			logger.WithFields(logrus.Fields{
-				"Service":   r.ClientInfo.ServiceName,
-				"Operation": r.Operation.Name,
-				"Method":    r.Operation.HTTPMethod,
-				"Path":      r.Operation.HTTPPath,
-				"Payload":   r.Params,
-			}).Debug("AWS Request")
+			logger.Debug().
+				Str("Service", r.ClientInfo.ServiceName).
+				Str("Operation", r.Operation.Name).
+				Str("Method", r.Operation.HTTPMethod).
+				Str("Path", r.Operation.HTTPPath).
+				Interface("Payload", r.Params).
+				Msg("AWS Request")
 		})
 	}
-
-	logger.WithFields(logrus.Fields{
-		"Name":    aws.SDKName,
-		"Version": aws.SDKVersion,
-	}).Debug("AWS SDK Info")
+	logger.Debug().
+		Str("Name", aws.SDKName).
+		Str("Version", aws.SDKVersion).
+		Msg("AWS SDK Info")
 	return sess
 }

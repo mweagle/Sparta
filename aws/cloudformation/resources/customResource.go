@@ -16,7 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -85,15 +85,15 @@ func init() {
 type CustomResourceCommand interface {
 	Create(session *session.Session,
 		event *CloudFormationLambdaEvent,
-		logger *logrus.Logger) (map[string]interface{}, error)
+		logger *zerolog.Logger) (map[string]interface{}, error)
 
 	Update(session *session.Session,
 		event *CloudFormationLambdaEvent,
-		logger *logrus.Logger) (map[string]interface{}, error)
+		logger *zerolog.Logger) (map[string]interface{}, error)
 
 	Delete(session *session.Session,
 		event *CloudFormationLambdaEvent,
-		logger *logrus.Logger) (map[string]interface{}, error)
+		logger *zerolog.Logger) (map[string]interface{}, error)
 }
 
 // CustomResourcePrivilegedCommand is a command that also has IAM privileges
@@ -110,11 +110,11 @@ func cloudFormationResourceType(resType string) string {
 }
 
 type logrusProxy struct {
-	logger *logrus.Logger
+	logger *zerolog.Logger
 }
 
 func (proxy *logrusProxy) Log(args ...interface{}) {
-	proxy.logger.Info(args...)
+	proxy.logger.Info().Msgf("%v", args)
 }
 
 // CloudFormationLambdaEvent is the event to a resource
@@ -136,7 +136,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	event *CloudFormationLambdaEvent,
 	results map[string]interface{},
 	responseErr error,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	status := "FAILED"
 	if nil == responseErr {
@@ -181,9 +181,9 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 		responseData["Data"] = map[string]interface{}{}
 	}
 
-	logger.WithFields(logrus.Fields{
-		"ResponsePayload": responseData,
-	}).Debug("Response Info")
+	logger.Debug().
+		Interface("ResponsePayload", responseData).
+		Msg("Response Info")
 
 	jsonData, jsonError := json.Marshal(responseData)
 	if nil != jsonError {
@@ -217,11 +217,11 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	req.URL.Path = ""
 	req.URL.RawPath = ""
 
-	logger.WithFields(logrus.Fields{
-		"RawURL": event.ResponseURL,
-		"URL":    req.URL,
-		"Body":   responseData,
-	}).Debug("Created URL response")
+	logger.Debug().
+		Str("RawURL", event.ResponseURL).
+		Stringer("URL", req.URL).
+		Fields(responseData).
+		Msg("Created URL response")
 
 	// Although it seems reasonable to set the Content-Type to "application/json" - don't.
 	// The Content-Type must be an empty string in order for the
@@ -234,16 +234,18 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	if httpErr != nil {
 		return errors.Wrapf(httpErr, "Sending CloudFormation response")
 	}
-	logger.WithFields(logrus.Fields{
-		"LogicalResourceId":  event.LogicalResourceID,
-		"Result":             responseData["Status"],
-		"ResponseStatusCode": resp.StatusCode,
-	}).Debug("Sent CloudFormation response")
+	logger.Debug().
+		Str("LogicalResourceId", event.LogicalResourceID).
+		Interface("Result", responseData["Status"]).
+		Int("ResponseStatusCode", resp.StatusCode).
+		Msg("Sent CloudFormation response")
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		body, bodyErr := ioutil.ReadAll(resp.Body)
 		if bodyErr != nil {
-			logger.Warn("Unable to read body: " + bodyErr.Error())
+			logger.Warn().
+				Err(bodyErr).
+				Msg("Unable to read body")
 			body = []byte{}
 		}
 		return errors.Errorf("Error sending response: %d. Data: %s", resp.StatusCode, string(body))
@@ -255,29 +257,31 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 // Returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
-func awsSession(logger *logrus.Logger) *session.Session {
+func awsSession(logger *zerolog.Logger) *session.Session {
 	awsConfig := &aws.Config{
 		CredentialsChainVerboseErrors: aws.Bool(true),
 	}
 
 	// Log AWS calls if needed
-	switch logger.Level {
-	case logrus.DebugLevel:
+	switch logger.GetLevel() {
+	case zerolog.DebugLevel:
 		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
 	}
 	awsConfig.Logger = &logrusProxy{logger}
 	sess, sessionErr := session.NewSession(awsConfig)
 	if sessionErr != nil {
-		logger.WithField("Error", sessionErr).Warn("Failed to attach AWS Session logger")
+		logger.Warn().
+			Err(sessionErr).
+			Msg("Failed to attach AWS Session logger")
 	} else {
 		sess.Handlers.Send.PushFront(func(r *request.Request) {
-			logger.WithFields(logrus.Fields{
-				"Service":   r.ClientInfo.ServiceName,
-				"Operation": r.Operation.Name,
-				"Method":    r.Operation.HTTPMethod,
-				"Path":      r.Operation.HTTPPath,
-				"Payload":   r.Params,
-			}).Debug("AWS Request")
+			logger.Debug().
+				Str("Service", r.ClientInfo.ServiceName).
+				Str("Operation", r.Operation.Name).
+				Str("Method", r.Operation.HTTPMethod).
+				Str("Path", r.Operation.HTTPPath).
+				Interface("Payload", r.Params).
+				Msg("AWS Request")
 		})
 	}
 	return sess
@@ -287,7 +291,7 @@ func awsSession(logger *logrus.Logger) *session.Session {
 // function that transforms an implementing CustomResourceCommand
 // into something that that can respond to the lambda custom
 // resource lifecycle
-func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, logger *logrus.Logger) interface{} {
+func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, logger *zerolog.Logger) interface{} {
 	return func(ctx context.Context,
 		event CloudFormationLambdaEvent) error {
 		lambdaCtx, lambdaCtxOk := awsLambdaCtx.FromContext(ctx)
@@ -316,11 +320,11 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 			}
 		}
 
-		logger.WithFields(logrus.Fields{
-			"ExecuteOperation": event.LogicalResourceID,
-			"Stacks":           fmt.Sprintf("%#+v", describeStacksOutput),
-			"RequestType":      event.RequestType,
-		}).Debug("CustomResource Request")
+		logger.Debug().
+			Str("ExecuteOperation", event.LogicalResourceID).
+			Str("Stacks", fmt.Sprintf("%#+v", describeStacksOutput)).
+			Str("RequestType", event.RequestType).
+			Msg("CustomResource Request")
 
 		if opErr == nil && executeOperation {
 			switch event.RequestType {
@@ -340,10 +344,10 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 				opErr,
 				logger)
 			if nil != sendErr {
-				logger.WithFields(logrus.Fields{
-					"Error": sendErr.Error(),
-					"URL":   event.ResponseURL,
-				}).Info("Failed to ACK status to CloudFormation")
+				logger.Info().
+					Err(sendErr).
+					Str("URL", event.ResponseURL).
+					Msg("Failed to ACK status to CloudFormation")
 			} else {
 				// If the cloudformation notification was complete, then this
 				// execution functioned properly and we can clear the Error
@@ -356,7 +360,7 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 
 // NewCustomResourceLambdaHandler returns a handler for the given
 // type
-func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) interface{} {
+func NewCustomResourceLambdaHandler(resourceType string, logger *zerolog.Logger) interface{} {
 
 	// TODO - eliminate this factory stuff and just register
 	// the custom resources as normal lambda handlers...

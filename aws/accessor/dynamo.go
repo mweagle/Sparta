@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -26,7 +26,7 @@ type DynamoAccessor struct {
 }
 
 func (svc *DynamoAccessor) dynamoSvc(ctx context.Context) *dynamodb.DynamoDB {
-	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 	sess := spartaAWS.NewSession(logger)
 	dynamoClient := dynamodb.New(sess)
 	xrayInit(dynamoClient.Client)

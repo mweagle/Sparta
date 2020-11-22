@@ -9,7 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,23 +60,23 @@ const (
 	StackOutputBuildID = "BuildID"
 )
 
-func showOptionalAWSUsageInfo(err error, logger *logrus.Logger) {
+func showOptionalAWSUsageInfo(err error, logger *zerolog.Logger) {
 	if err == nil {
 		return
 	}
 	userAWSErr, userAWSErrOk := err.(awserr.Error)
 	if userAWSErrOk {
 		if strings.Contains(userAWSErr.Error(), "could not find region configuration") {
-			logger.Error("")
-			logger.Error("Consider setting env.AWS_REGION, env.AWS_DEFAULT_REGION, or env.AWS_SDK_LOAD_CONFIG to resolve this issue.")
-			logger.Error("See the documentation at https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html for more information.")
-			logger.Error("")
+			logger.Error().Msg("")
+			logger.Error().Msg("Consider setting env.AWS_REGION, env.AWS_DEFAULT_REGION, or env.AWS_SDK_LOAD_CONFIG to resolve this issue.")
+			logger.Error().Msg("See the documentation at https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html for more information.")
+			logger.Error().Msg("")
 		}
 	}
 }
 
 // // logFilesize outputs a friendly filesize for the given filepath
-// func logFilesize(message string, filePath string, logger *logrus.Logger) {
+// func logFilesize(message string, filePath string, logger *zerolog.Logger) {
 // 	// Binary size
 // 	stat, err := os.Stat(filePath)
 // 	if err == nil {
@@ -97,14 +97,14 @@ func sanitizedName(input string) string {
 }
 
 type pipelineBaseOp interface {
-	Invoke(context.Context, *logrus.Logger) error
-	Rollback(context.Context, *logrus.Logger) error
+	Invoke(context.Context, *zerolog.Logger) error
+	Rollback(context.Context, *zerolog.Logger) error
 }
 
 type pipelineStageBase interface {
-	Run(context.Context, *logrus.Logger) error
+	Run(context.Context, *zerolog.Logger) error
 	Append(string, pipelineBaseOp) error
-	Rollback(context.Context, *logrus.Logger) error
+	Rollback(context.Context, *zerolog.Logger) error
 }
 
 type pipelineStageOpEntry struct {
@@ -124,13 +124,13 @@ func (ps *pipelineStage) Append(opName string, op pipelineBaseOp) error {
 	return nil
 }
 
-func (ps *pipelineStage) Run(ctx context.Context, logger *logrus.Logger) error {
+func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error {
 	var wg sync.WaitGroup
 	var mapErr sync.Map
 
 	for eachIndex, eachEntry := range ps.ops {
 		wg.Add(1)
-		go func(opIndex int, opEntry *pipelineStageOpEntry, goLogger *logrus.Logger) {
+		go func(opIndex int, opEntry *pipelineStageOpEntry, goLogger *zerolog.Logger) {
 			defer wg.Done()
 			opErr := opEntry.op.Invoke(ctx, goLogger)
 			if opErr != nil {
@@ -157,18 +157,18 @@ func (ps *pipelineStage) Run(ctx context.Context, logger *logrus.Logger) error {
 	return nil
 }
 
-func (ps *pipelineStage) Rollback(ctx context.Context, logger *logrus.Logger) error {
+func (ps *pipelineStage) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	// Ok, another wg to async cleanup everything. Operations
 	// need to be a bit stateful for this...
 	var wgRollback sync.WaitGroup
-	logger.Debugf("Rolling back %T due to errors", ps)
+	logger.Debug().Msgf("Rolling back %T due to errors", ps)
 	for _, eachEntry := range ps.ops {
 		wgRollback.Add(1)
-		go func(opEntry *pipelineStageOpEntry, goLogger *logrus.Logger) {
+		go func(opEntry *pipelineStageOpEntry, goLogger *zerolog.Logger) {
 			defer wgRollback.Done()
 			opErr := opEntry.op.Rollback(ctx, goLogger)
 			if opErr != nil {
-				goLogger.Warnf("Operation (%s) rollback failed: %s", opEntry.opName, opErr)
+				goLogger.Warn().Msgf("Operation (%s) rollback failed: %s", opEntry.opName, opErr)
 			}
 		}(eachEntry, logger)
 	}
@@ -196,7 +196,7 @@ func (p *pipeline) Append(stageName string, stage pipelineStageBase) {
 
 func (p *pipeline) Run(ctx context.Context,
 	name string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	p.startTime = time.Now()
 
@@ -205,12 +205,12 @@ func (p *pipeline) Run(ctx context.Context,
 		startTime := time.Now()
 		stageErr := curStage.stage.Run(ctx, logger)
 		if stageErr != nil {
-			logger.Warnf("Pipeline stage %s failed", curStage.stageName)
+			logger.Warn().Msgf("Pipeline stage %s failed", curStage.stageName)
 
 			for index := stageIndex; index >= 0; index-- {
 				rollbackErr := p.stages[index].stage.Rollback(ctx, logger)
 				if rollbackErr != nil {
-					logger.Warnf("Pipeline stage %s failed to Rollback", curStage.stageName)
+					logger.Warn().Msgf("Pipeline stage %s failed to Rollback", curStage.stageName)
 				}
 			}
 			return stageErr

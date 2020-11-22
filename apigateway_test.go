@@ -9,7 +9,7 @@ import (
 
 	spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
 	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 var randVal string
@@ -25,9 +25,9 @@ type testRequest struct {
 
 func testAPIGatewayLambda(ctx context.Context,
 	gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
-	logger, loggerOk := ctx.Value(ContextKeyLogger).(*logrus.Logger)
+	logger, loggerOk := ctx.Value(ContextKeyLogger).(*zerolog.Logger)
 	if loggerOk {
-		logger.Info("Hello world structured log message")
+		logger.Info().Msg("Hello world structured log message")
 	}
 
 	// Return a message, together with the incoming input...

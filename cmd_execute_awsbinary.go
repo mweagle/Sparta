@@ -15,7 +15,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	cloudformationResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // StampedServiceName is the name stamp
@@ -60,7 +60,7 @@ func takesContext(handler reflect.Type) bool {
 // tappedHandler is the handler that represents this binary's mode
 func tappedHandler(handlerSymbol interface{},
 	interceptors *LambdaEventInterceptors,
-	logger *logrus.Logger) interface{} {
+	logger *zerolog.Logger) interface{} {
 
 	// If there aren't any, make it a bit easier
 	// to call the applyInterceptors function
@@ -99,21 +99,17 @@ func tappedHandler(handlerSymbol interface{},
 		ctx = applyInterceptors(ctx, msg, interceptors.BeforeSetup)
 
 		// Create the entry logger that has some context information
-		var logrusEntry *logrus.Entry
+		var zerologRequestLogger zerolog.Logger
 		lambdaContext, lambdaContextOk := awsLambdaContext.FromContext(ctx)
 		if lambdaContextOk {
-			logrusEntry = logrus.
-				NewEntry(logger).
-				WithFields(logrus.Fields{
-					LogFieldRequestID:  lambdaContext.AwsRequestID,
-					LogFieldARN:        lambdaContext.InvokedFunctionArn,
-					LogFieldBuildID:    StampedBuildID,
-					LogFieldInstanceID: InstanceID(),
-				})
-		} else {
-			logrusEntry = logrus.NewEntry(logger)
+			zerologRequestLogger = logger.With().
+				Str(LogFieldRequestID, lambdaContext.AwsRequestID).
+				Str(LogFieldARN, lambdaContext.InvokedFunctionArn).
+				Str(LogFieldBuildID, StampedBuildID).
+				Str(LogFieldInstanceID, InstanceID()).
+				Logger()
 		}
-		ctx = context.WithValue(ctx, ContextKeyRequestLogger, logrusEntry)
+		ctx = context.WithValue(ctx, ContextKeyRequestLogger, &zerologRequestLogger)
 		ctx = applyInterceptors(ctx, msg, interceptors.AfterSetup)
 
 		// construct arguments
@@ -158,9 +154,9 @@ func tappedHandler(handlerSymbol interface{},
 // called via Main() via command line arguments.
 func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
-	logger.Debug("Initializing discovery service")
+	logger.Debug().Msg("Initializing discovery service")
 
 	// Initialize the discovery service
 	initializeDiscovery(logger)
@@ -168,11 +164,13 @@ func Execute(serviceName string,
 	// Find the function name based on the dispatch
 	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
 	requestedLambdaFunctionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
-	logger.WithField("lambdaName", requestedLambdaFunctionName).
-		Debug("Invoking requested lambda")
+	logger.Debug().
+		Str("lambdaName", requestedLambdaFunctionName).
+		Msg("Invoking requested lambda")
 
 	// Log any info when we start up...
-	logger.Debug("Querying for platform info")
+	logger.Debug().
+		Msg("Querying for platform info")
 	platformLogSysInfo(requestedLambdaFunctionName, logger)
 
 	// So what if we have workflow hooks in here?
@@ -193,7 +191,7 @@ func Execute(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// User registered commands?
 	//////////////////////////////////////////////////////////////////////////////
-	logger.Debug("Checking user-defined lambda functions")
+	logger.Debug().Msg("Checking user-defined lambda functions")
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		lambdaFunctionName = awsLambdaFunctionName(eachLambdaInfo.lambdaFunctionName())
 		testAWSName = lambdaFunctionName.String().Literal
@@ -224,21 +222,23 @@ func Execute(serviceName string,
 	// the CustomResourceCommand interface?
 	//////////////////////////////////////////////////////////////////////////////
 	if handlerSymbol == nil {
-		logger.Debug("Checking CustomResourceHandler lambda functions")
+		logger.Debug().Msg("Checking CustomResourceHandler lambda functions")
 
 		requestCustomResourceType := os.Getenv(EnvVarCustomResourceTypeName)
 		if requestCustomResourceType != "" {
 			knownNames = append(knownNames, fmt.Sprintf("CloudFormation Custom Resource: %s", requestCustomResourceType))
-			logger.WithFields(logrus.Fields{
-				"customResourceTypeName": requestCustomResourceType,
-			}).Debug("Checking to see if there is a custom resource")
+			logger.Debug().
+				Interface("customResourceTypeName", requestCustomResourceType).
+				Msg("Checking to see if there is a custom resource")
 
 			resource := gocf.NewResourceByType(requestCustomResourceType)
 			if resource != nil {
 				// Handler?
 				command, commandOk := resource.(cloudformationResources.CustomResourceCommand)
 				if !commandOk {
-					logger.Error("CloudFormation type %s doesn't implement cloudformationResources.CustomResourceCommand", requestCustomResourceType)
+					logger.Error().
+						Str("ResourceType", requestCustomResourceType).
+						Msg("CloudFormation type doesn't implement cloudformationResources.CustomResourceCommand")
 				} else {
 					customHandler := cloudformationResources.CloudFormationLambdaCustomResourceHandler(command, logger)
 					if customHandler != nil {
@@ -246,7 +246,9 @@ func Execute(serviceName string,
 					}
 				}
 			} else {
-				logger.Error("Failed to create CloudFormation custom resource of type: %s", requestCustomResourceType)
+				logger.Error().
+					Str("ResourceType", requestCustomResourceType).
+					Msg("Failed to create CloudFormation custom resource of type")
 			}
 		}
 	}
@@ -255,7 +257,7 @@ func Execute(serviceName string,
 		errorMessage := fmt.Errorf("No handler found for AWS Lambda function: %s. Registered function name: %#v",
 			requestedLambdaFunctionName,
 			knownNames)
-		logger.Error(errorMessage)
+		logger.Error().Err(errorMessage).Msg("Handler error")
 		return errorMessage
 	}
 

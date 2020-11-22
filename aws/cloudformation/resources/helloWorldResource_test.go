@@ -2,11 +2,12 @@ package resources
 
 import (
 	"encoding/json"
+	"os"
 	"testing"
 	"time"
 
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func mockHelloWorldResourceEvent(t *testing.T) *CloudFormationLambdaEvent {
@@ -51,11 +52,11 @@ func TestExecuteCreateHelloWorld(t *testing.T) {
 	customResource1 := resHello1.(*HelloWorldResource)
 	customResource1.Message = gocf.String("Create resource here")
 
-	logger := logrus.New()
-	awsSession := awsSession(logger)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	awsSession := awsSession(&logger)
 	createOutputs, createError := customResource1.Create(awsSession,
 		mockHelloWorldResourceEvent(t),
-		logger)
+		&logger)
 	if nil != createError {
 		t.Errorf("Failed to create HelloWorldResource: %s", createError)
 	}

@@ -25,7 +25,7 @@ import (
 	humanize "github.com/dustin/go-humanize"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 //var cacheLock sync.Mutex
@@ -199,7 +199,7 @@ func updateStackViaChangeSet(serviceName string,
 	stackParameters []*cloudformation.Parameter,
 	awsTags []*cloudformation.Tag,
 	awsCloudFormation *cloudformation.CloudFormation,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Create a change set name...
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
@@ -223,14 +223,14 @@ func updateStackViaChangeSet(serviceName string,
 	}
 	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
 
-	logger.WithFields(logrus.Fields{
-		"ExecuteChangeSetOutput": executeChangeSetOutput,
-	}).Debug("ExecuteChangeSet result")
+	logger.Debug().
+		Interface("ExecuteChangeSetOutput", executeChangeSetOutput).
+		Msg("ExecuteChangeSet result")
 
 	if nil == executeChangeSetError {
-		logger.WithFields(logrus.Fields{
-			"StackName": serviceName,
-		}).Info("Issued ExecuteChangeSet request")
+		logger.Info().
+			Str("StackName", serviceName).
+			Msg("Issued ExecuteChangeSet request")
 	}
 	return executeChangeSetError
 
@@ -239,7 +239,7 @@ func updateStackViaChangeSet(serviceName string,
 // func existingLambdaResourceVersions(serviceName string,
 // 	lambdaResourceName string,
 // 	session *session.Session,
-// 	logger *logrus.Logger) (*lambda.ListVersionsByFunctionOutput, error) {
+// 	logger *zerolog.Logger) (*lambda.ListVersionsByFunctionOutput, error) {
 
 // 	errorIsNotExist := func(apiError error) bool {
 // 		return apiError != nil && strings.Contains(apiError.Error(), "does not exist")
@@ -490,11 +490,11 @@ type WaitForStackOperationCompleteResult struct {
 func WaitForStackOperationComplete(stackID string,
 	pollingMessage string,
 	awsCloudFormation *cloudformation.CloudFormation,
-	logger *logrus.Logger) (*WaitForStackOperationCompleteResult, error) {
+	logger *zerolog.Logger) (*WaitForStackOperationCompleteResult, error) {
 
 	result := &WaitForStackOperationCompleteResult{}
 
-	startTime := time.Now()
+	//startTime := time.Now()
 
 	// Startup a spinner...
 	// TODO: special case iTerm per https://github.com/briandowns/spinner/issues/64
@@ -506,32 +506,32 @@ func WaitForStackOperationComplete(stackID string,
 		333*time.Millisecond)
 	spinnerErr := cliSpinner.Color("red", "bold")
 	if spinnerErr != nil {
-		logger.WithField("error", spinnerErr).Warn("Failed to set spinner color")
+		logger.Warn().
+			Err(spinnerErr).
+			Msg("Failed to set spinner color")
 	}
-	cliSpinnerStarted := false
 
 	// Poll for the current stackID state, and
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackID),
 	}
+	cliSpinnerStarted := false
+	startTime := time.Now()
+
 	for waitComplete := false; !waitComplete; {
 		// Startup the spinner if needed...
-		switch logger.Formatter.(type) {
-		case *logrus.JSONFormatter:
-			{
-				logger.Info(pollingMessage)
-			}
-		default:
-			if !cliSpinnerStarted {
-				cliSpinner.Start()
-				defer cliSpinner.Stop()
-				cliSpinnerStarted = true
-			}
-			spinnerText := fmt.Sprintf(" %s (requested: %s)",
-				pollingMessage,
-				humanize.Time(startTime))
-			cliSpinner.Suffix = spinnerText
+
+		logger.Info().Msg(pollingMessage)
+
+		if !cliSpinnerStarted {
+			cliSpinner.Start()
+			defer cliSpinner.Stop()
+			cliSpinnerStarted = true
 		}
+		spinnerText := fmt.Sprintf(" %s (requested: %s)",
+			pollingMessage,
+			humanize.Time(startTime))
+		cliSpinner.Suffix = spinnerText
 
 		// Then sleep and figure out if things are done...
 		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
@@ -612,12 +612,12 @@ func UploadTemplate(serviceName string,
 	s3Bucket string,
 	s3KeyName string,
 	awsSession *session.Session,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
-	logger.WithFields(logrus.Fields{
-		"Key":    s3KeyName,
-		"Bucket": s3Bucket,
-	}).Info("Uploading CloudFormation template")
+	logger.Info().
+		Str("Key", s3KeyName).
+		Str("Bucket", s3Bucket).
+		Msg("Uploading CloudFormation template")
 
 	s3Uploader := s3manager.NewUploader(awsSession)
 
@@ -643,29 +643,30 @@ func UploadTemplate(serviceName string,
 	}
 
 	// Be transparent
-	logger.WithFields(logrus.Fields{
-		"URL": templateUploadResult.Location,
-	}).Info("Template uploaded")
+	logger.Info().
+		Str("URL", templateUploadResult.Location).
+		Msg("Template uploaded")
 	return templateUploadResult.Location, nil
 }
 
 // StackExists returns whether the given stackName or stackID currently exists
-func StackExists(stackNameOrID string, awsSession *session.Session, logger *logrus.Logger) (bool, error) {
+func StackExists(stackNameOrID string, awsSession *session.Session, logger *zerolog.Logger) (bool, error) {
 	cf := cloudformation.New(awsSession)
 
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackNameOrID),
 	}
 	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
-	logger.WithFields(logrus.Fields{
-		"DescribeStackOutput": describeStacksOutput,
-	}).Debug("DescribeStackOutput results")
+
+	logger.Debug().
+		Interface("DescribeStackOutput", describeStacksOutput).
+		Msg("DescribeStackOutput results")
 
 	exists := false
 	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"DescribeStackOutputError": err,
-		}).Debug("DescribeStackOutput")
+		logger.Debug().
+			Err(err).
+			Msg("DescribeStackOutput")
 
 		// If the stack doesn't exist, then no worries
 		if strings.Contains(err.Error(), "does not exist") {
@@ -688,7 +689,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 	stackParameters []*cloudformation.Parameter,
 	awsTags []*cloudformation.Tag,
 	awsCloudFormation *cloudformation.CloudFormation,
-	logger *logrus.Logger) (*cloudformation.DescribeChangeSetOutput, error) {
+	logger *zerolog.Logger) (*cloudformation.DescribeChangeSetOutput, error) {
 
 	capabilities := stackCapabilities(cfTemplate)
 	changeSetInput := &cloudformation.CreateChangeSetInput{
@@ -708,9 +709,9 @@ func CreateStackChangeSet(changeSetRequestName string,
 		return nil, changeSetError
 	}
 
-	logger.WithFields(logrus.Fields{
-		"StackName": serviceName,
-	}).Info("Issued CreateChangeSet request")
+	logger.Info().
+		Str("StackName", serviceName).
+		Msg("Issued CreateChangeSet request")
 
 	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
 		ChangeSetName: aws.String(changeSetRequestName),
@@ -750,16 +751,16 @@ func CreateStackChangeSet(changeSetRequestName string,
 		}
 	}
 
-	logger.WithFields(logrus.Fields{
-		"DescribeChangeSetOutput": describeChangeSetOutput,
-	}).Debug("DescribeChangeSet result")
+	logger.Debug().
+		Interface("DescribeChangeSetOutput", describeChangeSetOutput).
+		Msg("DescribeChangeSet result")
 
 	//////////////////////////////////////////////////////////////////////////////
 	// If there aren't any changes, then skip it...
 	if len(describeChangeSetOutput.Changes) <= 0 {
-		logger.WithFields(logrus.Fields{
-			"StackName": serviceName,
-		}).Info("No changes detected for service")
+		logger.Info().
+			Str("StackName", serviceName).
+			Msg("No changes detected for service")
 
 		// Delete it...
 		_, deleteChangeSetResultErr := DeleteChangeSet(serviceName,
@@ -841,11 +842,11 @@ func ConvergeStackState(serviceName string,
 	awsSession *session.Session,
 	outputsDividerChar string,
 	dividerWidth int,
-	logger *logrus.Logger) (*cloudformation.Stack, error) {
+	logger *zerolog.Logger) (*cloudformation.Stack, error) {
 
-	logger.WithFields(logrus.Fields{
-		"TAGS": tags,
-	}).Info("Stack tags")
+	logger.Info().
+		Interface("Tags", tags).
+		Msg("Stack tags")
 
 	awsCloudFormation := cloudformation.New(awsSession)
 	// Create the parameter values.
@@ -902,13 +903,14 @@ func ConvergeStackState(serviceName string,
 		if nil != createStackResponseErr {
 			return nil, createStackResponseErr
 		}
-		logger.WithFields(logrus.Fields{
-			"StackID": *createStackResponse.StackId,
-		}).Info("Creating stack")
+		logger.Info().
+			Str("StackID", *createStackResponse.StackId).
+			Msg("Creating stack")
 		for eachKey, eachVal := range stackParameters {
-			logger.WithFields(logrus.Fields{
-				eachKey: eachVal,
-			}).Info("Stack parameter")
+			logger.Info().
+				Str(eachKey, eachVal).
+				Msg("Stack parameter")
+
 		}
 		stackID = *createStackResponse.StackId
 	}
@@ -970,9 +972,8 @@ func ConvergeStackState(serviceName string,
 
 	// If it didn't work, then output some failure information
 	if !convergeResult.operationSuccessful {
-		logger.Error("Stack provisioning error")
 		for _, eachError := range errorMessages {
-			logger.Error(eachError)
+			logger.Error().Err(errors.New(eachError)).Msg("Stack provisioning error")
 		}
 		return nil, fmt.Errorf("failed to provision: %s", serviceName)
 	}
@@ -994,26 +995,26 @@ func ConvergeStackState(serviceName string,
 	// Output the sorted time it took to create the necessary resources...
 	outputHeader := "CloudFormation Metrics "
 	suffix := strings.Repeat(outputsDividerChar, dividerWidth-len(outputHeader))
-	logger.Info(fmt.Sprintf("%s%s", outputHeader, suffix))
+	logger.Info().Msgf("%s%s", outputHeader, suffix)
 	for _, eachResourceStat := range resourceStats {
-		logger.WithFields(logrus.Fields{
-			"Resource": eachResourceStat.logicalResourceID,
-			"Type":     eachResourceStat.resourceType,
-			"Duration": fmt.Sprintf("%.2fs", eachResourceStat.elapsed.Seconds()),
-		}).Info("    Operation duration")
+		logger.Info().
+			Str("Resource", eachResourceStat.logicalResourceID).
+			Str("Type", eachResourceStat.resourceType).
+			Float64("Duration", eachResourceStat.elapsed.Seconds()).
+			Msg("    Operation duration")
 	}
 
 	if nil != convergeResult.stackInfo.Outputs {
 		// Add a nice divider if there are Stack specific output
 		outputHeader := "Stack Outputs "
 		suffix := strings.Repeat(outputsDividerChar, dividerWidth-len(outputHeader))
-		logger.Info(fmt.Sprintf("%s%s", outputHeader, suffix))
+		logger.Info().Msgf("%s%s", outputHeader, suffix)
 
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
-			logger.WithFields(logrus.Fields{
-				"Value":       aws.StringValue(eachOutput.OutputValue),
-				"Description": aws.StringValue(eachOutput.Description),
-			}).Info(fmt.Sprintf("    %s", aws.StringValue(eachOutput.OutputKey)))
+			logger.Info().
+				Str("Value", aws.StringValue(eachOutput.OutputValue)).
+				Str("Description", aws.StringValue(eachOutput.Description)).
+				Msgf("    %s", aws.StringValue(eachOutput.OutputKey))
 		}
 	}
 	return convergeResult.stackInfo, nil

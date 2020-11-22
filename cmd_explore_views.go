@@ -22,9 +22,8 @@ import (
 	tcell "github.com/gdamore/tcell/v2"
 	prettyjson "github.com/hokaccha/go-prettyjson"
 	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatch/logs"
-	"github.com/pkg/errors"
 	"github.com/rivo/tview"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -111,7 +110,7 @@ func newFunctionSelector(awsSession *session.Session,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
 	onChangeBroadcaster broadcast.Broadcaster,
-	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
+	logger *zerolog.Logger) (tview.Primitive, []tview.Primitive) {
 
 	lambdaARN := func(stackID string, logicalName string) string {
 		// stackID: arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/54339e80-6686-11e8-90cd-503f20f2ad82
@@ -131,7 +130,9 @@ func newFunctionSelector(awsSession *session.Session,
 	lambdaFunctionARNs := []string{}
 	for _, eachResource := range stackResources {
 		if *eachResource.ResourceType == "AWS::Lambda::Function" {
-			logger.WithField("Resource", *eachResource.LogicalResourceId).Debug("Found provisioned Lambda function")
+			logger.Debug().
+				Str("Resource", *eachResource.LogicalResourceId).
+				Msg("Found provisioned Lambda function")
 			lambdaFunctionARNs = append(lambdaFunctionARNs, lambdaARN(*eachResource.StackId, *eachResource.PhysicalResourceId))
 		}
 	}
@@ -173,7 +174,7 @@ func newEventInputSelector(awsSession *session.Session,
 	settings map[string]string,
 	inputExtensionsFilters []string,
 	functionSelectedBroadcaster broadcast.Broadcaster,
-	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
+	logger *zerolog.Logger) (tview.Primitive, []tview.Primitive) {
 
 	divider := strings.Repeat("━", 20)
 	activeFunction := ""
@@ -203,14 +204,19 @@ func newEventInputSelector(awsSession *session.Session,
 				!strings.Contains(path, ScratchDirectory) {
 				relPath := strings.TrimPrefix(path, curDir)
 				jsonFiles = append(jsonFiles, relPath)
-				logger.WithField("RelativePath", relPath).Debug("Event file found")
+				logger.Debug().
+					Str("RelativePath", relPath).
+					Msg("Event file found")
 			}
 		}
 		return nil
 	}
 	walkErr := filepath.Walk(curDir, walkerFunc)
 	if walkErr != nil {
-		logger.WithError(walkErr).Error("Failed to find JSON files in directory: " + curDir)
+		logger.Error().
+			Err(walkErr).
+			Str("Directory", curDir).
+			Msg("Failed to find JSON files in directory")
 		return nil, nil
 	}
 	// Create all the views...
@@ -264,13 +270,13 @@ func newEventInputSelector(awsSession *session.Session,
 			}
 			invokeOutput, invokeOutputErr := lambdaSvc.Invoke(lambdaInput)
 			if invokeOutputErr != nil {
-				logger.WithFields(logrus.Fields{
-					"Error": invokeOutputErr,
-				}).Error("Failed to invoke Lambda function")
+				logger.Error().
+					Err(invokeOutputErr).
+					Msg("Failed to invoke Lambda function")
 			} else if invokeOutput.FunctionError != nil {
-				logger.WithFields(logrus.Fields{
-					"Error": invokeOutput.FunctionError,
-				}).Error("Lambda function produced an error")
+				logger.Error().
+					Str("Error", *invokeOutput.FunctionError).
+					Msg("Lambda function produced an error")
 			} else {
 				var m interface{}
 
@@ -281,9 +287,9 @@ func newEventInputSelector(awsSession *session.Session,
 				} else {
 					responseData = string(invokeOutput.Payload)
 				}
-				logger.WithFields(logrus.Fields{
-					"payload": responseData,
-				}).Info(divider + " AWS Lambda Response " + divider)
+				logger.Info().
+					Interface("payload", responseData).
+					Msg(divider + " AWS Lambda Response " + divider)
 			}
 		}
 	})
@@ -309,7 +315,7 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
 	functionSelectedBroadcaster broadcast.Broadcaster,
-	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
+	logger *zerolog.Logger) (tview.Primitive, []tview.Primitive) {
 
 	osEmojiSet := progressEmoji
 	switch runtime.GOOS {
@@ -386,7 +392,9 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 				lambdaARN := selectedFunction
 				lambdaParts := strings.Split(lambdaARN, ":")
 				logGroupName := fmt.Sprintf("/aws/lambda/%s", lambdaParts[len(lambdaParts)-1])
-				logger.WithField("Name", logGroupName).Debug("CloudWatch LogGroupName")
+				logger.Debug().
+					Str("Name", logGroupName).
+					Msg("CloudWatch LogGroupName")
 
 				// Put this as the label in the view...
 				doneChan = make(chan bool)
@@ -405,7 +413,9 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 								lastTime = *event.Timestamp / 1000
 								updateCloudWatchLogInfoView(logGroupName, lastTime)
 								writePrettyString(logEventDataView, *event.Message)
-								logger.WithField("EventID", *event.EventId).Debug("Event received")
+								logger.Debug().
+									Str("EventID", *event.EventId).
+									Msg("Event received")
 								logEventDataView.ScrollToEnd()
 								app.Draw()
 							}
@@ -428,40 +438,40 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 	return flexView, []tview.Primitive{logEventDataView}
 }
 
-type colorizingFormatter struct {
-	TimestampFormat  string
-	DisableTimestamp bool
-	FieldMap         logrus.FieldMap
-}
+// type colorizingFormatter struct {
+// 	TimestampFormat  string
+// 	DisableTimestamp bool
+// 	FieldMap         logrus.FieldMap
+// }
 
-// Format renders a single log entry
-func (cf *colorizingFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	data := make(logrus.Fields, len(entry.Data)+3)
-	for k, v := range entry.Data {
-		switch v := v.(type) {
-		case error:
-			// Otherwise errors are ignored by `encoding/json`
-			// https://github.com/sirupsen/logrus/issues/137
-			data[k] = v.Error()
-		default:
-			data[k] = v
-		}
-	}
-	timestampFormat := cf.TimestampFormat
-	if timestampFormat == "" {
-		timestampFormat = time.RFC3339
-	}
-	if !cf.DisableTimestamp {
-		data[logrus.FieldKeyTime] = entry.Time.Format(timestampFormat)
-	}
-	data[logrus.FieldKeyMsg] = entry.Message
-	data[logrus.FieldKeyLevel] = entry.Level.String()
-	prettyString, prettyStringErr := prettyjson.Marshal(data)
-	if prettyStringErr != nil {
-		return nil, errors.Wrapf(prettyStringErr, "Failed to marshal fields to JSON")
-	}
-	return append(prettyString, '\n'), nil
-}
+// // Format renders a single log entry
+// func (cf *colorizingFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+// 	data := make(logrus.Fields, len(entry.Data)+3)
+// 	for k, v := range entry.Data {
+// 		switch v := v.(type) {
+// 		case error:
+// 			// Otherwise errors are ignored by `encoding/json`
+// 			// https://github.com/sirupsen/logrus/issues/137
+// 			data[k] = v.Error()
+// 		default:
+// 			data[k] = v
+// 		}
+// 	}
+// 	timestampFormat := cf.TimestampFormat
+// 	if timestampFormat == "" {
+// 		timestampFormat = time.RFC3339
+// 	}
+// 	if !cf.DisableTimestamp {
+// 		data[logrus.FieldKeyTime] = entry.Time.Format(timestampFormat)
+// 	}
+// 	data[logrus.FieldKeyMsg] = entry.Message
+// 	data[logrus.FieldKeyLevel] = entry.Level.String()
+// 	prettyString, prettyStringErr := prettyjson.Marshal(data)
+// 	if prettyStringErr != nil {
+// 		return nil, errors.Wrapf(prettyStringErr, "Failed to marshal fields to JSON")
+// 	}
+// 	return append(prettyString, '\n'), nil
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -471,10 +481,9 @@ func newLogOutputView(awsSession *session.Session,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
-	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
+	logger *zerolog.Logger) (tview.Primitive, []tview.Primitive) {
 
 	// Log to JSON
-	logger.Formatter = &colorizingFormatter{}
 	logDataView := tview.NewTextView().
 		SetScrollable(true).
 		SetDynamicColors(true)
@@ -484,6 +493,6 @@ func newLogOutputView(awsSession *session.Session,
 	logDataView.SetBorder(true).SetTitle("Output")
 
 	colorWriter := tview.ANSIWriter(logDataView)
-	logger.Out = colorWriter
+	logger.Output(colorWriter)
 	return logDataView, []tview.Primitive{logDataView}
 }

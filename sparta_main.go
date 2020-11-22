@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
 )
@@ -35,18 +35,18 @@ func isRunningInAWS() bool {
 	return len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) != 0
 }
 
-func displayPrettyHeader(headerDivider string, disableColors bool, logger *logrus.Logger) {
-	logger.Info(headerDivider)
+func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerolog.Logger) {
+	logger.Info().Msg(headerDivider)
 	red := func(inputText string) string {
 		if disableColors {
 			return inputText
 		}
 		return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
 	}
-	logger.Info(fmt.Sprintf(red("╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗")+"   Version : %s", SpartaVersion))
-	logger.Info(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
-	logger.Info(fmt.Sprintf(red("╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩")+"   Go      : %s", runtime.Version()))
-	logger.Info(headerDivider)
+	logger.Info().Msg(fmt.Sprintf(red("╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗")+"   Version : %s", SpartaVersion))
+	logger.Info().Msg(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
+	logger.Info().Msg(fmt.Sprintf(red("╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩")+"   Go      : %s", runtime.Version()))
+	logger.Info().Msg(headerDivider)
 }
 
 var codePipelineEnvironments map[string]map[string]string
@@ -60,7 +60,7 @@ func init() {
 }
 
 // Logger returns the sparta Logger instance for this process
-func Logger() *logrus.Logger {
+func Logger() *zerolog.Logger {
 	return OptionsGlobal.Logger
 }
 
@@ -95,7 +95,7 @@ type optionsBuildStruct struct {
 	OutputDir string `validate:"-"` // non-whitespace
 }
 
-func computeBuildID(userSuppliedValue string, logger *logrus.Logger) (string, error) {
+func computeBuildID(userSuppliedValue string, logger *zerolog.Logger) (string, error) {
 	buildID := userSuppliedValue
 	if buildID == "" {
 		// That's cool, let's see if we can find a git SHA
@@ -111,9 +111,10 @@ func computeBuildID(userSuppliedValue string, logger *logrus.Logger) (string, er
 			// Great, let's use the SHA
 			buildID = strings.TrimSpace(string(stdout.String()))
 			if buildID != "" {
-				logger.WithField("SHA", buildID).
-					WithField("Command", "git rev-parse HEAD").
-					Info("Using `git` SHA for StampedBuildID")
+				logger.Info().
+					Str("SHA", buildID).
+					Str("Command", "git rev-parse HEAD").
+					Msg("Using `git` SHA for StampedBuildID")
 			}
 		}
 		// Ignore any errors and make up a random one
@@ -470,14 +471,9 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 				return validateErr
 			}
 			// Format?
-			var formatter logrus.Formatter
-			switch OptionsGlobal.LogFormat {
-			case "text", "txt":
-				formatter = &logrus.TextFormatter{}
-			case "json":
-				formatter = &logrus.JSONFormatter{}
-			}
-			logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
+			logger, loggerErr := NewLoggerForOutput(OptionsGlobal.LogLevel,
+				OptionsGlobal.LogFormat,
+				OptionsGlobal.DisableColors)
 			if nil != loggerErr {
 				return loggerErr
 			}
@@ -555,6 +551,6 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 
 // NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
 // to set the formatter if needed.
-func NewLogger(level string) (*logrus.Logger, error) {
-	return NewLoggerWithFormatter(level, nil)
+func NewLogger(level string) (*zerolog.Logger, error) {
+	return NewLoggerForOutput(level, "", false)
 }

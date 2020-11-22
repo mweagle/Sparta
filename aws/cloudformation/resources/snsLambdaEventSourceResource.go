@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // SNSLambdaEventSourceResourceRequest defines the request properties to configure
@@ -27,7 +27,7 @@ type SNSLambdaEventSourceResource struct {
 func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bool,
 	session *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -56,11 +56,11 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 		}
 	}
 	// Just log it...
-	logger.WithFields(logrus.Fields{
-		"SNSTopicArn":             command.SNSTopicArn,
-		"LambdaArn":               command.LambdaTargetArn,
-		"ExistingSubscriptionArn": lambdaSubscriptionArn,
-	}).Info("Current SNS subscription status")
+	logger.Info().
+		Interface("SNSTopicArn", command.SNSTopicArn).
+		Interface("LambdaArn", command.LambdaTargetArn).
+		Interface("ExistingSubscriptionArn", lambdaSubscriptionArn).
+		Msg("Current SNS subscription status")
 
 	var opErr error
 	if isTargetActive && lambdaSubscriptionArn == "" {
@@ -77,9 +77,9 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 		_, opErr = snsSvc.Unsubscribe(unsubscribeInput)
 	} else {
 		// Just log it...
-		logger.WithFields(logrus.Fields{
-			"Command": command,
-		}).Info("No SNS operation required")
+		logger.Info().
+			Interface("Command", command).
+			Msg("No SNS operation required")
 	}
 
 	return nil, opErr
@@ -97,20 +97,20 @@ func (command *SNSLambdaEventSourceResource) IAMPrivileges() []string {
 // Create implements the custom resource create operation
 func (command SNSLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
 // Update implements the custom resource update operation
 func (command SNSLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
 // Delete implements the custom resource delete operation
 func (command SNSLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(false, awsSession, event, logger)
 }

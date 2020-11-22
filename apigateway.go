@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/apigateway"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // APIGateway repreents a type of API Gateway provisoining that can be exported
@@ -23,7 +23,7 @@ type APIGateway interface {
 		roleNameMap map[string]*gocf.StringExpr,
 		template *gocf.Template,
 		noop bool,
-		logger *logrus.Logger) error
+		logger *zerolog.Logger) error
 	Describe(targetNodeName string) (*DescriptionInfo, error)
 }
 
@@ -206,15 +206,15 @@ func apiStageInfo(apiName string,
 	stageName string,
 	session *session.Session,
 	noop bool,
-	logger *logrus.Logger) (*apigateway.Stage, error) {
+	logger *zerolog.Logger) (*apigateway.Stage, error) {
 
-	logger.WithFields(logrus.Fields{
-		"APIName":   apiName,
-		"StageName": stageName,
-	}).Info("Checking current API Gateway stage status")
+	logger.Info().
+		Str("APIName", apiName).
+		Str("StageName", stageName).
+		Msg("Checking current API Gateway stage status")
 
 	if noop {
-		logger.Info(noopMessage("API Gateway check"))
+		logger.Info().Msg(noopMessage("API Gateway check"))
 		return nil, nil
 	}
 
@@ -260,13 +260,13 @@ func apiStageInfo(apiName string,
 		}
 	}
 	if nil != matchingStageOutput {
-		logger.WithFields(logrus.Fields{
-			"DeploymentId": *matchingStageOutput.DeploymentId,
-			"LastUpdated":  matchingStageOutput.LastUpdatedDate,
-			"CreatedDate":  matchingStageOutput.CreatedDate,
-		}).Info("Checking current APIGateway stage status")
+		logger.Info().
+			Str("DeploymentId", *matchingStageOutput.DeploymentId).
+			Time("LastUpdated", *matchingStageOutput.LastUpdatedDate).
+			Time("CreatedDate", *matchingStageOutput.CreatedDate).
+			Msg("Checking current APIGateway stage status")
 	} else {
-		logger.Info("APIGateway stage has not been deployed")
+		logger.Info().Msg("APIGateway stage has not been deployed")
 	}
 	return matchingStageOutput, nil
 }
@@ -558,7 +558,7 @@ func (api *API) Marshal(serviceName string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	apiGatewayResourceNameForPath := func(fullPath string) string {
 		pathParts := strings.Split(fullPath, "/")
@@ -820,9 +820,9 @@ func (resource *Resource) NewMethod(httpMethod string,
 	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
 
 	if OptionsGlobal.Logger != nil && len(possibleHTTPStatusCodeResponses) != 0 {
-		OptionsGlobal.Logger.WithFields(logrus.Fields{
-			"possibleHTTPStatusCodeResponses": possibleHTTPStatusCodeResponses,
-		}).Debug("The set of all HTTP status codes is no longer required for NewMethod(...). Any valid HTTP status code can be returned starting with v1.8.0.")
+		OptionsGlobal.Logger.Debug().Interface(
+			"possibleHTTPStatusCodeResponses", possibleHTTPStatusCodeResponses).
+			Msg("The set of all HTTP status codes is no longer required for NewMethod(...). Any valid HTTP status code can be returned starting with v1.8.0.")
 	}
 
 	// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-method-settings.html#how-to-method-settings-console

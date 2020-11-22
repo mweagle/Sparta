@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const userdataResourceContents = `
@@ -19,10 +19,10 @@ const userdataResourceContents = `
 func helloZipLambda(ctx context.Context,
 	props map[string]interface{}) (string, error) {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return "Event processed", nil
 }
 
@@ -31,9 +31,9 @@ func archiveHook(ctx context.Context,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 
-	logger.Info("Adding userResource")
+	logger.Info().Msg("Adding userResource")
 	resourceFileName := "userResource.json"
 	binaryWriter, binaryWriterErr := zipWriter.Create(resourceFileName)
 	if nil != binaryWriterErr {

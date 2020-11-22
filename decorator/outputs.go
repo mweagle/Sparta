@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 var reInvalidOutputChars = regexp.MustCompile("[^A-Za-z0-9]+")
@@ -28,7 +28,7 @@ func PublishAllResourceOutputs(cfResourceName string,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		// Add the Ref
 		cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Ref", cfResourceName))] = &gocf.Output{
@@ -63,7 +63,7 @@ func PublishAttOutputDecorator(keyName string, description string, fieldName str
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		// Add the function ARN as a stack output
 		template.Outputs[sanitizedKeyName(keyName)] = &gocf.Output{
@@ -86,7 +86,7 @@ func PublishRefOutputDecorator(keyName string, description string) sparta.Templa
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		logger *logrus.Logger) (context.Context, error) {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		// Add the function ARN as a stack output
 		template.Outputs[sanitizedKeyName(keyName)] = &gocf.Output{

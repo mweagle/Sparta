@@ -6,7 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ type TemplateDecorator func(ctx context.Context,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // TemplateDecoratorHookFunc is the adapter to transform an existing
 // TemplateHook into a TemplateDecoratorHandler satisfier
@@ -42,7 +42,7 @@ type TemplateDecoratorHookFunc func(ctx context.Context,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // DecorateTemplate calls tdhf(...) to satisfy TemplateDecoratorHandler
 func (tdhf TemplateDecoratorHookFunc) DecorateTemplate(ctx context.Context,
@@ -53,7 +53,7 @@ func (tdhf TemplateDecoratorHookFunc) DecorateTemplate(ctx context.Context,
 	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	template *gocf.Template,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 	return tdhf(ctx,
 		serviceName,
 		lambdaResourceName,
@@ -76,7 +76,7 @@ type TemplateDecoratorHandler interface {
 		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		logger *logrus.Logger) (context.Context, error)
+		logger *zerolog.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ type WorkflowHook func(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // WorkflowHookFunc is the adapter to transform an existing
 // WorkflowHook into a WorkflowHookHandler satisfier
@@ -102,7 +102,7 @@ type WorkflowHookFunc func(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // DecorateWorkflow calls whf(...) to satisfy WorkflowHookHandler
 func (whf WorkflowHookFunc) DecorateWorkflow(ctx context.Context,
@@ -111,7 +111,7 @@ func (whf WorkflowHookFunc) DecorateWorkflow(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 	return whf(ctx,
 		serviceName,
 		S3Bucket,
@@ -130,7 +130,7 @@ type WorkflowHookHandler interface {
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error)
+		logger *zerolog.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ type ArchiveHook func(ctx context.Context,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // ArchiveHookFunc is the adapter to transform an existing
 // ArchiveHook into a WorkflowHookHandler satisfier
@@ -154,7 +154,7 @@ type ArchiveHookFunc func(ctx context.Context,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // DecorateArchive calls whf(...) to satisfy ArchiveHookHandler
 func (ahf ArchiveHookFunc) DecorateArchive(ctx context.Context,
@@ -162,7 +162,7 @@ func (ahf ArchiveHookFunc) DecorateArchive(ctx context.Context,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 	return ahf(ctx,
 		serviceName,
 		zipWriter,
@@ -179,7 +179,7 @@ type ArchiveHookHandler interface {
 		zipWriter *zip.Writer,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error)
+		logger *zerolog.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ type ServiceDecoratorHook func(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // ServiceDecoratorHookFunc is the adapter to transform an existing
 // ArchiveHook into a WorkflowHookHandler satisfier
@@ -205,7 +205,7 @@ type ServiceDecoratorHookFunc func(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // DecorateService calls sdhf(...) to satisfy ServiceDecoratorHookHandler
 func (sdhf ServiceDecoratorHookFunc) DecorateService(ctx context.Context,
@@ -215,7 +215,7 @@ func (sdhf ServiceDecoratorHookFunc) DecorateService(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 	return sdhf(ctx,
 		serviceName,
 		template,
@@ -236,7 +236,7 @@ type ServiceDecoratorHookHandler interface {
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error)
+		logger *zerolog.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ type ServiceValidationHook func(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // ServiceValidationHookFunc is the adapter to transform an existing
 // ArchiveHook into a WorkflowHookHandler satisfier
@@ -263,7 +263,7 @@ type ServiceValidationHookFunc func(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error)
+	logger *zerolog.Logger) (context.Context, error)
 
 // ValidateService calls sdhf(...) to satisfy ServiceValidationHookHandler
 func (sdhf ServiceValidationHookFunc) ValidateService(ctx context.Context,
@@ -273,7 +273,7 @@ func (sdhf ServiceValidationHookFunc) ValidateService(ctx context.Context,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 	return sdhf(ctx,
 		serviceName,
 		template,
@@ -294,7 +294,7 @@ type ServiceValidationHookHandler interface {
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error)
+		logger *zerolog.Logger) (context.Context, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +306,7 @@ type RollbackHook func(ctx context.Context,
 	serviceName string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger)
+	logger *zerolog.Logger)
 
 // RollbackHookFunc the adapter to transform an existing
 // RollbackHook into a RollbackHookHandler satisfier
@@ -314,14 +314,14 @@ type RollbackHookFunc func(ctx context.Context,
 	serviceName string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger)
+	logger *zerolog.Logger)
 
 // Rollback calls sdhf(...) to satisfy ArchiveHookHandler
 func (rhf RollbackHookFunc) Rollback(ctx context.Context,
 	serviceName string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) (context.Context, error) {
+	logger *zerolog.Logger) (context.Context, error) {
 	rhf(ctx,
 		serviceName,
 		awsSession,
@@ -337,5 +337,5 @@ type RollbackHookHandler interface {
 		serviceName string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) (context.Context, error)
+		logger *zerolog.Logger) (context.Context, error)
 }

@@ -10,7 +10,6 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaTesting "github.com/mweagle/Sparta/testing"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
 )
 
 func testStepProvisionAssertError(t *testing.T,
@@ -48,9 +47,9 @@ func testStepProvision(t *testing.T,
 // Standard AWS λ function
 func helloWorld(ctx context.Context,
 	props map[string]interface{}) (map[string]interface{}, error) {
-	sparta.Logger().WithFields(logrus.Fields{
-		"Woot": "Found",
-	}).Warn("Lambda called")
+	sparta.Logger().Warn().
+		Str("Woot", "Found").
+		Msg("Lambda Called")
 
 	return map[string]interface{}{
 		"hello": "world",
