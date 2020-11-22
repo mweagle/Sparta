@@ -10,12 +10,12 @@ import (
 	awsCloudWatch "github.com/aws/aws-sdk-go/service/cloudwatch"
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
+	"github.com/rs/zerolog"
 	gopsutilCPU "github.com/shirou/gopsutil/cpu"
 	gopsutilDisk "github.com/shirou/gopsutil/disk"
 	gopsutilHost "github.com/shirou/gopsutil/host"
 	gopsutilLoad "github.com/shirou/gopsutil/load"
 	gopsutilNet "github.com/shirou/gopsutil/net"
-	"github.com/sirupsen/logrus"
 )
 
 // publishMetrics is the actual metric publishing logic. T
@@ -32,21 +32,22 @@ func publishMetrics(customDimensionMap map[string]string) {
 	netMetrics, netMetricsErr := gopsutilNet.IOCounters(false)
 
 	// For now, just log everything...
-	logger, _ := sparta.NewLogger("info")
-	logger.WithFields(logrus.Fields{
-		"functionName":   functionName,
-		"cpuMetrics":     cpuMetrics,
-		"cpuMetricsErr":  cpuMetricsErr,
-		"diskMetrics":    diskMetrics,
-		"diskMetricsErr": diskMetricsErr,
-		"uptime":         uptime,
-		"uptimeErr":      uptimeErr,
-		"loadMetrics":    loadMetrics,
-		"loadMetricsErr": loadMetricsErr,
-		"netMetrics":     netMetrics,
-		"netMetricsErr":  netMetricsErr,
-	}).Info("Metric info")
-
+	logger, _ := sparta.NewLogger(zerolog.InfoLevel.String())
+	if logger != nil {
+		logger.Info().
+			Str("functionName", functionName).
+			Interface("cpuMetrics", cpuMetrics).
+			Interface("cpuMetricsErr", cpuMetricsErr).
+			Interface("diskMetrics", diskMetrics).
+			Interface("diskMetricsErr", diskMetricsErr).
+			Interface("uptime", uptime).
+			Interface("uptimeErr", uptimeErr).
+			Interface("loadMetrics", loadMetrics).
+			Interface("loadMetricsErr", loadMetricsErr).
+			Interface("netMetrics", netMetrics).
+			Interface("netMetricsErr", netMetricsErr).
+			Msg("Metric info")
+	}
 	// Return the array of metricDatum for the item
 	metricDatum := func(name string, value float64, unit MetricUnit) []*awsCloudWatch.MetricDatum {
 		defaultDatum := []*awsCloudWatch.MetricDatum{{
@@ -113,9 +114,9 @@ func publishMetrics(customDimensionMap map[string]string) {
 	awsCloudWatchSvc := awsCloudWatch.New(session)
 	putMetricResponse, putMetricResponseErr := awsCloudWatchSvc.PutMetricData(putMetricInput)
 	if putMetricResponseErr != nil {
-		logger.WithField("Error", putMetricResponseErr).Error("Failed to submit CloudWatch Metric data")
+		logger.Error().Err(putMetricResponseErr).Msg("Failed to submit CloudWatch Metric data")
 	} else {
-		logger.WithField("Response", putMetricResponse).Info("CloudWatch Metric response")
+		logger.Info().Interface("Response", putMetricResponse).Msg("CloudWatch Metric response")
 	}
 }
 

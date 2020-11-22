@@ -361,7 +361,7 @@ func MainEx(serviceName string,
 	executedCmd, executeErr := CommandLineOptions.Root.ExecuteC()
 	if executeErr != nil {
 		if OptionsGlobal.Logger == nil {
-			newLogger, newLoggerErr := NewLogger("info")
+			newLogger, newLoggerErr := NewLogger(zerolog.InfoLevel.String())
 			if newLoggerErr != nil {
 				fmt.Printf("Failed to create new logger: %v", newLoggerErr)
 				zLogger := zerolog.New(os.Stderr).With().Timestamp().Logger()

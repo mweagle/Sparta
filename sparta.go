@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -725,11 +726,16 @@ type LambdaAWSInfo struct {
 
 	// interceptors
 	Interceptors *LambdaEventInterceptors
+
+	// Internal mutex to prevent race conditions when lazily updating lambda function name
+	rwMutex sync.Mutex
 }
 
 // lambdaFunctionName returns the internal
 // function name for lambda export binding
 func (info *LambdaAWSInfo) lambdaFunctionName() string {
+	info.rwMutex.Lock()
+	defer info.rwMutex.Unlock()
 	if info.cachedLambdaFunctionName != "" {
 		return info.cachedLambdaFunctionName
 	}

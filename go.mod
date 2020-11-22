@@ -55,7 +55,7 @@ require (
 	github.com/pkg/browser v0.0.0-20201112035734-206646e67786
 	github.com/pkg/errors v0.9.1
 	github.com/rivo/tview v0.0.0-20201018122409-d551c850a743
-	github.com/rs/zerolog v1.20.0 // indirect
+	github.com/rs/zerolog v1.20.0
 	github.com/shirou/gopsutil v3.20.10+incompatible
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.1

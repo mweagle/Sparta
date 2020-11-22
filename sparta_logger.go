@@ -50,7 +50,7 @@ func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*ze
 				case "debug":
 					l = colorize("|DEBUG|", colorYellow, noColor)
 				case "info":
-					l = colorize("|INFO |", colorGreen, noColor)
+					l = colorize("|INFO |", colorBlue, noColor)
 				case "warn":
 					l = colorize("|WARN |", colorYellow, noColor)
 				case "error":

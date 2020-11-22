@@ -3,10 +3,12 @@ package sparta
 import (
 	"os"
 	"testing"
+
+	"github.com/rs/zerolog"
 )
 
 func TestDescribe(t *testing.T) {
-	logger, _ := NewLogger("info")
+	logger, _ := NewLogger(zerolog.InfoLevel.String())
 	output, err := os.Create("./graph.html")
 	if nil != err {
 		t.Fatalf("Failed to create graph: %s", err.Error())

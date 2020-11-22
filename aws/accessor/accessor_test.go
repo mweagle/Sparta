@@ -8,6 +8,7 @@ import (
 	"time"
 
 	sparta "github.com/mweagle/Sparta"
+	"github.com/rs/zerolog"
 )
 
 type testObject struct {
@@ -38,7 +39,7 @@ func testPut(t *testing.T, kvStore KevValueAccessor) {
 	if testDisabled() {
 		return
 	}
-	logger, _ := sparta.NewLogger("info")
+	logger, _ := sparta.NewLogger(zerolog.InfoLevel.String())
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, sparta.ContextKeyLogger, logger)
@@ -64,7 +65,7 @@ func testPutAll(t *testing.T, kvStore KevValueAccessor) {
 	if testDisabled() {
 		return
 	}
-	logger, _ := sparta.NewLogger("debug")
+	logger, _ := sparta.NewLogger(zerolog.DebugLevel.String())
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, sparta.ContextKeyLogger, logger)
 	recordCount := int(rand.Int31n(2) + 1)

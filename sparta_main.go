@@ -549,7 +549,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 	return executeErr
 }
 
-// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
+// NewLogger returns a new zerolog.Logger instance. It is the caller's responsibility
 // to set the formatter if needed.
 func NewLogger(level string) (*zerolog.Logger, error) {
 	return NewLoggerForOutput(level, "", false)

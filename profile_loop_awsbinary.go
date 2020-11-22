@@ -93,7 +93,7 @@ func snapshotProfiles(s3BucketArchive interface{},
 	profileTypes ...string) {
 
 	// The session the S3 Uploader will use
-	profileLogger, _ := NewLogger("")
+	profileLogger, _ := NewLogger(zerolog.InfoLevel.String())
 
 	publishProfiles := func(cpuProfilePath string) {
 

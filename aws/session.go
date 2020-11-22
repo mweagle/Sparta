@@ -9,12 +9,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type logrusProxy struct {
+type zerologProxy struct {
 	logger *zerolog.Logger
 }
 
 // Log is a utility function to comply with the AWS signature
-func (proxy *logrusProxy) Log(args ...interface{}) {
+func (proxy *zerologProxy) Log(args ...interface{}) {
 	proxy.logger.Info().Msg(fmt.Sprintf("%v", args))
 }
 
@@ -57,7 +57,7 @@ func NewSessionWithConfigLevel(awsConfig *aws.Config,
 	case zerolog.DebugLevel:
 		awsConfig.LogLevel = aws.LogLevel(level)
 	}
-	awsConfig.Logger = &logrusProxy{logger}
+	awsConfig.Logger = &zerologProxy{logger}
 	sess, sessErr := session.NewSession(awsConfig)
 	if sessErr != nil {
 		logger.Warn().

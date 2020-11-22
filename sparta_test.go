@@ -10,6 +10,7 @@ import (
 
 	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/rs/zerolog"
 )
 
 type StructHandler1 struct {
@@ -252,7 +253,7 @@ func TestResourceTransform(t *testing.T) {
 	}
 }
 func TestProvisionID(t *testing.T) {
-	logger, _ := NewLogger("info")
+	logger, _ := NewLogger(zerolog.InfoLevel.String())
 	testUserValues := []string{
 		"",
 		"DEFAULT_VALUE",

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"testing"
+
+	"github.com/rs/zerolog"
 )
 
 const lambdaTestExecuteARN = "LambdaExecutor"
@@ -131,7 +133,7 @@ func testProvisionEx(t *testing.T,
 		evaluator = assertSuccess
 	}
 
-	logger, loggerErr := NewLogger("info")
+	logger, loggerErr := NewLogger(zerolog.InfoLevel.String())
 	if loggerErr != nil {
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
