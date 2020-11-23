@@ -57,14 +57,20 @@ func ExploreWithInputFilter(serviceName string,
 	channelMap[broadcasterFileSubmit] = broadcast.NewBroadcaster(1)
 	application := tview.NewApplication()
 
-	// That's the list of functions, which we can map up against the operations to perform
-	// Create the logger first, since it will change the output sink
-	logView, logViewFocusable := newLogOutputView(awsSession,
-		application,
-		lambdaAWSInfos,
-		settingsMap,
-		logger)
+	// We need to setup the log output view so that we have a writer for the
+	// log output
+	logDataView := tview.NewTextView().
+		SetScrollable(true).
+		SetDynamicColors(true)
+	logDataView.SetChangedFunc(func() {
+		logDataView.ScrollToEnd()
+	})
+	logDataView.SetBorder(true).SetTitle("Output")
+	colorWriter := tview.ANSIWriter(logDataView)
+	newLogger := logger.Output(colorWriter)
+	logger = &newLogger
 
+	// Setup the rest of them...
 	focusTargets := []tview.Primitive{}
 	dropdown, selectorFocusable := newFunctionSelector(awsSession,
 		stackResourceOutputs.StackResources,
@@ -94,8 +100,8 @@ func ExploreWithInputFilter(serviceName string,
 	if eventFocusable != nil {
 		focusTargets = append(focusTargets, eventFocusable...)
 	}
-	if logViewFocusable != nil {
-		focusTargets = append(focusTargets, logViewFocusable...)
+	if logDataView != nil {
+		focusTargets = append(focusTargets, logDataView)
 	}
 	if outputViewFocusable != nil {
 		focusTargets = append(focusTargets, outputViewFocusable...)
@@ -108,7 +114,7 @@ func ExploreWithInputFilter(serviceName string,
 		AddItem(tview.NewFlex().
 			SetDirection(tview.FlexColumn).
 			AddItem(eventDropdown, 0, 1, false).
-			AddItem(logView, 0, 2, false), 0, 1, false).
+			AddItem(logDataView, 0, 2, false), 0, 1, false).
 		AddItem(outputView, 0, 1, false)
 
 	// Run  it...

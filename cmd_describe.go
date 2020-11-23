@@ -40,44 +40,33 @@ func Describe(serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api APIGateway,
-	s3Site *S3Site,
+	site *S3Site,
 	s3BucketName string,
 	buildTags string,
-	linkFlags string,
+	linkerFlags string,
 	outputWriter io.Writer,
 	workflowHooks *WorkflowHooks,
 	logger *zerolog.Logger) error {
 
-	// TODO - BUILD, not provision
-
-	// validationErr := validateSpartaPreconditions(lambdaAWSInfos, logger)
-	// if validationErr != nil {
-	// 	return validationErr
-	// }
 	var cloudFormationTemplate bytes.Buffer
-	// err := Provision(true,
-	// 	nil,
-	// 	false,
-	// 	"",
-	// 	logger)
-	// serviceName,
-	// serviceDescription,
-	// lambdaAWSInfos,
-	// api,
-	// s3Site,
-	// s3BucketName,
-	// false,
-	// false,
-	// buildID,
-	// "",
-	// buildTags,
-	// linkFlags,
-	// &cloudFormationTemplate,
-	// workflowHooks,
-	// logger)
-	// if nil != err {
-	// 	return err
-	// }
+	buildErr := Build(true,
+		serviceName,
+		serviceDescription,
+		lambdaAWSInfos,
+		api,
+		site,
+		false,
+		"BUILD_ID",
+		ScratchDirectory,
+		buildTags,
+		linkerFlags,
+		&cloudFormationTemplate,
+		workflowHooks,
+		logger)
+
+	if buildErr != nil {
+		return buildErr
+	}
 
 	tmpl, err := template.New("description").Parse(_escFSMustString(false, "/resources/describe/template.html"))
 	if err != nil {

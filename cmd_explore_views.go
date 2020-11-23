@@ -133,7 +133,8 @@ func newFunctionSelector(awsSession *session.Session,
 			logger.Debug().
 				Str("Resource", *eachResource.LogicalResourceId).
 				Msg("Found provisioned Lambda function")
-			lambdaFunctionARNs = append(lambdaFunctionARNs, lambdaARN(*eachResource.StackId, *eachResource.PhysicalResourceId))
+			lambdaFunctionARNs = append(lambdaFunctionARNs,
+				lambdaARN(*eachResource.StackId, *eachResource.PhysicalResourceId))
 		}
 	}
 	sort.Strings(lambdaFunctionARNs)
@@ -211,6 +212,10 @@ func newEventInputSelector(awsSession *session.Session,
 		}
 		return nil
 	}
+	logger.Debug().
+		Str("RelativePath", curDir).
+		Msg("Walking directory")
+
 	walkErr := filepath.Walk(curDir, walkerFunc)
 	if walkErr != nil {
 		logger.Error().
@@ -262,6 +267,7 @@ func newEventInputSelector(awsSession *session.Session,
 	submitButton.SetBackgroundColor(tcell.ColorGray)
 	submitButton.SetLabelColor(tcell.ColorDarkGreen)
 	submitButton.SetSelectedFunc(func() {
+		logger.Debug().Str("ActiveFunction", activeFunction).Msg("Invoking function")
 		// Submit it to lambda
 		if activeFunction != "" {
 			lambdaInput := &lambda.InvokeInput{
@@ -472,27 +478,3 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 // 	}
 // 	return append(prettyString, '\n'), nil
 // }
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// Redirect the logger to the log view
-//
-func newLogOutputView(awsSession *session.Session,
-	app *tview.Application,
-	lambdaAWSInfos []*LambdaAWSInfo,
-	settings map[string]string,
-	logger *zerolog.Logger) (tview.Primitive, []tview.Primitive) {
-
-	// Log to JSON
-	logDataView := tview.NewTextView().
-		SetScrollable(true).
-		SetDynamicColors(true)
-	logDataView.SetChangedFunc(func() {
-		logDataView.ScrollToEnd()
-	})
-	logDataView.SetBorder(true).SetTitle("Output")
-
-	colorWriter := tview.ANSIWriter(logDataView)
-	logger.Output(colorWriter)
-	return logDataView, []tview.Primitive{logDataView}
-}

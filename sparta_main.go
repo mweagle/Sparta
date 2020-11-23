@@ -387,7 +387,7 @@ func init() {
 	CommandLineOptions.Explore.Flags().StringArrayVarP(&optionsExplore.InputExtensions,
 		"inputExtension",
 		"e",
-		[]string{},
+		[]string{"json"},
 		"One or more file extensions to include as sample inputs")
 
 	// Profile

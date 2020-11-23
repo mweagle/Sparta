@@ -109,11 +109,11 @@ func cloudFormationResourceType(resType string) string {
 	return fmt.Sprintf("%s::%s", CustomResourceTypePrefix, resType)
 }
 
-type logrusProxy struct {
+type zerologProxy struct {
 	logger *zerolog.Logger
 }
 
-func (proxy *logrusProxy) Log(args ...interface{}) {
+func (proxy *zerologProxy) Log(args ...interface{}) {
 	proxy.logger.Info().Msgf("%v", args)
 }
 
@@ -267,7 +267,7 @@ func awsSession(logger *zerolog.Logger) *session.Session {
 	case zerolog.DebugLevel:
 		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
 	}
-	awsConfig.Logger = &logrusProxy{logger}
+	awsConfig.Logger = &zerologProxy{logger}
 	sess, sessionErr := session.NewSession(awsConfig)
 	if sessionErr != nil {
 		logger.Warn().
