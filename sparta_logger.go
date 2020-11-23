@@ -75,7 +75,7 @@ func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*ze
 			return fmt.Sprintf("%-48s", i)
 		}
 		consoleWriter.FormatFieldName = func(i interface{}) string {
-			return colorize(fmt.Sprintf("%s:", i), colorBold, noColor)
+			return colorize(fmt.Sprintf("%s=", i), colorBold, noColor)
 		}
 		consoleWriter.FormatFieldValue = func(i interface{}) string {
 			return fmt.Sprintf("%s", i)
