@@ -171,11 +171,6 @@ func BuildGoBinary(serviceName string,
 		volumeMountMapping := fmt.Sprintf("%s:%s", gopath, containerGoPath)
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
 
-		// If there's one from the environment, use that...
-		// TODO
-
-		// Otherwise, make one...
-
 		// Any CGO paths?
 		cgoLibPath := fmt.Sprintf("%s/cgo/lib", containerSourcePath)
 		cgoIncludePath := fmt.Sprintf("%s/cgo/include", containerSourcePath)
