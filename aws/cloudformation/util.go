@@ -521,8 +521,6 @@ func WaitForStackOperationComplete(stackID string,
 	for waitComplete := false; !waitComplete; {
 		// Startup the spinner if needed...
 
-		logger.Info().Msg(pollingMessage)
-
 		if !cliSpinnerStarted {
 			cliSpinner.Start()
 			defer cliSpinner.Stop()
