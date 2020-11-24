@@ -1,8 +1,11 @@
 package system
 
 import (
+	"bufio"
+	"bytes"
 	"io"
 	"os/exec"
+	"strings"
 
 	"github.com/rs/zerolog"
 )
@@ -46,8 +49,29 @@ func RunAndCaptureOSCommand(cmd *exec.Cmd,
 		Str("Path", cmd.Path).
 		Interface("Env", cmd.Env).
 		Msg("Running Command")
-	cmd.Stdout = stdoutWriter
-	cmd.Stderr = stderrWriter
-	return cmd.Run()
 
+	// Write the command to a buffer, split the lines, log them...
+	var commandStdOutput bytes.Buffer
+	var commandStdErr bytes.Buffer
+
+	cmd.Stdout = &commandStdOutput
+	cmd.Stderr = &commandStdErr
+	cmdErr := cmd.Run()
+
+	// Output each one...
+	scannerStdout := bufio.NewScanner(&commandStdOutput)
+	for scannerStdout.Scan() {
+		text := strings.TrimSpace(scannerStdout.Text())
+		if len(text) != 0 {
+			logger.Info().Msg(text)
+		}
+	}
+	scannerStderr := bufio.NewScanner(&commandStdErr)
+	for scannerStderr.Scan() {
+		text := strings.TrimSpace(scannerStderr.Text())
+		if len(text) != 0 {
+			logger.Error().Msg(text)
+		}
+	}
+	return cmdErr
 }
