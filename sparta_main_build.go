@@ -356,7 +356,10 @@ func MainEx(serviceName string,
 	executedCmd, executeErr := CommandLineOptions.Root.ExecuteC()
 	if executeErr != nil {
 		if OptionsGlobal.Logger == nil {
-			newLogger, newLoggerErr := NewLogger(zerolog.InfoLevel.String())
+			// Use a default console logger
+			newLogger, newLoggerErr := NewLoggerForOutput(zerolog.InfoLevel.String(),
+				"text",
+				isRunningInAWS())
 			if newLoggerErr != nil {
 				fmt.Printf("Failed to create new logger: %v", newLoggerErr)
 				zLogger := zerolog.New(os.Stderr).With().Timestamp().Logger()
@@ -380,6 +383,7 @@ func MainEx(serviceName string,
 					}
 				}
 			} else {
+				displayPrettyHeader(headerDivider, isRunningInAWS(), OptionsGlobal.Logger)
 				OptionsGlobal.Logger.Error().Err(executeErr).Msg("Failed to execute command")
 			}
 		} else {
