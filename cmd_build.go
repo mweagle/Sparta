@@ -921,7 +921,7 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 	// TODO - turn this into a Parameter block with defaults...
 	if nil != cto.userdata.s3SiteContext.s3Site {
 		exportErr := cto.userdata.s3SiteContext.s3Site.export(cto.userdata.serviceName,
-			cto.buildContext.compiledBinaryOutput,
+			SpartaBinaryName,
 			gocf.Ref(StackParamS3CodeBucketName),
 			s3CodeResource,
 			gocf.Ref(StackParamS3SiteArchiveKey).String(),
