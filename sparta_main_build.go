@@ -182,12 +182,8 @@ func MainEx(serviceName string,
 			}
 			StampedBuildID = buildID
 
-			// Ok, for this we're going some way to tell the Build Command
-			// where to write the output...I suppose we could just use a TeeWriter...
-			sanitizedServiceName := sanitizedName(serviceName)
-			templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
-			templateFilePath := filepath.Join(optionsProvision.OutputDir, templateName)
-			templateFile, templateFileErr := os.Create(templateFilePath)
+			templateFile, templateFileErr := templateOutputFile(optionsProvision.OutputDir,
+				serviceName)
 			if templateFileErr != nil {
 				return templateFileErr
 			}

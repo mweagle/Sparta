@@ -48,7 +48,16 @@ func Describe(serviceName string,
 	workflowHooks *WorkflowHooks,
 	logger *zerolog.Logger) error {
 
+	// Multiwriter
+	templateFile, templateFileErr := templateOutputFile(optionsProvision.OutputDir,
+		serviceName)
+	if templateFileErr != nil {
+		return templateFileErr
+	}
+
 	var cloudFormationTemplate bytes.Buffer
+	multiWriter := io.MultiWriter(templateFile, &cloudFormationTemplate)
+
 	buildErr := Build(true,
 		serviceName,
 		serviceDescription,
@@ -60,10 +69,15 @@ func Describe(serviceName string,
 		ScratchDirectory,
 		buildTags,
 		linkerFlags,
-		&cloudFormationTemplate,
+		multiWriter,
 		workflowHooks,
 		logger)
-
+	closeErr := templateFile.Close()
+	if closeErr != nil {
+		logger.Warn().
+			Err(closeErr).
+			Msg("Failed to close template file handle")
+	}
 	if buildErr != nil {
 		return buildErr
 	}

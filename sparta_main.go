@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -47,6 +48,15 @@ func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerol
 	logger.Info().Msg(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
 	logger.Info().Msg(fmt.Sprintf(red("╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩")+"   Go      : %s", runtime.Version()))
 	logger.Info().Msg(headerDivider)
+}
+
+func templateOutputFile(outputDir string, serviceName string) (*os.File, error) {
+	// Ok, for this we're going some way to tell the Build Command
+	// where to write the output...I suppose we could just use a TeeWriter...
+	sanitizedServiceName := sanitizedName(serviceName)
+	templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
+	templateFilePath := filepath.Join(outputDir, templateName)
+	return os.Create(templateFilePath)
 }
 
 var codePipelineEnvironments map[string]map[string]string
