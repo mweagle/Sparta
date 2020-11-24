@@ -93,7 +93,6 @@ type s3SiteContext struct {
 // provisionContext is data that is mutated during the provisioning workflow
 type provisionContext struct {
 	serviceName string
-	s3Bucket    string
 	// AWS Session to be used for all API calls made in the process of provisioning
 	// this service.
 	awsSession *session.Session
@@ -302,6 +301,33 @@ func (pwo *provisionWorkflowOp) MetadataString(keyName string) (string, error) {
 	return reader.AsString(keyName)
 }
 
+func (pwo *provisionWorkflowOp) s3Bucket() string {
+	s3ParamBucketName, s3ParamBucketNameExists := pwo.provisionContext.stackParmeterValues[StackParamS3CodeBucketName]
+	if !s3ParamBucketNameExists {
+		s3BucketName, s3BucketNameErr := pwo.MetadataString(MetadataParamS3Bucket)
+		if s3BucketNameErr == nil {
+			s3ParamBucketName = s3BucketName
+		}
+	}
+	return s3ParamBucketName
+}
+
+func (pwo *provisionWorkflowOp) stackParameters() map[string]string {
+	stackParmeterValues := make(map[string]string)
+
+	for eachKey, eachParam := range pwo.provisionContext.cfTemplate.Parameters {
+		userVal, userValExists := pwo.provisionContext.stackParmeterValues[eachKey]
+		if !userValExists {
+			noUserVal, noUserValErr := pwo.MetadataString(eachKey)
+			if noUserValErr == nil && len(noUserVal) > 0 {
+				userVal = eachParam.Default
+			}
+		}
+		stackParmeterValues[eachKey] = userVal
+	}
+	return stackParmeterValues
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // precondition checks for the operation to get some metadata bout the
 //
@@ -318,19 +344,6 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 	// into variables. If there is a parameter value we'll use that. If not, we
 	// need to use the default template value. Based on that we can do the
 	// other work...
-	if len(eppo.provisionContext.stackParmeterValues) <= 0 {
-		eppo.provisionContext.stackParmeterValues = make(map[string]string)
-	}
-	for eachKey, eachParam := range eppo.provisionContext.cfTemplate.Parameters {
-		userVal, userValExists := eppo.provisionContext.stackParmeterValues[eachKey]
-		if !userValExists {
-			noUserVal, noUserValErr := eppo.MetadataString(eachKey)
-			if noUserValErr == nil && len(noUserVal) > 0 {
-				userVal = eachParam.Default
-			}
-		}
-		eppo.provisionContext.stackParmeterValues[eachKey] = userVal
-	}
 
 	// Update the servicename
 	serviceName, serviceNameErr := eppo.MetadataString(MetadataParamServiceName)
@@ -343,23 +356,16 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 	}
 
 	// S3 Bucket? Try stack params first, then metadata...
-	s3ParamBucketName, s3ParamBucketNameExists := eppo.provisionContext.stackParmeterValues[StackParamS3CodeBucketName]
-	if !s3ParamBucketNameExists {
-		s3BucketName, s3BucketNameErr := eppo.MetadataString(MetadataParamS3Bucket)
-		if s3BucketNameErr == nil {
-			s3ParamBucketName = s3BucketName
-		}
-	}
-	eppo.provisionContext.s3Bucket = s3ParamBucketName
+	s3BucketName := eppo.s3Bucket()
 
 	// If this a NOOP, assume that versioning is not enabled
 	if eppo.provisionContext.noop {
 		logger.Info().
 			Bool("VersioningEnabled", false).
-			Str("Bucket", eppo.provisionContext.s3Bucket).
+			Str("Bucket", s3BucketName).
 			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
 			Msg(noopMessage("S3 preconditions check"))
-	} else if len(eppo.provisionContext.s3Bucket) != 0 {
+	} else if len(s3BucketName) != 0 {
 
 		// CodePipelineTrigger
 		// TODO
@@ -371,16 +377,16 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 			The name of the Amazon S3 bucket where the .zip file that contains your deployment package is stored. This bucket must reside in the same AWS Region that you're creating the Lambda function in. You can specify a bucket from another AWS account as long as the Lambda function and the bucket are in the same region.
 		*/
 		bucketRegion, bucketRegionErr := spartaS3.BucketRegion(eppo.provisionContext.awsSession,
-			eppo.provisionContext.s3Bucket,
+			s3BucketName,
 			logger)
 
 		if bucketRegionErr != nil {
 			return fmt.Errorf("failed to determine region for %s. Error: %s",
-				eppo.provisionContext.s3Bucket,
+				s3BucketName,
 				bucketRegionErr)
 		}
 		logger.Info().
-			Str("Bucket", eppo.provisionContext.s3Bucket).
+			Str("Bucket", s3BucketName).
 			Str("Region", bucketRegion).
 			Msg("Checking S3 region")
 		if bucketRegion != *eppo.provisionContext.awsSession.Config.Region {
@@ -391,7 +397,7 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		// Check versioning
 		// Get the S3 bucket and see if it has versioning enabled
 		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(eppo.provisionContext.awsSession,
-			eppo.provisionContext.s3Bucket,
+			s3BucketName,
 			logger)
 		// If this is an error and suggests missing region, output some helpful error text
 		if nil != versioningPolicyErr {
@@ -399,7 +405,7 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		}
 		logger.Info().
 			Bool("VersioningEnabled", isEnabled).
-			Str("Bucket", eppo.provisionContext.s3Bucket).
+			Str("Bucket", s3BucketName).
 			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
 			Msg("Checking S3 versioning")
 		eppo.provisionContext.isVersionAwareBucket = isEnabled
@@ -440,6 +446,7 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 			s3UploadMap[eachKey] = s3Path
 		}
 	}
+	s3BucketName := upo.s3Bucket()
 
 	uploadLocalFileTask := func(keyName string, localPath string) *workTask {
 		uploadTask := func() workResult {
@@ -455,7 +462,7 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 				localPath,
 				upo.provisionContext.serviceName,
 				uploadKeyPath,
-				upo.provisionContext.s3Bucket,
+				s3BucketName,
 				upo.provisionContext.isVersionAwareBucket,
 				upo.provisionContext.noop,
 				logger)
@@ -465,7 +472,7 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 			// All good, save it...
 			upo.provisionContext.s3Uploads[keyName] = newS3UploadURL(zipS3URL)
 
-			return newTaskResult(upo.provisionContext.s3Uploads[MetadataParamCodeArchivePath], nil)
+			return newTaskResult(upo.provisionContext.s3Uploads[keyName], nil)
 		}
 		return newWorkTask(uploadTask)
 	}
@@ -607,7 +614,6 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	if !codeArtifactURLExists {
 		return fmt.Errorf("can't find code bundle")
 	}
-
 	awsCloudFormation := cloudformation.New(ipuo.provisionContext.awsSession)
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sInPlaceChangeSet",
 		ipuo.provisionContext.serviceName))
@@ -615,8 +621,8 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 		ipuo.provisionContext.serviceName,
 		ipuo.provisionContext.cfTemplate,
 		ipuo.provisionContext.s3Uploads[s3UploadCloudFormationStackKey].location,
-		nil,
-		nil,
+		ipuo.stackParameters(),
+		ipuo.provisionContext.stackTags,
 		awsCloudFormation,
 		logger)
 	if nil != changesErr {
@@ -625,6 +631,7 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	if nil == changes || len(changes.Changes) <= 0 {
 		return fmt.Errorf("no changes detected")
 	}
+	s3BucketName := ipuo.s3Bucket()
 
 	updateCodeRequests := []*lambda.UpdateFunctionCodeInput{}
 	invalidInPlaceRequests := []string{}
@@ -632,12 +639,10 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 		resourceChange := eachChange.ResourceChange
 		if *resourceChange.Action == "Modify" && *resourceChange.ResourceType == "AWS::Lambda::Function" {
 			updateCodeRequest := &lambda.UpdateFunctionCodeInput{
-				FunctionName: resourceChange.PhysicalResourceId,
-				S3Bucket:     aws.String(ipuo.provisionContext.s3Bucket),
-				S3Key:        aws.String(codeArtifactURL.keyName()),
-			}
-			if codeArtifactURL.version != "" {
-				updateCodeRequest.S3ObjectVersion = aws.String(codeArtifactURL.version)
+				FunctionName:    resourceChange.PhysicalResourceId,
+				S3Bucket:        aws.String(s3BucketName),
+				S3Key:           aws.String(codeArtifactURL.path),
+				S3ObjectVersion: aws.String(codeArtifactURL.version),
 			}
 			updateCodeRequests = append(updateCodeRequests, updateCodeRequest)
 		} else {
