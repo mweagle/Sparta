@@ -25,6 +25,7 @@ const (
 
 	labelWeightNormal = "normal"
 	labelWeightBold   = "bolder"
+	defaultImagePath  = "/resources/describe/AWS-Architecture-Icons_PNG/PNG Light/_General/General@4x.png"
 )
 
 // This is the `go` type that's shuttled through the JSON data
@@ -153,10 +154,12 @@ func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *tem
 	var resource *templateResource
 	resourcePath := fmt.Sprintf("/resources/describe/%s",
 		strings.TrimLeft(resourceKeyName, "/"))
+
+	keyParts := strings.Split(resourcePath, "/")
+	keyName := keyParts[len(keyParts)-1]
+
 	data, dataErr := _escFSString(false, resourcePath)
 	if dataErr == nil {
-		keyParts := strings.Split(resourcePath, "/")
-		keyName := keyParts[len(keyParts)-1]
 		resource = &templateResource{
 			KeyName: keyName,
 			Data:    data,
@@ -169,7 +172,19 @@ func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *tem
 	} else {
 		logger.Warn().
 			Str("Path", resourcePath).
-			Msg("Failed to embed resource")
+			Msg("Failed to find resource. Using default image.")
+		data, dataErr = _escFSString(false, defaultImagePath)
+		if dataErr == nil {
+			resource = &templateResource{
+				KeyName: keyName,
+				Data:    data,
+			}
+		} else {
+			logger.Error().
+				Str("Path", defaultImagePath).
+				Err(dataErr).
+				Msg("Failed to find default resource")
+		}
 	}
 	return resource
 }
