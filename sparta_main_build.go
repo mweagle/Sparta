@@ -261,9 +261,8 @@ func MainEx(serviceName string,
 		CommandLineOptions.Describe.RunE = func(cmd *cobra.Command, args []string) error {
 			validateErr := validate.Struct(optionsDescribe)
 			if nil != validateErr {
-				return validateErr
+				return errors.Wrapf(validateErr, "Failed to validate `describe` options")
 			}
-
 			fileWriter, fileWriterErr := os.Create(optionsDescribe.OutputFile)
 			if fileWriterErr != nil {
 				return fileWriterErr
