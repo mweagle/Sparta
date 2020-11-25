@@ -18,7 +18,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
-	humanize "github.com/dustin/go-humanize"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/mweagle/Sparta/system"
 	spartaZip "github.com/mweagle/Sparta/zip"
@@ -93,15 +92,7 @@ func callArchiveHook(lambdaArchive *zip.Writer,
 	if userdata.workflowHooks == nil {
 		return nil
 	}
-	archiveHooks := userdata.workflowHooks.Archives
-	if userdata.workflowHooks.Archive != nil {
-		logger.Warn().
-			Msg("DEPRECATED: Single ArchiveHook hook superseded by ArchiveHooks slice")
-
-		archiveHooks = append(archiveHooks,
-			ArchiveHookFunc(userdata.workflowHooks.Archive))
-	}
-	for _, eachArchiveHook := range archiveHooks {
+	for _, eachArchiveHook := range userdata.workflowHooks.Archives {
 		// Run the hook
 		logger.Info().
 			Interface("WorkflowHookContext", buildContext.workflowHooksContext).
@@ -139,20 +130,11 @@ func newStackParameter(paramType string,
 
 // Encapsulate calling a workflow hook
 func callWorkflowHook(hookPhase string,
-	hook WorkflowHook,
 	hooks []WorkflowHookHandler,
 	userdata *userdata,
 	buildContext *buildContext,
 	logger *zerolog.Logger) error {
 
-	if hook != nil {
-		logger.Warn().
-			Msgf("DEPRECATED: Single %s hook superseded by %ss slice",
-				hookPhase,
-				hookPhase)
-
-		hooks = append(hooks, WorkflowHookFunc(hook))
-	}
 	for _, eachHook := range hooks {
 		// Run the hook
 		logger.Info().
@@ -183,18 +165,12 @@ func callServiceDecoratorHook(lambdaFunctionCode *gocf.LambdaFunctionCode,
 	if userdata.workflowHooks == nil {
 		return nil
 	}
-	serviceHooks := userdata.workflowHooks.ServiceDecorators
-	if userdata.workflowHooks.ServiceDecorator != nil {
-		logger.Warn().Msg("DEPRECATED: Single ServiceDecorator hook superseded by ServiceDecorators slice")
-		serviceHooks = append(serviceHooks,
-			ServiceDecoratorHookFunc(userdata.workflowHooks.ServiceDecorator))
-	}
 	// If there's an API gateway definition, include the resources that provision it.
 	// Since this export will likely
 	// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator,
 	// pass that to the S3Site
 	// if it's defined, and then merge it with the normal output map.-
-	for eachIndex, eachServiceHook := range serviceHooks {
+	for eachIndex, eachServiceHook := range userdata.workflowHooks.ServiceDecorators {
 		funcPtr := reflect.ValueOf(eachServiceHook).Pointer()
 		funcForPC := runtime.FuncForPC(funcPtr)
 		hookName := funcForPC.Name()
@@ -526,7 +502,6 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	// PreBuild Hook
 	if cpo.userdata.workflowHooks != nil {
 		preBuildErr := callWorkflowHook("PreBuild",
-			cpo.userdata.workflowHooks.PreBuild,
 			cpo.userdata.workflowHooks.PreBuilds,
 			cpo.userdata,
 			cpo.buildContext,
@@ -620,7 +595,6 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	// PostBuild Hook
 	if cpo.userdata.workflowHooks != nil {
 		postBuildErr := callWorkflowHook("PostBuild",
-			cpo.userdata.workflowHooks.PostBuild,
 			cpo.userdata.workflowHooks.PostBuilds,
 			cpo.userdata,
 			cpo.buildContext,
@@ -796,7 +770,6 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 	// PreMarshall Hook
 	if cto.userdata.workflowHooks != nil {
 		preMarshallErr := callWorkflowHook("PreMarshall",
-			cto.userdata.workflowHooks.PreMarshall,
 			cto.userdata.workflowHooks.PreMarshalls,
 			cto.userdata,
 			cto.buildContext,
@@ -937,7 +910,6 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 	// PostMarshall Hook
 	if cto.userdata.workflowHooks != nil {
 		postMarshallErr := callWorkflowHook("PostMarshall",
-			cto.userdata.workflowHooks.PostMarshall,
 			cto.userdata.workflowHooks.PostMarshalls,
 			cto.userdata,
 			cto.buildContext,
@@ -1063,23 +1035,20 @@ func Build(noop bool,
 		cfTemplate:           gocf.NewTemplate(),
 		awsSession:           spartaAWS.NewSession(logger),
 		outputDirectory:      absOutputDirectory,
-		workflowHooksContext: context.Background(),
+		workflowHooksContext: nil,
 		templateWriter:       templateWriter,
 		compiledBinaryOutput: filepath.Join(absOutputDirectory, SpartaBinaryName),
 	}
-
-	buildContext.cfTemplate.Description = serviceDescription
-	if nil != workflowHooks && nil != workflowHooks.Context {
-		for eachKey, eachValue := range workflowHooks.Context {
-			buildContext.workflowHooksContext = context.WithValue(buildContext.workflowHooksContext,
-				eachKey,
-				eachValue)
-		}
+	if workflowHooks != nil && workflowHooks.Context != nil {
+		buildContext.workflowHooksContext = workflowHooks.Context
+	} else {
+		buildContext.workflowHooksContext = context.Background()
 	}
+	buildContext.cfTemplate.Description = serviceDescription
 
 	logger.Info().
 		Str("BuildID", buildID).
-		Bool("NOOP", noop).
+		Bool("noop", noop).
 		Str("Tags", userdata.buildTags).
 		Str("CodePipelineTrigger", userdata.codePipelineTrigger).
 		Bool("InPlaceUpdates", userdata.inPlace).
@@ -1123,8 +1092,5 @@ func Build(noop bool,
 	if buildErr != nil {
 		return buildErr
 	}
-	logger.Info().
-		Str("Duration", humanize.Time(buildPipeline.startTime)).
-		Msg("Build complete")
 	return nil
 }

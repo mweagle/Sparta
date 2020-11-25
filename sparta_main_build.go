@@ -80,7 +80,9 @@ func MainEx(serviceName string,
 
 		// Format?
 		// Running in AWS?
-		disableColors := OptionsGlobal.DisableColors || isRunningInAWS()
+		disableColors := OptionsGlobal.DisableColors ||
+			isRunningInAWS() ||
+			OptionsGlobal.LogFormat == "json"
 		logger, loggerErr := NewLoggerForOutput(OptionsGlobal.LogLevel,
 			OptionsGlobal.LogFormat,
 			disableColors)
@@ -94,7 +96,7 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger = logger
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
-		// Header information...
+		// Header information...,
 		displayPrettyHeader(headerDivider, disableColors, logger)
 
 		// Metadata about the build...

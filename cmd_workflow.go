@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -218,39 +219,73 @@ func (p *pipeline) Run(ctx context.Context,
 		curStage.duration = time.Since(startTime)
 	}
 
-	//	pipelineTotalDuration := time.Since(pipelineStartTime)
-	// summaryLine := fmt.Sprintf("Pipeline complete: %s", name)
-	// logger.Info(headerDivider)
-	// logger.Info(summaryLine)
-	// logger.Info(headerDivider)
-	// for eachIndex, eachStageEntry := range p.stages {
-	// 	logger.Infof("Stage %d: %s", eachIndex)
-	// 	for _, eachOp := range eachStage.ops {
-	// 		logger.WithFields(logrus.Fields{
-	// 			"Duration (s)": fmt.Sprintf("%.f", eachOp.duration.Seconds()),
-	// 		}).Info(eachOp.opName)
-	// 	}
-	// }
+	// Log the total stage execution times...
+	logger.Debug().Msg(headerDivider)
+	for _, eachStageEntry := range p.stages {
+		logger.Debug().
+			Str("Name", eachStageEntry.stageName).
+			Str("Duration", eachStageEntry.duration.String()).
+			Msg("Stage duration")
+	}
 
-	// for _, eachEntry := range ctx.transaction.stepDurations {
-	// 	ctx.logger.WithFields(logrus.Fields{
-	// 		"Duration (s)": fmt.Sprintf("%.f", eachEntry.duration.Seconds()),
-	// 	}).Info(eachEntry.name)
-	// }
-	// elapsed := time.Since(startTime)
-	// ctx.logger.WithFields(logrus.Fields{
-	// 	"Duration (s)": fmt.Sprintf("%.f", elapsed.Seconds()),
-	// }).Info("Total elapsed time")
-	// curTime := time.Now()
-	// ctx.logger.WithFields(logrus.Fields{
-	// 	"Time (UTC)":   curTime.UTC().Format(time.RFC3339),
-	// 	"Time (Local)": curTime.Format(time.RFC822),
-	// }).Info("Complete")
+	pipelineTotalDuration := time.Since(p.startTime)
+	logger.Info().Msg(headerDivider)
+	curTime := time.Now()
+	logger.Info().
+		Str("Time (UTC)", curTime.UTC().Format(time.RFC3339)).
+		Str("Time (Local)", curTime.Format(time.RFC822)).
+		Str("Duration", pipelineTotalDuration.String()).
+		Msgf("%s Complete", name)
 
-	// ctx.logger.Info(headerDivider)
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Interfaces
+// Common stages
 ////////////////////////////////////////////////////////////////////////////////
+
+type userFunctionRollbackOp struct {
+	serviceName   string
+	awsSession    *session.Session
+	noop          bool
+	rollbackFuncs []RollbackHookHandler
+}
+
+func (ufro *userFunctionRollbackOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
+	wg := sync.WaitGroup{}
+
+	for _, eachRollbackHook := range ufro.rollbackFuncs {
+		wg.Add(1)
+		go func(ctx context.Context,
+			handler RollbackHookHandler,
+			serviceName string,
+			awsSession *session.Session,
+			noop bool,
+			logger *zerolog.Logger) {
+			// Decrement the counter when the goroutine completes.
+			defer wg.Done()
+			_, rollbackErr := handler.Rollback(ctx,
+				serviceName,
+				awsSession,
+				noop,
+				logger)
+			if rollbackErr != nil {
+				logger.Warn().
+					Err(rollbackErr).
+					Str("Function", fmt.Sprintf("%T", handler)).
+					Msg("Rollback function failed")
+			}
+		}(ctx,
+			eachRollbackHook,
+			ufro.serviceName,
+			ufro.awsSession,
+			ufro.noop,
+			logger)
+	}
+	wg.Wait()
+	return nil
+}
+func (ufro *userFunctionRollbackOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+
+	return nil
+}

@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -277,8 +278,6 @@ func uploadLocalFileToS3(awsSession *session.Session,
 			return "", errors.Wrapf(uploadURLErr, "Failed to upload file to S3")
 		}
 		s3URL = uploadLocation
-		// TODO - rollbacks
-		// ctx.registerRollback(spartaS3.CreateS3RollbackFunc(buildContext.awsSession, uploadLocation))
 	}
 	return s3URL, nil
 }
@@ -388,6 +387,7 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		logger.Info().
 			Str("Bucket", s3BucketName).
 			Str("Region", bucketRegion).
+			Str("CredentialsRegion", *eppo.provisionContext.awsSession.Config.Region).
 			Msg("Checking S3 region")
 		if bucketRegion != *eppo.provisionContext.awsSession.Config.Region {
 			return fmt.Errorf("region (%s) does not match bucket region (%s)",
@@ -407,7 +407,7 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 			Bool("VersioningEnabled", isEnabled).
 			Str("Bucket", s3BucketName).
 			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
-			Msg("Checking S3 versioning")
+			Msg("Checking S3 versioning policy")
 		eppo.provisionContext.isVersionAwareBucket = isEnabled
 
 		// Nothing else to do...
@@ -425,7 +425,6 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 // uplaod the ZIP packages
 type uploadPackageOp struct {
 	provisionWorkflowOp
-	// Local path, target S3 path, logger
 }
 
 func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
@@ -507,95 +506,107 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	return nil
 }
 func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
+
+	wg := sync.WaitGroup{}
+
+	for _, eachUploaded := range upo.provisionContext.s3Uploads {
+		rollbackFunc := spartaS3.CreateS3RollbackFunc(upo.provisionContext.awsSession, eachUploaded.location)
+		wg.Add(1)
+		go func(rollFunc spartaS3.RollbackFunction, logger *zerolog.Logger) {
+			defer wg.Done()
+			rollFunc(logger)
+		}(rollbackFunc, logger)
+	}
+	wg.Wait()
 	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// codePipelineTriggerOp
-// create the pipeline trigger op
+// ////////////////////////////////////////////////////////////////////////////////
+// // codePipelineTriggerOp
+// // create the pipeline trigger op
 
-type codePipelineTriggerOp struct {
-	provisionWorkflowOp
-}
+// type codePipelineTriggerOp struct {
+// 	provisionWorkflowOp
+// }
 
-func (cpto *codePipelineTriggerOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
-	return nil
-}
-func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
-	/*
-		tmpFile, err := system.TemporaryFile(ScratchDirectory, ctx.userdata.codePipelineTrigger)
-		if err != nil {
-			return "", errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
-		}
+// func (cpto *codePipelineTriggerOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
+// 	return nil
+// }
+// func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+// 	/*
+// 		tmpFile, err := system.TemporaryFile(ScratchDirectory, ctx.userdata.codePipelineTrigger)
+// 		if err != nil {
+// 			return "", errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
+// 		}
 
-		ctx.logger.WithFields(logrus.Fields{
-			"PipelineName": tmpFile.Name(),
-		}).Info("Creating pipeline archive")
+// 		ctx.logger.WithFields(logrus.Fields{
+// 			"PipelineName": tmpFile.Name(),
+// 		}).Info("Creating pipeline archive")
 
-		templateArchive := zip.NewWriter(tmpFile)
-		ctx.logger.WithFields(logrus.Fields{
-			"Path": tmpFile.Name(),
-		}).Info("Creating CodePipeline archive")
+// 		templateArchive := zip.NewWriter(tmpFile)
+// 		ctx.logger.WithFields(logrus.Fields{
+// 			"Path": tmpFile.Name(),
+// 		}).Info("Creating CodePipeline archive")
 
-		// File info for the binary executable
-		zipEntryName := "cloudformation.json"
-		bytesWriter, bytesWriterErr := templateArchive.Create(zipEntryName)
-		if bytesWriterErr != nil {
-			return "", bytesWriterErr
-		}
+// 		// File info for the binary executable
+// 		zipEntryName := "cloudformation.json"
+// 		bytesWriter, bytesWriterErr := templateArchive.Create(zipEntryName)
+// 		if bytesWriterErr != nil {
+// 			return "", bytesWriterErr
+// 		}
 
-		bytesReader := bytes.NewReader(cfTemplateJSON)
-		written, writtenErr := io.Copy(bytesWriter, bytesReader)
-		if nil != writtenErr {
-			return "", writtenErr
-		}
-		ctx.logger.WithFields(logrus.Fields{
-			"WrittenBytes": written,
-			"ZipName":      zipEntryName,
-		}).Debug("Archiving file")
+// 		bytesReader := bytes.NewReader(cfTemplateJSON)
+// 		written, writtenErr := io.Copy(bytesWriter, bytesReader)
+// 		if nil != writtenErr {
+// 			return "", writtenErr
+// 		}
+// 		ctx.logger.WithFields(logrus.Fields{
+// 			"WrittenBytes": written,
+// 			"ZipName":      zipEntryName,
+// 		}).Debug("Archiving file")
 
-		// If there is a codePipelineEnvironments defined, then we'll need to get all the
-		// maps, marshal them to JSON, then add the JSON to the ZIP archive.
-		if nil != codePipelineEnvironments {
-			for eachEnvironment, eachMap := range codePipelineEnvironments {
-				codePipelineParameters := map[string]interface{}{
-					"Parameters": eachMap,
-				}
-				environmentJSON, environmentJSONErr := json.Marshal(codePipelineParameters)
-				if nil != environmentJSONErr {
-					ctx.logger.Error("Failed to Marshal CodePipeline environment: " + eachEnvironment)
-					return "", environmentJSONErr
-				}
-				var envVarName = fmt.Sprintf("%s.json", eachEnvironment)
+// 		// If there is a codePipelineEnvironments defined, then we'll need to get all the
+// 		// maps, marshal them to JSON, then add the JSON to the ZIP archive.
+// 		if nil != codePipelineEnvironments {
+// 			for eachEnvironment, eachMap := range codePipelineEnvironments {
+// 				codePipelineParameters := map[string]interface{}{
+// 					"Parameters": eachMap,
+// 				}
+// 				environmentJSON, environmentJSONErr := json.Marshal(codePipelineParameters)
+// 				if nil != environmentJSONErr {
+// 					ctx.logger.Error("Failed to Marshal CodePipeline environment: " + eachEnvironment)
+// 					return "", environmentJSONErr
+// 				}
+// 				var envVarName = fmt.Sprintf("%s.json", eachEnvironment)
 
-				// File info for the binary executable
-				binaryWriter, binaryWriterErr := templateArchive.Create(envVarName)
-				if binaryWriterErr != nil {
-					return "", binaryWriterErr
-				}
-				_, writeErr := binaryWriter.Write(environmentJSON)
-				if writeErr != nil {
-					return "", writeErr
-				}
-			}
-		}
-		archiveCloseErr := templateArchive.Close()
-		if nil != archiveCloseErr {
-			return "", archiveCloseErr
-		}
-		tempfileCloseErr := tmpFile.Close()
-		if nil != tempfileCloseErr {
-			return "", tempfileCloseErr
-		}
-		// Leave it here...
-		ctx.logger.WithFields(logrus.Fields{
-			"File": filepath.Base(tmpFile.Name()),
-		}).Info("Created CodePipeline archive")
-		// The key is the name + the pipeline name
-		return tmpFile.Name(), nil
-	*/
-	return nil
-}
+// 				// File info for the binary executable
+// 				binaryWriter, binaryWriterErr := templateArchive.Create(envVarName)
+// 				if binaryWriterErr != nil {
+// 					return "", binaryWriterErr
+// 				}
+// 				_, writeErr := binaryWriter.Write(environmentJSON)
+// 				if writeErr != nil {
+// 					return "", writeErr
+// 				}
+// 			}
+// 		}
+// 		archiveCloseErr := templateArchive.Close()
+// 		if nil != archiveCloseErr {
+// 			return "", archiveCloseErr
+// 		}
+// 		tempfileCloseErr := tmpFile.Close()
+// 		if nil != tempfileCloseErr {
+// 			return "", tempfileCloseErr
+// 		}
+// 		// Leave it here...
+// 		ctx.logger.WithFields(logrus.Fields{
+// 			"File": filepath.Base(tmpFile.Name()),
+// 		}).Info("Created CodePipeline archive")
+// 		// The key is the name + the pipeline name
+// 		return tmpFile.Name(), nil
+// 	*/
+// 	return nil
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // inPlaceUpdatesOp
@@ -772,70 +783,6 @@ func (vpco *validatePostConditionOp) Invoke(ctx context.Context, logger *zerolog
 	return nil
 }
 
-// If the only detected changes to a stack are Lambda code updates,
-// then update use the LAmbda API to update the code directly
-// rather than waiting for CloudFormation
-/*
-
-// applyCloudFormationOperation is responsible for taking the current template
-// and applying that operation to the stack. It's where the in-place
-// branch is applied, because at this point all the template
-// mutations have been accumulated
-func applyCloudFormationOperation(ctx *provisionWorkflowContext) (workflowStep, error) {
-	// If this isn't a codePipelineTrigger, then do that
-	if ctx.userdata.codePipelineTrigger == "" {
-		if ctx.userdata.noop {
-			ctx.logger.WithFields(logrus.Fields{
-				"Bucket":       ctx.userdata.s3Bucket,
-				"TemplateName": templateName,
-			}).Info(noopMessage("Stack creation"))
-		} else {
-			// Dump the template to a file, then upload it...
-			uploadURL, uploadURLErr := uploadLocalFileToS3(templateFile.Name(), "", ctx)
-			if nil != uploadURLErr {
-				return nil, uploadURLErr
-			}
-
-			// If we're supposed to be inplace, then go ahead and try that
-			var stack *cloudformation.Stack
-			var stackErr error
-			if ctx.userdata.inPlace {
-				stack, stackErr = applyInPlaceFunctionUpdates(ctx, uploadURL)
-			} else {
-				operationTimeout := maximumStackOperationTimeout(ctx.context.cfTemplate, ctx.logger)
-				// Regular update, go ahead with the CloudFormation changes
-				stack, stackErr = spartaCF.ConvergeStackState(ctx.userdata.serviceName,
-					ctx.context.cfTemplate,
-					uploadURL,
-					stackTags,
-					ctx.transaction.startTime,
-					operationTimeout,
-					ctx.context.awsSession,
-					"▬",
-					dividerLength,
-					ctx.logger)
-			}
-			if nil != stackErr {
-				return nil, stackErr
-			}
-			ctx.logger.WithFields(logrus.Fields{
-				"StackName":    *stack.StackName,
-				"StackId":      *stack.StackId,
-				"CreationTime": *stack.CreationTime,
-			}).Info("Stack provisioned")
-		}
-	} else {
-		ctx.logger.Info("Creating pipeline package")
-
-		ctx.registerFileCleanupFinalizer(templateFile.Name())
-		_, urlErr := createCodePipelineTriggerPackage(cfTemplate, ctx)
-		if nil != urlErr {
-			return nil, urlErr
-		}
-	}
-	return nil, nil
-}
-*/
 func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *zerolog.Logger) error {
 
 	return nil
@@ -895,6 +842,8 @@ func Provision(noop bool,
 	// Workflow
 	//////////////////////////////////////////////////////////////////////////////
 	provisionPipeline := pipeline{}
+
+	// Rollback stage
 
 	// Preconditions
 	stagePreconditions := &pipelineStage{}
