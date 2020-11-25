@@ -270,19 +270,11 @@ type SpartaOptions struct {
 // TODO: remove single-valued fields
 type WorkflowHooks struct {
 	// Initial hook context. May be empty
-	Context map[string]interface{}
-	// PreBuild is called before the current Sparta-binary is compiled
-	PreBuild WorkflowHook
+	Context context.Context
 	// PreBuilds are called before the current Sparta-binary is compiled
 	PreBuilds []WorkflowHookHandler
-	// PostBuild is called after the current Sparta-binary is compiled
-	PostBuild WorkflowHook
 	// PostBuilds are called after the current Sparta-binary is compiled
 	PostBuilds []WorkflowHookHandler
-	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
-	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
-	// to add additional resource files to your Lambda package
-	Archive ArchiveHook
 	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
 	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
 	// to add additional resource files to your Lambda package
@@ -292,12 +284,9 @@ type WorkflowHooks struct {
 	// PreMarshalls are called before Sparta marshalls the application contents into a CloudFormation
 	// template
 	PreMarshalls []WorkflowHookHandler
-	// ServiceDecorator is called before Sparta marshalls the CloudFormation template
-	ServiceDecorator ServiceDecoratorHook
 	// ServiceDecorators are called before Sparta marshalls the CloudFormation template
 	ServiceDecorators []ServiceDecoratorHookHandler
-	// PostMarshall is called after Sparta marshalls the application contents to a CloudFormation template
-	PostMarshall WorkflowHook
+
 	// PostMarshalls are called after Sparta marshalls the application contents to a CloudFormation
 	// template
 	PostMarshalls []WorkflowHookHandler
@@ -307,8 +296,6 @@ type WorkflowHooks struct {
 	// copy of the materialized template.
 	Validators []ServiceValidationHookHandler
 
-	// Rollback is called if there is an error performing the requested operation
-	Rollback RollbackHook
 	// Rollbacks are called if there is an error performing the requested operation
 	Rollbacks []RollbackHookHandler
 }
