@@ -35,6 +35,19 @@ func ExploreWithInputFilter(serviceName string,
 	linkerFlags string,
 	logger *zerolog.Logger) error {
 
+	// We need to setup the log output view so that we have a writer for the
+	// log output
+	logDataView := tview.NewTextView().
+		SetScrollable(true).
+		SetDynamicColors(true)
+	logDataView.SetChangedFunc(func() {
+		logDataView.ScrollToEnd()
+	})
+	logDataView.SetBorder(true).SetTitle("Output")
+	colorWriter := tview.ANSIWriter(logDataView)
+	newLogger := logger.Output(colorWriter).Level(logger.GetLevel())
+	logger = &newLogger
+
 	// Great - everybody get's an aws session
 	awsSession := spartaAWS.NewSession(logger)
 	// Go get the stack and put the ARNs in the list of things. For that
@@ -56,19 +69,6 @@ func ExploreWithInputFilter(serviceName string,
 	channelMap[broadcasterFunctionSelect] = broadcast.NewBroadcaster(1)
 	channelMap[broadcasterFileSubmit] = broadcast.NewBroadcaster(1)
 	application := tview.NewApplication()
-
-	// We need to setup the log output view so that we have a writer for the
-	// log output
-	logDataView := tview.NewTextView().
-		SetScrollable(true).
-		SetDynamicColors(true)
-	logDataView.SetChangedFunc(func() {
-		logDataView.ScrollToEnd()
-	})
-	logDataView.SetBorder(true).SetTitle("Output")
-	colorWriter := tview.ANSIWriter(logDataView)
-	newLogger := logger.Output(colorWriter)
-	logger = &newLogger
 
 	// Setup the rest of them...
 	focusTargets := []tview.Primitive{}
