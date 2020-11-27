@@ -60,17 +60,23 @@ func RunAndCaptureOSCommand(cmd *exec.Cmd,
 
 	// Output each one...
 	scannerStdout := bufio.NewScanner(&commandStdOutput)
+	stdoutLogger := logger.With().
+		Str("io", "stdout").
+		Logger()
 	for scannerStdout.Scan() {
 		text := strings.TrimSpace(scannerStdout.Text())
 		if len(text) != 0 {
-			logger.Info().Msg(text)
+			stdoutLogger.Info().Msg(text)
 		}
 	}
 	scannerStderr := bufio.NewScanner(&commandStdErr)
+	stderrLogger := logger.With().
+		Str("io", "stderr").
+		Logger()
 	for scannerStderr.Scan() {
 		text := strings.TrimSpace(scannerStderr.Text())
 		if len(text) != 0 {
-			logger.Error().Msg(text)
+			stderrLogger.Info().Msg(text)
 		}
 	}
 	return cmdErr
