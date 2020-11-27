@@ -152,16 +152,15 @@ func newFunctionSelector(awsSession *session.Session,
 		SetOptions(lambdaFunctionARNs, nil)
 	dropdown.SetBorder(true).SetTitle("Select Function")
 
-	dropdownDoneFunc := func(key tcell.Key) {
-		selectedIndex, value := dropdown.GetCurrentOption()
+	dropdownSelectFunc := func(text string, selectedIndex int) {
 		if selectedIndex != -1 {
-			saveSetting(settingSelectedARN, value)
-			onChangeBroadcaster.Submit(value)
+			saveSetting(settingSelectedARN, text)
+			logger.Debug().Msgf("Selected: %s", selectedARN)
+			onChangeBroadcaster.Submit(text)
 		}
 	}
-	dropdown.SetDoneFunc(dropdownDoneFunc)
+	dropdown.SetSelectedFunc(dropdownSelectFunc)
 	// Populate it...
-	dropdownDoneFunc(tcell.KeyEnter)
 	return dropdown, []tview.Primitive{dropdown}
 }
 
@@ -240,16 +239,17 @@ func newEventInputSelector(awsSession *session.Session,
 		SetLabel("Event: ").
 		SetOptions(jsonFiles, nil)
 
-	submitEventData := func(key tcell.Key) {
+	selectEventData := func(text string, selectedIndex int) {
 		// What's the selected item?
-		selected, value := dropdown.GetCurrentOption()
-		if selected == -1 {
+		if selectedIndex == -1 {
 			return
 		}
+		logger.Debug().Str("EventInputPath", text).Msg("Event data source")
 		eventDataView.Clear()
+
 		// Save it...
-		saveSetting(settingSelectedEvent, value)
-		fullPath := curDir + value
+		saveSetting(settingSelectedEvent, text)
+		fullPath := curDir + text
 		/* #nosec */
 		jsonFile, jsonFileErr := ioutil.ReadFile(fullPath)
 		if jsonFileErr != nil {
@@ -259,8 +259,7 @@ func newEventInputSelector(awsSession *session.Session,
 		}
 		selectedJSONData = jsonFile
 	}
-	submitEventData(tcell.KeyEnter)
-	dropdown.SetDoneFunc(submitEventData)
+	dropdown.SetSelectedFunc(selectEventData)
 	submitButton := tview.NewButton("Submit")
 	submitButton.SetBackgroundColorActivated(tcell.ColorDarkGreen)
 	submitButton.SetLabelColorActivated(tcell.ColorWhite)
