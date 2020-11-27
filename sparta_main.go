@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -25,6 +26,8 @@ import (
 const (
 	redCode = 31
 )
+
+var headerDisplayed = false
 
 // The Lambda instance ID for this execution
 var instanceID string
@@ -37,6 +40,10 @@ func isRunningInAWS() bool {
 }
 
 func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerolog.Logger) {
+	if headerDisplayed {
+		return
+	}
+	headerDisplayed = true
 	logger.Info().Msg(headerDivider)
 	red := func(inputText string) string {
 		if disableColors {
@@ -56,6 +63,10 @@ func templateOutputFile(outputDir string, serviceName string) (*os.File, error) 
 	sanitizedServiceName := sanitizedName(serviceName)
 	templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
 	templateFilePath := filepath.Join(outputDir, templateName)
+	mkdirErr := os.MkdirAll(outputDir, os.ModePerm)
+	if nil != mkdirErr {
+		return nil, errors.Wrapf(mkdirErr, "Attempting to create output directory: %s", outputDir)
+	}
 	return os.Create(templateFilePath)
 }
 
