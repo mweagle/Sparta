@@ -15,7 +15,7 @@ type zerologProxy struct {
 
 // Log is a utility function to comply with the AWS signature
 func (proxy *zerologProxy) Log(args ...interface{}) {
-	proxy.logger.Info().Msg(fmt.Sprintf("%v", args))
+	proxy.logger.Debug().Msg(fmt.Sprintf("%v", args))
 }
 
 // NewSessionWithConfig returns an awsSession that includes the user supplied
@@ -77,6 +77,6 @@ func NewSessionWithConfigLevel(awsConfig *aws.Config,
 	logger.Debug().
 		Str("Name", aws.SDKName).
 		Str("Version", aws.SDKVersion).
-		Msg("AWS SDK Info")
+		Msg("AWS SDK Info.")
 	return sess
 }
