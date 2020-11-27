@@ -136,9 +136,7 @@ func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error 
 			opErr := opEntry.op.Invoke(ctx, goLogger)
 			if opErr != nil {
 				mapKey := fmt.Sprintf("%sErr%d", opEntry.opName, opIndex)
-				mapErr.Store(mapKey, fmt.Sprintf("Operation (%s) error: %s",
-					opEntry.opName,
-					opErr))
+				mapErr.Store(mapKey, opErr)
 			}
 		}(eachIndex, eachEntry, logger)
 	}
@@ -147,9 +145,9 @@ func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error 
 	// Were there any errors?
 	errorText := []string{}
 	mapErr.Range(func(key interface{}, value interface{}) bool {
-		keyName := key
-		valueErr := value
-		errorText = append(errorText, fmt.Sprintf("%s:%#v", keyName, valueErr))
+		errorText = append(errorText, fmt.Sprintf("%s:%v",
+			key,
+			value))
 		return true
 	})
 	if len(errorText) != 0 {
