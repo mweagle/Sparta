@@ -494,13 +494,11 @@ func WaitForStackOperationComplete(stackID string,
 
 	result := &WaitForStackOperationCompleteResult{}
 
-	//startTime := time.Now()
-
 	// Startup a spinner...
 	// TODO: special case iTerm per https://github.com/briandowns/spinner/issues/64
 	charSetIndex := 39
 	if strings.Contains(os.Getenv("LC_TERMINAL"), "iTerm") {
-		charSetIndex = 7
+		charSetIndex = 39 // WAS 7 to handle iTerm improperly updating
 	}
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex],
 		333*time.Millisecond)
