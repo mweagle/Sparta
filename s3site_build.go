@@ -199,7 +199,7 @@ func (s3Site *S3Site) export(serviceName string,
 			"S3 static site")),
 		Handler:    gocf.String(binaryName),
 		Role:       iamRoleRef,
-		Runtime:    gocf.String(GoLambdaVersion),
+		Runtime:    gocf.String(string(Go1LambdaRuntime)),
 		MemorySize: gocf.Integer(256),
 		Timeout:    gocf.Integer(180),
 		// Let AWS assign the function name

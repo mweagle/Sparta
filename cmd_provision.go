@@ -179,7 +179,7 @@ func EnsureCustomResourceHandler(serviceName string,
 	// Add the special key that's the custom resource type name
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code:        lambdaFunctionCode,
-		Runtime:     gocf.String(GoLambdaVersion),
+		Runtime:     gocf.String(string(Go1LambdaRuntime)),
 		Description: gocf.String(configuratorDescription),
 		Handler:     gocf.String(SpartaBinaryName),
 		Role:        iamRoleRef,

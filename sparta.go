@@ -552,7 +552,7 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 		Handler:      gocf.String(SpartaBinaryName),
 		MemorySize:   gocf.Integer(resourceInfo.options.MemorySize),
 		Role:         roleNameMap[iamRoleArnName],
-		Runtime:      gocf.String(GoLambdaVersion),
+		Runtime:      gocf.String(string(Go1LambdaRuntime)),
 		Timeout:      gocf.Integer(resourceInfo.options.Timeout),
 		VPCConfig:    resourceInfo.options.VpcConfig,
 		// DISPATCH INFORMATION
@@ -564,7 +564,9 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 		resourceInfo.logicalName())
 
 	cfResource := template.AddResource(lambdaFunctionCFName, lambdaResource)
-	safeMetadataInsert(cfResource, "golangFunc", resourceInfo.userFunctionName)
+	safeMetadataInsert(cfResource,
+		fmt.Sprintf("%sFunc", string(Go1LambdaRuntime)),
+		resourceInfo.userFunctionName)
 
 	// And create the CustomResource that actually invokes it...
 	newResource, newResourceError := newCloudFormationResource(cloudFormationLambda, logger)
@@ -710,6 +712,9 @@ type LambdaAWSInfo struct {
 
 	// deprecation notices
 	deprecationNotices []string
+
+	// runtime name
+	runtimeName AWSLambdaRuntimeName
 
 	// interceptors
 	Interceptors *LambdaEventInterceptors
@@ -1006,14 +1011,19 @@ func (info *LambdaAWSInfo) export(ctx context.Context,
 		lambdaDescription = fmt.Sprintf("%s: %s", serviceName, info.lambdaFunctionName())
 	}
 
+	handlerName := ""
+	switch info.runtimeName {
+	case Go1LambdaRuntime:
+		handlerName = SpartaBinaryName
+	}
 	// Create the primary resource
 	lambdaResource := gocf.LambdaFunction{
 		Code:        lambdaFunctionCode,
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(SpartaBinaryName),
+		Handler:     gocf.String(handlerName),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(GoLambdaVersion),
+		Runtime:     gocf.String(string(info.runtimeName)),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VPCConfig:   info.Options.VpcConfig,
 	}
@@ -1070,7 +1080,9 @@ func (info *LambdaAWSInfo) export(ctx context.Context,
 
 	cfResource := template.AddResource(info.LogicalResourceName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
-	safeMetadataInsert(cfResource, "golangFunc", info.lambdaFunctionName())
+	safeMetadataInsert(cfResource,
+		string(info.runtimeName),
+		info.lambdaFunctionName())
 
 	// Create the lambda Ref in case we need a permission or event mapping
 	functionAttr := gocf.GetAtt(info.LogicalResourceName(), "Arn")
@@ -1208,6 +1220,7 @@ func NewAWSLambda(functionName string,
 		Permissions:              make([]LambdaPermissionExporter, 0),
 		EventSourceMappings:      make([]*EventSourceMapping, 0),
 		deprecationNotices:       make([]string, 0),
+		runtimeName:              Go1LambdaRuntime,
 	}
 
 	switch v := roleNameOrIAMRoleDefinition.(type) {

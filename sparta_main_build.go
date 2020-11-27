@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/pkg/errors"
@@ -219,8 +218,6 @@ func MainEx(serviceName string,
 
 			// We don't need to walk the params because we
 			// put values in the Metadata block for them all...
-			// Save the BuildID
-
 			return Provision(true || OptionsGlobal.Noop,
 				templateFile.Name(),
 				optionsProvision.stackParams,

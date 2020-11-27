@@ -19,10 +19,16 @@ const (
 const (
 	// SpartaVersion defines the current Sparta release
 	SpartaVersion = "2.0.0"
-	// GoLambdaVersion is the Go version runtime used for the lambda function
-	GoLambdaVersion = "go1.x"
 	// LambdaBinaryTag is the build tag name used when building the binary
 	LambdaBinaryTag = "lambdabinary"
+)
+
+// AWSLambdaRuntimeName is an alias for the runtime name
+type AWSLambdaRuntimeName string
+
+const (
+	// Go1LambdaRuntime is the Go version runtime used for the lambda function
+	Go1LambdaRuntime AWSLambdaRuntimeName = "go1.x"
 )
 
 var (
@@ -102,4 +108,13 @@ const (
 	// ContextKeyAWSSession is the aws Session instance for this
 	// request
 	ContextKeyAWSSession
+)
+
+const (
+	// ContextKeyBuildOutputDir is the build-time output location
+	ContextKeyBuildOutputDir contextKey = iota
+	// ContextKeyBuildID is the build-time build id
+	ContextKeyBuildID
+	// ContextKeyBuildBinaryName is the name of the binary we're building
+	ContextKeyBuildBinaryName
 )
