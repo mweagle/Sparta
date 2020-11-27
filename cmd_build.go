@@ -1046,6 +1046,17 @@ func Build(noop bool,
 	}
 	buildContext.cfTemplate.Description = serviceDescription
 
+	// Add some params to the context...
+	buildContext.workflowHooksContext = context.WithValue(buildContext.workflowHooksContext,
+		ContextKeyBuildOutputDir,
+		outputDirectory)
+	buildContext.workflowHooksContext = context.WithValue(buildContext.workflowHooksContext,
+		ContextKeyBuildID,
+		buildID)
+	buildContext.workflowHooksContext = context.WithValue(buildContext.workflowHooksContext,
+		ContextKeyBuildBinaryName,
+		SpartaBinaryName)
+
 	logger.Info().
 		Str("BuildID", buildID).
 		Bool("noop", noop).
