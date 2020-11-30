@@ -225,16 +225,6 @@ func (p *pipeline) Run(ctx context.Context,
 			Str("Duration", eachStageEntry.duration.String()).
 			Msg("Stage duration")
 	}
-
-	pipelineTotalDuration := time.Since(p.startTime)
-	logger.Info().Msg(headerDivider)
-	curTime := time.Now()
-	logger.Info().
-		Str("Time (UTC)", curTime.UTC().Format(time.RFC3339)).
-		Str("Time (Local)", curTime.Format(time.RFC822)).
-		Str("Duration", pipelineTotalDuration.String()).
-		Msgf("%s Complete", name)
-
 	return nil
 }
 

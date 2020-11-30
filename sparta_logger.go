@@ -72,6 +72,7 @@ func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*ze
 			return l
 		}
 		consoleWriter.FormatMessage = func(i interface{}) string {
+			// 48 is the same as the dividerLength value
 			return fmt.Sprintf("%-48s", i)
 		}
 		consoleWriter.FormatFieldName = func(i interface{}) string {

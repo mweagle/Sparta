@@ -64,6 +64,7 @@ type optionsGlobalStruct struct {
 	BuildTags          string          `validate:"-"`
 	LinkerFlags        string          `validate:"-"` // no requirements
 	DisableColors      bool            `validate:"-"`
+	startTime          time.Time
 }
 
 // OptionsGlobal stores the global command line options

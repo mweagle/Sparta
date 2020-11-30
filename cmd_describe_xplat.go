@@ -173,6 +173,7 @@ func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *tem
 		logger.Warn().
 			Str("Path", resourcePath).
 			Msg("Failed to find resource. Using default image.")
+
 		data, dataErr = _escFSString(false, defaultImagePath)
 		if dataErr == nil {
 			resource = &templateResource{

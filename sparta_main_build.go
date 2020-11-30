@@ -71,6 +71,7 @@ func MainEx(serviceName string,
 		// Save the ServiceName in case a custom command wants it
 		OptionsGlobal.ServiceName = serviceName
 		OptionsGlobal.ServiceDescription = serviceDescription
+		OptionsGlobal.startTime = time.Now()
 
 		validateErr := validate.Struct(OptionsGlobal)
 		if nil != validateErr {
@@ -107,7 +108,17 @@ func MainEx(serviceName string,
 		logger.Info().Msg(headerDivider)
 		return nil
 	}
-
+	CommandLineOptions.Root.PersistentPostRunE = func(cmd *cobra.Command, args []string) error {
+		commandTimeDuration := time.Since(OptionsGlobal.startTime)
+		OptionsGlobal.Logger.Info().Msg(headerDivider)
+		curTime := time.Now()
+		OptionsGlobal.Logger.Info().
+			Str("Time (UTC)", curTime.UTC().Format(time.RFC3339)).
+			Str("Time (Local)", curTime.Format(time.RFC822)).
+			Str("Duration", commandTimeDuration.String()).
+			Msgf("Complete")
+		return nil
+	}
 	//////////////////////////////////////////////////////////////////////////////
 	// Version
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Version)
