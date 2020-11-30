@@ -41,9 +41,7 @@ func TestBuildUPXImage(t *testing.T) {
 		},
 	}
 
-	logger, loggerErr := sparta.NewLoggerForOutput(zerolog.InfoLevel.String(),
-		"text",
-		true)
+	logger, loggerErr := sparta.NewLogger(zerolog.InfoLevel.String())
 	if loggerErr != nil {
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
