@@ -200,7 +200,7 @@ func updateStackViaChangeSet(serviceName string,
 	logger *zerolog.Logger) error {
 
 	// Create a change set name...
-	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
+	changeSetRequestName := ResourceName(fmt.Sprintf("%sChangeSet", serviceName))
 	_, changesErr := CreateStackChangeSet(changeSetRequestName,
 		serviceName,
 		cfTemplate,
@@ -565,15 +565,15 @@ func WaitForStackOperationComplete(stackID string,
 
 // StableResourceName returns a stable resource name
 func StableResourceName(value string) string {
-	return CloudFormationResourceName(value, value)
+	return ResourceName(value, value)
 }
 
-// CloudFormationResourceName returns a name suitable as a logical
+// ResourceName returns a name suitable as a logical
 // CloudFormation resource value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 // for more information.  The `prefix` value should provide a hint as to the
 // resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
 // name is not content-addressable.
-func CloudFormationResourceName(prefix string, parts ...string) string {
+func ResourceName(prefix string, parts ...string) string {
 	hash := sha1.New()
 	_, writeErr := hash.Write([]byte(prefix))
 	//lint:ignore SA9003 because it's TODO

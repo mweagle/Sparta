@@ -241,7 +241,7 @@ type LambdaFunctionOptions struct {
 	// Tracing options for XRay
 	TracingConfig *gocf.LambdaFunctionTracingConfig
 	// Additional params
-	SpartaOptions *SpartaOptions
+	ExtendedOptions *ExtendedOptions
 }
 
 func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
@@ -252,12 +252,12 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 		Environment:                  make(map[string]*gocf.StringExpr),
 		KmsKeyArn:                    "",
 		ReservedConcurrentExecutions: 0,
-		SpartaOptions:                nil,
+		ExtendedOptions:              nil,
 	}
 }
 
-// SpartaOptions allow the passing in of additional options during the creation of a Lambda Function
-type SpartaOptions struct {
+// ExtendedOptions allow the passing in of additional options during the creation of a Lambda Function
+type ExtendedOptions struct {
 	// User supplied function name to use for
 	// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname
 	// value. If this is not supplied, a reflection-based
@@ -734,9 +734,9 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	var lambdaFuncName string
 
 	if info.Options != nil &&
-		info.Options.SpartaOptions != nil &&
-		info.Options.SpartaOptions.Name != "" {
-		lambdaFuncName = info.Options.SpartaOptions.Name
+		info.Options.ExtendedOptions != nil &&
+		info.Options.ExtendedOptions.Name != "" {
+		lambdaFuncName = info.Options.ExtendedOptions.Name
 	} else if info.userSuppliedFunctionName != "" {
 		lambdaFuncName = info.userSuppliedFunctionName
 	} else {
@@ -1168,7 +1168,7 @@ type AWSLambdaProvider interface {
 // resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
 // name is not content-addressable.
 func CloudFormationResourceName(prefix string, parts ...string) string {
-	return spartaCF.CloudFormationResourceName(prefix, parts...)
+	return spartaCF.ResourceName(prefix, parts...)
 }
 
 // LambdaName returns the Go-reflection discovered name for a given

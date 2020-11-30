@@ -116,12 +116,12 @@ func TestDoubleRefCustomResource(t *testing.T) {
 func TestSignatureVersion(t *testing.T) {
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	lambdaFunctions[0].Options = &LambdaFunctionOptions{
-		SpartaOptions: &SpartaOptions{
+		ExtendedOptions: &ExtendedOptions{
 			Name: "Handler0",
 		},
 	}
 	lambdaFunctions[1].Options = &LambdaFunctionOptions{
-		SpartaOptions: &SpartaOptions{
+		ExtendedOptions: &ExtendedOptions{
 			Name: "Handler1",
 		},
 	}
@@ -134,7 +134,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	for _, eachLambda := range lambdaFunctions {
 		eachLambda.Options = &LambdaFunctionOptions{
-			SpartaOptions: &SpartaOptions{
+			ExtendedOptions: &ExtendedOptions{
 				Name: "HandlerX",
 			},
 		}
