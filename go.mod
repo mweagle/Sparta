@@ -14,7 +14,7 @@ require (
 	github.com/aws/aws-sdk-go v1.35.35
 	github.com/aws/aws-xray-sdk-go v1.1.0
 	github.com/awslabs/goformation v1.4.1 // indirect
-	github.com/briandowns/spinner v1.11.1
+	github.com/briandowns/spinner v1.12.0
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/dustin/go-broadcast v0.0.0-20171205050544-f664265f5a66
@@ -67,7 +67,8 @@ require (
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77 // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392 // indirect
-	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
+	golang.org/x/sys v0.0.0-20201126233918-771906719818 // indirect
+	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
 	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/tools v0.0.0-20200910222312-571a207697e7 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
