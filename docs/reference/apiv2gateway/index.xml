@@ -6,10 +6,6 @@
     <description>Recent content on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
-    
-	<atom:link href="/reference/apiv2gateway/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate><atom:link href="/reference/apiv2gateway/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

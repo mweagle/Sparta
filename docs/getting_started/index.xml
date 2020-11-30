@@ -6,10 +6,6 @@
     <description>Recent content in Getting Started on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 27 Nov 2019 16:12:19 +0000</lastBuildDate>
-    
-	<atom:link href="/getting_started/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 27 Nov 2019 16:12:19 +0000</lastBuildDate><atom:link href="/getting_started/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
