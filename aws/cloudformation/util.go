@@ -685,7 +685,9 @@ func CreateStackChangeSet(changeSetRequestName string,
 	awsCloudFormation *cloudformation.CloudFormation,
 	logger *zerolog.Logger) (*cloudformation.DescribeChangeSetOutput, error) {
 
-	var cloudFormationParameters []*cloudformation.Parameter
+	cloudFormationParameters := make([]*cloudformation.Parameter,
+		0,
+		len(stackParameters))
 	for eachKey, eachValue := range stackParameters {
 		cloudFormationParameters = append(cloudFormationParameters, &cloudformation.Parameter{
 			ParameterKey:   aws.String(eachKey),
