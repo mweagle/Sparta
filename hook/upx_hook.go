@@ -15,6 +15,14 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// UPXDockerFile is the docker file used to build the local
+// UPX image to do the compression.
+const UPXDockerFile = `
+FROM alpine:edge
+RUN apk add --no-cache upx=3.96-r0
+ENTRYPOINT [ "/usr/bin/upx" ]
+`
+
 // PostBuildUPXCompressHook returns a WorkflowHookHandler that handles
 // UPX compressing the `go` binary containing our functions
 func PostBuildUPXCompressHook(dockerImageName string) sparta.WorkflowHookHandler {
@@ -55,7 +63,7 @@ func PostBuildUPXCompressHook(dockerImageName string) sparta.WorkflowHookHandler
 			"/var/tmp",
 			"-v",
 			fmt.Sprintf("%s:/var/tmp", absPath),
-			"hairyhenderson/upx",
+			dockerImageName,
 			"--best",
 			"--lzma",
 			"-o",

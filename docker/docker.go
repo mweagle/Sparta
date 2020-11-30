@@ -27,10 +27,12 @@ const (
 	BinaryNameArgument = "SPARTA_DOCKER_BINARY"
 )
 
-// BuildDockerImageWithFlags is an extended version of BuildDockerImage that includes
-// support for build time tags
-func BuildDockerImageWithFlags(serviceName string,
+// BuildDockerImageInDirectoryWithFlags is an extended version of BuildDockerImage
+// that includes support for build time tags and allows the caller to provide
+// the working directory
+func BuildDockerImageInDirectoryWithFlags(serviceName string,
 	dockerFilepath string,
+	workingDirectory string,
 	dockerTags map[string]string,
 	buildTags string,
 	linkFlags string,
@@ -72,7 +74,7 @@ func BuildDockerImageWithFlags(serviceName string,
 		false,
 		logger)
 	if buildErr != nil {
-		return errors.Wrapf(buildErr, "Attempting to build Docker binary")
+		return errors.Wrapf(buildErr, "Attempting to build Docker image")
 	}
 	defer func() {
 		removeErr := os.Remove(executableOutput)
@@ -109,9 +111,32 @@ func BuildDockerImageWithFlags(serviceName string,
 			strings.ToLower(eachValue)))
 	}
 
-	dockerArgs = append(dockerArgs, ".")
+	dockerArgs = append(dockerArgs, workingDirectory)
 	dockerCmd := exec.Command("docker", dockerArgs...)
 	return system.RunOSCommand(dockerCmd, logger)
+}
+
+// BuildDockerImageWithFlags is an extended version of BuildDockerImage that includes
+// support for build time tags
+func BuildDockerImageWithFlags(serviceName string,
+	dockerFilepath string,
+	dockerTags map[string]string,
+	buildTags string,
+	linkFlags string,
+	logger *zerolog.Logger) error {
+
+	curDir, curDirErr := os.Getwd()
+	if curDirErr != nil {
+		return errors.Wrapf(curDirErr, "Failed to get current directory")
+	}
+	return BuildDockerImageInDirectoryWithFlags(
+		serviceName,
+		dockerFilepath,
+		curDir,
+		dockerTags,
+		buildTags,
+		linkFlags,
+		logger)
 }
 
 // BuildDockerImage creates the smallest docker image for this Golang binary
