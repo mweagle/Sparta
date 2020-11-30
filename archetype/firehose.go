@@ -233,7 +233,7 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 				if loggerOk && logger.GetLevel() >= (zerolog.DebugLevel) {
 					logger.Debug().
 						Str("input", string(eachRecord.Data)).
-						Str("output", string(outputBuffer.Bytes())).
+						Str("output", outputBuffer.String()).
 						Msg("Transformation result")
 				}
 

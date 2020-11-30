@@ -45,7 +45,9 @@ func archiveHook(ctx context.Context,
 }
 
 func ExampleWorkflowHooks() {
-	workflowHooks := WorkflowHooks{}
+	workflowHooks := WorkflowHooks{
+		Archives: []ArchiveHookHandler{ArchiveHookFunc(archiveHook)},
+	}
 	var lambdaFunctions []*LambdaAWSInfo
 	helloWorldLambda, _ := NewAWSLambda("PreexistingAWSLambdaRoleName",
 		helloZipLambda,

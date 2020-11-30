@@ -104,7 +104,7 @@ type pipelineBaseOp interface {
 
 type pipelineStageBase interface {
 	Run(context.Context, *zerolog.Logger) error
-	Append(string, pipelineBaseOp) error
+	Append(string, pipelineBaseOp) pipelineStageBase
 	Rollback(context.Context, *zerolog.Logger) error
 }
 
@@ -116,13 +116,12 @@ type pipelineStage struct {
 	ops []*pipelineStageOpEntry
 }
 
-func (ps *pipelineStage) Append(opName string, op pipelineBaseOp) error {
-
+func (ps *pipelineStage) Append(opName string, op pipelineBaseOp) pipelineStageBase {
 	ps.ops = append(ps.ops, &pipelineStageOpEntry{
 		opName: opName,
 		op:     op,
 	})
-	return nil
+	return ps
 }
 
 func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error {
@@ -186,11 +185,12 @@ type pipeline struct {
 	startTime time.Time
 }
 
-func (p *pipeline) Append(stageName string, stage pipelineStageBase) {
+func (p *pipeline) Append(stageName string, stage pipelineStageBase) *pipeline {
 	p.stages = append(p.stages, &pipelineStageEntry{
 		stageName: stageName,
 		stage:     stage,
 	})
+	return p
 }
 
 func (p *pipeline) Run(ctx context.Context,
@@ -286,4 +286,23 @@ func (ufro *userFunctionRollbackOp) Rollback(ctx context.Context, logger *zerolo
 func (ufro *userFunctionRollbackOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 
 	return nil
+}
+
+func newUserRollbackEnabledPipeline(serviceName string,
+	awsSession *session.Session,
+	rollbackFuncs []RollbackHookHandler,
+	noop bool) *pipeline {
+
+	buildPipeline := &pipeline{}
+
+	// Verify
+	rollbackStateUserFunctions := &pipelineStage{}
+	rollbackStateUserFunctions.Append("userRollbackFunctions", &userFunctionRollbackOp{
+		serviceName:   serviceName,
+		awsSession:    awsSession,
+		noop:          noop,
+		rollbackFuncs: rollbackFuncs,
+	})
+	buildPipeline.Append("userRollbackFunctions", rollbackStateUserFunctions)
+	return buildPipeline
 }

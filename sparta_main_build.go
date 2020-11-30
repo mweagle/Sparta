@@ -125,7 +125,11 @@ func MainEx(serviceName string,
 	}
 
 	if nil == CommandLineOptions.Build.RunE {
-		CommandLineOptions.Build.RunE = func(cmd *cobra.Command, args []string) error {
+		CommandLineOptions.Build.RunE = func(cmd *cobra.Command, args []string) (provisionErr error) {
+			defer func() {
+				showOptionalAWSUsageInfo(provisionErr, OptionsGlobal.Logger)
+			}()
+
 			buildID, buildIDErr := computeBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
 			if nil != buildIDErr {
 				return buildIDErr
@@ -141,8 +145,7 @@ func MainEx(serviceName string,
 			if templateFileErr != nil {
 				return templateFileErr
 			}
-			defer templateFile.Close()
-			return Build(OptionsGlobal.Noop,
+			buildErr := Build(OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
@@ -156,6 +159,13 @@ func MainEx(serviceName string,
 				templateFile,
 				workflowHooks,
 				OptionsGlobal.Logger)
+			closeErr := templateFile.Close()
+			if closeErr != nil {
+				OptionsGlobal.Logger.Warn().
+					Err(closeErr).
+					Msg("Failed to close template file output")
+			}
+			return buildErr
 		}
 	}
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Build)
@@ -173,7 +183,11 @@ func MainEx(serviceName string,
 	}
 
 	if nil == CommandLineOptions.Provision.RunE {
-		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
+		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) (provisionErr error) {
+			defer func() {
+				showOptionalAWSUsageInfo(provisionErr, OptionsGlobal.Logger)
+			}()
+
 			buildID, buildIDErr := computeBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
 			if nil != buildIDErr {
 				return buildIDErr
@@ -201,7 +215,15 @@ func MainEx(serviceName string,
 				templateFile,
 				workflowHooks,
 				OptionsGlobal.Logger)
-			templateFile.Close()
+
+			defer func() {
+				closeErr := templateFile.Close()
+				if closeErr != nil {
+					OptionsGlobal.Logger.Warn().
+						Err(closeErr).
+						Msg("Failed to close template file handle")
+				}
+			}()
 
 			if buildErr != nil {
 				return buildErr
@@ -218,7 +240,7 @@ func MainEx(serviceName string,
 
 			// We don't need to walk the params because we
 			// put values in the Metadata block for them all...
-			return Provision(true || OptionsGlobal.Noop,
+			return Provision(OptionsGlobal.Noop,
 				templateFile.Name(),
 				optionsProvision.stackParams,
 				optionsProvision.stackTags,

@@ -170,9 +170,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				}
 				// Always include a newline at a minimum
 				appendLine := fmt.Sprintf("%s%s", curContents, newlineValue)
-				if len(appendLine) != 0 {
-					converter.contents = append(converter.contents, gocf.String(appendLine))
-				}
+				converter.contents = append(converter.contents, gocf.String(appendLine))
 				break
 			}
 		}
@@ -714,6 +712,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 					Value: aws.String(eachValue),
 				})
 		}
+		changeSetInput.Tags = awsTags
 	}
 	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
 	if nil != changeSetError {

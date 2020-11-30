@@ -10,7 +10,7 @@
   - Parameters for bucket, code, archive so that out of band changes allowed
 
 - Removed `HandleAWSLambda`
-
+- Add `step.APIGatewayTaskState` for to support [calling API Gateway](https://docs.aws.amazon.com/step-functions/latest/dg/connect-api-gateway.html)
 - TODO:
   - Workflow hooks return (context, error) for more go idiomatic
 

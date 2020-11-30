@@ -254,6 +254,59 @@ func callValidationHooks(validationHooks []ServiceValidationHookHandler,
 //
 // BEGIN - Private
 //
+
+type verifyAWSPreconditionsOp struct {
+	userdata *userdata
+}
+
+func (vapo *verifyAWSPreconditionsOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+	// If there are codePipeline environments defined, warn if they don't include
+	// the same keysets
+	if nil != codePipelineEnvironments {
+		mapKeys := func(inboundMap map[string]string) []string {
+			keys := make([]string, len(inboundMap))
+			i := 0
+			for k := range inboundMap {
+				keys[i] = k
+				i++
+			}
+			return keys
+		}
+		aggregatedKeys := make([][]string, len(codePipelineEnvironments))
+		i := 0
+		for _, eachEnvMap := range codePipelineEnvironments {
+			aggregatedKeys[i] = mapKeys(eachEnvMap)
+			i++
+		}
+		i = 0
+		keysEqual := true
+		for _, eachKeySet := range aggregatedKeys {
+			j := 0
+			for _, eachKeySetTest := range aggregatedKeys {
+				if j != i {
+					if !reflect.DeepEqual(eachKeySet, eachKeySetTest) {
+						keysEqual = false
+					}
+				}
+				j++
+			}
+			i++
+		}
+		if !keysEqual {
+			// Setup an interface with the fields so that the log message
+			logEntry := logger.Warn()
+			for eachEnv, eachEnvMap := range codePipelineEnvironments {
+				logEntry = logEntry.Interface(eachEnv, eachEnvMap)
+			}
+			logEntry.Msg("CodePipeline environments do not define equivalent environment keys")
+		}
+	}
+	return nil
+}
+func (vapo *verifyAWSPreconditionsOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
+	return nil
+}
+
 type validatePreconditionsOp struct {
 	userdata *userdata
 }
@@ -437,56 +490,6 @@ func (viro *verifyIAMRolesOp) Rollback(ctx context.Context, logger *zerolog.Logg
 // END - Private
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-type verifyAWSPreconditionsOp struct {
-	userdata     *userdata
-	buildContext *buildContext
-}
-
-func (vapo *verifyAWSPreconditionsOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
-	// If there are codePipeline environments defined, warn if they don't include
-	// the same keysets
-	if nil != codePipelineEnvironments {
-		mapKeys := func(inboundMap map[string]string) []string {
-			keys := make([]string, len(inboundMap))
-			i := 0
-			for k := range inboundMap {
-				keys[i] = k
-				i++
-			}
-			return keys
-		}
-		aggregatedKeys := make([][]string, len(codePipelineEnvironments))
-		i := 0
-		for _, eachEnvMap := range codePipelineEnvironments {
-			aggregatedKeys[i] = mapKeys(eachEnvMap)
-			i++
-		}
-		i = 0
-		keysEqual := true
-		for _, eachKeySet := range aggregatedKeys {
-			j := 0
-			for _, eachKeySetTest := range aggregatedKeys {
-				if j != i {
-					if !reflect.DeepEqual(eachKeySet, eachKeySetTest) {
-						keysEqual = false
-					}
-				}
-				j++
-			}
-			i++
-		}
-		if !keysEqual {
-			// Setup an interface with the fields so that the log message
-			logEntry := logger.Warn()
-			for eachEnv, eachEnvMap := range codePipelineEnvironments {
-				logEntry = logEntry.Interface(eachEnv, eachEnvMap)
-			}
-			logEntry.Msg("CodePipeline environments do not define equivalent environment keys")
-		}
-	}
-	return nil
-}
 
 type createPackageOp struct {
 	userdata     *userdata
@@ -675,7 +678,7 @@ func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context, logge
 	if cto.buildContext.cfTemplate.Parameters == nil {
 		cto.buildContext.cfTemplate.Parameters = make(map[string]*gocf.Parameter)
 	}
-	paramRefMap := make(map[string]gocf.Stringable, 0)
+	paramRefMap := make(map[string]gocf.Stringable)
 
 	// Code S3 info
 	cto.buildContext.cfTemplate.Parameters[StackParamS3CodeKeyName] = newStackParameter(
@@ -1068,9 +1071,25 @@ func Build(noop bool,
 	//////////////////////////////////////////////////////////////////////////////
 	// Workflow
 	//////////////////////////////////////////////////////////////////////////////
-	buildPipeline := pipeline{}
+	/* #nosec G104 */
+
+	var rollbackFuncs []RollbackHookHandler
+	if workflowHooks != nil {
+		rollbackFuncs = workflowHooks.Rollbacks
+	}
+	buildPipeline := newUserRollbackEnabledPipeline(
+		serviceName,
+		buildContext.awsSession,
+		rollbackFuncs,
+		noop)
 
 	// Verify
+	stageAWSPreconditions := &pipelineStage{}
+	stageAWSPreconditions.Append("validateAWSPreconditions", &verifyAWSPreconditionsOp{
+		userdata: userdata,
+	})
+	buildPipeline.Append("validateAWSPreconditions", stageAWSPreconditions)
+
 	stageVerify := &pipelineStage{}
 	stageVerify.Append("validatePreconditions", &validatePreconditionsOp{
 		userdata: userdata,

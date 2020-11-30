@@ -43,9 +43,9 @@ type s3UploadURL struct {
 	version  string
 }
 
-func (s3URL *s3UploadURL) keyName() string {
-	return s3URL.path
-}
+// func (s3URL *s3UploadURL) keyName() string {
+// 	return s3URL.path
+// }
 
 func newS3UploadURL(s3URL string) *s3UploadURL {
 	urlParts, urlPartsErr := url.Parse(s3URL)
@@ -416,6 +416,7 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 			Msg("Confirmed S3 region match")
 	} else {
 		// We don't have an S3 bucket, so that seems bad...
+		return errors.Errorf("Failed to find S3Bucket to verify")
 	}
 	return nil
 }
@@ -514,7 +515,12 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 		wg.Add(1)
 		go func(rollFunc spartaS3.RollbackFunction, logger *zerolog.Logger) {
 			defer wg.Done()
-			rollFunc(logger)
+			errResult := rollFunc(logger)
+			if errResult != nil {
+				logger.Warn().
+					Err(errResult).
+					Msg("S3 upload rollback function failed")
+			}
 		}(rollbackFunc, logger)
 	}
 	wg.Wait()
@@ -772,6 +778,7 @@ func (osi *outputStackInfoOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	return nil
 }
 
+/*
 type validatePostConditionOp struct {
 	provisionWorkflowOp
 }
@@ -782,7 +789,7 @@ func (vpco *validatePostConditionOp) Rollback(ctx context.Context, logger *zerol
 func (vpco *validatePostConditionOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-
+*/
 func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *zerolog.Logger) error {
 
 	return nil
@@ -829,6 +836,7 @@ func Provision(noop bool,
 	}
 
 	// Unmarshal the JSON template into the struct
+	/* #nosec G304 */
 	templateBytes, templateBytesErr := ioutil.ReadFile(templatePath)
 	if templateBytesErr != nil {
 		return templateBytesErr
@@ -843,9 +851,9 @@ func Provision(noop bool,
 	//////////////////////////////////////////////////////////////////////////////
 	provisionPipeline := pipeline{}
 
-	// Rollback stage
-
 	// Preconditions
+
+	/* #nosec G104 */
 	stagePreconditions := &pipelineStage{}
 	stagePreconditions.Append("validatePreconditions", &ensureProvisionPreconditionsOp{
 		provisionWorkflowOp: provisionWorkflowOp{
