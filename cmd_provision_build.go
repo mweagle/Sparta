@@ -431,7 +431,7 @@ type uploadPackageOp struct {
 func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	var uploadTasks []*workTask
 
-	// Keys in the metadata to ZIP files that shoudl be uploaded
+	// Keys in the metadata to ZIP files that should be uploaded
 	metadataKeys := []string{MetadataParamCodeArchivePath,
 		MetadataParamS3SiteArchivePath}
 
