@@ -47,7 +47,7 @@ func PostBuildUPXCompressHook(dockerImageName string) sparta.WorkflowHookHandler
 		}
 
 		// Run the UPX packer against the binary with a new name,
-		// then overwrite the exisitng one...
+		// then overwrite the existing one...
 		commandLineArgs := []string{
 			"run",
 			"--rm",
