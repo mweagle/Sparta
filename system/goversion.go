@@ -266,7 +266,7 @@ func BuildGoBinary(serviceName string,
 		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 		logger.Info().
 			Str("Path", executableOutput).
-			Msg("Compiling binary")
+			Msg("Running docker ")
 		cmdError = RunOSCommand(cmd, logger)
 	}
 	return cmdError
