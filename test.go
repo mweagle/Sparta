@@ -3,6 +3,8 @@ package sparta
 import (
 	"bytes"
 	"context"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -138,6 +140,15 @@ func testProvisionEx(t *testing.T,
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
 	var templateWriter bytes.Buffer
+
+	workingDir, workingDirErr := os.Getwd()
+	if workingDirErr != nil {
+		t.Error(workingDirErr)
+	}
+	fullPath, fullPathErr := filepath.Abs(workingDir)
+	if fullPathErr != nil {
+		t.Error(fullPathErr)
+	}
 	err := Build(true,
 		"SampleProvision",
 		"",
@@ -146,7 +157,7 @@ func testProvisionEx(t *testing.T,
 		nil,
 		false,
 		"testBuildID",
-		"",
+		fullPath,
 		"",
 		"",
 		&templateWriter,
