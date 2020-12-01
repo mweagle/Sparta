@@ -76,18 +76,6 @@ func showOptionalAWSUsageInfo(err error, logger *zerolog.Logger) {
 	}
 }
 
-// // logFilesize outputs a friendly filesize for the given filepath
-// func logFilesize(message string, filePath string, logger *zerolog.Logger) {
-// 	// Binary size
-// 	stat, err := os.Stat(filePath)
-// 	if err == nil {
-// 		logger.WithFields(logrus.Fields{
-// 			"Path": filePath,
-// 			"Size": humanize.Bytes(uint64(stat.Size())),
-// 		}).Info(message)
-// 	}
-// }
-
 func spartaTagName(baseKey string) string {
 	return fmt.Sprintf("io:gosparta:%s", baseKey)
 }
@@ -134,7 +122,7 @@ func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error 
 			defer wg.Done()
 			opErr := opEntry.op.Invoke(ctx, goLogger)
 			if opErr != nil {
-				mapKey := fmt.Sprintf("%sErr%d", opEntry.opName, opIndex)
+				mapKey := fmt.Sprintf("%s", opEntry.opName)
 				mapErr.Store(mapKey, opErr)
 			}
 		}(eachIndex, eachEntry, logger)
@@ -144,7 +132,7 @@ func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error 
 	// Were there any errors?
 	errorText := []string{}
 	mapErr.Range(func(key interface{}, value interface{}) bool {
-		errorText = append(errorText, fmt.Sprintf("%s:%v",
+		errorText = append(errorText, fmt.Sprintf("%s=>%v",
 			key,
 			value))
 		return true
@@ -204,7 +192,7 @@ func (p *pipeline) Run(ctx context.Context,
 		startTime := time.Now()
 		stageErr := curStage.stage.Run(ctx, logger)
 		if stageErr != nil {
-			logger.Warn().Msgf("Pipeline stage %s failed", curStage.stageName)
+			logger.Error().Msgf("Pipeline stage %s failed", curStage.stageName)
 
 			for index := stageIndex; index >= 0; index-- {
 				rollbackErr := p.stages[index].stage.Rollback(ctx, logger)
