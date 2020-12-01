@@ -380,9 +380,8 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 			logger)
 
 		if bucketRegionErr != nil {
-			return fmt.Errorf("failed to determine region for %s. Error: %s",
-				s3BucketName,
-				bucketRegionErr)
+			return errors.Wrap(bucketRegionErr,
+				fmt.Sprintf("Checking S3 bucket <%s>", s3BucketName))
 		}
 		logger.Info().
 			Str("Bucket", s3BucketName).
@@ -507,23 +506,23 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	return nil
 }
 func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
-
-	wg := sync.WaitGroup{}
-
-	for _, eachUploaded := range upo.provisionContext.s3Uploads {
-		rollbackFunc := spartaS3.CreateS3RollbackFunc(upo.provisionContext.awsSession, eachUploaded.location)
-		wg.Add(1)
-		go func(rollFunc spartaS3.RollbackFunction, logger *zerolog.Logger) {
-			defer wg.Done()
-			errResult := rollFunc(logger)
-			if errResult != nil {
-				logger.Warn().
-					Err(errResult).
-					Msg("S3 upload rollback function failed")
-			}
-		}(rollbackFunc, logger)
+	if !upo.provisionContext.noop {
+		wg := sync.WaitGroup{}
+		for _, eachUploaded := range upo.provisionContext.s3Uploads {
+			rollbackFunc := spartaS3.CreateS3RollbackFunc(upo.provisionContext.awsSession, eachUploaded.location)
+			wg.Add(1)
+			go func(rollFunc spartaS3.RollbackFunction, logger *zerolog.Logger) {
+				defer wg.Done()
+				errResult := rollFunc(logger)
+				if errResult != nil {
+					logger.Warn().
+						Err(errResult).
+						Msg("S3 upload rollback function failed")
+				}
+			}(rollbackFunc, logger)
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 	return nil
 }
 
@@ -626,6 +625,12 @@ func (ipuo *inPlaceUpdatesOp) Rollback(ctx context.Context, logger *zerolog.Logg
 	return nil
 }
 func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+	if ipuo.provisionContext.noop {
+		logger.Info().
+			Msg(noopMessage("InPlace Update Check"))
+
+		return nil
+	}
 	// Code bucket
 	codeArtifactURL, codeArtifactURLExists := ipuo.provisionContext.s3Uploads[MetadataParamCodeArchivePath]
 	if !codeArtifactURLExists {
@@ -733,6 +738,13 @@ func (cfsu *cloudformationStackUpdateOp) Rollback(ctx context.Context, logger *z
 	return nil
 }
 func (cfsu *cloudformationStackUpdateOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+	if cfsu.provisionContext.noop {
+		logger.Info().
+			Msg(noopMessage("CloudFormation Stack update"))
+
+		return nil
+	}
+
 	operationTimeout := maximumStackOperationTimeout(cfsu.provisionContext.cfTemplate, logger)
 	startTime := time.Now()
 
@@ -833,6 +845,7 @@ func Provision(noop bool,
 		stackTags:           stackTags,
 		s3Uploads:           map[string]*s3UploadURL{},
 		inPlaceUpdates:      inPlaceUpdates,
+		noop:                noop,
 	}
 
 	// Unmarshal the JSON template into the struct
