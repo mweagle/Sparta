@@ -74,13 +74,15 @@ func UploadLocalFileToS3(localPath string,
 		ContentType: aws.String(mime.TypeByExtension(path.Ext(localPath))),
 		Body:        reader,
 	}
-	closeErr := reader.Close()
-	if closeErr != nil {
-		logger.Warn().
-			Err(closeErr).
-			Msg("Failed to close upload Body reader input")
-	}
-
+	// Ensure we close the reader...
+	defer func() {
+		closeErr := reader.Close()
+		if closeErr != nil {
+			logger.Warn().
+				Err(closeErr).
+				Msg("Failed to close upload Body reader input")
+		}
+	}()
 	// If we can get the current working directory, let's try and strip
 	// it from the path just to keep the log statement a bit shorter
 	logPath := localPath
