@@ -122,8 +122,7 @@ func (ps *pipelineStage) Run(ctx context.Context, logger *zerolog.Logger) error 
 			defer wg.Done()
 			opErr := opEntry.op.Invoke(ctx, goLogger)
 			if opErr != nil {
-				mapKey := fmt.Sprintf("%s", opEntry.opName)
-				mapErr.Store(mapKey, opErr)
+				mapErr.Store(opEntry.opName, opErr)
 			}
 		}(eachIndex, eachEntry, logger)
 	}
