@@ -1,0 +1,121 @@
+{
+    "choices": {
+        "StringEquals": {
+            "Variable": "string"
+        },
+        "StringLessThan": {
+            "Variable": "string"
+        },
+        "StringGreaterThan": {
+            "Variable": "string"
+        },
+        "StringLessThanEquals": {
+            "Variable": "string"
+        },
+        "StringGreaterThanEquals": {
+            "Variable": "string"
+        },
+        "NumericEquals": {
+            "Variable": "int64"
+        },
+        "NumericLessThan": {
+            "Variable": "int64"
+        },
+        "NumericGreaterThan": {
+            "Variable": "int64"
+        },
+        "NumericLessThanEquals": {
+            "Variable": "int64"
+        },
+        "NumericGreaterThanEquals": {
+            "Variable": "int64"
+        },
+        "BooleanEquals": {
+            "Variable": "interface{}"
+        },
+        "TimestampEquals": {
+            "Variable": "time.Time"
+        },
+        "TimestampLessThan": {
+            "Variable": "time.Time"
+        },
+        "TimestampLessThanEquals": {
+            "Variable": "time.Time"
+        },
+        "TimestampGreaterThan": {
+            "Variable": "time.Time"
+        },
+        "TimestampGreaterThanEquals": {
+            "Variable": "time.Time"
+        },
+        "StringMatches": {
+            "Variable": "string"
+        },
+        "IsNull": {
+            "Variable": "string"
+        },
+        "IsPresent": {
+            "Variable": "string"
+        },
+        "IsNumeric": {
+            "Variable": "string"
+        },
+        "IsString": {
+            "Variable": "string"
+        },
+        "IsBoolean": {
+            "Variable": "string"
+        },
+        "IsTimestamp": {
+            "Variable": "string"
+        },
+        "StringEqualsPath": {
+            "Variable": "string"
+        },
+        "StringLessThanPath": {
+            "Variable": "string"
+        },
+        "StringGreaterThanPath": {
+            "Variable": "string"
+        },
+        "StringLessThanEqualsPath": {
+            "Variable": "string"
+        },
+        "StringGreaterThanEqualsPath": {
+            "Variable": "string"
+        },
+        "NumericEqualsPath": {
+            "Variable": "string"
+        },
+        "NumericLessThanPath": {
+            "Variable": "string"
+        },
+        "NumericGreaterThanPath": {
+            "Variable": "string"
+        },
+        "NumericLessThanEqualsPath": {
+            "Variable": "string"
+        },
+        "NumericGreaterThanEqualsPath": {
+            "Variable": "string"
+        },
+        "BooleanEqualsPath": {
+            "Variable": "string"
+        },
+        "TimestampEqualsPath": {
+            "Variable": "string"
+        },
+        "TimestampLessThanPath": {
+            "Variable": "string"
+        },
+        "TimestampGreaterThanPath": {
+            "Variable": "string"
+        },
+        "TimestampLessThanEqualsPath": {
+            "Variable": "string"
+        },
+        "TimestampGreaterThanEqualsPath": {
+            "Variable": "string"
+        }
+    }
+}
