@@ -1,6 +1,7 @@
 package step
 
 //go:generate go run ./generator/main.go ./generator/choice_definitions.json ./choice_rules.go
+//go:generate goimports -e -w ./choice_rules.go
 
 import (
 	"bytes"
