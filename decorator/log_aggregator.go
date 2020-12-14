@@ -131,7 +131,8 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 }
 
 // DecorateTemplate annotates the lambda with the log forwarding sink info
-func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context, serviceName string,
+func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
+	serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
