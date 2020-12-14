@@ -77,7 +77,7 @@ func main() {
 	}
 	inputDefFile := os.Args[1]
 	outputSourceFile := os.Args[2]
-
+	/* #nosec G304 */
 	inputFileBytes, inputFileBytesErr := ioutil.ReadFile(inputDefFile)
 	if inputFileBytesErr != nil {
 		fmt.Printf("Failed to read %s: %v\n", inputDefFile, inputFileBytesErr)
@@ -102,9 +102,17 @@ func main() {
 		fmt.Printf("Failed to open %s: %v\n", outputSourceFile, outputSourceErr)
 		os.Exit(1)
 	}
-	defer outputSource.Close()
-	io.WriteString(outputSource, choiceStatePrelude)
-
+	defer func() {
+		closeErr := outputSource.Close()
+		if closeErr != nil {
+			fmt.Printf("Failed to close output stream: %#v", closeErr)
+		}
+	}()
+	_, writeErr := io.WriteString(outputSource, choiceStatePrelude)
+	if writeErr != nil {
+		fmt.Printf("Failed to write: %v\n", writeErr)
+		os.Exit(1)
+	}
 	for eachRuleName, eachRuleDef := range choiceDefs.Choices {
 		templateParams := ChoiceRule{
 			Name:         eachRuleName,
