@@ -18,6 +18,18 @@ func marshalInterface(item interface{}) interface{} {
 	return nil
 }
 
+// Utility function to marshal array of strings
+func marshalStringArray(vals []string) *gocf.StringListExpr {
+	if len(vals) <= 0 {
+		return nil
+	}
+	arrValues := []gocf.Stringable{}
+	for i := 0; i != len(vals); i++ {
+		arrValues = append(arrValues, gocf.String(vals[i]))
+	}
+	return gocf.StringList(arrValues...)
+}
+
 // Utility function to marshal an int
 func marshalInt(intVal int64) *gocf.IntegerExpr {
 	if intVal != 0 {
