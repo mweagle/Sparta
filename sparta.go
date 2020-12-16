@@ -413,16 +413,19 @@ func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetL
 // directly correspond to the golang AWS SDK's CreateEventSourceMappingInput
 // (http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput)
 type EventSourceMapping struct {
+	BatchSize                      int64
 	StartingPosition               string
 	EventSourceArn                 interface{}
 	Disabled                       bool
-	BatchSize                      int64
 	BisectBatchOnFunctionError     bool
 	DestinationConfig              *gocf.LambdaEventSourceMappingDestinationConfig
 	MaximumBatchingWindowInSeconds int64
 	MaximumRecordAgeInSeconds      int64
 	MaximumRetryAttempts           int64
 	ParallelizationFactor          int64
+	PartialBatchResponse           bool
+	Queues                         []gocf.Stringable
+	Topics                         []gocf.Stringable
 }
 
 func (mapping *EventSourceMapping) export(serviceName string,
@@ -437,14 +440,17 @@ func (mapping *EventSourceMapping) export(serviceName string,
 		StartingPosition:               marshalString(mapping.StartingPosition),
 		EventSourceArn:                 dynamicArn.String(),
 		FunctionName:                   targetLambdaArn,
-		BatchSize:                      gocf.Integer(mapping.BatchSize),
-		Enabled:                        gocf.Bool(!mapping.Disabled),
-		BisectBatchOnFunctionError:     gocf.Bool(mapping.BisectBatchOnFunctionError),
+		BatchSize:                      marshalInt(mapping.BatchSize),
+		Enabled:                        marshalBool(!mapping.Disabled),
+		BisectBatchOnFunctionError:     marshalBool(mapping.BisectBatchOnFunctionError),
 		DestinationConfig:              mapping.DestinationConfig,
 		MaximumBatchingWindowInSeconds: marshalInt(mapping.MaximumBatchingWindowInSeconds),
 		MaximumRecordAgeInSeconds:      marshalInt(mapping.MaximumRecordAgeInSeconds),
 		MaximumRetryAttempts:           marshalInt(mapping.MaximumRetryAttempts),
+		PartialBatchResponse:           marshalBool(mapping.PartialBatchResponse),
 		ParallelizationFactor:          marshalInt(mapping.ParallelizationFactor),
+		Queues:                         gocf.StringList(mapping.Queues...),
+		Topics:                         gocf.StringList(mapping.Topics...),
 	}
 
 	// Unique components for the hash for the EventSource mapping
