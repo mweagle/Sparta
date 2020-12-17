@@ -9,7 +9,7 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/aws/aws-lambda-go v1.20.0
-	github.com/aws/aws-sdk-go v1.36.9
+	github.com/aws/aws-sdk-go v1.36.10
 	github.com/aws/aws-xray-sdk-go v1.1.0
 	github.com/briandowns/spinner v1.12.0
 	github.com/deckarep/golang-set v1.7.1 // indirect
@@ -21,8 +21,9 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
-	github.com/google/pprof v0.0.0-20201211104106-9bd6f8a8ed4b
+	github.com/google/pprof v0.0.0-20201216223654-096c08e13fa9
 	github.com/google/uuid v1.1.2 // indirect
+	github.com/hhatto/gocloc v0.3.3 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
@@ -47,7 +48,7 @@ require (
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
-	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9 // indirect
+	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620 // indirect
 	golang.org/x/sys v0.0.0-20201214210602-f9fddec55a1e // indirect
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
 	golang.org/x/text v0.3.4 // indirect
