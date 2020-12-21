@@ -4,11 +4,13 @@ package sparta
 
 import (
 	"archive/zip"
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -18,6 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/service/sts"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/mweagle/Sparta/system"
 	spartaZip "github.com/mweagle/Sparta/zip"
@@ -27,16 +30,29 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const (
+	// DockerArgAWSAccountID is the AWS Account id used when building
+	DockerArgAWSAccountID = "AWS_ACCOUNT_ID"
+	// DockerArgAWSRegion is the AWS region we're building for
+	DockerArgAWSRegion = "AWS_REGION"
+	// DockerArgSpartaBinaryPath is the path to the Sparta binary relative to the
+	// Dockerfile
+	DockerArgSpartaBinaryPath = "SPARTA_BINARY"
+	// DockerArgECRLabelName is the value of the label to set inside the user
+	// supplied Dockerfile. For instance LABEL ${SPARTA_ECR_LABEL_NAME}=xxx
+	DockerArgECRLabelName = "SPARTA_ECR_LABEL_NAME"
+	// DockerArgBuildID is the buildID of the current build
+	DockerArgBuildID = "SPARTA_BUILD_ID"
+)
+
 // userdata is user-supplied, code related values
 type userdata struct {
 	// Is this is a -dry-run?
 	noop bool
 	// Is this a CGO enabled build?
 	useCGO bool
-	// To do in-place updates we'd need to find all the function ARNs
-	// and then update them. That requires the names to be stable. Interesting.
-	// Are in-place updates enabled?
-	inPlace bool
+	// The optional path the Dockerfile to use for packaging
+	dockerFile string
 	// The user-supplied or automatically generated BuildID
 	buildID string
 	// Optional user-supplied build tags
@@ -144,7 +160,7 @@ func callWorkflowHook(hookPhase string,
 
 		hookCtx, hookErr := eachHook.DecorateWorkflow(buildContext.workflowHooksContext,
 			userdata.serviceName,
-			gocf.Ref(StackParamS3CodeBucketName),
+			gocf.Ref(StackParamArtifactBucketName),
 			userdata.buildID,
 			buildContext.awsSession,
 			userdata.noop,
@@ -499,7 +515,161 @@ type createPackageOp struct {
 func (cpo *createPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
+func (cpo *createPackageOp) buildZIPArchive(sanitizedServiceName string,
+	logger *zerolog.Logger) error {
+	// Regular ZIP build
+	codeArchiveName := fmt.Sprintf("%s-code.zip", sanitizedServiceName)
+	codeZIPArchivePath := filepath.Join(cpo.buildContext.outputDirectory, codeArchiveName)
+	zipOutputFile, zipOutputFileErr := os.Create(codeZIPArchivePath)
+	if zipOutputFileErr != nil {
+		return errors.Wrapf(zipOutputFileErr, "Failed to create ZIP archive for code")
+	}
+	// Strip the local directory in case it's in there...
+	relativeTempFilePath := relativePath(zipOutputFile.Name())
+	lambdaArchive := zip.NewWriter(zipOutputFile)
 
+	// Pass the state through the Metadata
+	cpo.buildContext.cfTemplate.Metadata[MetadataParamCodeArchivePath] = relativeTempFilePath
+	// We will only need this if there is a site
+	if cpo.userdata.s3SiteContext != nil || cpo.userdata.dockerFile == "" {
+		cpo.buildContext.cfTemplate.Metadata[MetadataParamS3Bucket] = cpo.userdata.s3Bucket
+	}
+
+	// Archive Hook
+	archiveErr := callArchiveHook(lambdaArchive, cpo.userdata, cpo.buildContext, logger)
+	if nil != archiveErr {
+		return archiveErr
+	}
+	// Issue: https://github.com/mweagle/Sparta/issues/103. If the executable
+	// bit isn't set, then AWS Lambda won't be able to fork the binary. This tends
+	// to be set properly on a mac/linux os, but not on others. So pre-emptively
+	// always set the bit.
+	// Ref: https://github.com/mweagle/Sparta/issues/158
+	fileHeaderAnnotator := func(header *zip.FileHeader) (*zip.FileHeader, error) {
+		// Make the binary executable
+		// Ref: https://github.com/aws/aws-lambda-go/blob/master/cmd/build-lambda-zip/main.go#L51
+		header.CreatorVersion = 3 << 8
+		header.ExternalAttrs = 0777 << 16
+		return header, nil
+	}
+
+	// File info for the binary executable
+	readerErr := spartaZip.AnnotateAddToZip(lambdaArchive,
+		cpo.buildContext.compiledBinaryOutput,
+		"",
+		fileHeaderAnnotator,
+		logger)
+	if nil != readerErr {
+		return readerErr
+	}
+	// Flush it...
+	archiveCloseErr := lambdaArchive.Close()
+	if nil != archiveCloseErr {
+		return errors.Wrapf(archiveCloseErr, "Failed to close code ZIP stream")
+	}
+	zipCloseErr := zipOutputFile.Close()
+	if zipCloseErr != nil {
+		return errors.Wrapf(zipCloseErr, "Failed to close code ZIP archive")
+	}
+	logger.Info().
+		Str("Path", zipOutputFile.Name()).
+		Msg("Code Archive")
+	return nil
+}
+
+func (cpo *createPackageOp) buildDockerImage(sanitizedServiceName string,
+	logger *zerolog.Logger) error {
+	spartaECRLabelName := "io.sparta.ecr-name"
+	imageTag := fmt.Sprintf("sparta/%s:%s",
+		strings.ToLower(cpo.userdata.serviceName),
+		cpo.userdata.buildID)
+
+	// Get the current account id...
+	accountID := "123412341234"
+	if !cpo.userdata.noop {
+		stsService := sts.New(cpo.buildContext.awsSession)
+
+		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+		if callerInfoErr != nil {
+			return callerInfoErr
+		}
+		accountID = *callerInfo.Account
+	}
+	dockerBuildTag := func(key string, value string) string {
+		return fmt.Sprintf("%s=%s", key, value)
+	}
+	// Strip the name of the Dockerfile
+	dockerDir := filepath.Dir(cpo.userdata.dockerFile)
+
+	// Path to binary is relative to Dockerfile
+	binaryRelPath := strings.TrimPrefix(cpo.buildContext.compiledBinaryOutput, dockerDir)
+	binaryRelPath = strings.TrimPrefix(binaryRelPath, string(filepath.Separator))
+	dockerBuildCommands := []string{
+		"build",
+		"--tag",
+		imageTag,
+		"--build-arg",
+		dockerBuildTag(DockerArgSpartaBinaryPath, binaryRelPath),
+		"--build-arg",
+		dockerBuildTag(DockerArgAWSAccountID, accountID),
+		"--build-arg",
+		dockerBuildTag(DockerArgAWSRegion, *cpo.buildContext.awsSession.Config.Region),
+		"--build-arg",
+		dockerBuildTag(DockerArgECRLabelName, spartaECRLabelName),
+		"--build-arg",
+		dockerBuildTag(DockerArgBuildID, cpo.userdata.buildID),
+		"--file",
+		cpo.userdata.dockerFile,
+		dockerDir,
+	}
+	runCmd := exec.Command("docker", dockerBuildCommands...)
+	buildErr := system.RunOSCommand(runCmd, logger)
+	if buildErr != nil {
+		logger.Error().
+			Strs("CommandLine", dockerBuildCommands).
+			Msg("Docker Command")
+		return buildErr
+	}
+
+	// Next up we need to describe the image we created so that we can get the labels
+	//docker inspect --format '{{ index .Config.Labels "io.sparta.ecr-name"}}' sparta/myhelloworldstack-027159405834
+	formatString := fmt.Sprintf(`{{ index .Config.Labels "%s"}}`, spartaECRLabelName)
+
+	inspectCommand := exec.Command("docker",
+		"inspect",
+		"--format",
+		fmt.Sprintf(`'%s'`, formatString),
+		imageTag)
+	stdoutBuffer := bytes.Buffer{}
+	stdErrBuffer := bytes.Buffer{}
+	inspectResultErr := system.RunAndCaptureOSCommand(inspectCommand,
+		&stdoutBuffer,
+		&stdErrBuffer,
+		logger)
+	if inspectResultErr != nil {
+		return inspectResultErr
+	}
+	// Store it...
+	ecrLabel := strings.TrimSpace(stdoutBuffer.String())
+	ecrLabel = strings.Trim(ecrLabel, "'")
+
+	// Then we need to tag it with the ECR information...which is the label...
+	// docker tag mweagle/spartaoci:latest 027159405834.dkr.ecr.us-west-2.amazonaws.com/spartaoci
+	// Get the version from the the container
+	// imageParts := strings.Split(ecrLabel, ":")
+	// imageVersionTag := imageParts[len(imageParts)-1]
+	// Run the tag...
+	dockerTagCommand := exec.Command("docker",
+		"tag",
+		imageTag,
+		ecrLabel)
+	dockerTagErr := system.RunOSCommand(dockerTagCommand, logger)
+	if dockerTagErr != nil {
+		return errors.Wrapf(dockerTagErr, "Failed to tag local ECR image")
+	}
+	cpo.buildContext.cfTemplate.Metadata[MetadataParamECRTag] = ecrLabel
+	return dockerTagErr
+}
 func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 
 	// PreBuild Hook
@@ -514,7 +684,9 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 		}
 	}
 	sanitizedServiceName := sanitizedName(cpo.userdata.serviceName)
+
 	// Output location
+	// TODO - here...
 	buildErr := system.BuildGoBinary(cpo.userdata.serviceName,
 		cpo.buildContext.compiledBinaryOutput,
 		cpo.userdata.useCGO,
@@ -607,61 +779,33 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////
-	// Build the code ZIP
-	codeArchiveName := fmt.Sprintf("%s-code.zip", sanitizedServiceName)
-	codeZIPArchivePath := filepath.Join(cpo.buildContext.outputDirectory, codeArchiveName)
-	zipOutputFile, zipOutputFileErr := os.Create(codeZIPArchivePath)
-	if zipOutputFileErr != nil {
-		return errors.Wrapf(zipOutputFileErr, "Failed to create ZIP archive for code")
-	}
-	// Strip the local directory in case it's in there...
-	relativeTempFilePath := relativePath(zipOutputFile.Name())
-	lambdaArchive := zip.NewWriter(zipOutputFile)
-
-	// Pass the state through the Metdata
-	cpo.buildContext.cfTemplate.Metadata[MetadataParamCodeArchivePath] = relativeTempFilePath
+	// We always need to pass the service name
 	cpo.buildContext.cfTemplate.Metadata[MetadataParamServiceName] = cpo.userdata.serviceName
-	cpo.buildContext.cfTemplate.Metadata[MetadataParamS3Bucket] = cpo.userdata.s3Bucket
 
-	// Archive Hook
-	archiveErr := callArchiveHook(lambdaArchive, cpo.userdata, cpo.buildContext, logger)
-	if nil != archiveErr {
-		return archiveErr
-	}
-	// Issue: https://github.com/mweagle/Sparta/issues/103. If the executable
-	// bit isn't set, then AWS Lambda won't be able to fork the binary. This tends
-	// to be set properly on a mac/linux os, but not on others. So pre-emptively
-	// always set the bit.
-	// Ref: https://github.com/mweagle/Sparta/issues/158
-	fileHeaderAnnotator := func(header *zip.FileHeader) (*zip.FileHeader, error) {
-		// Make the binary executable
-		// Ref: https://github.com/aws/aws-lambda-go/blob/master/cmd/build-lambda-zip/main.go#L51
-		header.CreatorVersion = 3 << 8
-		header.ExternalAttrs = 0777 << 16
-		return header, nil
-	}
-
-	// File info for the binary executable
-	readerErr := spartaZip.AnnotateAddToZip(lambdaArchive,
-		cpo.buildContext.compiledBinaryOutput,
-		"",
-		fileHeaderAnnotator,
-		logger)
-	if nil != readerErr {
-		return readerErr
-	}
-	// Flush it...
-	archiveCloseErr := lambdaArchive.Close()
-	if nil != archiveCloseErr {
-		return errors.Wrapf(archiveCloseErr, "Failed to close code ZIP stream")
-	}
-	zipCloseErr := zipOutputFile.Close()
-	if zipCloseErr != nil {
-		return errors.Wrapf(zipCloseErr, "Failed to close code ZIP archive")
-	}
 	logger.Info().
-		Str("Path", zipOutputFile.Name()).
-		Msg("Code Archive")
+		Str("Dockerfile", cpo.userdata.dockerFile).
+		Msg("Docker build info")
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Next up we either need to pass the ZIP archive or the ECR information
+	//////////////////////////////////////////////////////////////////////////////
+	isDockerBuild := (cpo.userdata.dockerFile != "")
+	if isDockerBuild {
+		// If we are building Docker, make sure there are no archive hooks
+		if cpo.userdata.workflowHooks != nil &&
+			len(cpo.userdata.workflowHooks.Archives) != 0 {
+			return errors.Errorf("ZIP ArchiveHooks (count: %d) are not supported for Docker builds",
+				len(cpo.userdata.workflowHooks.Archives))
+		}
+
+		// Dockerbuild
+		dockerErr := cpo.buildDockerImage(sanitizedServiceName, logger)
+		if dockerErr != nil {
+			return dockerErr
+		}
+	} else {
+		return cpo.buildZIPArchive(sanitizedServiceName, logger)
+	}
 	return nil
 }
 
@@ -673,35 +817,50 @@ type createTemplateOp struct {
 func (cto *createTemplateOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
-func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context, logger *zerolog.Logger) (map[string]gocf.Stringable, error) {
+func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context,
+	logger *zerolog.Logger) (map[string]gocf.Stringable, error) {
+
 	// Code archive...
 	if cto.buildContext.cfTemplate.Parameters == nil {
 		cto.buildContext.cfTemplate.Parameters = make(map[string]*gocf.Parameter)
 	}
 	paramRefMap := make(map[string]gocf.Stringable)
 
-	// Code S3 info
-	cto.buildContext.cfTemplate.Parameters[StackParamS3CodeKeyName] = newStackParameter(
-		"String",
-		"S3 key for object storing Sparta payload (required)",
-		"",
-		".+",
-		3)
-	paramRefMap[StackParamS3CodeKeyName] = gocf.Ref(StackParamS3CodeKeyName)
-	cto.buildContext.cfTemplate.Parameters[StackParamS3CodeBucketName] = newStackParameter(
+	// Always include the S3 bucket
+	cto.buildContext.cfTemplate.Parameters[StackParamArtifactBucketName] = newStackParameter(
 		"String",
 		"S3 bucket for object storing Sparta payload (required)",
 		"",
 		".+",
 		3)
-	paramRefMap[StackParamS3CodeBucketName] = gocf.Ref(StackParamS3CodeBucketName)
-	cto.buildContext.cfTemplate.Parameters[StackParamS3CodeVersion] = newStackParameter(
-		"String",
-		"S3 object version",
-		"",
-		".*",
-		0)
-	paramRefMap[StackParamS3CodeVersion] = gocf.Ref(StackParamS3CodeVersion)
+	paramRefMap[StackParamArtifactBucketName] = gocf.Ref(StackParamArtifactBucketName)
+
+	if cto.userdata.dockerFile == "" {
+		// Code S3 info
+		cto.buildContext.cfTemplate.Parameters[StackParamS3CodeKeyName] = newStackParameter(
+			"String",
+			"S3 key for object storing Sparta payload (required)",
+			"",
+			".+",
+			3)
+		paramRefMap[StackParamS3CodeKeyName] = gocf.Ref(StackParamS3CodeKeyName)
+
+		cto.buildContext.cfTemplate.Parameters[StackParamS3CodeVersion] = newStackParameter(
+			"String",
+			"S3 object version",
+			"",
+			".*",
+			0)
+		paramRefMap[StackParamS3CodeVersion] = gocf.Ref(StackParamS3CodeVersion)
+	} else {
+		paramRefMap[StackParamCodeImageURI] = gocf.Ref(StackParamCodeImageURI)
+		cto.buildContext.cfTemplate.Parameters[StackParamCodeImageURI] = newStackParameter(
+			"String",
+			"Code ImageURI",
+			"",
+			".*",
+			0)
+	}
 
 	// Code Pipeline?
 	if nil != codePipelineEnvironments {
@@ -791,18 +950,16 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Add the tags
-	stackTags := map[string]string{
-		SpartaTagBuildIDKey: cto.userdata.buildID,
-	}
-	if len(cto.userdata.buildTags) != 0 {
-		stackTags[SpartaTagBuildTagsKey] = cto.userdata.buildTags
-	}
 
 	// Canonical code resource definition...
-	s3CodeResource := &gocf.LambdaFunctionCode{
-		S3Bucket:        paramMap[StackParamS3CodeBucketName].String(),
-		S3Key:           paramMap[StackParamS3CodeKeyName].String(),
-		S3ObjectVersion: paramMap[StackParamS3CodeVersion].String(),
+	isDockerPackage := (cto.userdata.dockerFile != "")
+	s3CodeResource := &gocf.LambdaFunctionCode{}
+	if !isDockerPackage {
+		s3CodeResource.S3Bucket = paramMap[StackParamArtifactBucketName].String()
+		s3CodeResource.S3Key = paramMap[StackParamS3CodeKeyName].String()
+		s3CodeResource.S3ObjectVersion = paramMap[StackParamS3CodeVersion].String()
+	} else {
+		s3CodeResource.ImageURI = paramMap[StackParamCodeImageURI].String()
 	}
 
 	// Marshall the objects...
@@ -898,7 +1055,7 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 	if nil != cto.userdata.s3SiteContext.s3Site {
 		exportErr := cto.userdata.s3SiteContext.s3Site.export(cto.userdata.serviceName,
 			SpartaBinaryName,
-			gocf.Ref(StackParamS3CodeBucketName),
+			gocf.Ref(StackParamArtifactBucketName),
 			s3CodeResource,
 			gocf.Ref(StackParamS3SiteArchiveKey).String(),
 			apiGatewayTemplate.Outputs,
@@ -1006,6 +1163,7 @@ func Build(noop bool,
 	site *S3Site,
 	useCGO bool,
 	buildID string,
+	dockerFile string,
 	outputDirectory string,
 	buildTags string,
 	linkerFlags string,
@@ -1028,6 +1186,17 @@ func Build(noop bool,
 			s3Site: site,
 		},
 		workflowHooks: workflowHooks,
+	}
+
+	// If there's a Dockerfile, then make sure we can get the absolute path
+	if dockerFile != "" {
+		absDockerFile, absDockerFileErr := filepath.Abs(dockerFile)
+		if absDockerFileErr != nil {
+			return errors.Wrapf(absDockerFileErr,
+				"Failed to get absolute filepath for Dockerfile: %s",
+				dockerFile)
+		}
+		userdata.dockerFile = absDockerFile
 	}
 
 	absOutputDirectory, absOutputDirectoryErr := filepath.Abs(outputDirectory)
@@ -1065,7 +1234,6 @@ func Build(noop bool,
 		Bool("noop", noop).
 		Str("Tags", userdata.buildTags).
 		Str("CodePipelineTrigger", userdata.codePipelineTrigger).
-		Bool("InPlaceUpdates", userdata.inPlace).
 		Msg("Building service")
 
 	//////////////////////////////////////////////////////////////////////////////

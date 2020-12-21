@@ -57,6 +57,7 @@ func TestBuildUPXImage(t *testing.T) {
 		"",
 		"",
 		"",
+		"",
 		&templateWriter,
 		workflowHooks,
 		logger)

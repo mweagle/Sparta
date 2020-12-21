@@ -34,24 +34,36 @@ const (
 	// MetadataParamServiceName is the name of the stack to use
 	MetadataParamServiceName = "ServiceName"
 	// MetadataParamS3Bucket is the Metadata param we use for the bucket
-	MetadataParamS3Bucket = "CodeArtifactS3Bucket"
+	MetadataParamS3Bucket = "ArtifactS3Bucket"
+
+	// Metadata params for a ZIP archive
+	//
+
 	// MetadataParamCodeArchivePath is the intemediate local path to the code
 	MetadataParamCodeArchivePath = "CodeArchivePath"
 	// MetadataParamS3SiteArchivePath is the intemediate local path to the S3 site contents
 	MetadataParamS3SiteArchivePath = "S3SiteArtifactPath"
+
+	// Metadata params for OCI builds
+	//
+
+	// MetadataParamECRTag is the locally tagged Docker image to push
+	MetadataParamECRTag = "ECRTag"
 )
 
 const (
 	// StackParamS3CodeKeyName is the Stack Parameter to the S3 key of the uploaded asset
 	StackParamS3CodeKeyName = "CodeArtifactS3Key"
-	// StackParamS3CodeBucketName is where we uploaded the artifact to
-	StackParamS3CodeBucketName = MetadataParamS3Bucket
+	// StackParamArtifactBucketName is where we uploaded the artifact to
+	StackParamArtifactBucketName = MetadataParamS3Bucket
 	// StackParamS3CodeVersion is the object version to use for the S3 item
 	StackParamS3CodeVersion = "CodeArtifactS3ObjectVersion"
 	// StackParamS3SiteArchiveKey is the param to the S3 archive for a static website.
 	StackParamS3SiteArchiveKey = "SiteArtifactS3Key"
 	// StackParamS3SiteArchiveVersion is the version of the S3 artifact to use
 	StackParamS3SiteArchiveVersion = "SiteArtifactS3ObjectVersion"
+	// StackParamCodeImageURI is the ImageURI to the uploaded image
+	StackParamCodeImageURI = "CodeImageURI"
 )
 
 const (
@@ -77,7 +89,7 @@ func showOptionalAWSUsageInfo(err error, logger *zerolog.Logger) {
 }
 
 func spartaTagName(baseKey string) string {
-	return fmt.Sprintf("io:gosparta:%s", baseKey)
+	return fmt.Sprintf("io:sparta:%s", baseKey)
 }
 
 // Sanitize the provided input by replacing illegal characters with underscores

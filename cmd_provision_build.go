@@ -25,6 +25,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
+	spartaDocker "github.com/mweagle/Sparta/docker"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -111,7 +112,7 @@ type provisionContext struct {
 	stack *cloudformation.Stack
 	// stack parameters supplied to the template. These will be upserted
 	// to get either the user supplied, metadata tunneled value.
-	stackParmeterValues map[string]string
+	stackParameterValues map[string]string
 	// additional stack tags for the provisioned stack
 	stackTags map[string]string
 	// Is this inplace udpates?
@@ -301,7 +302,7 @@ func (pwo *provisionWorkflowOp) MetadataString(keyName string) (string, error) {
 }
 
 func (pwo *provisionWorkflowOp) s3Bucket() string {
-	s3ParamBucketName, s3ParamBucketNameExists := pwo.provisionContext.stackParmeterValues[StackParamS3CodeBucketName]
+	s3ParamBucketName, s3ParamBucketNameExists := pwo.provisionContext.stackParameterValues[StackParamArtifactBucketName]
 	if !s3ParamBucketNameExists {
 		s3BucketName, s3BucketNameErr := pwo.MetadataString(MetadataParamS3Bucket)
 		if s3BucketNameErr == nil {
@@ -312,19 +313,19 @@ func (pwo *provisionWorkflowOp) s3Bucket() string {
 }
 
 func (pwo *provisionWorkflowOp) stackParameters() map[string]string {
-	stackParmeterValues := make(map[string]string)
+	stackParameterValues := make(map[string]string)
 
 	for eachKey, eachParam := range pwo.provisionContext.cfTemplate.Parameters {
-		userVal, userValExists := pwo.provisionContext.stackParmeterValues[eachKey]
+		userVal, userValExists := pwo.provisionContext.stackParameterValues[eachKey]
 		if !userValExists {
 			noUserVal, noUserValErr := pwo.MetadataString(eachKey)
 			if noUserValErr == nil && len(noUserVal) > 0 {
 				userVal = eachParam.Default
 			}
 		}
-		stackParmeterValues[eachKey] = userVal
+		stackParameterValues[eachKey] = userVal
 	}
-	return stackParmeterValues
+	return stackParameterValues
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -352,6 +353,9 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		Msg("ServiceName")
 	if serviceNameErr == nil {
 		eppo.provisionContext.serviceName = serviceName
+	}
+	if eppo.provisionContext.serviceName == "" {
+		return errors.Errorf("Failed to find serviceName in MetadataString: %s", MetadataParamServiceName)
 	}
 
 	// S3 Bucket? Try stack params first, then metadata...
@@ -413,9 +417,6 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		logger.Debug().
 			Str("Region", bucketRegion).
 			Msg("Confirmed S3 region match")
-	} else {
-		// We don't have an S3 bucket, so that seems bad...
-		return errors.Errorf("Failed to find S3Bucket to verify")
 	}
 	return nil
 }
@@ -428,17 +429,24 @@ type uploadPackageOp struct {
 }
 
 func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+	// All upload tasks will be pushed into this
 	var uploadTasks []*workTask
 
-	// Keys in the metadata to ZIP files that should be uploaded
-	metadataKeys := []string{MetadataParamCodeArchivePath,
-		MetadataParamS3SiteArchivePath}
+	//////////////////////////////////////////////////////////////////////////////
+	// ZIP Package Format
 
 	// Map of keys to local paths that will be uploaded. The
 	// updated S3 key will be pushed into the map
 	s3UploadMap := map[string]string{
 		s3UploadCloudFormationStackKey: upo.provisionContext.cfTemplatePath,
 	}
+
+	// These are optional keys and depend on whether we have a ZIP archive
+	// or a Site archive. If they are nonempty in the Metadata block,
+	// then we'll upload them...
+	metadataKeys := []string{MetadataParamCodeArchivePath,
+		MetadataParamS3SiteArchivePath}
+
 	for _, eachKey := range metadataKeys {
 		s3Path, s3PathErr := upo.MetadataString(eachKey)
 		if s3PathErr == nil && len(s3Path) > 0 {
@@ -447,10 +455,9 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	}
 	s3BucketName := upo.s3Bucket()
 
+	// For each non-empty S3 local file, upload it in here...
 	uploadLocalFileTask := func(keyName string, localPath string) *workTask {
 		uploadTask := func() workResult {
-			//logFilesize("File size", localPath, logger)
-
 			// Keyname is the name of the zip file
 			archiveBaseName := filepath.Base(localPath)
 			// Put it in the service bucket
@@ -470,17 +477,51 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 			}
 			// All good, save it...
 			upo.provisionContext.s3Uploads[keyName] = newS3UploadURL(zipS3URL)
-
 			return newTaskResult(upo.provisionContext.s3Uploads[keyName], nil)
 		}
 		return newWorkTask(uploadTask)
 	}
-
-	// Upload them all...
+	// For each nonEmpty S3 upload, push it.
 	for eachKey, eachLocalPath := range s3UploadMap {
 		uploadTasks = append(uploadTasks, uploadLocalFileTask(eachKey, eachLocalPath))
 	}
-	// Run it and figure out what happened
+
+	//////////////////////////////////////////////////////////////////////////////
+	// OCI Package Format
+
+	// If this is an ECR, we need to push the image....
+	ecrImageTag, ecrImageTagErr := upo.MetadataString(MetadataParamECRTag)
+	logger.Debug().
+		Str("ECRImageTag", ecrImageTag).
+		Str("ECRImageTagErr", fmt.Sprintf("%v", ecrImageTagErr)).
+		Msg("ECR Image Information")
+
+	if ecrImageTag != "" {
+		// Push the image, store the resulting URI in the image URI...
+		// We have another push task here..., where the result goes into the
+		// IMAGEURI param...
+		pushTask := func() workResult {
+			if upo.provisionContext.noop {
+				logger.Info().
+					Str("ECRTag", ecrImageTag).
+					Msg("Bypassing ECR push due to -n/--noop flag")
+				return newTaskResult("ECR Push bypassed", nil)
+			} else {
+				logger.Info().
+					Str("Tag", ecrImageTag).
+					Msg("Pushing local image to ECR")
+
+				pushErr := spartaDocker.PushECRTaggedImage(ecrImageTag,
+					upo.provisionContext.awsSession,
+					logger)
+				return newTaskResult(ecrImageTag, pushErr)
+			}
+		}
+		uploadTasks = append(uploadTasks, newWorkTask(pushTask))
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Everything is merged into a single workerpool to do the work...
 	p := newWorkerPool(uploadTasks, len(uploadTasks))
 	_, uploadErrors := p.Run()
 
@@ -492,19 +533,22 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 		errorText = strings.TrimSuffix(errorText, ", ")
 		return errors.Errorf("Encountered errors during upload: %s", errorText)
 	}
-	// Great, everything worked, let's create the stack parameters...
-	// Code location is one...
-	upo.provisionContext.stackParmeterValues[StackParamS3CodeKeyName] = upo.provisionContext.s3Uploads[MetadataParamCodeArchivePath].path
-	upo.provisionContext.stackParmeterValues[StackParamS3CodeVersion] = upo.provisionContext.s3Uploads[MetadataParamCodeArchivePath].version
-
-	// If there is an S3 site upload, then do that...
+	//////////////////////////////////////////////////////////////////////////////
+	// Save the stack params, based on what we uploaded
+	//////////////////////////////////////////////////////////////////////////////
 	// TODO: This could be a bit cleaner...
-	if len(s3UploadMap[MetadataParamS3SiteArchivePath]) != 0 {
-		upo.provisionContext.stackParmeterValues[StackParamS3SiteArchiveKey] = upo.provisionContext.s3Uploads[MetadataParamS3SiteArchivePath].path
-		upo.provisionContext.stackParmeterValues[StackParamS3SiteArchiveVersion] = upo.provisionContext.s3Uploads[MetadataParamS3SiteArchivePath].version
+	if len(s3UploadMap[MetadataParamCodeArchivePath]) != 0 {
+		upo.provisionContext.stackParameterValues[StackParamS3CodeKeyName] =
+			upo.provisionContext.s3Uploads[MetadataParamCodeArchivePath].path
+		upo.provisionContext.stackParameterValues[StackParamS3CodeVersion] =
+			upo.provisionContext.s3Uploads[MetadataParamCodeArchivePath].version
+	}
+	if len(ecrImageTag) != 0 {
+		upo.provisionContext.stackParameterValues[StackParamCodeImageURI] = ecrImageTag
 	}
 	return nil
 }
+
 func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	if !upo.provisionContext.noop {
 		wg := sync.WaitGroup{}
@@ -521,6 +565,7 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 				}
 			}(rollbackFunc, logger)
 		}
+		// TODO - delete ECR image
 		wg.Wait()
 	}
 	return nil
@@ -624,18 +669,15 @@ type inPlaceUpdatesOp struct {
 func (ipuo *inPlaceUpdatesOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
 	return nil
 }
+
 func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
 	if ipuo.provisionContext.noop {
 		logger.Info().
 			Msg(noopMessage("InPlace Update Check"))
-
 		return nil
 	}
-	// Code bucket
-	codeArtifactURL, codeArtifactURLExists := ipuo.provisionContext.s3Uploads[MetadataParamCodeArchivePath]
-	if !codeArtifactURLExists {
-		return fmt.Errorf("can't find code bundle")
-	}
+
+	// Let's see if there is a change at all
 	awsCloudFormation := cloudformation.New(ipuo.provisionContext.awsSession)
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sInPlaceChangeSet",
 		ipuo.provisionContext.serviceName))
@@ -655,28 +697,49 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	}
 	s3BucketName := ipuo.s3Bucket()
 
+	//////////////////////////////////////////////////////////////////////////////
+
+	// Either Docker URI or the code URI should be there...
+	ecrImageURI := ipuo.provisionContext.stackParameterValues[StackParamCodeImageURI]
+	codeKeyName := ipuo.provisionContext.stackParameterValues[StackParamS3CodeKeyName]
+	codeKeyVersion := ipuo.provisionContext.stackParameterValues[StackParamS3CodeVersion]
+
+	if ecrImageURI == "" && codeKeyName == "" {
+		return errors.Errorf("Failed to find either Code ZIP key or ECR Image tag for inPlace update")
+	}
+
 	updateCodeRequests := []*lambda.UpdateFunctionCodeInput{}
-	invalidInPlaceRequests := []string{}
+	invalidInPlaceRequests := []*cloudformation.Change{}
 	for _, eachChange := range changes.Changes {
 		resourceChange := eachChange.ResourceChange
-		if *resourceChange.Action == "Modify" && *resourceChange.ResourceType == "AWS::Lambda::Function" {
+		if *resourceChange.Action == "Modify" &&
+			*resourceChange.ResourceType == "AWS::Lambda::Function" {
 			updateCodeRequest := &lambda.UpdateFunctionCodeInput{
-				FunctionName:    resourceChange.PhysicalResourceId,
-				S3Bucket:        aws.String(s3BucketName),
-				S3Key:           aws.String(codeArtifactURL.path),
-				S3ObjectVersion: aws.String(codeArtifactURL.version),
+				FunctionName: resourceChange.PhysicalResourceId,
+			}
+			// Either ZIP or OCI - pick one
+			if codeKeyName != "" {
+				updateCodeRequest.S3Bucket = aws.String(s3BucketName)
+				updateCodeRequest.S3Key = aws.String(codeKeyName)
+				updateCodeRequest.S3ObjectVersion = aws.String(codeKeyVersion)
+			} else if ecrImageURI != "" {
+				updateCodeRequest.ImageUri = aws.String(ecrImageURI)
 			}
 			updateCodeRequests = append(updateCodeRequests, updateCodeRequest)
 		} else {
-			invalidInPlaceRequests = append(invalidInPlaceRequests,
-				fmt.Sprintf("%s for %s (ResourceType: %s)",
-					*resourceChange.Action,
-					*resourceChange.LogicalResourceId,
-					*resourceChange.ResourceType))
+			invalidInPlaceRequests = append(invalidInPlaceRequests, eachChange)
 		}
 	}
 	if len(invalidInPlaceRequests) != 0 {
-		return fmt.Errorf("unsupported in-place operations detected:\n\t%s", strings.Join(invalidInPlaceRequests, ",\n\t"))
+		for _, eachInvalidChange := range invalidInPlaceRequests {
+			logger.Warn().
+				Str("ID", *eachInvalidChange.ResourceChange.LogicalResourceId).
+				Str("Action", *eachInvalidChange.ResourceChange.Action).
+				Interface("Details", eachInvalidChange.ResourceChange.Details).
+				Str("ResourceType", *eachInvalidChange.ResourceChange.ResourceType).
+				Msg("Additional change detected for in-place update")
+		}
+		//return fmt.Errorf("unsupported in-place operations detected")
 	}
 
 	logger.Info().
@@ -748,13 +811,11 @@ func (cfsu *cloudformationStackUpdateOp) Invoke(ctx context.Context, logger *zer
 	operationTimeout := maximumStackOperationTimeout(cfsu.provisionContext.cfTemplate, logger)
 	startTime := time.Now()
 
-	// Can we upload the template in parallel with the archives?
-
 	// Regular update, go ahead with the CloudFormation changes
 	stack, stackErr := spartaCF.ConvergeStackState(cfsu.provisionContext.serviceName,
 		cfsu.provisionContext.cfTemplate,
 		cfsu.provisionContext.s3Uploads[s3UploadCloudFormationStackKey].location,
-		cfsu.provisionContext.stackParmeterValues,
+		cfsu.provisionContext.stackParameterValues,
 		cfsu.provisionContext.stackTags,
 		startTime,
 		operationTimeout,
@@ -838,14 +899,14 @@ func Provision(noop bool,
 		Msg("Provisioning service")
 
 	pc := &provisionContext{
-		awsSession:          spartaAWS.NewSession(logger),
-		cfTemplatePath:      templatePath,
-		cfTemplate:          gocf.NewTemplate(),
-		stackParmeterValues: stackParamValues,
-		stackTags:           stackTags,
-		s3Uploads:           map[string]*s3UploadURL{},
-		inPlaceUpdates:      inPlaceUpdates,
-		noop:                noop,
+		awsSession:           spartaAWS.NewSession(logger),
+		cfTemplatePath:       templatePath,
+		cfTemplate:           gocf.NewTemplate(),
+		stackParameterValues: stackParamValues,
+		stackTags:            stackTags,
+		s3Uploads:            map[string]*s3UploadURL{},
+		inPlaceUpdates:       inPlaceUpdates,
+		noop:                 noop,
 	}
 
 	// Unmarshal the JSON template into the struct

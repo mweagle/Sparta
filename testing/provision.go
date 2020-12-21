@@ -71,6 +71,7 @@ func ProvisionEx(t *testing.T,
 		"",
 		"",
 		"",
+		"",
 		&templateWriter,
 		workflowHooks,
 		logger)

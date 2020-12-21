@@ -1027,12 +1027,17 @@ func (info *LambdaAWSInfo) export(ctx context.Context,
 	lambdaResource := gocf.LambdaFunction{
 		Code:        lambdaFunctionCode,
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(handlerName),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(string(info.runtimeName)),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VPCConfig:   info.Options.VpcConfig,
+	}
+	// Pick the right kind of handler/runtime
+	if lambdaFunctionCode.ImageURI != nil {
+		lambdaResource.PackageType = gocf.String("Image")
+	} else {
+		lambdaResource.Runtime = gocf.String(string(info.runtimeName))
+		lambdaResource.Handler = gocf.String(handlerName)
 	}
 	// Layers?
 	if nil != info.Layers {

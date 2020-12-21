@@ -112,8 +112,9 @@ var CommandLineOptions = struct {
 // Build options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
 type optionsBuildStruct struct {
-	BuildID   string `validate:"-"` // non-whitespace
-	OutputDir string `validate:"-"` // non-whitespace
+	BuildID    string `validate:"-"` // non-whitespace
+	OutputDir  string `validate:"-"` // non-whitespace
+	DockerFile string `validate:"-"` // non-whitespace
 }
 
 func computeBuildID(userSuppliedValue string, logger *zerolog.Logger) (string, error) {
@@ -197,7 +198,7 @@ func (ops *optionsProvisionStruct) parseParams() error {
 		ops.stackParams[pairVals[0]] = pairVals[1]
 	}
 	// Special affordance for S3 bucket
-	ops.stackParams[StackParamS3CodeBucketName] = ops.S3Bucket
+	ops.stackParams[StackParamArtifactBucketName] = ops.S3Bucket
 
 	// Tags, including user defined
 	ops.stackTags = map[string]string{
@@ -321,6 +322,11 @@ func init() {
 		"o",
 		ScratchDirectory,
 		"Optional output directory for artifacts")
+	CommandLineOptions.Build.Flags().StringVarP(&optionsBuild.DockerFile,
+		"dockerFile",
+		"d",
+		"",
+		"Optional Dockerfile path to use OCI image rather than ZIP")
 
 	// Provision
 	CommandLineOptions.Provision = &cobra.Command{
@@ -349,11 +355,11 @@ func init() {
 		"i",
 		"",
 		"Optional BuildID to use")
-	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
-		"codePipelinePackage",
-		"p",
-		"",
-		"Name of CodePipeline package that includes cloudformation.json Template and ZIP config files")
+	// CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
+	// 	"codePipelinePackage",
+	// 	"p",
+	// 	"",
+	// 	"Name of CodePipeline package that includes cloudformation.json Template and ZIP config files")
 	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
 		"inplace",
 		"c",
@@ -364,6 +370,12 @@ func init() {
 		"o",
 		ScratchDirectory,
 		"Optional output directory for artifacts")
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.DockerFile,
+		"dockerFile",
+		"d",
+		"",
+		"Optional Dockerfile path")
+
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
 		Use:          "delete",
