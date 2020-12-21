@@ -4,20 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"io/ioutil"
 	"os/exec"
 	"strings"
 
 	"github.com/rs/zerolog"
 )
-
-type zerologWriter struct {
-	targetLog *zerolog.Logger
-}
-
-func (zw *zerologWriter) Write(p []byte) (n int, err error) {
-	zw.targetLog.Info().Msg(string(p))
-	return len(p), nil
-}
 
 // RunOSCommand properly executes a system command
 // and writes the output to the provided logger
@@ -29,10 +21,10 @@ func RunOSCommand(cmd *exec.Cmd, logger *zerolog.Logger) error {
 		Interface("Env", cmd.Env).
 		Msg("Running Command")
 
-	outputWriter := &zerologWriter{targetLog: logger}
+	// NOP write
 	cmdErr := RunAndCaptureOSCommand(cmd,
-		outputWriter,
-		outputWriter,
+		ioutil.Discard,
+		ioutil.Discard,
 		logger)
 	return cmdErr
 }
@@ -54,8 +46,11 @@ func RunAndCaptureOSCommand(cmd *exec.Cmd,
 	var commandStdOutput bytes.Buffer
 	var commandStdErr bytes.Buffer
 
-	cmd.Stdout = &commandStdOutput
-	cmd.Stderr = &commandStdErr
+	teeStdOut := io.MultiWriter(&commandStdOutput, stdoutWriter)
+	teeStdErr := io.MultiWriter(&commandStdErr, stderrWriter)
+
+	cmd.Stdout = teeStdOut
+	cmd.Stderr = teeStdErr
 	cmdErr := cmd.Run()
 
 	// Output each one...
