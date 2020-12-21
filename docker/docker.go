@@ -154,6 +154,66 @@ func BuildDockerImage(serviceName string,
 		logger)
 }
 
+// PushECRTaggedImage pushes previously tagged image to ECR
+func PushECRTaggedImage(localImageTag string,
+	awsSession *session.Session,
+	logger *zerolog.Logger) error {
+
+	ecrSvc := ecr.New(awsSession)
+
+	// Push the image - if that fails attempt to reauthorize with the docker
+	// client and try again
+	var pushError error
+	dockerPushCmd := exec.Command("docker", "push", localImageTag)
+	pushError = system.RunOSCommand(dockerPushCmd, logger)
+	if pushError != nil {
+		logger.Info().
+			Err(pushError).
+			Msg("ECR push failed - reauthorizing")
+		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(
+			&ecr.GetAuthorizationTokenInput{},
+		)
+		if ecrAuthTokenResultErr != nil {
+			pushError = ecrAuthTokenResultErr
+		} else {
+			authData := ecrAuthTokenResult.AuthorizationData[0]
+			authToken, authTokenErr := base64.StdEncoding.DecodeString(*authData.AuthorizationToken)
+			if authTokenErr != nil {
+				pushError = authTokenErr
+			} else {
+				authTokenString := string(authToken)
+				authTokenParts := strings.Split(authTokenString, ":")
+
+				// Get the part of the ECR
+				ecrParts := strings.Split(localImageTag, "/")
+				dockerURL := fmt.Sprintf("https://%s", ecrParts[0])
+				dockerLoginCmd := exec.Command("docker",
+					"login",
+					"-u",
+					authTokenParts[0],
+					"--password-stdin",
+					dockerURL)
+				dockerLoginCmd.Stdout = os.Stdout
+				dockerLoginCmd.Stdin = bytes.NewReader([]byte(fmt.Sprintf("%s\n", authTokenParts[1])))
+				dockerLoginCmd.Stderr = os.Stderr
+				dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
+				if dockerLoginCmdErr != nil {
+					pushError = dockerLoginCmdErr
+				} else {
+					// Try it again...
+					dockerRetryPushCmd := exec.Command("docker", "push", localImageTag)
+					dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
+					pushError = dockerRetryPushCmdErr
+				}
+			}
+		}
+	}
+	if pushError != nil {
+		pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
+	}
+	return pushError
+}
+
 // PushDockerImageToECR pushes a local Docker image to an ECR repository
 func PushDockerImageToECR(localImageTag string,
 	ecrRepoName string,
@@ -161,7 +221,6 @@ func PushDockerImageToECR(localImageTag string,
 	logger *zerolog.Logger) (string, error) {
 
 	stsSvc := sts.New(awsSession)
-	ecrSvc := ecr.New(awsSession)
 
 	// 1. Get the caller identity s.t. we can get the ECR URL which includes the
 	// account name
@@ -187,50 +246,53 @@ func PushDockerImageToECR(localImageTag string,
 
 	// 4. Push the image - if that fails attempt to reauthorize with the docker
 	// client and try again
-	var pushError error
-	dockerPushCmd := exec.Command("docker", "push", ecrTagValue)
-	pushError = system.RunOSCommand(dockerPushCmd, logger)
-	if pushError != nil {
-		logger.Info().
-			Err(pushError).
-			Msg("ECR push failed - reauthorizing")
-		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
-		if ecrAuthTokenResultErr != nil {
-			pushError = ecrAuthTokenResultErr
-		} else {
-			authData := ecrAuthTokenResult.AuthorizationData[0]
-			authToken, authTokenErr := base64.StdEncoding.DecodeString(*authData.AuthorizationToken)
-			if authTokenErr != nil {
-				pushError = authTokenErr
+	/*
+		var pushError error
+		dockerPushCmd := exec.Command("docker", "push", ecrTagValue)
+		pushError = system.RunOSCommand(dockerPushCmd, logger)
+		if pushError != nil {
+			logger.Info().
+				Err(pushError).
+				Msg("ECR push failed - reauthorizing")
+			ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
+			if ecrAuthTokenResultErr != nil {
+				pushError = ecrAuthTokenResultErr
 			} else {
-				authTokenString := string(authToken)
-				authTokenParts := strings.Split(authTokenString, ":")
-				dockerURL := fmt.Sprintf("https://%s.dkr.ecr.%s.amazonaws.com",
-					*stsIdentityOutput.Account,
-					*awsSession.Config.Region)
-				dockerLoginCmd := exec.Command("docker",
-					"login",
-					"-u",
-					authTokenParts[0],
-					"--password-stdin",
-					dockerURL)
-				dockerLoginCmd.Stdout = os.Stdout
-				dockerLoginCmd.Stdin = bytes.NewReader([]byte(fmt.Sprintf("%s\n", authTokenParts[1])))
-				dockerLoginCmd.Stderr = os.Stderr
-				dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
-				if dockerLoginCmdErr != nil {
-					pushError = dockerLoginCmdErr
+				authData := ecrAuthTokenResult.AuthorizationData[0]
+				authToken, authTokenErr := base64.StdEncoding.DecodeString(*authData.AuthorizationToken)
+				if authTokenErr != nil {
+					pushError = authTokenErr
 				} else {
-					// Try it again...
-					dockerRetryPushCmd := exec.Command("docker", "push", ecrTagValue)
-					dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
-					pushError = dockerRetryPushCmdErr
+					authTokenString := string(authToken)
+					authTokenParts := strings.Split(authTokenString, ":")
+					dockerURL := fmt.Sprintf("https://%s.dkr.ecr.%s.amazonaws.com",
+						*stsIdentityOutput.Account,
+						*awsSession.Config.Region)
+					dockerLoginCmd := exec.Command("docker",
+						"login",
+						"-u",
+						authTokenParts[0],
+						"--password-stdin",
+						dockerURL)
+					dockerLoginCmd.Stdout = os.Stdout
+					dockerLoginCmd.Stdin = bytes.NewReader([]byte(fmt.Sprintf("%s\n", authTokenParts[1])))
+					dockerLoginCmd.Stderr = os.Stderr
+					dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
+					if dockerLoginCmdErr != nil {
+						pushError = dockerLoginCmdErr
+					} else {
+						// Try it again...
+						dockerRetryPushCmd := exec.Command("docker", "push", ecrTagValue)
+						dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
+						pushError = dockerRetryPushCmdErr
+					}
 				}
 			}
 		}
-	}
-	if pushError != nil {
-		pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
-	}
-	return ecrTagValue, pushError
+		if pushError != nil {
+			pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
+		}
+	*/
+	pushErr := PushECRTaggedImage(ecrTagValue, awsSession, logger)
+	return ecrTagValue, pushErr
 }
