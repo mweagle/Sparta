@@ -764,6 +764,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 	}
 
 	logger.Debug().
+		Interface("ChangeSetInput", changeSetInput).
 		Interface("DescribeChangeSetOutput", describeChangeSetOutput).
 		Msg("DescribeChangeSet result")
 
@@ -857,13 +858,14 @@ func ConvergeStackState(serviceName string,
 	logger *zerolog.Logger) (*cloudformation.Stack, error) {
 
 	logger.Info().
+		Interface("Parameters", stackParameters).
 		Interface("Tags", tags).
-		Msg("Stack tags")
+		Str("Name", serviceName).
+		Msg("Stack configuration")
 
 	awsCloudFormation := cloudformation.New(awsSession)
 	// Create the parameter values.
 	// Update the tags
-
 	exists, existsErr := StackExists(serviceName, awsSession, logger)
 	if nil != existsErr {
 		return nil, existsErr
