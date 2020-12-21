@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mattn/go-colorable"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -38,7 +39,7 @@ func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*ze
 	switch outputFormat {
 	case "text", "txt":
 		consoleWriter := zerolog.ConsoleWriter{
-			Out:        os.Stdout,
+			Out:        colorable.NewColorableStdout(),
 			TimeFormat: time.RFC822,
 		}
 		consoleWriter.FormatLevel = func(i interface{}) string {
