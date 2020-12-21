@@ -30,6 +30,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magefile/mage v1.10.0
+	github.com/mattn/go-colorable v0.1.8
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/mitchellh/copystructure v1.0.0 // indirect
@@ -49,7 +50,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620 // indirect
-	golang.org/x/sys v0.0.0-20201214210602-f9fddec55a1e // indirect
+	golang.org/x/sys v0.0.0-20201218084310-7d0127a74742 // indirect
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
 	golang.org/x/text v0.3.4 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
