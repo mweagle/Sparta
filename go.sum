@@ -14,6 +14,8 @@ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7
 github.com/AlecAivazis/survey v1.8.8 h1:Y4yypp763E8cbqb5RBqZhGgkCFLRFnbRBHrxnpMMsgQ=
 github.com/AlecAivazis/survey/v2 v2.2.5 h1:peRnrLnIgJVtyLpg9o6Od2diCdFkHlUHQPVHGB5Qi9Y=
 github.com/AlecAivazis/survey/v2 v2.2.5/go.mod h1:9FJRdMdDm8rnT+zHVbvQT2RTSTLq0Ttd6q3Vl2fahjk=
+github.com/AlecAivazis/survey/v2 v2.2.7 h1:5NbxkF4RSKmpywYdcRgUmos1o+roJY8duCLZXbVjoig=
+github.com/AlecAivazis/survey/v2 v2.2.7/go.mod h1:9DYvHgXtiXm6nCn+jXnOXLKbH+Yo9u8fAS/SduGdoPk=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DATA-DOG/go-sqlmock v1.4.1/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
@@ -41,6 +43,8 @@ github.com/aws/aws-sdk-go v1.36.9 h1:TS667yc08a/EHGBqFrfOItpnzSrBFwIf2gQGlDhhQsg
 github.com/aws/aws-sdk-go v1.36.9/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
 github.com/aws/aws-sdk-go v1.36.10 h1:JCBOoVIEJkNcio01MNbmelgOc6+uxANTC3TYYPlcsEE=
 github.com/aws/aws-sdk-go v1.36.10/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
+github.com/aws/aws-sdk-go v1.36.12 h1:YJpKFEMbqEoo+incs5qMe61n1JH3o4O1IMkMexLzJG8=
+github.com/aws/aws-sdk-go v1.36.12/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
 github.com/aws/aws-xray-sdk-go v1.1.0 h1:CSOeSvhl0OWHmF73yV9dkq5vNcd0H2w7RYYgkcJZa3w=
 github.com/aws/aws-xray-sdk-go v1.1.0/go.mod h1:tmxq1c+yeEbMh39OmRFuXOrse5ajRlMmDXJ6LrCVsIs=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
@@ -125,6 +129,8 @@ github.com/google/pprof v0.0.0-20201211104106-9bd6f8a8ed4b h1:AgNyy9WfDQyMiLd6bB
 github.com/google/pprof v0.0.0-20201211104106-9bd6f8a8ed4b/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
 github.com/google/pprof v0.0.0-20201216223654-096c08e13fa9 h1:X4TOZ4GuqE90jPLUWdhO9LM5E3cIfq3JMlQhJl3qsOo=
 github.com/google/pprof v0.0.0-20201216223654-096c08e13fa9/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
+github.com/google/pprof v0.0.0-20201218002935-b9804c9f04c2 h1:LR89qFljJ48s990kEKGsk213yIJDPI4205OKOzbURK8=
+github.com/google/pprof v0.0.0-20201218002935-b9804c9f04c2/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
 github.com/google/uuid v1.1.2 h1:EVhdT+1Kseyi1/pUmXKaFxYsDNy9RQYkMWRH68J/W7Y=
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
@@ -242,6 +248,8 @@ github.com/mweagle/go-cloudformation v0.0.0-20201115225219-d51cfb7c4fd2 h1:YBRjo
 github.com/mweagle/go-cloudformation v0.0.0-20201115225219-d51cfb7c4fd2/go.mod h1:ZkuUgvDIuRW0sYTRfCz7VmL3IodhIufcb8HNdI6b6AI=
 github.com/mweagle/go-cloudformation v0.0.0-20201214054705-b6716aedba5d h1:WNE9EEVn3WzglQK6vCShJMtuFxOWdCZQdOpq7CQkn7M=
 github.com/mweagle/go-cloudformation v0.0.0-20201214054705-b6716aedba5d/go.mod h1:ZkuUgvDIuRW0sYTRfCz7VmL3IodhIufcb8HNdI6b6AI=
+github.com/mweagle/go-cloudformation v0.0.0-20201221052357-16773840fea5 h1:TpsxLbpDesdB7j5Rk6T0hDA5kfGd7RMXz55fV3ShMX0=
+github.com/mweagle/go-cloudformation v0.0.0-20201221052357-16773840fea5/go.mod h1:ZkuUgvDIuRW0sYTRfCz7VmL3IodhIufcb8HNdI6b6AI=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/nwaples/rardecode v1.1.0 h1:vSxaY8vQhOcVr4mm5e8XllHWTiM4JF507A0Katqw7MQ=
 github.com/nwaples/rardecode v1.1.0/go.mod h1:5DzqNKiOdpKKBH87u8VlvAnPZMXcGRhxWkRpHbbfGS0=
@@ -326,6 +334,8 @@ github.com/toqueteos/trie v1.0.0/go.mod h1:Ywk48QhEqhU1+DwhMkJ2x7eeGxDHiGkAdc9+0
 github.com/ulikunitz/xz v0.5.6/go.mod h1:2bypXElzHzzJZwzH67Y6wb67pO62Rzfn7BSiF4ABRW8=
 github.com/ulikunitz/xz v0.5.8 h1:ERv8V6GKqVi23rgu5cj9pVfVzJbOqAY2Ntl88O6c2nQ=
 github.com/ulikunitz/xz v0.5.8/go.mod h1:nbz6k7qbPmH4IRqmfOplQw/tblSgqTqBwxkY0oWt/14=
+github.com/ulikunitz/xz v0.5.9 h1:RsKRIA2MO8x56wkkcd3LbtcE/uMszhb6DpRf+3uwa3I=
+github.com/ulikunitz/xz v0.5.9/go.mod h1:nbz6k7qbPmH4IRqmfOplQw/tblSgqTqBwxkY0oWt/14=
 github.com/urfave/cli/v2 v2.2.0/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2caLfQ=
 github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f h1:J9EGpcZtP0E/raorCMxlFGSTBrsSlaDGf3jU/qvAE2c=
 github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f/go.mod h1:N2zxlSyiKSe5eX1tZViRH5QA0qijqEDrYZiPEAiq3wU=

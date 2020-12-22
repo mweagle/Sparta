@@ -3,13 +3,13 @@ module github.com/mweagle/Sparta
 go 1.15
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.2.5
+	github.com/AlecAivazis/survey/v2 v2.2.7
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/aws/aws-lambda-go v1.20.0
-	github.com/aws/aws-sdk-go v1.36.10
+	github.com/aws/aws-sdk-go v1.36.12
 	github.com/aws/aws-xray-sdk-go v1.1.0
 	github.com/briandowns/spinner v1.12.0
 	github.com/deckarep/golang-set v1.7.1 // indirect
@@ -21,7 +21,7 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
-	github.com/google/pprof v0.0.0-20201216223654-096c08e13fa9
+	github.com/google/pprof v0.0.0-20201218002935-b9804c9f04c2
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/hhatto/gocloc v0.3.3 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
@@ -36,7 +36,7 @@ require (
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
-	github.com/mweagle/go-cloudformation v0.0.0-20201214054705-b6716aedba5d
+	github.com/mweagle/go-cloudformation v0.0.0-20201221052357-16773840fea5
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/otiai10/copy v1.3.0
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
@@ -46,7 +46,7 @@ require (
 	github.com/rs/zerolog v1.20.0
 	github.com/shirou/gopsutil v3.20.11+incompatible
 	github.com/spf13/cobra v1.1.1
-	github.com/ulikunitz/xz v0.5.8 // indirect
+	github.com/ulikunitz/xz v0.5.9 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620 // indirect
