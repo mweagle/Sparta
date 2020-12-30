@@ -510,7 +510,14 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 				}
 			}(rollbackFunc, logger)
 		}
-		// TODO - delete ECR image
+		// IF we have an ECRTag, log that we won't be deleting it
+		ecrTag := upo.provisionContext.stackParameterValues[StackParamCodeImageURI]
+		if ecrTag != "" {
+			logger.Info().
+				Str("Tag", ecrTag).
+				Msg("Image will not be deleted from repository")
+		}
+
 		wg.Wait()
 	}
 	return nil
