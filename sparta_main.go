@@ -181,7 +181,6 @@ func (ops *optionsProvisionStruct) parseParams() error {
 		keyName := parts[0]
 		paramVal := ""
 		if len(parts) > 1 {
-			// TODO , wat?
 			unquoteVal, unquoteValErr := strconv.Unquote(parts[1])
 			if unquoteValErr == nil {
 				paramVal = unquoteVal
