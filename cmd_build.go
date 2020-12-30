@@ -632,7 +632,7 @@ func (cpo *createPackageOp) buildDockerImage(sanitizedServiceName string,
 	}
 
 	// Next up we need to describe the image we created so that we can get the labels
-	//docker inspect --format '{{ index .Config.Labels "io.sparta.ecr-name"}}' sparta/myhelloworldstack-027159405834
+	//docker inspect --format '{{ index .Config.Labels "io.sparta.ecr-name"}}' sparta/myhelloworldstack-123412341234
 	formatString := fmt.Sprintf(`{{ index .Config.Labels "%s"}}`, spartaECRLabelName)
 
 	inspectCommand := exec.Command("docker",
@@ -654,10 +654,7 @@ func (cpo *createPackageOp) buildDockerImage(sanitizedServiceName string,
 	ecrLabel = strings.Trim(ecrLabel, "'")
 
 	// Then we need to tag it with the ECR information...which is the label...
-	// docker tag mweagle/spartaoci:latest 027159405834.dkr.ecr.us-west-2.amazonaws.com/spartaoci
-	// Get the version from the the container
-	// imageParts := strings.Split(ecrLabel, ":")
-	// imageVersionTag := imageParts[len(imageParts)-1]
+	// docker tag mweagle/spartaoci:latest 123412341234.dkr.ecr.us-west-2.amazonaws.com/name
 	// Run the tag...
 	dockerTagCommand := exec.Command("docker",
 		"tag",
