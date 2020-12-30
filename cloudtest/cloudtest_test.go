@@ -1,15 +1,28 @@
+// +build integration
+
 package cloudtest
 
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"regexp"
 	"testing"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/sts"
 )
 
-var accountID = os.Getenv("AWS_ACCOUNT_ID")
+var accountID = ""
+
+func init() {
+	awsSession := session.New()
+	stsService := sts.New(awsSession)
+	callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if callerInfoErr == nil {
+		accountID = *callerInfo.Account
+	}
+}
 
 var helloWorldJSON = []byte(`{
     "hello" : "world"
@@ -63,7 +76,7 @@ func TestS3LambdaHandler(t *testing.T) {
 	dataUpload := bytes.NewReader(helloWorldJSON)
 	NewTest().
 		Given(NewS3MessageTrigger(
-			"some-lambda-testbucket",
+			"weagle-sparta-testbucket",
 			fmt.Sprintf("testKey%d", time.Now().Unix()),
 			dataUpload)).
 		Against(
