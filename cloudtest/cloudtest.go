@@ -70,9 +70,7 @@ func (fc *functionCache) getFunction(t CloudTest, functionName string) *lambda.G
 	if !outputExists {
 		// Look it up...
 		t.Logf("Looking up function: %s", functionName)
-		awsSession := session.New()
-		lambdaSvc := lambda.New(awsSession)
-
+		lambdaSvc := lambda.New(t.Session())
 		getFunctionInput := &lambda.GetFunctionInput{
 			FunctionName: aws.String(functionName),
 		}
@@ -280,7 +278,10 @@ func (cts *TestScenario) Run(t *testing.T) {
 	errContext, cancelFunc := context.WithDeadline(context.Background(), deadline)
 	defer cancelFunc()
 
-	awsSession := session.New()
+	awsSession, awsSessionErr := session.NewSession()
+	if awsSessionErr != nil {
+		t.Fatalf("Failed to create new AWS Session. Error: %s", awsSessionErr.Error())
+	}
 	zerologger := zerolog.New(os.Stdout).
 		With().
 		Timestamp().
@@ -303,7 +304,7 @@ func (cts *TestScenario) Run(t *testing.T) {
 		ct.Fatalf("No valid function found for selector")
 	}
 
-	errGroup, errContext := errgroup.WithContext(errContext)
+	errGroup, _ := errgroup.WithContext(errContext)
 
 	for _, eachEvaluator := range cts.evaluators {
 		errGroup.Go(func() error {

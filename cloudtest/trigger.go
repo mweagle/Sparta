@@ -115,7 +115,10 @@ func (spt *s3PayloadTrigger) Cleanup(t CloudTest, output *lambda.GetFunctionOutp
 		Key:    spt.putObjectParams.Key,
 	}
 	s3Svc := s3.New(t.Session())
-	s3Svc.DeleteObject(delObjectInput)
+	_, delErr := s3Svc.DeleteObject(delObjectInput)
+	if delErr != nil {
+		t.Logf("Failed to delete object: %s", delErr.Error())
+	}
 }
 
 // NewS3MessageTrigger returns an S3 Trigger that posts a payload
@@ -141,6 +144,7 @@ func NewS3FileMessageTrigger(s3Bucket string, s3Key string, localFilePath string
 		},
 	}
 	// Read the body...
+	/* #nosec G304 */
 	allData, allDataErr := ioutil.ReadFile(localFilePath)
 	if allDataErr != nil {
 		trigger.putObjectParams.Body = bytes.NewReader(allData)

@@ -140,10 +140,8 @@ var IsSuccess = func(values map[MetricName][]*float64) (bool, error) {
 
 	invocationsTotal := func(values []*float64) float64 {
 		totalAgg := float64(0)
-		if values != nil {
-			for _, eachValue := range values {
-				totalAgg += *eachValue
-			}
+		for _, eachValue := range values {
+			totalAgg += *eachValue
 		}
 		return totalAgg
 	}
@@ -177,7 +175,7 @@ func (lime *lambdaInvocationMetricEvaluator) Evaluate(t CloudTest,
 	// Just sit there and see if the thing successfully executed...so this is a
 	// cloudwatch metric query?
 	for _, eachQuery := range lime.queries {
-		for _, eachDimension := range *&eachQuery.MetricStat.Metric.Dimensions {
+		for _, eachDimension := range eachQuery.MetricStat.Metric.Dimensions {
 			eachDimension.Value = output.Configuration.FunctionName
 		}
 	}
@@ -231,9 +229,6 @@ func (lime *lambdaInvocationMetricEvaluator) Evaluate(t CloudTest,
 				return testError
 			}
 			breakTest = stopTest
-			if breakTest {
-				break
-			}
 		}
 	}
 	return nil

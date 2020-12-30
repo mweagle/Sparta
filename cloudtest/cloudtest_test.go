@@ -16,11 +16,13 @@ import (
 var accountID = ""
 
 func init() {
-	awsSession := session.New()
-	stsService := sts.New(awsSession)
-	callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
-	if callerInfoErr == nil {
-		accountID = *callerInfo.Account
+	awsSession, awsSessionErr := session.NewSession()
+	if awsSessionErr == nil {
+		stsService := sts.New(awsSession)
+		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+		if callerInfoErr == nil {
+			accountID = *callerInfo.Account
+		}
 	}
 }
 
