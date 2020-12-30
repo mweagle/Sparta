@@ -123,52 +123,6 @@ type provisionContext struct {
 // Private - START
 //
 
-// Encapsulate calling the rollback hooks
-/*
-func callRollbackHook(wg *sync.WaitGroup,
-	userdata *userdata,
-	buildContext *buildContext,
-	logger *zerolog.Logger) error {
-
-		// TODO - run this if the pipeline fails...
-
-	if userdata.workflowHooks == nil {
-		return nil
-	}
-	rollbackHooks := userdata.workflowHooks.Rollbacks
-	if userdata.workflowHooks.Rollback != nil {
-		logger.Warn("DEPRECATED: Single RollbackHook superseded by RollbackHookHandler slice")
-		rollbackHooks = append(rollbackHooks,
-			RollbackHookFunc(userdata.workflowHooks.Rollback))
-	}
-	for _, eachRollbackHook := range rollbackHooks {
-		wg.Add(1)
-		go func(handler RollbackHookHandler, context map[string]interface{},
-			serviceName string,
-			awsSession *session.Session,
-			noop bool,
-			logger *zerolog.Logger) {
-			// Decrement the counter when the goroutine completes.
-			defer wg.Done()
-			rollbackErr := handler.Rollback(context,
-				serviceName,
-				awsSession,
-				noop,
-				logger)
-			logger.WithFields(logrus.Fields{
-				"Error": rollbackErr,
-			}).Warn("Rollback function failed to complete")
-		}(eachRollbackHook,
-			buildContext.workflowHooksContext,
-			userdata.serviceName,
-			buildContext.awsSession,
-			userdata.noop,
-			logger)
-	}
-	return nil
-}
-*/
-
 // maximumStackOperationTimeout returns the timeout
 // value to use for a stack operation based on the type
 // of resources that it provisions. In general the timeout
@@ -266,9 +220,6 @@ func uploadLocalFileToS3(awsSession *session.Session,
 			s3ObjectBucket,
 			s3ObjectKey)
 	} else {
-		// Make sure we mark things for cleanup in case there's a problem
-		// TODO - finalizers
-		//ctx.registerFileCleanupFinalizer(localPath)
 		// Then upload it
 		uploadLocation, uploadURLErr := spartaS3.UploadLocalFileToS3(localPath,
 			awsSession,
@@ -369,12 +320,6 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
 			Msg(noopMessage("S3 preconditions check"))
 	} else if len(s3BucketName) != 0 {
-
-		// CodePipelineTrigger
-		// TODO
-		// if eppo.provisionContext.codePipelineTrigger != "" && !isEnabled {
-		// 	return fmt.Errorf("s3 Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", vapo.userdata.s3Bucket)
-		// }
 		// Bucket region should match target
 		/*
 			The name of the Amazon S3 bucket where the .zip file that contains your deployment package is stored. This bucket must reside in the same AWS Region that you're creating the Lambda function in. You can specify a bucket from another AWS account as long as the Lambda function and the bucket are in the same region.
