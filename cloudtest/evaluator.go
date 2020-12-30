@@ -23,7 +23,7 @@ type timedNOPEvaluator struct {
 
 func (tne *timedNOPEvaluator) Evaluate(t CloudTest, output *lambda.GetFunctionOutput) error {
 	time.Sleep(tne.duration)
-	t.Logf("NOP success after artifical delay of %s for function: %s",
+	t.Logf("NOP success after artificial delay of %s for function: %s",
 		tne.duration.String(),
 		*output.Configuration.FunctionName)
 	return nil
