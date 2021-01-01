@@ -5,17 +5,19 @@
 - Decouple build from provision
 - Build:
   - Saves intermediate binary
+- Magefiles
+  - Uses new positional arguments in [mage](https://github.com/magefile/mage/releases/tag/v1.11.0)
+- Eliminate CodePipelineTrigger support
 - Provision
 - Change `SpartaOptions` to `ExtendedOptions` to comply with golint
 - Change `cloudformation.CloudFormationResourceName` to `cloudformation.ResourceName` to comply with golint
-
   - Parameters for bucket, code, archive so that out of band changes allowed
-
 - Removed `HandleAWSLambda`
 - Add `step.APIGatewayTaskState` for to support [calling API Gateway](https://docs.aws.amazon.com/step-functions/latest/dg/connect-api-gateway.html)
 - Eliminate WorkflowHooks singletons
+- Added cloudtest package for writing async, event-triggered integration tests
 - TODO:
-  - Workflow hooks return (context, error) for more go idiomatic
+  - Workflow hooks return (context, error) for more go idiomatic signatures
 
 ## v1.15.0 - The Daylight Savings Edition 🕑
 
