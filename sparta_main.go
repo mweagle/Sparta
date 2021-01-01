@@ -38,23 +38,23 @@ var validate *validator.Validate
 func isRunningInAWS() bool {
 	return len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) != 0
 }
+func redText(inputText string, disableColors bool) string {
+	if disableColors {
+		return inputText
+	}
+	return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
+}
 
 func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerolog.Logger) {
 	if headerDisplayed {
 		return
 	}
 	headerDisplayed = true
-	logger.Info().Msg(headerDivider)
-	red := func(inputText string) string {
-		if disableColors {
-			return inputText
-		}
-		return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
-	}
-	logger.Info().Msg(fmt.Sprintf(red("╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗")+"   Version : %s", SpartaVersion))
-	logger.Info().Msg(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
-	logger.Info().Msg(fmt.Sprintf(red("╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩")+"   Go      : %s", runtime.Version()))
-	logger.Info().Msg(headerDivider)
+	logger.Info().Msg(redText(headerDivider, disableColors))
+	logger.Info().Msg(fmt.Sprintf(redText(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐`, disableColors)+"   Version : %s", SpartaVersion))
+	logger.Info().Msg(fmt.Sprintf(redText(`╚═╗├─┘├─┤├┬┘ │ ├─┤`, disableColors)+"   SHA     : %s", SpartaGitHash[0:7]))
+	logger.Info().Msg(fmt.Sprintf(redText(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴`, disableColors)+"   Go      : %s", runtime.Version()))
+	logger.Info().Msg(redText(headerDivider, disableColors))
 }
 
 func templateOutputFile(outputDir string, serviceName string) (*os.File, error) {
@@ -354,11 +354,11 @@ func init() {
 		"i",
 		"",
 		"Optional BuildID to use")
-	// CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
-	// 	"codePipelinePackage",
-	// 	"p",
-	// 	"",
-	// 	"Name of CodePipeline package that includes cloudformation.json Template and ZIP config files")
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
+		"codePipelinePackage",
+		"p",
+		"",
+		"Name of CodePipeline package that includes cloudformation.json Template and ZIP config files")
 	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
 		"inplace",
 		"c",
