@@ -3,11 +3,14 @@
 package sparta
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -26,6 +29,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaDocker "github.com/mweagle/Sparta/docker"
+	"github.com/mweagle/Sparta/system"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -110,6 +114,8 @@ type provisionContext struct {
 	s3Uploads map[string]*s3UploadURL
 	// stack that we mutated
 	stack *cloudformation.Stack
+	// the code pipeline trigger
+	codePipelineTrigger string
 	// stack parameters supplied to the template. These will be upserted
 	// to get either the user supplied, metadata tunneled value.
 	stackParameterValues map[string]string
@@ -523,92 +529,92 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 	return nil
 }
 
-// ////////////////////////////////////////////////////////////////////////////////
-// // codePipelineTriggerOp
-// // create the pipeline trigger op
+////////////////////////////////////////////////////////////////////////////////
+// codePipelineTriggerOp
+// create the pipeline trigger op
+type codePipelineTriggerOp struct {
+	provisionWorkflowOp
+}
 
-// type codePipelineTriggerOp struct {
-// 	provisionWorkflowOp
-// }
+func (cpto *codePipelineTriggerOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
+	return nil
+}
 
-// func (cpto *codePipelineTriggerOp) Rollback(ctx context.Context, logger *zerolog.Logger) error {
-// 	return nil
-// }
-// func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
-// 	/*
-// 		tmpFile, err := system.TemporaryFile(ScratchDirectory, ctx.userdata.codePipelineTrigger)
-// 		if err != nil {
-// 			return "", errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
-// 		}
+func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.Logger) error {
+	tmpFile, err := system.TemporaryFile(ScratchDirectory, cpto.provisionContext.codePipelineTrigger)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
+	}
 
-// 		ctx.logger.WithFields(logrus.Fields{
-// 			"PipelineName": tmpFile.Name(),
-// 		}).Info("Creating pipeline archive")
+	logger.Info().
+		Str("PipelineName", tmpFile.Name()).
+		Str("Path", tmpFile.Name()).
+		Msg("Creating pipeline archive")
 
-// 		templateArchive := zip.NewWriter(tmpFile)
-// 		ctx.logger.WithFields(logrus.Fields{
-// 			"Path": tmpFile.Name(),
-// 		}).Info("Creating CodePipeline archive")
+	// File info for the binary executable
+	templateArchive := zip.NewWriter(tmpFile)
+	zipEntryName := "cloudformation.json"
+	bytesWriter, bytesWriterErr := templateArchive.Create(zipEntryName)
+	if bytesWriterErr != nil {
+		return errors.Wrapf(bytesWriterErr, "Failed to create Zip writer")
+	}
+	// We need to get the template bytes into a reader...
+	jsonTemplateBytes, jsonTemplateBytesErr := json.Marshal(cpto.provisionContext.cfTemplate)
+	if jsonTemplateBytesErr != nil {
+		return errors.Wrapf(jsonTemplateBytesErr, "Failed to Marshal CloudFormation template")
+	}
+	bytesReader := bytes.NewReader(jsonTemplateBytes)
+	written, writtenErr := io.Copy(bytesWriter, bytesReader)
+	if nil != writtenErr {
+		return errors.Wrapf(writtenErr, "Failed to copy CloudFormation template to Zip output")
+	}
+	logger.Debug().
+		Int64("WrittenBytes", written).
+		Str("ZipName", zipEntryName).
+		Msg("Archiving file")
 
-// 		// File info for the binary executable
-// 		zipEntryName := "cloudformation.json"
-// 		bytesWriter, bytesWriterErr := templateArchive.Create(zipEntryName)
-// 		if bytesWriterErr != nil {
-// 			return "", bytesWriterErr
-// 		}
+	// If there is a codePipelineEnvironments defined, then we'll need to get all the
+	// maps, marshal them to JSON, then add the JSON to the ZIP archive.
+	if nil != codePipelineEnvironments {
+		for eachEnvironment, eachMap := range codePipelineEnvironments {
+			codePipelineParameters := map[string]interface{}{
+				"Parameters": eachMap,
+			}
+			environmentJSON, environmentJSONErr := json.Marshal(codePipelineParameters)
+			if nil != environmentJSONErr {
+				logger.Error().
+					Str("Environment", eachEnvironment).
+					Msg("Failed to marshal environment")
+				return environmentJSONErr
+			}
+			var envVarName = fmt.Sprintf("%s.json", eachEnvironment)
 
-// 		bytesReader := bytes.NewReader(cfTemplateJSON)
-// 		written, writtenErr := io.Copy(bytesWriter, bytesReader)
-// 		if nil != writtenErr {
-// 			return "", writtenErr
-// 		}
-// 		ctx.logger.WithFields(logrus.Fields{
-// 			"WrittenBytes": written,
-// 			"ZipName":      zipEntryName,
-// 		}).Debug("Archiving file")
-
-// 		// If there is a codePipelineEnvironments defined, then we'll need to get all the
-// 		// maps, marshal them to JSON, then add the JSON to the ZIP archive.
-// 		if nil != codePipelineEnvironments {
-// 			for eachEnvironment, eachMap := range codePipelineEnvironments {
-// 				codePipelineParameters := map[string]interface{}{
-// 					"Parameters": eachMap,
-// 				}
-// 				environmentJSON, environmentJSONErr := json.Marshal(codePipelineParameters)
-// 				if nil != environmentJSONErr {
-// 					ctx.logger.Error("Failed to Marshal CodePipeline environment: " + eachEnvironment)
-// 					return "", environmentJSONErr
-// 				}
-// 				var envVarName = fmt.Sprintf("%s.json", eachEnvironment)
-
-// 				// File info for the binary executable
-// 				binaryWriter, binaryWriterErr := templateArchive.Create(envVarName)
-// 				if binaryWriterErr != nil {
-// 					return "", binaryWriterErr
-// 				}
-// 				_, writeErr := binaryWriter.Write(environmentJSON)
-// 				if writeErr != nil {
-// 					return "", writeErr
-// 				}
-// 			}
-// 		}
-// 		archiveCloseErr := templateArchive.Close()
-// 		if nil != archiveCloseErr {
-// 			return "", archiveCloseErr
-// 		}
-// 		tempfileCloseErr := tmpFile.Close()
-// 		if nil != tempfileCloseErr {
-// 			return "", tempfileCloseErr
-// 		}
-// 		// Leave it here...
-// 		ctx.logger.WithFields(logrus.Fields{
-// 			"File": filepath.Base(tmpFile.Name()),
-// 		}).Info("Created CodePipeline archive")
-// 		// The key is the name + the pipeline name
-// 		return tmpFile.Name(), nil
-// 	*/
-// 	return nil
-// }
+			// File info for the binary executable
+			binaryWriter, binaryWriterErr := templateArchive.Create(envVarName)
+			if binaryWriterErr != nil {
+				return binaryWriterErr
+			}
+			_, writeErr := binaryWriter.Write(environmentJSON)
+			if writeErr != nil {
+				return writeErr
+			}
+		}
+	}
+	archiveCloseErr := templateArchive.Close()
+	if nil != archiveCloseErr {
+		return archiveCloseErr
+	}
+	tempfileCloseErr := tmpFile.Close()
+	if nil != tempfileCloseErr {
+		return tempfileCloseErr
+	}
+	// Leave it here...
+	logger.Info().
+		Str("File", filepath.Base(tmpFile.Name())).
+		Msg("Created CodePipeline archive")
+	// The key is the name + the pipeline name
+	return nil
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // inPlaceUpdatesOp
@@ -854,6 +860,7 @@ func Provision(noop bool,
 		awsSession:           spartaAWS.NewSession(logger),
 		cfTemplatePath:       templatePath,
 		cfTemplate:           gocf.NewTemplate(),
+		codePipelineTrigger:  codePipelineTrigger,
 		stackParameterValues: stackParamValues,
 		stackTags:            stackTags,
 		s3Uploads:            map[string]*s3UploadURL{},
@@ -888,12 +895,20 @@ func Provision(noop bool,
 	provisionPipeline.Append("preconditions", stagePreconditions)
 
 	// Build Package
-	stageUpload := &pipelineStage{}
-	stageUpload.Append("uploadPackages", &uploadPackageOp{
-		provisionWorkflowOp: provisionWorkflowOp{
-			provisionContext: pc,
-		}})
-	provisionPipeline.Append("upload", stageUpload)
+	stageBuild := &pipelineStage{}
+	if pc.codePipelineTrigger == "" {
+		stageBuild.Append("uploadPackages", &uploadPackageOp{
+			provisionWorkflowOp: provisionWorkflowOp{
+				provisionContext: pc,
+			}})
+		provisionPipeline.Append("upload", stageBuild)
+	} else {
+		stageBuild.Append("codePipelinePackage", &codePipelineTriggerOp{
+			provisionWorkflowOp: provisionWorkflowOp{
+				provisionContext: pc,
+			}})
+		provisionPipeline.Append("build", stageBuild)
+	}
 
 	// Which mutation to apply?
 	stageApply := &pipelineStage{}
