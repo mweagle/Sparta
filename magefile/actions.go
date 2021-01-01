@@ -112,23 +112,34 @@ func Build() error {
 }
 
 // Provision deploys the given service
-func Provision() error {
+func Provision(s3Bucket string) error {
 	// Get the bucketName
-	bucketName := os.Getenv("S3_BUCKET")
-	if bucketName == "" {
+	if s3Bucket == "" {
 		return errors.New("Provision requires env.S3_BUCKET to be defined")
 	}
-	return SpartaCommand("provision", "--s3Bucket", bucketName)
+	return SpartaCommand("provision", "--s3Bucket", s3Bucket)
+}
+
+// ProvisionDocker deploys the given service using an OCI image
+func ProvisionDocker(s3Bucket string, dockerFile string) error {
+	// Get the bucketName
+	if s3Bucket == "" {
+		return errors.New("Provision requires env.S3_BUCKET to be defined")
+	}
+	return SpartaCommand("provision",
+		"--s3Bucket",
+		s3Bucket,
+		"--dockerFile",
+		dockerFile)
 }
 
 // Describe deploys the given service
-func Describe() error {
+func Describe(s3Bucket string) error {
 	// Get the bucketName
-	bucketName := os.Getenv("S3_BUCKET")
-	if bucketName == "" {
+	if s3Bucket == "" {
 		return errors.New("Describe requires env.S3_BUCKET to be defined")
 	}
-	return SpartaCommand("describe", "--s3Bucket", bucketName, "--out", "graph.html")
+	return SpartaCommand("describe", "--s3Bucket", s3Bucket, "--out", "graph.html")
 }
 
 // Delete deletes the given service
