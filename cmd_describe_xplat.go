@@ -19,7 +19,6 @@ import (
 const (
 	nodeColorService     = "#720502"
 	nodeColorEventSource = "#BF2803"
-	nodeColorLambda      = "#F35B05"
 	nodeColorAPIGateway  = "#06B5F5"
 	nodeNameAPIGateway   = "API Gateway"
 

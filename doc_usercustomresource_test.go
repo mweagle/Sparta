@@ -68,9 +68,12 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 	var lambdaFunctions []*LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
-	Main("SpartaUserCustomResource",
+	mainErr := Main("SpartaUserCustomResource",
 		"Uses a user-defined CloudFormation CustomResource",
 		lambdaFunctions,
 		nil,
 		nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

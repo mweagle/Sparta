@@ -53,11 +53,14 @@ func ExampleWorkflowHooks() {
 		helloZipLambda,
 		nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
-	MainEx("HelloWorldArchiveHook",
+	mainErr := MainEx("HelloWorldArchiveHook",
 		"Description for Hello World HelloWorldArchiveHook",
 		lambdaFunctions,
 		nil,
 		nil,
 		&workflowHooks,
 		false)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

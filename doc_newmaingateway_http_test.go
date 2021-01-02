@@ -55,5 +55,8 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 	method.Parameters["method.request.querystring.myOtherKey"] = true
 
 	// Start
-	Main("HelloWorldLambdaHTTPSService", "Description for Hello World HTTPS Lambda", []*LambdaAWSInfo{echoAPIGatewayLambdaFn}, apiGateway, nil)
+	mainErr := Main("HelloWorldLambdaHTTPSService", "Description for Hello World HTTPS Lambda", []*LambdaAWSInfo{echoAPIGatewayLambdaFn}, apiGateway, nil)
+	if mainErr != nil {
+		panic("Failed to launch Main: " + mainErr.Error())
+	}
 }

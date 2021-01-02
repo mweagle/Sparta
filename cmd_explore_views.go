@@ -72,7 +72,10 @@ func loadSettings() map[string]string {
 		return defaultSettings
 	}
 	/* #nosec */
-	json.Unmarshal(bytes, &defaultSettings)
+	umarshalErr := json.Unmarshal(bytes, &defaultSettings)
+	if umarshalErr != nil {
+		fmt.Printf("Failed to unmarshal: %s", umarshalErr.Error())
+	}
 	return defaultSettings
 }
 
@@ -89,18 +92,29 @@ func writePrettyString(writer io.Writer, input string) {
 		prettyString, prettyStringErr := prettyjson.Marshal(jsonData)
 		if prettyStringErr == nil {
 			/* #nosec */
-			io.WriteString(colorWriter, string(prettyString))
+			_, writeErr := io.WriteString(colorWriter, string(prettyString))
+			if writeErr != nil {
+				fmt.Printf("Failed to writeString: %s", writeErr.Error())
+			}
 		} else {
 			/* #nosec */
-			io.WriteString(colorWriter, input)
+			_, writeErr := io.WriteString(colorWriter, input)
+			if writeErr != nil {
+				fmt.Printf("Failed to writeString: %s", writeErr.Error())
+			}
 		}
 	} else {
 		/* #nosec */
-
-		io.WriteString(colorWriter, strings.TrimSpace(input))
+		_, writeErr := io.WriteString(colorWriter, strings.TrimSpace(input))
+		if writeErr != nil {
+			fmt.Printf("Failed to writeString: %s", writeErr.Error())
+		}
 	}
 	/* #nosec */
-	io.WriteString(writer, "\n")
+	_, writeErr := io.WriteString(writer, "\n")
+	if writeErr != nil {
+		fmt.Printf("Failed to writeString: %s", writeErr.Error())
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -186,10 +200,8 @@ func newEventInputSelector(awsSession *session.Session,
 	go func() {
 		//lint:ignore S1000 to make the check happy
 		for {
-			select {
-			case funcSelected := <-ch:
-				activeFunction = funcSelected.(string)
-			}
+			funcSelected := <-ch
+			activeFunction = funcSelected.(string)
 		}
 	}()
 	lambdaSvc := lambda.New(awsSession)
@@ -382,65 +394,66 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 
 		//lint:ignore S1000 to make the check happy
 		for {
-			select {
-			case funcSelected := <-ch:
-				if selectedFunction == funcSelected.(string) {
-					continue
-				}
-				selectedFunction = funcSelected.(string)
-				logEventDataView.Clear()
-				if doneChan != nil {
-					doneChan <- true
-					progressEmojiView.Clear()
-				}
-				if ticker != nil {
-					ticker.Stop()
-				}
-				ticker = time.NewTicker(time.Millisecond * 333)
-				lambdaARN := selectedFunction
-				lambdaParts := strings.Split(lambdaARN, ":")
-				logGroupName := fmt.Sprintf("/aws/lambda/%s", lambdaParts[len(lambdaParts)-1])
-				logger.Debug().
-					Str("Name", logGroupName).
-					Msg("CloudWatch LogGroupName")
+			funcSelected := <-ch
+			if selectedFunction == funcSelected.(string) {
+				continue
+			}
+			selectedFunction = funcSelected.(string)
+			logEventDataView.Clear()
+			if doneChan != nil {
+				doneChan <- true
+				progressEmojiView.Clear()
+			}
+			if ticker != nil {
+				ticker.Stop()
+			}
+			ticker = time.NewTicker(time.Millisecond * 333)
+			lambdaARN := selectedFunction
+			lambdaParts := strings.Split(lambdaARN, ":")
+			logGroupName := fmt.Sprintf("/aws/lambda/%s", lambdaParts[len(lambdaParts)-1])
+			logger.Debug().
+				Str("Name", logGroupName).
+				Msg("CloudWatch LogGroupName")
 
-				// Put this as the label in the view...
-				doneChan = make(chan bool)
-				messages := spartaCWLogs.TailWithContext(context.Background(),
-					doneChan,
-					awsSession,
-					logGroupName,
-					"",
-					logger)
-				// Go read it...
-				go func() {
-					for {
-						select {
-						case event := <-messages:
-							{
-								lastTime = *event.Timestamp / 1000
-								updateCloudWatchLogInfoView(logGroupName, lastTime)
-								writePrettyString(logEventDataView, *event.Message)
-								logger.Debug().
-									Str("EventID", *event.EventId).
-									Msg("Event received")
-								logEventDataView.ScrollToEnd()
-								app.Draw()
-							}
-						case <-ticker.C:
-							/* #nosec */
-							animationIndex = (animationIndex + 1) % len(osEmojiSet)
-							progressEmojiView.Clear()
-							progressText := fmt.Sprintf("%s Waiting for events...", osEmojiSet[animationIndex])
-							/* #nosec */
-							io.WriteString(progressEmojiView, progressText)
-							// Update the other stuff
+			// Put this as the label in the view...
+			doneChan = make(chan bool)
+			messages := spartaCWLogs.TailWithContext(context.Background(),
+				doneChan,
+				awsSession,
+				logGroupName,
+				"",
+				logger)
+			// Go read it...
+			go func() {
+				for {
+					select {
+					case event := <-messages:
+						{
+							lastTime = *event.Timestamp / 1000
 							updateCloudWatchLogInfoView(logGroupName, lastTime)
+							writePrettyString(logEventDataView, *event.Message)
+							logger.Debug().
+								Str("EventID", *event.EventId).
+								Msg("Event received")
+							logEventDataView.ScrollToEnd()
 							app.Draw()
 						}
+					case <-ticker.C:
+						/* #nosec */
+						animationIndex = (animationIndex + 1) % len(osEmojiSet)
+						progressEmojiView.Clear()
+						progressText := fmt.Sprintf("%s Waiting for events...", osEmojiSet[animationIndex])
+						/* #nosec */
+						_, writeErr := io.WriteString(progressEmojiView, progressText)
+						if writeErr != nil {
+							fmt.Printf("Failed to write string: %s", writeErr.Error())
+						}
+						// Update the other stuff
+						updateCloudWatchLogInfoView(logGroupName, lastTime)
+						app.Draw()
 					}
-				}()
-			}
+				}
+			}()
 		}
 	}()
 	return flexView, []tview.Primitive{logEventDataView}

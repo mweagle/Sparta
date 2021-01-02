@@ -37,5 +37,8 @@ func ExampleCloudWatchEventsPermission() {
 		cloudWatchEventsPermission)
 	var lambdaFunctions []*LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, cloudWatchEventsLambda)
-	Main("CloudWatchLogs", "Registers for CloudWatch Logs", lambdaFunctions, nil, nil)
+	mainErr := Main("CloudWatchLogs", "Registers for CloudWatch Logs", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

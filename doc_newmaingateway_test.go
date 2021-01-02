@@ -39,7 +39,10 @@ func ExampleMain_apiGateway() {
 	apiGatewayResource, _ := apiGateway.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
 
 	// Associate 1 or more HTTP methods with the Resource.
-	apiGatewayResource.NewMethod("GET", http.StatusOK)
+	_, methodErr := apiGatewayResource.NewMethod("GET", http.StatusOK)
+	if methodErr != nil {
+		panic("Failed to create API Method")
+	}
 
 	// After the stack is deployed, the
 	// echoAPIGatewayEvent lambda function will be available at:
@@ -56,5 +59,8 @@ func ExampleMain_apiGateway() {
 	// 	curl -vs https://zdjfwrcao7.execute-api.us-west-2.amazonaws.com/test/echoHelloWorld
 
 	// Start
-	Main("HelloWorldLambdaService", "Description for Hello World Lambda", []*LambdaAWSInfo{echoAPIGatewayLambdaFn}, apiGateway, nil)
+	mainErr := Main("HelloWorldLambdaService", "Description for Hello World Lambda", []*LambdaAWSInfo{echoAPIGatewayLambdaFn}, apiGateway, nil)
+	if mainErr != nil {
+		panic("Failed to launch Main: " + mainErr.Error())
+	}
 }

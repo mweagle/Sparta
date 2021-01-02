@@ -30,5 +30,8 @@ func ExampleSNSPermission() {
 		},
 	})
 	lambdaFunctions = append(lambdaFunctions, snsLambda)
-	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil, nil)
+	mainErr := Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

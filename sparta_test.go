@@ -87,15 +87,20 @@ func TestDoubleRefStruct(t *testing.T) {
 
 func TestCustomResource(t *testing.T) {
 	lambdaFuncs := testLambdaStructData()
-	lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
+	_, reqErr := lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource1,
 		nil,
 		nil)
-
-	lambdaFuncs[1].RequireCustomResource(IAMRoleDefinition{},
+	if reqErr != nil {
+		t.Fatalf("Failed to include custom resource: %s", reqErr.Error())
+	}
+	_, reqErr2 := lambdaFuncs[1].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource2,
 		nil,
 		nil)
+	if reqErr2 != nil {
+		t.Fatalf("Failed to include custom resource: %s", reqErr2.Error())
+	}
 	testProvision(t, lambdaFuncs, nil)
 }
 
@@ -103,10 +108,13 @@ func TestDoubleRefCustomResource(t *testing.T) {
 	lambdaFuncs := testLambdaStructData()
 
 	for _, eachLambda := range lambdaFuncs {
-		eachLambda.RequireCustomResource(IAMRoleDefinition{},
+		_, reqErr := eachLambda.RequireCustomResource(IAMRoleDefinition{},
 			userDefinedCustomResource1,
 			nil,
 			nil)
+		if reqErr != nil {
+			t.Fatalf("Failed to require custom resource: %s", reqErr.Error())
+		}
 	}
 	testProvision(t,
 		lambdaFuncs,

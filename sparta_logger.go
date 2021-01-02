@@ -13,17 +13,12 @@ import (
 )
 
 const (
-	colorBlack   = 30
 	colorRed     = 31
-	colorGreen   = 32
 	colorYellow  = 33
 	colorBlue    = 34
 	colorMagenta = 35
-	colorCyan    = 36
-	colorWhite   = 37
 
-	colorBold     = 1
-	colorDarkGray = 90
+	colorBold = 1
 )
 
 func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*zerolog.Logger, error) {

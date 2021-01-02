@@ -17,5 +17,8 @@ func ExampleMain_basic() {
 		IAMRoleDefinition{})
 
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
-	Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions, nil, nil)
+	mainErr := Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

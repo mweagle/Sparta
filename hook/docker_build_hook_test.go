@@ -75,7 +75,10 @@ func TestBuildUPXImage(t *testing.T) {
 
 	// Try and delete it either way...
 	dockerDeleteCommand := exec.Command("docker", "rmi", "-f", dockerTagName)
-	system.RunOSCommand(dockerDeleteCommand, logger)
+	systemErr := system.RunOSCommand(dockerDeleteCommand, logger)
+	if systemErr != nil {
+		t.Errorf("Failed to cleanup docker image: " + systemErr.Error())
+	}
 	if dockerErr != nil {
 		t.Fatalf("Failed to run Docker command to verify UPX image: " + dockerErr.Error())
 	}

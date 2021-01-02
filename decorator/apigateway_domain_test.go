@@ -120,11 +120,14 @@ func ExampleAPIGatewayDomainDecorator() {
 	hooks := apigatewayHooks(apiGateway)
 	// Deploy it
 	stackName := spartaCF.UserScopedStackName("CustomAPIGateway")
-	sparta.MainEx(stackName,
+	mainErr := sparta.MainEx(stackName,
 		"CustomAPIGateway defines a stack with a custom APIGateway Domain Name",
 		lambdaFuncs(apiGateway),
 		apiGateway,
 		nil,
 		hooks,
 		false)
+	if mainErr != nil {
+		panic("Failed to launch Main: " + mainErr.Error())
+	}
 }

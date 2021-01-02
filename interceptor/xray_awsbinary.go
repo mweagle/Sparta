@@ -15,8 +15,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
+//lint:ignore U1000 because it's actually used
+type contextKey int
+
 const (
-	logRingSize = 1024
+	//lint:ignore U1000 because it's actually used
+	contextKeySegment contextKey = iota
 )
 
 func (xri *xrayInterceptor) Begin(ctx context.Context, msg json.RawMessage) context.Context {

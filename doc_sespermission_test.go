@@ -46,7 +46,10 @@ func ExampleSESPermission_messageBody() {
 	sesLambda.Permissions = append(sesLambda.Permissions, lambdaSESPermission)
 
 	lambdaFunctions = append(lambdaFunctions, sesLambda)
-	Main("SESLambdaApp", "Registers for SES events and saves the MessageBody", lambdaFunctions, nil, nil)
+	mainErr := Main("SESLambdaApp", "Registers for SES events and saves the MessageBody", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }
 
 func ExampleSESPermission_headersOnly() {
@@ -84,5 +87,8 @@ func ExampleSESPermission_headersOnly() {
 	sesLambda.Permissions = append(sesLambda.Permissions, lambdaSESPermission)
 
 	lambdaFunctions = append(lambdaFunctions, sesLambda)
-	Main("SESLambdaApp", "Registers for SES events", lambdaFunctions, nil, nil)
+	mainErr := Main("SESLambdaApp", "Registers for SES events", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }
