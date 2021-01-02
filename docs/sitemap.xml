@@ -378,13 +378,18 @@
   </url>
   
   <url>
-    <loc>/presentations/</loc>
-    <lastmod>2019-09-11T21:16:10-07:00</lastmod>
+    <loc>/reference/oci/</loc>
+    <lastmod>2021-01-01T21:22:47-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/testing/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2021-01-01T21:22:47-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/presentations/</loc>
+    <lastmod>2019-09-11T21:16:10-07:00</lastmod>
   </url>
   
   <url>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Testing on Sparta - AWS Lambda Microservices</title>
+    <link>/reference/testing/</link>
+    <description>Recent content in Testing on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 31 Dec 2020 21:48:47 +0000</lastBuildDate><atom:link href="/reference/testing/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

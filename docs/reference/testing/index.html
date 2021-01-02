@@ -12,22 +12,22 @@
     <title>Testing :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1609479641" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1609479641" rel="stylesheet">
-    <link href="/css/hybrid.css?1609479641" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1609479641" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1609479641" rel="stylesheet">
-    <link href="/css/auto-complete.css?1609479641" rel="stylesheet">
-    <link href="/css/theme.css?1609479641" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1609479641" rel="stylesheet">
+    <link href="/css/nucleus.css?1609564994" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1609564994" rel="stylesheet">
+    <link href="/css/hybrid.css?1609564994" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1609564994" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1609564994" rel="stylesheet">
+    <link href="/css/auto-complete.css?1609564994" rel="stylesheet">
+    <link href="/css/theme.css?1609564994" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1609564994" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1609479641" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1609564994" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1609479641"></script>
-    <script src="/js/highlight.pack.js?1609479641"></script>
-    <link href="/css/magula.css?1609479641" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1609564994"></script>
+    <script src="/js/highlight.pack.js?1609564994"></script>
+    <link href="/css/github.css?1609564994" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -61,14 +61,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1609479641"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1609479641"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1609564994"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1609564994"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1609479641"></script>
+<script type="text/javascript" src="/js/search.js?1609564994"></script>
 
     
   </div>
@@ -1857,13 +1857,44 @@ pre {
  
   
     
-      <li data-nav-id="/reference/testing/" title="Testing" class="dd-item active">
-        <a href="/reference/testing/">
-        Testing
+    <li data-nav-id="/reference/oci/" title="OCI" class="dd-item
         
-        </a>
+        
+        
+        ">
+      <a href="/reference/oci/">
+          OCI
+          
+      </a>
+      
+      
     </li>
-     
+  
+ 
+
+            
+          
+            
+            
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/testing/" title="Testing" class="dd-item
+        parent
+        active
+        
+        ">
+      <a href="/reference/testing/">
+          Testing
+          
+      </a>
+      
+      
+    </li>
   
  
 
@@ -2040,8 +2071,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/c340726e">c340726e</a><p/>
-  Date: 2020-12-31T21:40:41-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/35e68b43">35e68b43</a><p/>
+  Date: 2021-01-01T21:23:14-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2064,7 +2095,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/testing.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/testing/_index.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -2108,7 +2139,12 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-<nav id="TableOfContents"></nav>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#unit-tests">Unit Tests</a></li>
+    <li><a href="#acceptance-tests">Acceptance Tests</a></li>
+  </ul>
+</nav>
     </div>
 </div>
 
@@ -2131,7 +2167,9 @@ pre {
         
 
 
-<p>While developing Sparta lambda functions it may be useful to test them locally without needing to <code>provision</code> each new code change.  You can test your lambda functions
+
+	<h2 id="unit-tests">Unit Tests</h2>
+<p>While developing Sparta lambda functions it may be useful to test them locally without needing to <code>provision</code> each new code change. You can test your lambda functions
 using standard <code>go test</code> functionality.</p>
 <p>To create proper event types, consider:</p>
 <ul>
@@ -2139,9 +2177,39 @@ using standard <code>go test</code> functionality.</p>
 <li>Sparta types</li>
 <li>Use <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#NewAPIGatewayMockRequest">NewAPIGatewayMockRequest</a> to generate API Gateway style requests.</li>
 </ul>
+<h2 id="acceptance-tests">Acceptance Tests</h2>
+<p>The <em>cloudtest</em> package provides a BDD-style interface to represent tests
+that verify Lambda behavior that is asynchronously triggered. For instance, to
+verify that a direct LambdaInvocation with a known payload also produces a
+known CloudWatch log output:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> TestCloudLiteralLogOutputTest(t *testing.T) {
+  NewTest().
+    Given(NewLambdaInvokeTrigger(helloWorldJSON)).
+    Against(NewLambdaLiteralSelector(fmt.Sprintf(<span style="color:#a31515">&#34;MyOCIStack-%s_Hello_World&#34;</span>, accountID))).
+    Ensure(NewLogOutputEvaluator(regexp.MustCompile(<span style="color:#a31515">&#34;Accessing&#34;</span>))).
+    Run(t)
+}
+</code></pre></div><p>Tests can also use lambda invocation metrics using <a href="http://jmespath.org">JMESPath</a> selectors against the functions <a href="https://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#GetFunctionOutput">GetFunctionOutput</a> JSON representation:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> TestCloudMetricsTest(t *testing.T) {
+  NewTest().
+    Given(NewLambdaInvokeTrigger(helloWorldJSON)).
+    Against(
+      NewStackLambdaSelector(fmt.Sprintf(<span style="color:#a31515">&#34;MyOCIStack-%s&#34;</span>, accountID),
+        <span style="color:#a31515">&#34;[Configuration][?contains(FunctionName,&#39;Hello_World&#39;)].FunctionName | [0]&#34;</span>)).
+    Ensure(NewLambdaInvocationMetricEvaluator(DefaultLambdaFunctionMetricQueries(),
+      IsSuccess),
+    ).
+    Run(t)
+}
+</code></pre></div><p>The <em>cloudtest</em> package also provides S3, SQS, and other event source triggers.
+Clients can define their own <code>cloudtest.Trigger</code> compliant instance to
+extend the test scenarios.</p>
 
 
-<footer class="footline">
+
+
+
+<footer class=" footline" >
 	
 </footer>
 
@@ -3400,6 +3468,22 @@ using standard <code>go test</code> functionality.</p>
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                     
                 
                 
@@ -3523,7 +3607,7 @@ using standard <code>go test</code> functionality.</p>
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/operations/profiling/" title="Profiling"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/oci/" title="OCI"> <i class="fa fa-chevron-left"></i></a>
 		
 		
 			<a class="nav nav-next" href="/reference/supporting_packages/" title="Supporting Packages" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
@@ -3536,19 +3620,19 @@ using standard <code>go test</code> functionality.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1609479641"></script>
-    <script src="/js/perfect-scrollbar.min.js?1609479641"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1609479641"></script>
-    <script src="/js/jquery.sticky.js?1609479641"></script>
-    <script src="/js/featherlight.min.js?1609479641"></script>
-    <script src="/js/highlight.pack.js?1609479641"></script>
+    <script src="/js/clipboard.min.js?1609564994"></script>
+    <script src="/js/perfect-scrollbar.min.js?1609564994"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1609564994"></script>
+    <script src="/js/jquery.sticky.js?1609564994"></script>
+    <script src="/js/featherlight.min.js?1609564994"></script>
+    <script src="/js/highlight.pack.js?1609564994"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1609479641"></script>
-    <script src="/js/learn.js?1609479641"></script>
-    <script src="/js/hugo-learn.js?1609479641"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1609564994"></script>
+    <script src="/js/learn.js?1609564994"></script>
+    <script src="/js/hugo-learn.js?1609564994"></script>
     
         
-            <script src="/mermaid/mermaid.js?1609479641"></script>
+            <script src="/mermaid/mermaid.js?1609564994"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });
@@ -3565,4 +3649,3 @@ using standard <code>go test</code> functionality.</p>
 </script>
   </body>
 </html>
-

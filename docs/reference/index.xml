@@ -39,17 +39,6 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
     </item>
     
     <item>
-      <title>Testing</title>
-      <link>/reference/testing/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>/reference/testing/</guid>
-      <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. You can test your lambda functions using standard go test functionality.
-To create proper event types, consider:
- AWS Lambda Go types Sparta types Use NewAPIGatewayMockRequest to generate API Gateway style requests.  </description>
-    </item>
-    
-    <item>
       <title>Supporting Packages</title>
       <link>/reference/supporting_packages/</link>
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
