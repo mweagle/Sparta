@@ -574,7 +574,6 @@ func StableResourceName(value string) string {
 // name is not content-addressable.
 func ResourceName(prefix string, parts ...string) string {
 	hash := sha1.New()
-	//lint:ignore SA9003 because it's TODO
 	_, writeErr := hash.Write([]byte(prefix))
 	if writeErr != nil {
 		fmt.Printf("Failed to write to hash: " + writeErr.Error())
@@ -582,14 +581,12 @@ func ResourceName(prefix string, parts ...string) string {
 	if len(parts) <= 0 {
 		randValue := rand.Int63()
 		_, writeErr = hash.Write([]byte(strconv.FormatInt(randValue, 10)))
-		//lint:ignore SA9003 because it's TODO
 		if writeErr != nil {
 			fmt.Printf("Failed to write to hash: " + writeErr.Error())
 		}
 	} else {
 		for _, eachPart := range parts {
 			_, writeErr = hash.Write([]byte(eachPart))
-			//lint:ignore SA9003 because it's TODO
 			if writeErr != nil {
 				fmt.Printf("Failed to write to hash: " + writeErr.Error())
 			}
