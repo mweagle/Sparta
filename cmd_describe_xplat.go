@@ -224,8 +224,8 @@ func templateJSFiles(logger *zerolog.Logger) []*templateResource {
 
 func templateImageMap(logger *zerolog.Logger) map[string]string {
 	images := []string{"SpartaHelmet256.png",
-		"AWS-Architecture-Icons_PNG/PNG Light/Compute/AWS-Lambda_Lambda-Function_light-bg@4x.png",
-		"AWS-Architecture-Icons_PNG/PNG Light/Management & Governance/AWS-CloudFormation_light-bg@4x.png",
+		"AWS-Architecture-Assets/Res_Compute/Res_48_Light/Res_Amazon-Lambda_Lambda-Function_48_Light.png",
+		"AWS-Architecture-Assets/Arch_Management-Governance/64/Arch_AWS-CloudFormation_64@5x.png",
 	}
 	resources := templateResourcesForKeys(images, logger)
 	imageMap := make(map[string]string)
@@ -243,35 +243,40 @@ func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
 	if jsonBytesErr != nil {
 		jsonBytes = make([]byte, 0)
 	}
+
 	canonicalRaw := strings.ToLower(string(jsonBytes))
 	iconMappings := map[string]*DescriptionIcon{
 		"dynamodb": {
-			Category: "Database",
-			Name:     "Amazon-DynamoDB@4x.png",
+			Category: "Arch_Database",
+			Name:     "64/Arch_Amazon-DynamoDB_64@5x.png",
 		},
 		"sqs": {
-			Category: "Application Integration",
-			Name:     "Amazon-Simple-Queue-Service-SQS@4x.png",
+			Category: "Arch_App-Integration",
+			Name:     "Arch_64/Arch_AWS-Simple-Queue-Service_64@5x.png",
 		},
 		"sns": {
-			Category: "Application Integration",
-			Name:     "Amazon-Simple-Notification-Service-SNS@4x.png",
+			Category: "Arch_App-Integration",
+			Name:     "Arch_64/Arch_AWS-Simple-Notification-Service_64@5x.png",
+		},
+		"step": {
+			Category: "Arch_App-Integration",
+			Name:     "Arch_64/Arch_AWS-Step-Functions_64@5x.png",
 		},
 		"cloudwatch": {
-			Category: "Management & Governance",
-			Name:     "Amazon-Simple-Notification-Service-SNS@4x.png",
+			Category: "Arch_Management-Governance",
+			Name:     "64/Arch_Amazon-CloudWatch_64@5x.png",
 		},
 		"kinesis": {
-			Category: "Analytics",
-			Name:     "Amazon-Kinesis@4x.png",
+			Category: "Arch_Analytics",
+			Name:     "Arch_64/Arch_Amazon-Kinesis_64@5x.png",
 		},
 		"s3": {
-			Category: "Storage",
-			Name:     "Amazon-Simple-Storage-Service-S3@4x.png",
+			Category: "Arch_Storage",
+			Name:     "64/Arch_Amazon-S3-Standard_64@5x.png",
 		},
 		"codecommit": {
-			Category: "Developer Tools",
-			Name:     "AWS-CodeCommit_light-bg.svg",
+			Category: "Arch_Developer- Tools",
+			Name:     "64/Arch_AWS-CodeCommit_64@5x.png",
 		},
 	}
 	// Return it if we have it...

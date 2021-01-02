@@ -108,9 +108,9 @@ func Describe(serviceName string,
 			// Because the style uses data(image) we need to ensure that
 			// empty nodes have some sort of image, else the Cytoscape JS
 			// won't render
-			return "AWS-Architecture-Icons_PNG/empty-image.png"
+			return "AWS-Architecture-Assets/empty-image.png"
 		}
-		return fmt.Sprintf("AWS-Architecture-Icons_PNG/PNG Light/%s/%s",
+		return fmt.Sprintf("AWS-Architecture-Assets/%s/%s",
 			descriptionNode.Category,
 			descriptionNode.Name)
 	}
@@ -119,8 +119,8 @@ func Describe(serviceName string,
 	writeErr := describer.writeNodeWithParent(serviceName,
 		nodeColorService,
 		fullIconPath(&DescriptionIcon{
-			Category: "Management & Governance",
-			Name:     "AWS-CloudFormation_Stack_light-bg@4x.png",
+			Category: "Res_Management-Governance",
+			Name:     "Res_48_Light/Res_AWS-CloudFormation_Stack_48_Light.png",
 		}),
 		"",
 		labelWeightBold)
