@@ -818,8 +818,8 @@ func (info *LambdaAWSInfo) Description(targetNodeName string) ([]*DescriptionTri
 		SourceNodeName: info.lambdaFunctionName(),
 		DisplayInfo: &DescriptionDisplayInfo{
 			SourceIcon: &DescriptionIcon{
-				Category: "Compute",
-				Name:     "AWS-Lambda@4x.png",
+				Category: "Arch_Compute",
+				Name:     "64/Arch_AWS-Lambda_64.png",
 			},
 		},
 		TargetNodeName: targetNodeName,

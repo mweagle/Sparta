@@ -25,7 +25,7 @@ const (
 
 	labelWeightNormal = "normal"
 	labelWeightBold   = "bolder"
-	defaultImagePath  = "/resources/describe/AWS-Architecture-Icons_PNG/PNG Light/_General/General@4x.png"
+	defaultImagePath  = "/resources/describe/AWS-Architecture-Assets/General@4x.png"
 )
 
 // This is the `go` type that's shuttled through the JSON data
@@ -285,7 +285,10 @@ func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
 			return eachIcon
 		}
 	}
-	return nil
+	return &DescriptionIcon{
+		Category: "Default",
+		Name:     "General@4x.png",
+	}
 }
 
 // DescriptionIcon is the struct that contains the category & icon

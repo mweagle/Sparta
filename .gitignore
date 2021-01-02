@@ -4,7 +4,7 @@ graph.html
 tags
 .atom-build.json
 resources/provision/node_modules/*
-resources/describe/AWS-Architecture-Icons_PNG/*
+resources/describe/AWS-Architecture-Assets/*
 Sparta.lambda.amd64
 SampleProvision-code.zip
 mage_output_file.go
