@@ -65,8 +65,10 @@ func TestAPIGateway(t *testing.T) {
 
 	// Register the function with the API Gateway
 	apiGatewayResource, _ := apiGateway.NewResource("/test", lambdaFn)
-	apiGatewayResource.NewMethod("GET", http.StatusOK)
-
+	_, resErr := apiGatewayResource.NewMethod("GET", http.StatusOK)
+	if resErr != nil {
+		t.Fatalf("Failed to create new resource: %s", resErr.Error())
+	}
 	testProvisionEx(t,
 		[]*LambdaAWSInfo{lambdaFn},
 		apiGateway,

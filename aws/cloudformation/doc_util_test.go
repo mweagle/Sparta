@@ -1,6 +1,7 @@
 package cloudformation
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -18,5 +19,9 @@ var sampleTemplateProps = map[string]interface{}{
 
 func ExampleConvertToTemplateExpression() {
 	templateReader := strings.NewReader(sampleTemplate)
-	ConvertToTemplateExpression(templateReader, sampleTemplateProps)
+	converted, convertedErr := ConvertToTemplateExpression(templateReader, sampleTemplateProps)
+	if convertedErr != nil {
+		panic("Failed to convert data")
+	}
+	fmt.Sprintf("%#v", converted)
 }

@@ -54,7 +54,10 @@ func saveSetting(key string, value string) {
 	}
 	mu.Lock()
 	/* #nosec */
-	ioutil.WriteFile(settingsFile(), output, os.ModePerm)
+	writtenErr := ioutil.WriteFile(settingsFile(), output, os.ModePerm)
+	if writtenErr != nil {
+		fmt.Printf("Failed to save settings: %s", writtenErr.Error())
+	}
 	mu.Unlock()
 }
 
