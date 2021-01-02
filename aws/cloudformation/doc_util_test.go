@@ -23,5 +23,5 @@ func ExampleConvertToTemplateExpression() {
 	if convertedErr != nil {
 		panic("Failed to convert data")
 	}
-	fmt.Sprintf("%#v", converted)
+	fmt.Printf("%#v", converted)
 }
