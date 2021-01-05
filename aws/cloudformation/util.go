@@ -1010,14 +1010,16 @@ func ConvergeStackState(serviceName string,
 	outputHeader := "CloudFormation Metrics "
 	suffix := strings.Repeat(outputsDividerChar, dividerWidth-len(outputHeader))
 	logger.Info().Msgf("%s%s", outputHeader, suffix)
+	curUnit := zerolog.DurationFieldUnit
+	zerolog.DurationFieldUnit = time.Second
 	for _, eachResourceStat := range resourceStats {
 		logger.Info().
 			Str("Resource", eachResourceStat.logicalResourceID).
 			Str("Type", eachResourceStat.resourceType).
-			Float64("Duration", eachResourceStat.elapsed.Seconds()).
-			Msg("    Operation duration")
+			Dur("Duration (sec)", eachResourceStat.elapsed).
+			Msg("   Operation duration")
 	}
-
+	zerolog.DurationFieldUnit = curUnit
 	if nil != convergeResult.stackInfo.Outputs {
 		// Add a nice divider if there are Stack specific output
 		outputHeader := "Stack Outputs "
