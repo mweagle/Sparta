@@ -30,7 +30,7 @@ const (
 // export marshals the API data to a CloudFormation compatible representation
 func (s3Site *S3Site) export(serviceName string,
 	binaryName string,
-	s3TargetBucket gocf.Stringable,
+	s3ArtifactBucket gocf.Stringable,
 	s3CodeResource *gocf.LambdaFunctionCode,
 	s3ResourcesKey gocf.Stringable,
 	apiGatewayOutputs map[string]*gocf.Output,
@@ -140,7 +140,7 @@ func (s3Site *S3Site) export(serviceName string,
 		Effect: "Allow",
 		Resource: gocf.Join("",
 			gocf.String("arn:aws:s3:::"),
-			s3CodeResource.S3Bucket,
+			s3ArtifactBucket,
 			gocf.String("/"),
 			s3ResourcesKey.String()),
 	})
@@ -190,11 +190,7 @@ func (s3Site *S3Site) export(serviceName string,
 		return errors.Wrapf(lambdaEnvErr, "Failed to create S3 site resource")
 	}
 	customResourceHandlerDef := gocf.LambdaFunction{
-		Code: &gocf.LambdaFunctionCode{
-			S3Bucket:        s3CodeResource.S3Bucket,
-			S3Key:           s3CodeResource.S3Key,
-			S3ObjectVersion: s3CodeResource.S3ObjectVersion,
-		},
+		Code: s3CodeResource,
 		Description: gocf.String(customResourceDescription(serviceName,
 			"S3 static site")),
 		Handler:    gocf.String(binaryName),
@@ -228,7 +224,7 @@ func (s3Site *S3Site) export(serviceName string,
 	}
 	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
 	zipResource.SrcKeyName = s3ResourcesKey.String()
-	zipResource.SrcBucket = s3TargetBucket.String()
+	zipResource.SrcBucket = s3ArtifactBucket.String()
 	zipResource.DestBucket = gocf.Ref(s3BucketResourceName).String()
 
 	// Build the manifest data with any output info...
