@@ -730,9 +730,6 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 		if addToZipErr != nil {
 			return errors.Wrapf(addToZipErr, "Failed to create S3 site ZIP archive")
 		}
-		// Else, save it...
-		cpo.buildContext.cfTemplate.Metadata[MetadataParamS3SiteArchivePath] = zipOutputFile.Name()
-
 		archiveCloseErr := zipArchive.Close()
 		if nil != archiveCloseErr {
 			return errors.Wrapf(archiveCloseErr, "Failed to close S3 site ZIP stream")
@@ -857,6 +854,26 @@ func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context,
 			"",
 			".*",
 			0)
+	}
+
+	// S3 site archive parameters?
+	if cto.userdata.s3SiteContext != nil {
+		// Code S3 info
+		cto.buildContext.cfTemplate.Parameters[StackParamS3SiteArchiveKey] = newStackParameter(
+			"String",
+			"S3 key for object storing S3 Site payload (required)",
+			"",
+			".+",
+			3)
+		paramRefMap[StackParamS3SiteArchiveKey] = gocf.Ref(StackParamS3CodeKeyName)
+
+		cto.buildContext.cfTemplate.Parameters[StackParamS3SiteArchiveVersion] = newStackParameter(
+			"String",
+			"S3 object version of S3 Site payload",
+			"",
+			".*",
+			0)
+		paramRefMap[StackParamS3SiteArchiveVersion] = gocf.Ref(StackParamS3SiteArchiveVersion)
 	}
 
 	// Code Pipeline?

@@ -494,6 +494,12 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 		upo.provisionContext.stackParameterValues[StackParamS3CodeVersion] =
 			upo.provisionContext.s3Uploads[MetadataParamCodeArchivePath].version
 	}
+	if len(s3UploadMap[MetadataParamS3SiteArchivePath]) != 0 {
+		upo.provisionContext.stackParameterValues[StackParamS3SiteArchiveKey] =
+			upo.provisionContext.s3Uploads[MetadataParamS3SiteArchivePath].path
+		upo.provisionContext.stackParameterValues[StackParamS3SiteArchiveVersion] =
+			upo.provisionContext.s3Uploads[MetadataParamS3SiteArchivePath].version
+	}
 	if len(ecrImageTag) != 0 {
 		upo.provisionContext.stackParameterValues[StackParamCodeImageURI] = ecrImageTag
 	}
