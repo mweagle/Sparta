@@ -193,9 +193,7 @@ func (s3Site *S3Site) export(serviceName string,
 		Code: s3CodeResource,
 		Description: gocf.String(customResourceDescription(serviceName,
 			"S3 static site")),
-		Handler:    gocf.String(binaryName),
 		Role:       iamRoleRef,
-		Runtime:    gocf.String(string(Go1LambdaRuntime)),
 		MemorySize: gocf.Integer(256),
 		Timeout:    gocf.Integer(180),
 		// Let AWS assign the function name
@@ -203,6 +201,12 @@ func (s3Site *S3Site) export(serviceName string,
 			FunctionName: lambdaFunctionName.String(),
 		*/
 		Environment: lambdaEnv,
+	}
+	if s3CodeResource.ImageURI != nil {
+		customResourceHandlerDef.PackageType = gocf.String("Image")
+	} else {
+		customResourceHandlerDef.Runtime = gocf.String(string(Go1LambdaRuntime))
+		customResourceHandlerDef.Handler = gocf.String(binaryName)
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)

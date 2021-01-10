@@ -189,6 +189,12 @@ func EnsureCustomResourceHandler(serviceName string,
 		// DISPATCH INFORMATION
 		Environment: lambdaEnv,
 	}
+	if lambdaFunctionCode.ImageURI != nil {
+		customResourceHandlerDef.PackageType = gocf.String("Image")
+	} else {
+		customResourceHandlerDef.Runtime = gocf.String(string(Go1LambdaRuntime))
+		customResourceHandlerDef.Handler = gocf.String(SpartaBinaryName)
+	}
 
 	cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
 	if nil != dependsOn && (len(dependsOn) > 0) {
