@@ -571,8 +571,15 @@ func (cpo *createPackageOp) buildZIPArchive(sanitizedServiceName string,
 	if zipCloseErr != nil {
 		return errors.Wrapf(zipCloseErr, "Failed to close code ZIP archive")
 	}
+	// Size?
+	filesize := int64(0)
+	stat, statErr := os.Stat(codeZIPArchivePath)
+	if statErr == nil {
+		filesize = stat.Size()
+	}
 	logger.Info().
 		Str("Path", zipOutputFile.Name()).
+		Int64("Size (MB)", filesize/(1024*1024)).
 		Msg("Code Archive")
 	return nil
 }

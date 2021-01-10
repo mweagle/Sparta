@@ -22,27 +22,29 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-// Constant for Sparta color aware stdout logging
-const (
-	redCode = 31
+func init() {
+	validate = validator.New()
+	codePipelineEnvironments = make(map[string]map[string]string)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	instanceID = fmt.Sprintf("i-%d", r.Int63())
+}
+
+var (
+	// Have we already shown the header/usage?
+	headerDisplayed = false
+
+	// The Lambda instance ID for this execution
+	instanceID string
+
+	// Validation instance
+	validate *validator.Validate
+
+	// CodePipeline environments
+	codePipelineEnvironments map[string]map[string]string
 )
-
-var headerDisplayed = false
-
-// The Lambda instance ID for this execution
-var instanceID string
-
-// Validation instance
-var validate *validator.Validate
 
 func isRunningInAWS() bool {
 	return len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) != 0
-}
-func redText(inputText string, disableColors bool) string {
-	if disableColors {
-		return inputText
-	}
-	return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
 }
 
 func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerolog.Logger) {
@@ -50,11 +52,11 @@ func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerol
 		return
 	}
 	headerDisplayed = true
-	logger.Info().Msg(redText(headerDivider, disableColors))
-	logger.Info().Msg(fmt.Sprintf(redText(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐`, disableColors)+"   Version : %s", SpartaVersion))
-	logger.Info().Msg(fmt.Sprintf(redText(`╚═╗├─┘├─┤├┬┘ │ ├─┤`, disableColors)+"   SHA     : %s", SpartaGitHash[0:7]))
-	logger.Info().Msg(fmt.Sprintf(redText(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴`, disableColors)+"   Go      : %s", runtime.Version()))
-	logger.Info().Msg(redText(headerDivider, disableColors))
+	logger.Info().Msg(colorize(headerDivider, colorRed, disableColors))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐`, colorRed, disableColors)+"   Version : %s", SpartaVersion))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╚═╗├─┘├─┤├┬┘ │ ├─┤`, colorRed, disableColors)+"   SHA     : %s", SpartaGitHash[0:7]))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴`, colorRed, disableColors)+"   Go      : %s", runtime.Version()))
+	logger.Info().Msg(colorize(headerDivider, colorRed, disableColors))
 }
 
 func templateOutputFile(outputDir string, serviceName string) (*os.File, error) {
@@ -70,23 +72,14 @@ func templateOutputFile(outputDir string, serviceName string) (*os.File, error) 
 	return os.Create(templateFilePath)
 }
 
-var codePipelineEnvironments map[string]map[string]string
-
-func init() {
-	validate = validator.New()
-	codePipelineEnvironments = make(map[string]map[string]string)
-
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	instanceID = fmt.Sprintf("i-%d", r.Int63())
-}
-
 // Logger returns the sparta Logger instance for this process
 func Logger() *zerolog.Logger {
 	return OptionsGlobal.Logger
 }
 
 // InstanceID returns the uniquely assigned instanceID for this lambda
-// container
+// container. The InstanceID is created at the time the this Lambda function
+// initializes
 func InstanceID() string {
 	return instanceID
 }
@@ -579,10 +572,4 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		executeErr = parseCmdRoot.Root().Help()
 	}
 	return executeErr
-}
-
-// NewLogger returns a new zerolog.Logger instance. It is the caller's responsibility
-// to set the formatter if needed.
-func NewLogger(level string) (*zerolog.Logger, error) {
-	return NewLoggerForOutput(level, "", false)
 }

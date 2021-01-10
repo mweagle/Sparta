@@ -115,8 +115,8 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger.Info().
 			Str("Time (UTC)", curTime.UTC().Format(time.RFC3339)).
 			Str("Time (Local)", curTime.Format(time.RFC822)).
-			Str("Duration", commandTimeDuration.String()).
-			Msgf("Complete")
+			Dur(fmt.Sprintf("Duration (%s)", durationUnitLabel), commandTimeDuration).
+			Msg("Complete")
 		return nil
 	}
 	//////////////////////////////////////////////////////////////////////////////

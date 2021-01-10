@@ -457,16 +457,15 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 					Str("ECRTag", ecrImageTag).
 					Msg("Bypassing ECR push due to -n/--noop flag")
 				return newTaskResult("ECR Push bypassed", nil)
-			} else {
-				logger.Info().
-					Str("Tag", ecrImageTag).
-					Msg("Pushing local image to ECR")
-
-				pushErr := spartaDocker.PushECRTaggedImage(ecrImageTag,
-					upo.provisionContext.awsSession,
-					logger)
-				return newTaskResult(ecrImageTag, pushErr)
 			}
+			logger.Info().
+				Str("Tag", ecrImageTag).
+				Msg("Pushing local image to ECR")
+
+			pushErr := spartaDocker.PushECRTaggedImage(ecrImageTag,
+				upo.provisionContext.awsSession,
+				logger)
+			return newTaskResult(ecrImageTag, pushErr)
 		}
 		uploadTasks = append(uploadTasks, newWorkTask(pushTask))
 	}

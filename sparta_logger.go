@@ -23,14 +23,6 @@ const (
 
 func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*zerolog.Logger, error) {
 	var loggerWriter io.Writer
-	// colorize returns the string s wrapped in ANSI code c, unless disabled is true.
-	colorize := func(s interface{}, c int, disabled bool) string {
-		if noColor {
-			return fmt.Sprintf("%s", s)
-		}
-		return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
-	}
-
 	switch outputFormat {
 	case "text", "txt":
 		consoleWriter := zerolog.ConsoleWriter{
@@ -83,7 +75,14 @@ func newRSLogger(logLevel zerolog.Level, outputFormat string, noColor bool) (*ze
 	}
 	// Set it up and return it...
 	rsLogger := zerolog.New(loggerWriter).With().Timestamp().Logger().Level(logLevel)
+	updateLoggerGlobals()
 	return &rsLogger, nil
+}
+
+// NewLogger returns a new zerolog.Logger instance. It is the caller's responsibility
+// to set the formatter if needed.
+func NewLogger(level string) (*zerolog.Logger, error) {
+	return NewLoggerForOutput(level, "", false)
 }
 
 // NewLoggerForOutput returns a new zerolog
