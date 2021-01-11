@@ -28,6 +28,7 @@ tabWidth = 2
 author = "Matt Weagle"
 description = "Sparta - AWS Lambda Microservices"
 disableBreadcrumb = false
+disableInlineCopyToClipBoard = true
 disableLandingPageButton = true
 disableNextPrev = false
 editURL = "https://github.com/mweagle/Sparta/tree/docs/content/"
