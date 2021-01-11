@@ -458,38 +458,3 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 	}()
 	return flexView, []tview.Primitive{logEventDataView}
 }
-
-// type colorizingFormatter struct {
-// 	TimestampFormat  string
-// 	DisableTimestamp bool
-// 	FieldMap         logrus.FieldMap
-// }
-
-// // Format renders a single log entry
-// func (cf *colorizingFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-// 	data := make(logrus.Fields, len(entry.Data)+3)
-// 	for k, v := range entry.Data {
-// 		switch v := v.(type) {
-// 		case error:
-// 			// Otherwise errors are ignored by `encoding/json`
-// 			// https://github.com/sirupsen/logrus/issues/137
-// 			data[k] = v.Error()
-// 		default:
-// 			data[k] = v
-// 		}
-// 	}
-// 	timestampFormat := cf.TimestampFormat
-// 	if timestampFormat == "" {
-// 		timestampFormat = time.RFC3339
-// 	}
-// 	if !cf.DisableTimestamp {
-// 		data[logrus.FieldKeyTime] = entry.Time.Format(timestampFormat)
-// 	}
-// 	data[logrus.FieldKeyMsg] = entry.Message
-// 	data[logrus.FieldKeyLevel] = entry.Level.String()
-// 	prettyString, prettyStringErr := prettyjson.Marshal(data)
-// 	if prettyStringErr != nil {
-// 		return nil, errors.Wrapf(prettyStringErr, "Failed to marshal fields to JSON")
-// 	}
-// 	return append(prettyString, '\n'), nil
-// }
