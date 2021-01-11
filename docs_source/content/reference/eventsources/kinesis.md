@@ -4,7 +4,7 @@ title: Kinesis
 weight: 10
 ---
 
-In this section we'll walkthrough how to trigger your lambda function in response to [Amazon Kinesis](https://aws.amazon.com/kinesis/) streams.  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130) sample code if you'd rather jump to the end result.
+In this section we'll walkthrough how to trigger your lambda function in response to [Amazon Kinesis](https://aws.amazon.com/kinesis/) streams. This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130) sample code if you'd rather jump to the end result.
 
 # Goal
 
@@ -19,10 +19,12 @@ import (
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 )
 func echoKinesisEvent(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (*awsLambdaEvents.KinesisEvent, error) {
-	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
-	logger.WithFields(logrus.Fields{
-		"Event": kinesisEvent,
-	}).Info("Event received")
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
+
+  logger.Info().
+    Interface("Event", kinesisEvent).
+    Msg("Event received")
+
 	return &kinesisEvent, nil
 }
 ```
@@ -62,14 +64,14 @@ The `kinesisTestStream` parameter is the Kinesis stream ARN (eg: _arn:aws:kinesi
 
 # Wrapping Up
 
-With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:
+With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service. The workflow below is shared by all Kinesis-triggered lambda functions:
 
-  * Define the lambda function (`echoKinesisEvent`).
-  * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
-  * Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
+- Define the lambda function (`echoKinesisEvent`).
+- If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
+- Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
+- Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
 # Notes
 
-  * The Kinesis stream and the AWS Lambda function must be provisioned in the same region.
-  * The AWS docs have an excellent [Kinesis EventSource](http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html) walkthrough.
+- The Kinesis stream and the AWS Lambda function must be provisioned in the same region.
+- The AWS docs have an excellent [Kinesis EventSource](http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html) walkthrough.

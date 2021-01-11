@@ -4,7 +4,6 @@ title: SNS
 weight: 10
 ---
 
-
 To create a SNS reactor that subscribes via an [subscription configuration](https://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-function.html#supported-event-source-sns),
 use the [NewSNSReactor](https://godoc.org/github.com/mweagle/Sparta/archetype#NewSNSReactor) constructor as in:
 
@@ -16,11 +15,12 @@ import (
 // DynamoDB reactor function
 func reactorFunc(ctx context.Context,
   snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-  logger.WithFields(logrus.Fields{
-    "Event": snsEvent,
-  }).Info("SNS Event")
+  logger.Info().
+    Interface("Event", snsEvent).
+    Msg("SNS Event")
+
   return "Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾", nil
 }
 

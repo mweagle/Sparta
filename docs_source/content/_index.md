@@ -100,14 +100,6 @@ To get started using Sparta, begin with the [Overview](/example_service/step1/).
 
 - Problems? Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
 
-<br />
-<img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256">
-<center>
-<h6>Courtesy of <a href="https://github.com/ashleymcnamara/gophers">gophers</a>
-</h6>
-</center>
-<br />
-
 ## Questions?
 
 Get in touch via:

@@ -21,13 +21,15 @@ import (
 
 // EventBridge reactor function
 func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
   var eventData map[string]interface{}
   err := json.Unmarshal(msg, &eventData)
-  logger.WithFields(logrus.Fields{
-    "error":   err,
-    "message": eventData,
-  }).Info("EventBridge event")
+
+  logger.Info().
+    Err(err).
+    Interface("Event", eventData).
+    Msg("EventBridge event")
+
   return nil, err
 }
 
@@ -76,13 +78,15 @@ To create an event subscriber use a constructor as in:
 
 ```go
 func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
   var eventData map[string]interface{}
   err := json.Unmarshal(msg, &eventData)
-  logger.WithFields(logrus.Fields{
-    "error":   err,
-    "message": eventData,
-  }).Info("EventBridge event")
+
+  logger.Info().
+    Err(err).
+    Interface("Message", eventData).
+    Msg("EventBridge event")
+
   return nil, err
 }
 

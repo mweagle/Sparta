@@ -22,11 +22,11 @@ awsEvents "github.com/aws/aws-lambda-go/events"
 func reactorFunc(ctx context.Context,
                     record *awsEvents.KinesisFirehoseEventRecord)
                     (*awsEvents.KinesisFirehoseResponseRecord, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-  logger.WithFields(logrus.Fields{
-    "Record": record,
-  }).Info("Kinesis Firehose Event")
+  logger.Info().
+    Interface("Record", record).
+    Msg("Kinesis Firehose Event")
 
   responseRecord = &awsEvents.KinesisFirehoseResponseRecord{
     RecordID: record.RecordID,

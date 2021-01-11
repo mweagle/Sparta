@@ -30,18 +30,20 @@ func helloWorld(ctx context.Context) (string, error) {
 The `ctx` parameter includes the following entries:
 
 - The [AWS LambdaContext](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#FromContext)
-- A [\*logrus.Logger](https://github.com/sirupsen/logrus) instance (`sparta.ContextKeyLogger`)
-- A per-request annotated [\*logrus.Entry](https://godoc.org/github.com/sirupsen/logrus#Entry) instance (`sparta.ContextKeyRequestLogger`)
+- A [\*zerolog.Logger](https://github.com/rs/zerolog) instance (`sparta.ContextKeyLogger`)
+- A per-request annotated [\*zerolog.Logger](https://godoc.org/github.com/rs/zerolog#Logger) instance (`sparta.ContextKeyRequestLogger`)
 
 # Creation
 
 The next step is to create a Sparta-wrapped version of the `helloWorld` function.
 
 ```go
-var lambdaFunctions []*sparta.LambdaAWSInfo
-helloWorldFn, _ := sparta.NewAWSLambda("Hello World",
-  helloWorld,
-  sparta.IAMRoleDefinition{})
+func main() {
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  helloWorldFn, _ := sparta.NewAWSLambda("Hello World", helloWorld, sparta.IAMRoleDefinition{})
+  ...
+}
+
 ```
 
 We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended. The next step is to register a new lambda target via [NewAWSLambda](https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda). `NewAWSLambda` accepts three parameters:
@@ -56,11 +58,17 @@ We first declare an empty slice `lambdaFunctions` to which all our service's lam
 The final step is to define a Sparta service under your application's `main` package and provide the non-empty slice of lambda functions:
 
 ```go
-sparta.Main("MyHelloWorldStack",
-  "Simple Sparta application that demonstrates core functionality",
-  lambdaFunctions,
-  nil,
-  nil)
+
+func main() {
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  helloWorldFn, _ := sparta.NewAWSLambda("Hello World", helloWorld, sparta.IAMRoleDefinition{})
+
+  sparta.Main("MyHelloWorldStack",
+    "Simple Sparta application that demonstrates core functionality",
+    lambdaFunctions,
+    nil,
+    nil)
+}
 ```
 
 `sparta.Main` accepts five parameters:

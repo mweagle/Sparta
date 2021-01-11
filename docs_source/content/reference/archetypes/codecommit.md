@@ -16,10 +16,10 @@ To create an event subscriber use a constructor as in:
 ```go
 // CodeCommit reactor function
 func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
-  logger.WithFields(logrus.Fields{
-    "Event": event,
-  }).Info("Event received")
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
+  logger.Info().
+    Interface("Event", event).
+    Msg("Event received")
   return &event, nil
 }
 

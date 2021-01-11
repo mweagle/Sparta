@@ -119,11 +119,11 @@ func echoS3DynamicBucketEvent(ctx context.Context,
   s3Event awsLambdaEvents.S3Event) (*awsLambdaEvents.S3Event, error) {
 
   discoveryInfo, discoveryInfoErr := sparta.Discover()
-  logger.WithFields(logrus.Fields{
-    "Event":        s3Event,
-    "Discovery":    discoveryInfo,
-    "DiscoveryErr": discoveryInfoErr,
-  }).Info("Event received")
+  logger.Info().
+    Interface("Event", s3Event).
+    Interface("Discovery", discoveryInfo).
+    Interface("DiscoveryErr", discoveryInfoErr).
+  .Msg("Event received")
 
   // Use discoveryInfo to determine the bucket name to which RawMessage should be stored
   ...
@@ -132,7 +132,7 @@ func echoS3DynamicBucketEvent(ctx context.Context,
 
 # Summary
 
-Given a set of registered Sparta lambda function, a typical `provision` build to create a new service follows this workflow. Items with dashed borders are opt-in user behaviors.
+Given a set of registered Sparta lambda functions, a typical `provision` build to create a new service follows this workflow. Items with dashed borders are opt-in user behaviors.
 
 {{< spartaflow >}}
 

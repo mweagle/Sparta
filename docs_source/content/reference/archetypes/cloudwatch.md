@@ -22,11 +22,11 @@ import (
 // CloudWatch reactor function
 func reactorFunc(ctx context.Context,
   cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-  logger.WithFields(logrus.Fields{
-    "Event": cwLogs,
-  }).Info("Cron triggered")
+  logger.Info().
+    Interface("Event", cwLogs).
+    Msg("Cron triggered")
   return "Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾", nil
 }
 
@@ -51,11 +51,12 @@ To create an event subscriber use a constructor as in:
 // CloudWatch reactor function
 func reactorFunc(ctx context.Context,
   cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-  logger.WithFields(logrus.Fields{
-    "Event": cwLogs,
-  }).Info("Cron triggered")
+  logger.Info().
+    Interface("Event", cwLogs).
+    Msg("Cron triggered")
+
   return "Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾", nil
 }
 

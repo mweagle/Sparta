@@ -32,13 +32,13 @@ To build a Sparta application, follow these steps:
        "github.com/aws/aws-sdk-go/aws/session"
        sparta "github.com/mweagle/Sparta"
        spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-       "github.com/sirupsen/logrus"
+       "github.com/rs/zerolog"
    )
 
    // Standard AWS λ function
 
    func helloWorld(ctx context.Context) (string, error) {
-       logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+       logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
        if loggerOk {
            logger.Info("Accessing structured logger 🙌")
        }

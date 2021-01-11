@@ -7,7 +7,7 @@ weight: 100
 
 # API Gateway
 
-One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
+One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS. This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/). In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
 
 {{% children description="true"   %}}
 
@@ -15,21 +15,21 @@ One of the most powerful ways to use AWS Lambda is to make function publicly ava
 
 Before moving on to the examples, it's suggested you familiarize yourself with the API Gateway concepts.
 
-* [Gettting Started with Amazon API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-intro.html)
+- [Gettting Started with Amazon API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-intro.html)
 
-The API Gateway presents a powerful and complex domain model.  In brief, to integrate with the API Gateway, a service must:
+The API Gateway presents a powerful and complex domain model. In brief, to integrate with the API Gateway, a service must:
 
-  1. Define one or more AWS Lambda functions
-  1. Create an API Gateway REST API instance
-  1. Create one or more resources associated with the REST API
-  1. Create one or more methods for each resource
-  1. For each method:
-      1. Define the method request params
-      1. Define the integration request mapping
-      1. Define the integration response mapping
-      1. Define the method response mapping
-  1. Create a stage for a REST API
-  1. Deploy the given stage
+1. Define one or more AWS Lambda functions
+1. Create an API Gateway REST API instance
+1. Create one or more resources associated with the REST API
+1. Create one or more methods for each resource
+1. For each method:
+   1. Define the method request params
+   1. Define the integration request mapping
+   1. Define the integration response mapping
+   1. Define the method response mapping
+1. Create a stage for a REST API
+1. Deploy the given stage
 
 See a the [echo example](/reference/apigateway/echo_event) for a complete version.
 
@@ -96,7 +96,7 @@ headers using the default VTL mappings, provide them as the optional third `map[
 func helloWorld(ctx context.Context,
   gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
 
-  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
   if loggerOk {
     logger.Info("Hello world structured log message")
   }
@@ -114,5 +114,5 @@ func helloWorld(ctx context.Context,
 
 ## Other Resources
 
-* [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)
-* [Use a Mapping Template to Override an API's Request and Response Parameters and Status Codes](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-override-request-response-parameters.html)
+- [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)
+- [Use a Mapping Template to Override an API's Request and Response Parameters and Status Codes](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-override-request-response-parameters.html)

@@ -49,58 +49,49 @@ gocf.Ref("AWS::StackName")
 
 ## Development
 
-
 ### How do I configure AWS SDK settings?
 
 Sparta relies on standard AWS SDK configuration settings. See the [official documentation](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html) for more information.
 
 During development, configuration is typically done through environment variables:
 
-  - `AWS_ACCESS_KEY_ID`
-  - `AWS_SECRET_ACCESS_KEY`
-  - `AWS_REGION`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION`
 
-### What are the *Minimum* IAM Privileges for Sparta developers?
+### What are the _Minimum_ IAM Privileges for Sparta developers?
 
 The absolute minimum set of privileges an account needs is the following [IAM Policy](https://awspolicygen.s3.amazonaws.com/policygen.html):
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Stmt1505975332000",
-            "Effect": "Allow",
-            "Action": [
-                "cloudformation:DescribeStacks",
-                "cloudformation:CreateStack",
-                "cloudformation:CreateChangeSet",
-                "cloudformation:DescribeChangeSet",
-                "cloudformation:ExecuteChangeSet",
-                "cloudformation:DeleteChangeSet",
-                "cloudformation:DeleteStack",
-                "iam:GetRole",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy",
-                "iam:PutRolePolicy"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "Stmt1505975332000",
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject",
-                "s3:GetBucketVersioning",
-                "s3:DeleteObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::PROVISION_TARGET_BUCKETNAME"
-            ]
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1505975332000",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:DescribeStacks",
+        "cloudformation:CreateStack",
+        "cloudformation:CreateChangeSet",
+        "cloudformation:DescribeChangeSet",
+        "cloudformation:ExecuteChangeSet",
+        "cloudformation:DeleteChangeSet",
+        "cloudformation:DeleteStack",
+        "iam:GetRole",
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:PutRolePolicy"
+      ],
+      "Resource": ["*"]
+    },
+    {
+      "Sid": "Stmt1505975332000",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetBucketVersioning", "s3:DeleteObject"],
+      "Resource": ["arn:aws:s3:::PROVISION_TARGET_BUCKETNAME"]
+    }
+  ]
 }
 ```
 
@@ -167,15 +158,14 @@ Your AWS user must have the following privileges. Ensure to update the `YOUR_S3_
 }
 ```
 
-
 ### What flags are defined during AWS AMI compilation?
 
-* **TAGS**:         `-tags lambdabinary`
-* **ENVIRONMENT**:  `GOOS=linux GOARCH=amd64`
+- **TAGS**: `-tags lambdabinary`
+- **ENVIRONMENT**: `GOOS=linux GOARCH=amd64`
 
 ### What working directory should I use?
 
-Your working directory should be the root of your Sparta application.  Eg, use
+Your working directory should be the root of your Sparta application. Eg, use
 
 ```go
 go run main.go provision --level info --s3Bucket $S3_BUCKET
@@ -193,21 +183,22 @@ See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
 
 Starting with Sparta [v0.11.2](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0112), you can supply an optional
 _--inplace_ argument to the `provision` command. If this is set when provisioning updates to an existing stack,
-your Sparta application will verify that the *only* updates to the CloudFormation stack are code-level updates. If
+your Sparta application will verify that the _only_ updates to the CloudFormation stack are code-level updates. If
 only code updates are detected, your Sparta application will parallelize [UpdateFunctionCode](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode) API calls directly to update the
 application code.
 
 Whether _--inplace_ is valid is based on evaluating the [ChangeSet](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html) results of the
 requested update operation.
 
-*NOTE*: The _inplace_ argument implies that your service state is not reflected in CloudFormation.
+_NOTE_: The _inplace_ argument implies that your service state is not reflected in CloudFormation.
 
 ## Event Sources - SES
+
 <hr />
 
 ### Where does the _SpartaRuleSet_ come from?
 
-SES only permits a single [active receipt rule](http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html).  Additionally, it's possible that multiple Sparta-based services are handing different SES recipients.
+SES only permits a single [active receipt rule](http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html). Additionally, it's possible that multiple Sparta-based services are handing different SES recipients.
 
 All Sparta-based services share the _SpartaRuleSet_ SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES [ReceiptRule](http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html).
 
@@ -216,6 +207,7 @@ All Sparta-based services share the _SpartaRuleSet_ SES ruleset, and uniquely id
 Initial _SpartaRuleSet_ will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn't attempt to override the user setting.
 
 ## Operations
+
 <hr />
 
 ### How can I provision a service dashboard?
@@ -253,7 +245,7 @@ func lambdaDecorator(serviceName string,
 	buildID string,
 	cfTemplate *gocf.Template,
 	context map[string]interface{},
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// setup CloudWatch alarm
 	var alarmDimensions gocf.CloudWatchMetricDimensionList
@@ -280,10 +272,9 @@ func lambdaDecorator(serviceName string,
 }
 ```
 
-
 ### Where can I view my function's `*logger` output?
 
-Each lambda function includes privileges to write to [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home).  The `*logrus.logger` output is written (with a brief delay) to a lambda-specific log group.
+Each lambda function includes privileges to write to [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home). The `*zerolog.Logger` output is written (with a brief delay) to a lambda-specific log group.
 
 The CloudWatch log group name includes a sanitized version of your **go** function name & owning service name.
 
@@ -295,8 +286,8 @@ Visit the [CloudWatch Metrics](https://aws.amazon.com/cloudwatch/) AWS console p
 
 Sparta publishes two counters:
 
-  * `ProcessSpawned`: A new **go** process was spawned to handle requests
-  * `ProcessReused`: An existing **go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
+- `ProcessSpawned`: A new **go** process was spawned to handle requests
+- `ProcessReused`: An existing **go** process was used to handle requests. See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
 
 ### How can I include additional AWS resources as part of my Sparta application?
 
@@ -336,14 +327,14 @@ cfTemplate.AddResource(aliasResourceName, aliasResource)
 
 ### How do I forward additional metrics?
 
-Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics `putMetric` privileges.  Your lambda code can call `putMetric` with application-specific data.
+Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics `putMetric` privileges. Your lambda code can call `putMetric` with application-specific data.
 
 ### How do I setup alerts on additional metrics?
 
-Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with the needed [AWS::CloudWatch::Alarm](https://godoc.org/github.com/crewjam/go-cloudformation#CloudWatchAlarm) values.  Use [CloudFormationResourceName(prefix, ...parts)](https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName) to help generate unique resource names.
+Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with the needed [AWS::CloudWatch::Alarm](https://godoc.org/github.com/crewjam/go-cloudformation#CloudWatchAlarm) values. Use [CloudFormationResourceName(prefix, ...parts)](https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName) to help generate unique resource names.
 
 ### How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?
 
-The list of registered output provider types is defined by `cloudformationTypeMapDiscoveryOutputs` in [cloudformation_resources.go](https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go).  See the [CloudFormation Resource Types Reference](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for information on interpreting the values.
+The list of registered output provider types is defined by `cloudformationTypeMapDiscoveryOutputs` in [cloudformation_resources.go](https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go). See the [CloudFormation Resource Types Reference](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for information on interpreting the values.
 
 ## Future
