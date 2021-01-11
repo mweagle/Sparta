@@ -32,7 +32,7 @@ disableLandingPageButton = true
 disableNextPrev = false
 editURL = "https://github.com/mweagle/Sparta/tree/docs/content/"
 ordersectionsby = "weight"
-showVisitedLinks = false
+showVisitedLinks = true
 themeVariant = "sparta"
 titleSeparator = "::"
 
@@ -47,16 +47,21 @@ weight = 1
 
 [[Languages.en.menu.shortcuts]]
 identifier = "ds"
-name = "<i class='fab fa-fw fa-github'></i> Github repo"
-url = "https://github.com/mweagle/Sparta"
+name = "<i class='fab fa-aws'></i> AWS Lambda"
+url = "https://aws.amazon.com/lambda/"
 weight = 10
 
 [[Languages.en.menu.shortcuts]]
-name = "<i class='fas fa-fw fa-camera'></i> Showcases"
+name = "<i class='fab fa-fw fa-github'></i> Github repo"
+url = "https://github.com/mweagle/Sparta"
+weight = 20
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fas fa-fw fa-camera'></i> Examples"
 url = "https://github.com/mweagle?utf8=%E2%9C%93&tab=repositories&q=Sparta&type=&language="
-weight = 11
+weight = 30
 
 [[Languages.en.menu.shortcuts]]
 name = "<i class='fas fa-fw fa-signal'></i> Release History"
 url = "https://github.com/mweagle/Sparta/blob/master/CHANGES.md"
-weight = 12
+weight = 40
