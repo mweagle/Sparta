@@ -234,53 +234,6 @@ func updateStackViaChangeSet(serviceName string,
 
 }
 
-// func existingLambdaResourceVersions(serviceName string,
-// 	lambdaResourceName string,
-// 	session *session.Session,
-// 	logger *zerolog.Logger) (*lambda.ListVersionsByFunctionOutput, error) {
-
-// 	errorIsNotExist := func(apiError error) bool {
-// 		return apiError != nil && strings.Contains(apiError.Error(), "does not exist")
-// 	}
-
-// 	logger.WithFields(logrus.Fields{
-// 		"ResourceName": lambdaResourceName,
-// 	}).Info("Fetching existing function versions")
-
-// 	cloudFormationSvc := cloudformation.New(session)
-// 	describeParams := &cloudformation.DescribeStackResourceInput{
-// 		StackName:         aws.String(serviceName),
-// 		LogicalResourceId: aws.String(lambdaResourceName),
-// 	}
-// 	describeResponse, describeResponseErr := cloudFormationSvc.DescribeStackResource(describeParams)
-// 	logger.WithFields(logrus.Fields{
-// 		"Response":    describeResponse,
-// 		"ResponseErr": describeResponseErr,
-// 	}).Debug("Describe response")
-// 	if errorIsNotExist(describeResponseErr) {
-// 		return nil, nil
-// 	} else if describeResponseErr != nil {
-// 		return nil, describeResponseErr
-// 	}
-
-// 	listVersionsParams := &lambda.ListVersionsByFunctionInput{
-// 		FunctionName: describeResponse.StackResourceDetail.PhysicalResourceId,
-// 		MaxItems:     aws.Int64(128),
-// 	}
-// 	lambdaSvc := lambda.New(session)
-// 	listVersionsResp, listVersionsRespErr := lambdaSvc.ListVersionsByFunction(listVersionsParams)
-// 	if errorIsNotExist(listVersionsRespErr) {
-// 		return nil, nil
-// 	} else if listVersionsRespErr != nil {
-// 		return nil, listVersionsRespErr
-// 	}
-// 	logger.WithFields(logrus.Fields{
-// 		"Response":    listVersionsResp,
-// 		"ResponseErr": listVersionsRespErr,
-// 	}).Debug("ListVersionsByFunction")
-// 	return listVersionsResp, nil
-// }
-
 func toExpressionSlice(input interface{}) ([]string, error) {
 	var expressions []string
 	slice, sliceOK := input.([]interface{})
