@@ -76,6 +76,7 @@ To get started building and verifying local changes:
 1. `go get -u -d github.com/magefile/mage`
 1. In the .../mweagle/Sparta directory, run `mage -l` to list the current targets:
 
+```
 \$ mage -l
 Targets:
 build the application
@@ -105,7 +106,7 @@ publish the latest source
 test runs the Sparta tests
 testCover runs the test and opens up the resulting report
 travisBuild is the task to build in the context of a Travis CI pipeline
-
+```
 Confirm tests are passing on `HEAD` by first running `mage -v test`.
 
 As you periodically make local changes, run `mage -v test` to confirm backward compatibility.
