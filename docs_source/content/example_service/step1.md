@@ -10,13 +10,13 @@ Sparta is a framework for developing and deploying **go** based AWS Lambda-backe
 Please be aware that running Lambda functions may incur [costs](https://aws.amazon.com/lambda/pricing"). Be sure to decommission Sparta stacks after you are finished using them (via the `delete` command line option) to avoid unwanted charges. It's likely that you'll be well under the free tier, but secondary AWS resources provisioned during development (eg, Kinesis streams) are not pay-per-invocation.
 {{% /notice %}}
 
-# Preconditions
+## Preconditions
 
 Sparta uses the [AWS SDK for Go](http://aws.amazon.com/sdk-for-go/) to interact with AWS APIs. Before you get started, ensure that you've properly configured the [SDK credentials](https://github.com/aws/aws-sdk-go/wiki/configuring-sdk).
 
 Note that you must use an AWS region that supports Lambda. Consult the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the most up to date release information.
 
-# Lambda Definition
+## Lambda Definition
 
 The first place to start is with the lambda function definition.
 
@@ -33,7 +33,7 @@ The `ctx` parameter includes the following entries:
 - A [\*zerolog.Logger](https://github.com/rs/zerolog) instance (`sparta.ContextKeyLogger`)
 - A per-request annotated [\*zerolog.Logger](https://godoc.org/github.com/rs/zerolog#Logger) instance (`sparta.ContextKeyRequestLogger`)
 
-# Creation
+## Creation
 
 The next step is to create a Sparta-wrapped version of the `helloWorld` function.
 
@@ -53,7 +53,7 @@ We first declare an empty slice `lambdaFunctions` to which all our service's lam
 - `string|IAMRoleDefinition` : _Either_ a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, _OR_ a `sparta.IAMRoleDefinition` value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
   - In this example, we're defining a new `IAMRoleDefinition` as part of the stack. This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
 
-# Delegation
+## Delegation
 
 The final step is to define a Sparta service under your application's `main` package and provide the non-empty slice of lambda functions:
 
@@ -85,7 +85,7 @@ func main() {
 
 Delegating `main()` to `Sparta.Main()` transforms the set of lambda functions into a standalone executable with several command line options. Run `go run main.go --help` to see the available options.
 
-# Putting It Together
+## Putting It Together
 
 Putting everything together, and including the necessary imports, we have:
 
@@ -118,7 +118,7 @@ func main() {
 }
 ```
 
-# Running It
+## Running It
 
 Next download the Sparta dependencies via:
 
@@ -199,7 +199,7 @@ INFO[0033] Total elapsed time                            Duration (s)=33
 
 Once the stack has been provisioned (`CREATE_COMPLETE`), login to the AWS console and navigate to the Lambda section.
 
-# Testing
+## Testing
 
 Find your Lambda function in the list of AWS Lambda functions and click the hyperlink. The display name will be prefixed by the name of your stack (_MyHelloWorldStack_ in our example):
 
@@ -213,7 +213,7 @@ Accept the and name the _Hello World_ event template sample (our Lambda function
 
 ![AWS Lambda Execution](/images/overview/AWS_Lambda_Execution.png)
 
-# Cleaning Up
+## Cleaning Up
 
 To prevent unauthorized usage and potential charges, make sure to `delete` your stack before moving on:
 
@@ -231,11 +231,11 @@ INFO[0000] Stack existence check                         Exists=true Name=MyHell
 INFO[0000] Delete request submitted                      Response="{\n\n}"
 ```
 
-# Conclusion
+## Conclusion
 
 Congratulations! You've just deployed your first "serverless" service. The following sections will dive
 deeper into what's going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.
 
-# Next Steps
+## Next Steps
 
 Walkthrough what Sparta actually does to deploy your application in the [next section](/reference/intro_example/step2/).
