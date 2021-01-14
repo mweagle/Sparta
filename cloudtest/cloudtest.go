@@ -3,7 +3,6 @@ package cloudtest
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 	"sync"
 	"testing"
@@ -36,31 +35,6 @@ type functionCache struct {
 	perStackFunctions map[string][]*lambda.GetFunctionOutput
 	freeFunctions     map[string]*lambda.GetFunctionOutput
 	mu                sync.RWMutex
-}
-
-func (fc *functionCache) isJMESMatch(jmesSelector string, output *lambda.GetFunctionOutput) bool {
-	jsonData, jsonDataErr := json.MarshalIndent(output, "", "  ")
-	if jsonDataErr != nil {
-		return false
-	}
-	// Unmarshalled data
-	var unmarshalledData interface{}
-	unmarshalErr := json.Unmarshal(jsonData, &unmarshalledData)
-	if unmarshalErr != nil {
-		return false
-	}
-	matchResult, matchResultErr := jmespath.Search(jmesSelector, unmarshalledData)
-	if matchResultErr != nil {
-		fmt.Printf("ERROR: %#v\n", matchResultErr)
-	} else if matchResult != nil {
-		_, isOk := matchResult.(string)
-		if isOk {
-			return isOk
-		}
-		//formattedMatch, _ := json.Marshal(matchResult)
-		//fmt.Printf("Could not coerce match to string: \n\n%s\n\n", formattedMatch)
-	}
-	return false
 }
 
 func (fc *functionCache) getFunction(t CloudTest, functionName string) *lambda.GetFunctionOutput {
@@ -111,8 +85,6 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 		// Get all the stack resources, then for each LambdaFunction
 		// get the GetFunctionOutput information. For each one, apply the
 		// jmesSelector and if it returns an ARN, we're done.
-
-		// TODO - first try the cloudtest cached functions in this stackname
 		cloudFormationSvc := cloudformation.New(t.Session())
 		params := &cloudformation.ListStackResourcesInput{
 			StackName: aws.String(stackName),
@@ -153,7 +125,10 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 	// Ok, now for each one turn it into JSON, parse it, apply
 	// the JMESPath, and if it returns with an ARN, use it...
 	for _, eachFunctionOutput := range stackFuncs {
-		if fc.isJMESMatch(jmesSelector, eachFunctionOutput) {
+		isMatch, matchErr := IsJMESMatch(jmesSelector, eachFunctionOutput)
+		if matchErr != nil {
+			t.Errorf("JMES selection error: %s\n", matchErr.Error())
+		} else if isMatch {
 			return eachFunctionOutput
 		}
 	}
@@ -161,6 +136,32 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+// IsJMESMatch is a function that accepts a GetFunctionOutput and a
+// JMES selector expression. The return value is (isMatch, error). It's exposed
+// as a packge public to allow for callers to write their own providers
+func IsJMESMatch(jmesSelector string, output *lambda.GetFunctionOutput) (bool, error) {
+	jsonData, jsonDataErr := json.MarshalIndent(output, "", "  ")
+	if jsonDataErr != nil {
+		return false, nil
+	}
+	// Unmarshalled data
+	var unmarshalledData interface{}
+	unmarshalErr := json.Unmarshal(jsonData, &unmarshalledData)
+	if unmarshalErr != nil {
+		return false, nil
+	}
+	matchResult, matchResultErr := jmespath.Search(jmesSelector, unmarshalledData)
+	if matchResultErr != nil {
+		return false, matchResultErr
+	} else if matchResult != nil {
+		_, isOk := matchResult.(string)
+		if isOk {
+			return isOk, nil
+		}
+	}
+	return false, nil
+}
 
 // CloudTest is the interface passed to testing instances
 type CloudTest interface {
