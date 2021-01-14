@@ -864,7 +864,8 @@ func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context,
 	}
 
 	// S3 site archive parameters?
-	if cto.userdata.s3SiteContext != nil {
+	if cto.userdata.s3SiteContext != nil &&
+		cto.userdata.s3SiteContext.s3Site != nil {
 		// Code S3 info
 		cto.buildContext.cfTemplate.Parameters[StackParamS3SiteArchiveKey] = newStackParameter(
 			"String",
