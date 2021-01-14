@@ -36,7 +36,7 @@ func (sls *stackLambdasSelector) Select(t CloudTest) (*lambda.GetFunctionOutput,
 
 	functionOutput := cache.getStackFunction(t, sls.stackName, sls.jmesSelector)
 	if functionOutput == nil {
-		return nil, errors.Errorf("Failed to find AWS Laambda in stack %s for selector: %s",
+		return nil, errors.Errorf("Failed to find AWS Lambda in stack %s for selector: %s",
 			sls.stackName,
 			sls.jmesSelector)
 	}
