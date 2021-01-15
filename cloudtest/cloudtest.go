@@ -139,7 +139,7 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 
 // IsJMESMatch is a function that accepts a GetFunctionOutput and a
 // JMES selector expression. The return value is (isMatch, error). It's exposed
-// as a packge public to allow for callers to write their own providers
+// as a package public to allow for callers to write their own providers
 func IsJMESMatch(jmesSelector string, output *lambda.GetFunctionOutput) (bool, error) {
 	jsonData, jsonDataErr := json.MarshalIndent(output, "", "  ")
 	if jsonDataErr != nil {
