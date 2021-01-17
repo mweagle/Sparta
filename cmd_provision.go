@@ -69,7 +69,7 @@ func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.Strin
 	}
 	totalDeps := len(deps)
 	var templateFuncMap = template.FuncMap{
-		// The name "inc" is what the function will be called in the template text.
+		// The name "trailingComma" is what the function will be called in the template text.
 		"trailingComma": func() string {
 			totalDeps--
 			if totalDeps > 0 {
