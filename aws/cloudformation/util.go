@@ -22,7 +22,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/briandowns/spinner"
-	humanize "github.com/dustin/go-humanize"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -468,15 +467,15 @@ func WaitForStackOperationComplete(stackID string,
 
 	for waitComplete := false; !waitComplete; {
 		// Startup the spinner if needed...
-
+		deltaTime := time.Since(startTime)
 		if !cliSpinnerStarted {
 			cliSpinner.Start()
 			defer cliSpinner.Stop()
 			cliSpinnerStarted = true
 		}
-		spinnerText := fmt.Sprintf(" %s (requested: %s)",
+		spinnerText := fmt.Sprintf(" %s (elapsed: %s)",
 			pollingMessage,
-			humanize.Time(startTime))
+			deltaTime.String())
 		cliSpinner.Suffix = spinnerText
 
 		// Then sleep and figure out if things are done...

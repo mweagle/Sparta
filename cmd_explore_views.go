@@ -1,3 +1,5 @@
+// +build !lambdabinary
+
 package sparta
 
 import (

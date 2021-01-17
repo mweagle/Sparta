@@ -12,7 +12,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	humanize "github.com/dustin/go-humanize"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -102,7 +101,7 @@ func UploadLocalFileToS3(localPath string,
 		Str("Path", logPath).
 		Str("Bucket", S3Bucket).
 		Str("Key", S3KeyName).
-		Str("Size", humanize.Bytes(uint64(stat.Size()))).
+		Int64("Size", stat.Size()).
 		Msg("Uploading")
 
 	uploader := s3manager.NewUploader(awsSession)

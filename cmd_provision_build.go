@@ -24,7 +24,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	humanize "github.com/dustin/go-humanize"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
@@ -219,7 +218,7 @@ func uploadLocalFileToS3(awsSession *session.Session,
 			Str("Bucket", s3ObjectBucket).
 			Str("Key", s3ObjectKey).
 			Str("File", filepath.Base(localPath)).
-			Str("Size", humanize.Bytes(uint64(filesize))).
+			Int64("Size", filesize).
 			Msg(noopMessage("S3 upload"))
 
 		s3URL = fmt.Sprintf("https://%s-s3.amazonaws.com/%s",
