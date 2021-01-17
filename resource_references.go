@@ -105,8 +105,8 @@ func isResolvedResourceType(resource *resourceRef,
 	return false
 }
 
-// visitResolvedEventSourceMapping is a utility function that visits all the EventSourceMapping
-// entries for the given lambdaAWSInfo struct
+// visitResolvedEventSourceMapping is a utility function that visits all
+// the EventSourceMapping entries for the given lambdaAWSInfo struct
 func visitResolvedEventSourceMapping(visitor resolvedResourceVisitor,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	template *gocf.Template,
