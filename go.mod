@@ -43,9 +43,10 @@ require (
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/pkg/browser v0.0.0-20210115035449-ce105d075bb4
 	github.com/pkg/errors v0.9.1
-	github.com/rivo/tview v0.0.0-20210111184519-c818a0c789ee
+	github.com/rivo/tview v0.0.0-20210117162420-745e4ceeb711
 	github.com/rs/zerolog v1.20.0
 	github.com/shirou/gopsutil v3.20.12+incompatible
+	github.com/shirou/gopsutil/v3 v3.20.12
 	github.com/spf13/cobra v1.1.1
 	github.com/ulikunitz/xz v0.5.9 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0
