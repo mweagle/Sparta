@@ -11,11 +11,11 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rs/zerolog"
-	gopsutilCPU "github.com/shirou/gopsutil/cpu"
-	gopsutilDisk "github.com/shirou/gopsutil/disk"
-	gopsutilHost "github.com/shirou/gopsutil/host"
-	gopsutilLoad "github.com/shirou/gopsutil/load"
-	gopsutilNet "github.com/shirou/gopsutil/net"
+	gopsutilCPU "github.com/shirou/gopsutil/v3/cpu"
+	gopsutilDisk "github.com/shirou/gopsutil/v3/disk"
+	gopsutilHost "github.com/shirou/gopsutil/v3/host"
+	gopsutilLoad "github.com/shirou/gopsutil/v3/load"
+	gopsutilNet "github.com/shirou/gopsutil/v3/net"
 )
 
 // publishMetrics is the actual metric publishing logic. T
