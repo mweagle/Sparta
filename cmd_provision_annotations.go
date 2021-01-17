@@ -3,8 +3,10 @@
 package sparta
 
 import (
+	"fmt"
 	"reflect"
 	"runtime"
+	"strings"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
@@ -21,14 +23,27 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 
 	policyStatements := []spartaIAM.PolicyStatement{}
 
-	if isResolvedResourceType(resource, template, ":dynamodb:", &gocf.DynamoDBTable{}) {
-		policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
-	} else if isResolvedResourceType(resource, template, ":kinesis:", &gocf.KinesisStream{}) {
-		policyStatements = append(policyStatements, CommonIAMStatements.Kinesis...)
-	} else if isResolvedResourceType(resource, template, ":sqs:", &gocf.SQSQueue{}) {
-		policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
-	} else {
-		logger.Debug().
+	// Map the types to their common statements
+	resourceToStatementsMap := map[gocf.ResourceProperties][]spartaIAM.PolicyStatement{
+		&gocf.DynamoDBTable{}:  CommonIAMStatements.DynamoDB,
+		&gocf.KinesisStream{}:  CommonIAMStatements.Kinesis,
+		&gocf.SQSQueue{}:       CommonIAMStatements.SQS,
+		&gocf.MSKCluster{}:     CommonIAMStatements.MSKCluster,
+		&gocf.AmazonMQBroker{}: CommonIAMStatements.AmazonMQBroker,
+	}
+	preLengthStatements := len(policyStatements)
+	for eachResource, eachPolicyStatements := range resourceToStatementsMap {
+		// Split the type
+		splitTypes := strings.Split(eachResource.CfnResourceType(), "::")
+		if len(splitTypes) == 3 {
+			typeHint := fmt.Sprintf(":%s:", strings.ToLower(splitTypes[1]))
+			if isResolvedResourceType(resource, template, typeHint, eachResource) {
+				policyStatements = append(policyStatements, eachPolicyStatements...)
+			}
+		}
+	}
+	if preLengthStatements == len(policyStatements) {
+		logger.Info().
 			Interface("Resource", resource).
 			Msg("No additional EventSource IAM permissions found for event type")
 	}
@@ -65,9 +80,12 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 	// Update the metdata with a reference to the output of each
 	// depended on item...
 	for _, eachDependsKey := range lambdaAWSInfo.DependsOn {
-		dependencyText, dependencyTextErr := discoveryResourceInfoForDependency(template, eachDependsKey, logger)
+		dependencyText, dependencyTextErr := discoveryResourceInfoForDependency(template,
+			eachDependsKey,
+			logger)
 		if dependencyTextErr != nil {
-			return nil, errors.Wrapf(dependencyTextErr, "Failed to determine discovery info for resource")
+			return nil, errors.Wrapf(dependencyTextErr,
+				"Failed to determine discovery info for resource")
 		}
 		depMap[eachDependsKey] = string(dependencyText)
 	}
@@ -115,6 +133,8 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *zero
 func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 	template *gocf.Template,
 	logger *zerolog.Logger) error {
+
+	// TODO - this is brittle
 
 	//
 	// BEGIN

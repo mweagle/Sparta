@@ -90,11 +90,13 @@ var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudfor
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
 var CommonIAMStatements = struct {
-	Core     []spartaIAM.PolicyStatement
-	VPC      []spartaIAM.PolicyStatement
-	DynamoDB []spartaIAM.PolicyStatement
-	Kinesis  []spartaIAM.PolicyStatement
-	SQS      []spartaIAM.PolicyStatement
+	Core           []spartaIAM.PolicyStatement
+	VPC            []spartaIAM.PolicyStatement
+	DynamoDB       []spartaIAM.PolicyStatement
+	Kinesis        []spartaIAM.PolicyStatement
+	SQS            []spartaIAM.PolicyStatement
+	MSKCluster     []spartaIAM.PolicyStatement
+	AmazonMQBroker []spartaIAM.PolicyStatement
 }{
 	Core: []spartaIAM.PolicyStatement{
 		{
@@ -161,6 +163,35 @@ var CommonIAMStatements = struct {
 				"SQS:ChangeMessageVisibility",
 				"SQS:DeleteMessage",
 				"SQS:ReceiveMessage",
+			},
+		},
+	},
+	MSKCluster: []spartaIAM.PolicyStatement{
+		{
+			Effect: "Allow",
+			Action: []string{
+				"kafka:DescribeCluster",
+				"kafka:GetBootstrapBrokers",
+				"ec2:CreateNetworkInterface",
+				"ec2:DescribeNetworkInterfaces",
+				"ec2:DescribeVpcs",
+				"ec2:DeleteNetworkInterface",
+				"ec2:DescribeSubnets",
+				"ec2:DescribeSecurityGroups",
+			},
+		},
+	},
+	AmazonMQBroker: []spartaIAM.PolicyStatement{
+		{
+			Effect: "Allow",
+			Action: []string{"mq:DescribeBroker",
+				"secretsmanager:GetSecretValue",
+				"ec2:CreateNetworkInterface",
+				"ec2:DeleteNetworkInterface",
+				"ec2:DescribeNetworkInterfaces",
+				"ec2:DescribeSecurityGroups",
+				"ec2:DescribeSubnets",
+				"ec2:DescribeVpcs",
 			},
 		},
 	},
