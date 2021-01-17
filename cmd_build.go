@@ -99,6 +99,19 @@ type buildContext struct {
 	workflowHooksContext context.Context
 }
 
+// relativePath returns the relative path of inputPath if it's relative to the current
+// workint directory
+func relativePath(inputPath string) string {
+	cwd, cwdErr := os.Getwd()
+	if cwdErr == nil {
+		relPath := strings.TrimPrefix(inputPath, cwd)
+		if relPath != inputPath {
+			inputPath = fmt.Sprintf(".%s", relPath)
+		}
+	}
+	return inputPath
+}
+
 // Encapsulate calling the archive hooks
 func callArchiveHook(lambdaArchive *zip.Writer,
 	userdata *userdata,

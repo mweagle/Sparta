@@ -15,6 +15,25 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
+
+// describeInfoValue is a utility function that accepts
+// some type of dynamic gocf value and transforms it into
+// something that is `describe` output compatible
+func describeInfoValue(dynamicValue interface{}) string {
+	switch typedArn := dynamicValue.(type) {
+	case string:
+		return typedArn
+	case gocf.Stringable:
+		data, dataErr := json.Marshal(typedArn)
+		if dataErr != nil {
+			data = []byte(fmt.Sprintf("%v", typedArn))
+		}
+		return string(data)
+	default:
+		panic(fmt.Sprintf("Unsupported dynamic value type for `describe`: %+v", typedArn))
+	}
+}
+
 type descriptionNode struct {
 	Name     string
 	Relation string

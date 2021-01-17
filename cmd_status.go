@@ -3,6 +3,7 @@
 package sparta
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,6 +13,15 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
+
+func logSectionHeader(text string,
+	dividerWidth int,
+	logger *zerolog.Logger) {
+	// Add a nice divider if there are Stack specific output
+	outputHeader := fmt.Sprintf("%s ", text)
+	suffix := strings.Repeat("▬", dividerWidth-len(outputHeader))
+	logger.Info().Msgf("%s%s", outputHeader, suffix)
+}
 
 // Status produces a status report for the given stack
 func Status(serviceName string,

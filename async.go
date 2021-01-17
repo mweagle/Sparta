@@ -1,46 +1,8 @@
 package sparta
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-	"strings"
 	"sync"
-
-	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/rs/zerolog"
 )
-
-// describeInfoValue is a utility function that accepts
-// some type of dynamic gocf value and transforms it into
-// something that is `describe` output compatible
-func describeInfoValue(dynamicValue interface{}) string {
-	switch typedArn := dynamicValue.(type) {
-	case string:
-		return typedArn
-	case gocf.Stringable:
-		data, dataErr := json.Marshal(typedArn)
-		if dataErr != nil {
-			data = []byte(fmt.Sprintf("%v", typedArn))
-		}
-		return string(data)
-	default:
-		panic(fmt.Sprintf("Unsupported dynamic value type for `describe`: %+v", typedArn))
-	}
-}
-
-// relativePath returns the relative path of logPath if it's relative to the current
-// workint directory
-func relativePath(logPath string) string {
-	cwd, cwdErr := os.Getwd()
-	if cwdErr == nil {
-		relPath := strings.TrimPrefix(logPath, cwd)
-		if relPath != logPath {
-			logPath = fmt.Sprintf(".%s", relPath)
-		}
-	}
-	return logPath
-}
 
 // workResult is the result from a worker task
 type workResult interface {
@@ -147,13 +109,4 @@ func (p *workerPool) work() {
 	for task := range p.tasksChan {
 		task.Run(&p.wg)
 	}
-}
-
-func logSectionHeader(text string,
-	dividerWidth int,
-	logger *zerolog.Logger) {
-	// Add a nice divider if there are Stack specific output
-	outputHeader := fmt.Sprintf("%s ", text)
-	suffix := strings.Repeat("▬", dividerWidth-len(outputHeader))
-	logger.Info().Msgf("%s%s", outputHeader, suffix)
 }
