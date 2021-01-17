@@ -62,43 +62,13 @@ func marshalBool(boolValue bool) *gocf.BoolExpr {
 }
 
 // resourceOutputs is responsible for returning the conditional
-// set of CloudFormation outputs for a given resource type.
+// set of CloudFormation outputs for a given resource type. These are
+// produced from the schema
 func resourceOutputs(resourceName string,
 	resource gocf.ResourceProperties,
 	logger *zerolog.Logger) ([]string, error) {
 
-	outputProps := []string{}
-	switch typedResource := resource.(type) {
-	case gocf.IAMRole:
-		// NOP
-	case *gocf.DynamoDBTable:
-		if typedResource.StreamSpecification != nil {
-			outputProps = append(outputProps, "StreamArn")
-		}
-	case gocf.DynamoDBTable:
-		if typedResource.StreamSpecification != nil {
-			outputProps = append(outputProps, "StreamArn")
-		}
-	case gocf.KinesisStream,
-		*gocf.KinesisStream:
-		outputProps = append(outputProps, "Arn")
-	case gocf.Route53RecordSet,
-		*gocf.Route53RecordSet:
-		// NOP
-	case gocf.S3Bucket,
-		*gocf.S3Bucket:
-		outputProps = append(outputProps, "DomainName", "WebsiteURL")
-	case gocf.SNSTopic,
-		*gocf.SNSTopic:
-		outputProps = append(outputProps, "TopicName")
-	case gocf.SQSQueue,
-		*gocf.SQSQueue:
-		outputProps = append(outputProps, "Arn", "QueueName")
-	default:
-		logger.Warn().
-			Str("ResourceType", fmt.Sprintf("%T", typedResource)).
-			Msg("Discovery information for dependency not yet implemented")
-	}
+	outputProps := resource.CfnResourceAttributes()
 	return outputProps, nil
 }
 
