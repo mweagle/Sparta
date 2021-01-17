@@ -6,11 +6,7 @@
     <description>Recent content in Reference on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate>
-    
-	<atom:link href="/reference/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate><atom:link href="/reference/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Discovery Service</title>
       <link>/reference/discovery/</link>
@@ -40,17 +36,6 @@ The following sections walk through provisioning a S3 bucket, declaring an expli
       <guid>/reference/hybrid_topologies/</guid>
       <description>At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&amp;rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
 However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &amp;ldquo;legacy&amp;rdquo; AWS services:</description>
-    </item>
-    
-    <item>
-      <title>Testing</title>
-      <link>/reference/testing/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>/reference/testing/</guid>
-      <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. You can test your lambda functions using standard go test functionality.
-To create proper event types, consider:
- AWS Lambda Go types Sparta types Use NewAPIGatewayMockRequest to generate API Gateway style requests.  </description>
     </item>
     
     <item>

@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func TestGoVersion(t *testing.T) {
-	logger := logrus.New()
-	goVersion, goVersionError := GoVersion(logger)
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+	goVersion, goVersionError := GoVersion(&logger)
 	if goVersionError != nil {
 		t.Fatalf("Failed to get go version: %s", goVersionError.Error())
 	}

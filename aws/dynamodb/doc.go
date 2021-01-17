@@ -6,7 +6,7 @@ into source-specific data.  Example:
     func s3EventListener(event *json.RawMessage,
                           context *sparta.LambdaContext,
                           w http.ResponseWriter,
-                          logger *logrus.Logger) {
+                          logger *zerolog.Logger) {
       var lambdaEvent spartaDynamoDB.Event
       err := json.Unmarshal([]byte(*event), &lambdaEvent)
       if err != nil {

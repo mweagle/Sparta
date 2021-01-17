@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // S3LambdaEventSourceResourceRequest is what the UserProperties
@@ -38,7 +38,7 @@ func (command *S3LambdaEventSourceResource) IAMPrivileges() []string {
 func (command S3LambdaEventSourceResource) updateNotification(isTargetActive bool,
 	session *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -85,9 +85,9 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 		NotificationConfiguration: config,
 	}
 
-	logger.WithFields(logrus.Fields{
-		"PutBucketNotificationConfigurationInput": putBucketNotificationConfigurationInput,
-	}).Debug("Updating bucket configuration")
+	logger.Debug().
+		Interface("PutBucketNotificationConfigurationInput", putBucketNotificationConfigurationInput).
+		Msg("Updating bucket configuration")
 
 	_, putErr := s3Svc.PutBucketNotificationConfiguration(putBucketNotificationConfigurationInput)
 	return nil, putErr
@@ -96,20 +96,20 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 // Create implements the custom resource create operation
 func (command S3LambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(true, awsSession, event, logger)
 }
 
 // Update implements the custom resource update operation
 func (command S3LambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(true, awsSession, event, logger)
 }
 
 // Delete implements the custom resource delete operation
 func (command S3LambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(false, awsSession, event, logger)
 }

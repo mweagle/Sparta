@@ -8,14 +8,13 @@ import (
 	"os"
 	"time"
 
-	validator "gopkg.in/go-playground/validator.v9"
-
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
-func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
+func platformLogSysInfo(lambdaFunc string, logger *zerolog.Logger) {
 	// NOP
 }
 
@@ -33,29 +32,6 @@ func RegisterCodePipelineEnvironment(environmentName string,
 	}
 	codePipelineEnvironments[environmentName] = environmentVariables
 	return nil
-}
-
-// NewLoggerWithFormatter returns a logger with the given formatter. If formatter
-// is nil, a TTY-aware formatter is used
-func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
-	logger := logrus.New()
-	// If there is an environment override, use that
-	envLogLevel := os.Getenv(envVarLogLevel)
-	if envLogLevel != "" {
-		level = envLogLevel
-	}
-
-	logLevel, err := logrus.ParseLevel(level)
-	if err != nil {
-		return nil, err
-	}
-
-	logger.Level = logLevel
-	if nil != formatter {
-		logger.Formatter = formatter
-	}
-	logger.Out = os.Stdout
-	return logger, nil
 }
 
 // Main defines the primary handler for transforming an application into a Sparta package.  The
@@ -91,9 +67,11 @@ func MainEx(serviceName string,
 		SpartaVersion)
 	CommandLineOptions.Root.Long = serviceDescription
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+
 		// Save the ServiceName in case a custom command wants it
 		OptionsGlobal.ServiceName = serviceName
 		OptionsGlobal.ServiceDescription = serviceDescription
+		OptionsGlobal.startTime = time.Now()
 
 		validateErr := validate.Struct(OptionsGlobal)
 		if nil != validateErr {
@@ -102,19 +80,12 @@ func MainEx(serviceName string,
 
 		// Format?
 		// Running in AWS?
-		disableColors := OptionsGlobal.DisableColors || isRunningInAWS()
-		var formatter logrus.Formatter
-		switch OptionsGlobal.LogFormat {
-		case "text", "txt":
-			formatter = &logrus.TextFormatter{
-				DisableColors: disableColors,
-				FullTimestamp: OptionsGlobal.TimeStamps,
-			}
-		case "json":
-			formatter = &logrus.JSONFormatter{}
-			disableColors = true
-		}
-		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
+		disableColors := OptionsGlobal.DisableColors ||
+			isRunningInAWS() ||
+			OptionsGlobal.LogFormat == "json"
+		logger, loggerErr := NewLoggerForOutput(OptionsGlobal.LogLevel,
+			OptionsGlobal.LogFormat,
+			disableColors)
 		if nil != loggerErr {
 			return loggerErr
 		}
@@ -125,58 +96,169 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger = logger
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
-		// Header information...
+		// Header information...,
 		displayPrettyHeader(headerDivider, disableColors, logger)
-		// Metadata about the build...
-		logger.WithFields(logrus.Fields{
-			"Option":    cmd.Name(),
-			"UTC":       (time.Now().UTC().Format(time.RFC3339)),
-			"LinkFlags": OptionsGlobal.LinkerFlags,
-		}).Info(welcomeMessage)
-		logger.Info(headerDivider)
 
+		// Metadata about the build...
+		logger.Info().
+			Str("Option", cmd.Name()).
+			Str("LinkFlags", OptionsGlobal.LinkerFlags).
+			Str("UTC", time.Now().UTC().Format(time.RFC3339)).
+			Msg(welcomeMessage)
+		logger.Info().Msg(headerDivider)
 		return nil
 	}
-
+	CommandLineOptions.Root.PersistentPostRunE = func(cmd *cobra.Command, args []string) error {
+		commandTimeDuration := time.Since(OptionsGlobal.startTime)
+		OptionsGlobal.Logger.Info().Msg(headerDivider)
+		curTime := time.Now()
+		OptionsGlobal.Logger.Info().
+			Str("Time (UTC)", curTime.UTC().Format(time.RFC3339)).
+			Str("Time (Local)", curTime.Format(time.RFC822)).
+			Dur(fmt.Sprintf("Duration (%s)", durationUnitLabel), commandTimeDuration).
+			Msg("Complete")
+		return nil
+	}
 	//////////////////////////////////////////////////////////////////////////////
 	// Version
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Version)
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Build
+	CommandLineOptions.Build.PreRunE = func(cmd *cobra.Command, args []string) error {
+		validateErr := validate.Struct(optionsBuild)
+
+		OptionsGlobal.Logger.Debug().
+			Interface("ValidateErr", validateErr).
+			Interface("OptionsProvision", optionsProvision).
+			Msg("Build validation results")
+		return validateErr
+	}
+
+	if nil == CommandLineOptions.Build.RunE {
+		CommandLineOptions.Build.RunE = func(cmd *cobra.Command, args []string) (provisionErr error) {
+			defer func() {
+				showOptionalAWSUsageInfo(provisionErr, OptionsGlobal.Logger)
+			}()
+
+			buildID, buildIDErr := computeBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
+			if nil != buildIDErr {
+				return buildIDErr
+			}
+
+			// Save the BuildID
+			StampedBuildID = buildID
+
+			// Ok, for this we're going some way to tell the Build Command
+			// where to write the output...I suppose we could just use a TeeWriter...
+			templateFile, templateFileErr := templateOutputFile(optionsProvision.OutputDir,
+				serviceName)
+			if templateFileErr != nil {
+				return templateFileErr
+			}
+			buildErr := Build(OptionsGlobal.Noop,
+				serviceName,
+				serviceDescription,
+				lambdaAWSInfos,
+				api,
+				site,
+				useCGO,
+				buildID,
+				optionsBuild.DockerFile,
+				optionsBuild.OutputDir,
+				OptionsGlobal.BuildTags,
+				OptionsGlobal.LinkerFlags,
+				templateFile,
+				workflowHooks,
+				OptionsGlobal.Logger)
+			closeErr := templateFile.Close()
+			if closeErr != nil {
+				OptionsGlobal.Logger.Warn().
+					Err(closeErr).
+					Msg("Failed to close template file output")
+			}
+			return buildErr
+		}
+	}
+	CommandLineOptions.Root.AddCommand(CommandLineOptions.Build)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Provision
 	CommandLineOptions.Provision.PreRunE = func(cmd *cobra.Command, args []string) error {
 		validateErr := validate.Struct(optionsProvision)
 
-		OptionsGlobal.Logger.WithFields(logrus.Fields{
-			"validateErr":      validateErr,
-			"optionsProvision": optionsProvision,
-		}).Debug("Provision validation results")
+		OptionsGlobal.Logger.Debug().
+			Interface("validateErr", validateErr).
+			Interface("optionsProvision", optionsProvision).
+			Msg("Provision validation results")
 		return validateErr
 	}
 
 	if nil == CommandLineOptions.Provision.RunE {
-		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
-			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
+		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) (provisionErr error) {
+			defer func() {
+				showOptionalAWSUsageInfo(provisionErr, OptionsGlobal.Logger)
+			}()
+
+			buildID, buildIDErr := computeBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
 			if nil != buildIDErr {
 				return buildIDErr
 			}
-			// Save the BuildID
 			StampedBuildID = buildID
-			return Provision(OptionsGlobal.Noop,
+
+			templateFile, templateFileErr := templateOutputFile(optionsProvision.OutputDir,
+				serviceName)
+			if templateFileErr != nil {
+				return templateFileErr
+			}
+
+			// TODO: Build, then Provision
+			buildErr := Build(OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
 				api,
 				site,
-				optionsProvision.S3Bucket,
 				useCGO,
-				optionsProvision.InPlace,
 				buildID,
-				optionsProvision.PipelineTrigger,
+				optionsProvision.DockerFile,
+				optionsProvision.OutputDir,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,
-				nil,
+				templateFile,
 				workflowHooks,
+				OptionsGlobal.Logger)
+
+			defer func() {
+				closeErr := templateFile.Close()
+				if closeErr != nil {
+					OptionsGlobal.Logger.Warn().
+						Err(closeErr).
+						Msg("Failed to close template file handle")
+				}
+			}()
+
+			if buildErr != nil {
+				return buildErr
+			}
+			// So for this, we need to take command
+			// line params and turn them into a map...
+			parseErr := optionsProvision.parseParams()
+			if parseErr != nil {
+				return parseErr
+			}
+			OptionsGlobal.Logger.Debug().
+				Interface("params", optionsProvision.stackParams).
+				Msg("ParseParams")
+
+			// We don't need to walk the params because we
+			// put values in the Metadata block for them all...
+			return Provision(OptionsGlobal.Noop,
+				templateFile.Name(),
+				optionsProvision.stackParams,
+				optionsProvision.stackTags,
+				optionsProvision.InPlace,
+				optionsProvision.PipelineTrigger,
 				OptionsGlobal.Logger)
 		}
 	}
@@ -194,8 +276,6 @@ func MainEx(serviceName string,
 	// Execute
 	if nil == CommandLineOptions.Execute.RunE {
 		CommandLineOptions.Execute.RunE = func(cmd *cobra.Command, args []string) error {
-
-			OptionsGlobal.Logger.Formatter = new(logrus.JSONFormatter)
 			// Ensure the discovery service is initialized
 			initializeDiscovery(OptionsGlobal.Logger)
 
@@ -212,9 +292,8 @@ func MainEx(serviceName string,
 		CommandLineOptions.Describe.RunE = func(cmd *cobra.Command, args []string) error {
 			validateErr := validate.Struct(optionsDescribe)
 			if nil != validateErr {
-				return validateErr
+				return errors.Wrapf(validateErr, "Failed to validate `describe` options")
 			}
-
 			fileWriter, fileWriterErr := os.Create(optionsDescribe.OutputFile)
 			if fileWriterErr != nil {
 				return fileWriterErr
@@ -222,9 +301,9 @@ func MainEx(serviceName string,
 			defer func() {
 				closeErr := fileWriter.Close()
 				if closeErr != nil {
-					OptionsGlobal.Logger.WithFields(logrus.Fields{
-						"error": closeErr,
-					}).Warn("Failed to close describe output writer")
+					OptionsGlobal.Logger.Warn().
+						Err(closeErr).
+						Msg("Failed to close describe output writer")
 				}
 			}()
 
@@ -308,10 +387,14 @@ func MainEx(serviceName string,
 	executedCmd, executeErr := CommandLineOptions.Root.ExecuteC()
 	if executeErr != nil {
 		if OptionsGlobal.Logger == nil {
-			newLogger, newLoggerErr := NewLogger("info")
+			// Use a default console logger
+			newLogger, newLoggerErr := NewLoggerForOutput(zerolog.InfoLevel.String(),
+				"text",
+				isRunningInAWS())
 			if newLoggerErr != nil {
 				fmt.Printf("Failed to create new logger: %v", newLoggerErr)
-				newLogger = logrus.New()
+				zLogger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+				newLogger = &zLogger
 			}
 			OptionsGlobal.Logger = newLogger
 		}
@@ -319,17 +402,20 @@ func MainEx(serviceName string,
 			validationErr, validationErrOk := executeErr.(validator.ValidationErrors)
 			if validationErrOk {
 				for _, eachError := range validationErr {
-					OptionsGlobal.Logger.Error(eachError)
+					OptionsGlobal.Logger.Error().
+						Interface("Error", eachError).
+						Msg("Validation error")
 				}
 				// Only show the usage if there were input validation errors
 				if executedCmd != nil {
 					usageErr := executedCmd.Usage()
 					if usageErr != nil {
-						OptionsGlobal.Logger.Error(usageErr)
+						OptionsGlobal.Logger.Error().Err(usageErr).Msg("Usage error")
 					}
 				}
 			} else {
-				OptionsGlobal.Logger.Error(executeErr)
+				displayPrettyHeader(headerDivider, isRunningInAWS(), OptionsGlobal.Logger)
+				OptionsGlobal.Logger.Error().Err(executeErr).Msg("Failed to execute command")
 			}
 		} else {
 			log.Printf("ERROR: %s", executeErr)

@@ -4,16 +4,15 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/sirupsen/logrus"
 )
 
 func cloudWatchLogsProcessor(ctx context.Context,
 	props map[string]interface{}) error {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID": lambdaCtx.AwsRequestID,
-	}).Info("CloudWatch log event")
-	Logger().Info("CloudWatch Log event received")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Msg("CloudWatch log event")
+	Logger().Info().Msg("CloudWatch Log event received")
 	return nil
 }
 
@@ -32,5 +31,8 @@ func ExampleCloudWatchLogsPermission() {
 	cloudWatchLogsLambda.Permissions = append(cloudWatchLogsLambda.Permissions, cloudWatchLogsPermission)
 
 	lambdaFunctions = append(lambdaFunctions, cloudWatchLogsLambda)
-	Main("CloudWatchLogs", "Registers for CloudWatch Logs", lambdaFunctions, nil, nil)
+	mainErr := Main("CloudWatchLogs", "Registers for CloudWatch Logs", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

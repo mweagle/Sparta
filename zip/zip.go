@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // FileHeaderAnnotator represents a callback function that accepts the current
@@ -22,7 +22,7 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 	source string,
 	rootSource string,
 	annotator FileHeaderAnnotator,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	linuxZipName := func(platformValue string) string {
 		return strings.Replace(platformValue, "\\", "/", -1)
@@ -54,10 +54,10 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 			fileHeader = annotatedHeader
 		}
 
-		logger.WithFields(logrus.Fields{
-			"Source": info.Name(),
-			"Header": fileHeader,
-		}).Debug("Adding ZIP")
+		logger.Debug().
+			Str("Source", info.Name()).
+			Interface("Header", fileHeader).
+			Msg("Adding ZIP")
 
 		// File info for the binary executable
 		binaryWriter, binaryWriterErr := zipWriter.CreateHeader(fileHeader)
@@ -72,15 +72,15 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		written, copyErr := io.Copy(binaryWriter, reader)
 		errClose := reader.Close()
 		if errClose != nil {
-			logger.WithFields(logrus.Fields{
-				"Error": errClose,
-			}).Warn("Failed to close Zip input stream")
+			logger.Warn().
+				Err(errClose).
+				Msg("Failed to close Zip input stream")
 		}
-		logger.WithFields(logrus.Fields{
-			"WrittenBytes": written,
-			"SourcePath":   fullPathSource,
-			"ZipName":      zipEntryName,
-		}).Debug("Archiving file")
+		logger.Debug().
+			Int64("WrittenBytes", written).
+			Str("SourcePath", fullPathSource).
+			Str("ZipName", zipEntryName).
+			Msg("Archiving file")
 		return copyErr
 	}
 
@@ -116,9 +116,9 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		defer func() {
 			closeErr := file.Close()
 			if closeErr != nil {
-				logger.WithFields(logrus.Fields{
-					"error": closeErr,
-				}).Warn("Failed to close zip writer")
+				logger.Warn().
+					Err(closeErr).
+					Msg("Failed to close zip writer")
 			}
 		}()
 
@@ -150,6 +150,6 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 // AddToZip creates a source object (either a file, or a directory that will be recursively
 // added) to a previously opened zip.Writer.  The archive path of `source` is relative to the
 // `rootSource` parameter.
-func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *logrus.Logger) error {
+func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *zerolog.Logger) error {
 	return AnnotateAddToZip(zipWriter, source, rootSource, nil, logger)
 }

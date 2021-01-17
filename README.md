@@ -11,6 +11,10 @@
 
 Visit [gosparta.io](https://gosparta.io) for complete documentation.
 
+## Version Info
+
+This is the breaking `v2` version of Sparta. The previous version is available at at the `/v1` branch.
+
 ## Overview
 
 Sparta takes a set of _golang_ functions and automatically provisions them in
@@ -107,6 +111,7 @@ test runs the Sparta tests
 testCover runs the test and opens up the resulting report
 travisBuild is the task to build in the context of a Travis CI pipeline
 ```
+
 Confirm tests are passing on `HEAD` by first running `mage -v test`.
 
 As you periodically make local changes, run `mage -v test` to confirm backward compatibility.

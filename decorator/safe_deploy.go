@@ -1,12 +1,13 @@
 package decorator
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // codeDeployLambdaUpdateDecorator is the per-function decorator
@@ -14,16 +15,15 @@ import (
 func codeDeployLambdaUpdateDecorator(updateType string,
 	codeDeployApplicationName string,
 	codeDeployRoleName string) sparta.TemplateDecorator {
-	return func(serviceName string,
+	return func(ctx context.Context,
+		serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		template *gocf.Template,
-		context map[string]interface{},
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		safeDeployResourceName := func(resType string) string {
 			return sparta.CloudFormationResourceName(serviceName,
@@ -71,7 +71,7 @@ func codeDeployLambdaUpdateDecorator(updateType string,
 				DeploymentGroupName: gocf.Ref(codeDeploymentGroupResourceName).String(),
 			},
 		}
-		return nil
+		return ctx, nil
 	}
 }
 
@@ -121,15 +121,14 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 	}
 
 	// Return the service decorator...
-	return func(context map[string]interface{},
+	return func(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 		// So what we really need to do is walk over all the lambda functions in the template
 		// and setup all the Deployment groups...
 		codeDeployApplication := &gocf.CodeDeployApplication{
@@ -156,6 +155,6 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 		template.AddResource(codeDeployRoleResourceName, codeDeployRoleResource)
 
 		// Ship it...
-		return nil
+		return ctx, nil
 	}
 }

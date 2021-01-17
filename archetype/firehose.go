@@ -21,7 +21,7 @@ import (
 	"github.com/mweagle/Sparta/archetype/xformer"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func dropError() error {
@@ -125,35 +125,35 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 
 	// Create the decorator that adds the file to the ZIP archive using
 	// the transform name...
-	archiveDecorator := func(context map[string]interface{},
+	archiveDecorator := func(ctx context.Context,
 		serviceName string,
 		zipWriter *zip.Writer,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 		fileInfo, fileInfoErr := os.Stat(xformFilePath)
 		if fileInfoErr != nil {
-			return errors.Wrapf(fileInfoErr, "Failed to get fileInfo for Kinesis Firehose transform")
+			return ctx, errors.Wrapf(fileInfoErr, "Failed to get fileInfo for Kinesis Firehose transform")
 		}
 		// G304: Potential file inclusion via variable
 		/* #nosec */
 		fileReader, fileReaderErr := os.Open(xformFilePath)
 		if fileReaderErr != nil {
-			return errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
+			return ctx, errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
 		}
 		defer func() {
 			closeErr := fileReader.Close()
 
 			if closeErr != nil {
-				logger.WithFields(logrus.Fields{
-					"error": closeErr,
-				}).Warn("Failed to close file reader")
+				logger.Warn().
+					Err(closeErr).
+					Msg("Failed to close file reader")
 			}
 		}()
 
 		fileHeader, fileHeaderErr := zip.FileInfoHeader(fileInfo)
 		if fileHeaderErr != nil {
-			return errors.Wrapf(fileHeaderErr, "Failed to detect ZIP header for Kinesis Firehose transform")
+			return ctx, errors.Wrapf(fileHeaderErr, "Failed to detect ZIP header for Kinesis Firehose transform")
 		}
 
 		fileHeader.Name = archiveEntryName
@@ -162,10 +162,10 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		// Copy it...
 		writer, writerErr := zipWriter.CreateHeader(fileHeader)
 		if writerErr != nil {
-			return errors.Wrapf(fileHeaderErr, "Failed to create ZIP header for Kinesis Firehose transform")
+			return ctx, errors.Wrapf(fileHeaderErr, "Failed to create ZIP header for Kinesis Firehose transform")
 		}
 		_, copyErr := io.Copy(writer, fileReader)
-		return copyErr
+		return ctx, copyErr
 	}
 	// Done...
 	hooks.Archives = append(hooks.Archives, sparta.ArchiveHookFunc(archiveDecorator))
@@ -178,9 +178,9 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 	templateBytes []byte,
 	kinesisEvent awsEvents.KinesisFirehoseEvent) (*awsEvents.KinesisFirehoseResponse, error) {
 
-	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 	if loggerOk {
-		logger.Info("Hello world structured log message")
+		logger.Info().Msg("Hello world structured log message")
 	}
 
 	funcMap := sprig.TxtFuncMap()
@@ -230,11 +230,11 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 			} else if xform.Error() != nil {
 				xformedRecord.Result = awsEvents.KinesisFirehoseTransformedStateProcessingFailed
 			} else {
-				if loggerOk && logger.IsLevelEnabled(logrus.DebugLevel) {
-					logger.WithFields(logrus.Fields{
-						"input":  eachRecord.Data,
-						"output": outputBuffer.Bytes(),
-					}).Debug("Transformation result")
+				if loggerOk && logger.GetLevel() >= (zerolog.DebugLevel) {
+					logger.Debug().
+						Str("input", string(eachRecord.Data)).
+						Str("output", outputBuffer.String()).
+						Msg("Transformation result")
 				}
 
 				xformedRecord.Data = outputBuffer.Bytes()

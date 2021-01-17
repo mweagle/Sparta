@@ -4,7 +4,7 @@ title: S3 Sites with CORS
 weight: 150
 ---
 
-Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.
+Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning. We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.
 
 The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) example application.
 
@@ -26,7 +26,7 @@ type helloWorldResponse struct {
 // Hello world event handler
 func helloWorld(ctx context.Context,
   gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
-  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
   if loggerOk {
     logger.Info("Hello world structured log message")
   }
@@ -39,7 +39,7 @@ func helloWorld(ctx context.Context,
 ```
 
 This lambda function returns a reply that consists of the inbound
-request plus a sample message.  See the API Gateway [examples](/reference/apigateway)
+request plus a sample message. See the API Gateway [examples](/reference/apigateway)
 for more information.
 
 ## API Gateway
@@ -79,15 +79,14 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 }
 ```
 
-
 ## S3 Site
 
-The next part is to define the S3 site resources via `sparta.NewS3Site(localFilePath)`.  The _localFilePath_ parameter
+The next part is to define the S3 site resources via `sparta.NewS3Site(localFilePath)`. The _localFilePath_ parameter
 typically points to a directory, which will be:
 
-  1. Recursively ZIP'd
-  1. Posted to S3 alongside the Lambda code archive and CloudFormation Templates
-  1. Dynamically unpacked by a CloudFormation CustomResource during `provision` to a new S3 bucket.
+1. Recursively ZIP'd
+1. Posted to S3 alongside the Lambda code archive and CloudFormation Templates
+1. Dynamically unpacked by a CloudFormation CustomResource during `provision` to a new S3 bucket.
 
 ## Provision
 
@@ -137,17 +136,17 @@ An open issue is how to communicate the dynamically assigned API Gateway hostnam
 
 As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a _MANIFEST.json_ discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:
 
-  1. **MANIFEST.json**
+1. **MANIFEST.json**
 
 ```json
 {
- "APIGatewayURL": {
-  "Description": "API Gateway URL",
-  "Value": "https://ksuo0qlc3m.execute-api.us-west-2.amazonaws.com/v1"
- }
+  "APIGatewayURL": {
+    "Description": "API Gateway URL",
+    "Value": "https://ksuo0qlc3m.execute-api.us-west-2.amazonaws.com/v1"
+  }
 }
 ```
 
 ### Notes
 
-* See the [Medium](https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef) post for an additional walk through this sample.
+- See the [Medium](https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef) post for an additional walk through this sample.

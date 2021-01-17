@@ -18,11 +18,17 @@ const (
 )
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.15.0"
-	// GoLambdaVersion is the Go version runtime used for the lambda function
-	GoLambdaVersion = "go1.x"
+	SpartaVersion = "2.0.0"
 	// LambdaBinaryTag is the build tag name used when building the binary
 	LambdaBinaryTag = "lambdabinary"
+)
+
+// AWSLambdaRuntimeName is an alias for the runtime name
+type AWSLambdaRuntimeName string
+
+const (
+	// Go1LambdaRuntime is the Go version runtime used for the lambda function
+	Go1LambdaRuntime AWSLambdaRuntimeName = "go1.x"
 )
 
 var (
@@ -82,10 +88,10 @@ const (
 type contextKey int
 
 const (
-	// ContextKeyLogger is the request-independent *logrus.Logger
+	// ContextKeyLogger is the request-independent *zerolog.Logger
 	// instance common to all requests
 	ContextKeyLogger contextKey = iota
-	// ContextKeyRequestLogger is the *logrus.Entry instance
+	// ContextKeyRequestLogger is the *zerolog.Logger instance
 	// that is annotated with request-identifying
 	// information extracted from the AWS context object
 	ContextKeyRequestLogger
@@ -102,4 +108,13 @@ const (
 	// ContextKeyAWSSession is the aws Session instance for this
 	// request
 	ContextKeyAWSSession
+)
+
+const (
+	// ContextKeyBuildOutputDir is the build-time output location
+	ContextKeyBuildOutputDir contextKey = iota
+	// ContextKeyBuildID is the build-time build id
+	ContextKeyBuildID
+	// ContextKeyBuildBinaryName is the name of the binary we're building
+	ContextKeyBuildBinaryName
 )

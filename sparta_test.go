@@ -10,6 +10,7 @@ import (
 
 	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/rs/zerolog"
 )
 
 type StructHandler1 struct {
@@ -86,15 +87,20 @@ func TestDoubleRefStruct(t *testing.T) {
 
 func TestCustomResource(t *testing.T) {
 	lambdaFuncs := testLambdaStructData()
-	lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
+	_, reqErr := lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource1,
 		nil,
 		nil)
-
-	lambdaFuncs[1].RequireCustomResource(IAMRoleDefinition{},
+	if reqErr != nil {
+		t.Fatalf("Failed to include custom resource: %s", reqErr.Error())
+	}
+	_, reqErr2 := lambdaFuncs[1].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource2,
 		nil,
 		nil)
+	if reqErr2 != nil {
+		t.Fatalf("Failed to include custom resource: %s", reqErr2.Error())
+	}
 	testProvision(t, lambdaFuncs, nil)
 }
 
@@ -102,10 +108,13 @@ func TestDoubleRefCustomResource(t *testing.T) {
 	lambdaFuncs := testLambdaStructData()
 
 	for _, eachLambda := range lambdaFuncs {
-		eachLambda.RequireCustomResource(IAMRoleDefinition{},
+		_, reqErr := eachLambda.RequireCustomResource(IAMRoleDefinition{},
 			userDefinedCustomResource1,
 			nil,
 			nil)
+		if reqErr != nil {
+			t.Fatalf("Failed to require custom resource: %s", reqErr.Error())
+		}
 	}
 	testProvision(t,
 		lambdaFuncs,
@@ -115,12 +124,12 @@ func TestDoubleRefCustomResource(t *testing.T) {
 func TestSignatureVersion(t *testing.T) {
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	lambdaFunctions[0].Options = &LambdaFunctionOptions{
-		SpartaOptions: &SpartaOptions{
+		ExtendedOptions: &ExtendedOptions{
 			Name: "Handler0",
 		},
 	}
 	lambdaFunctions[1].Options = &LambdaFunctionOptions{
-		SpartaOptions: &SpartaOptions{
+		ExtendedOptions: &ExtendedOptions{
 			Name: "Handler1",
 		},
 	}
@@ -133,7 +142,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	for _, eachLambda := range lambdaFunctions {
 		eachLambda.Options = &LambdaFunctionOptions{
-			SpartaOptions: &SpartaOptions{
+			ExtendedOptions: &ExtendedOptions{
 				Name: "HandlerX",
 			},
 		}
@@ -252,13 +261,13 @@ func TestResourceTransform(t *testing.T) {
 	}
 }
 func TestProvisionID(t *testing.T) {
-	logger, _ := NewLogger("info")
+	logger, _ := NewLogger(zerolog.InfoLevel.String())
 	testUserValues := []string{
 		"",
 		"DEFAULT_VALUE",
 	}
 	for _, eachTestValue := range testUserValues {
-		buildID, buildIDErr := provisionBuildID(eachTestValue, logger)
+		buildID, buildIDErr := computeBuildID(eachTestValue, logger)
 		if buildIDErr != nil {
 			t.Fatalf("Failed to compute buildID: %s", buildIDErr)
 		}

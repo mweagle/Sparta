@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/codecommit"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // CodeCommitLambdaEventSourceResourceRequest defines the request properties to configure
@@ -29,15 +29,15 @@ type CodeCommitLambdaEventSourceResource struct {
 func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetActive bool,
 	session *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
-	logger.WithFields(logrus.Fields{
-		"Event": command,
-	}).Info("CodeCommit Custom Resource info")
+	logger.Info().
+		Interface("Event", command).
+		Msg("CodeCommit Custom Resource info")
 
 	// We need the repo in here...
 	codeCommitSvc := codecommit.New(session)
@@ -64,11 +64,11 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 	}
 
 	// Just log it...
-	logger.WithFields(logrus.Fields{
-		"RepositoryName": command.RepositoryName.Literal,
-		"Trigger":        preexistingTrigger,
-		"LambdaArn":      *command.LambdaTargetArn,
-	}).Info("Current CodeCommit trigger status")
+	logger.Info().
+		Str("RepositoryName", command.RepositoryName.Literal).
+		Interface("Trigger", preexistingTrigger).
+		Interface("LambdaArn", command.LambdaTargetArn).
+		Msg("Current CodeCommit trigger status")
 
 	reqBranches := make([]*string, len(command.Branches))
 	for idx, eachBranch := range command.Branches {
@@ -79,7 +79,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 		reqEvents[idx] = aws.String(eachEvent)
 	}
 	if len(reqEvents) <= 0 {
-		logger.Info("No events found. Defaulting to `all`.")
+		logger.Info().Msg("No events found. Defaulting to `all`.")
 		reqEvents = []*string{
 			aws.String("all"),
 		}
@@ -104,10 +104,11 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 	}
 	putTriggersResp, putTriggersRespErr := codeCommitSvc.PutRepositoryTriggers(putTriggersInput)
 	// Just log it...
-	logger.WithFields(logrus.Fields{
-		"Response": putTriggersResp,
-		"Error":    putTriggersRespErr,
-	}).Info("CodeCommit PutRepositoryTriggers")
+	logger.Info().
+		Interface("Response", putTriggersResp).
+		Interface("Error", putTriggersRespErr).
+		Msg("CodeCommit PutRepositoryTriggers")
+
 	return nil, putTriggersRespErr
 }
 
@@ -120,20 +121,20 @@ func (command *CodeCommitLambdaEventSourceResource) IAMPrivileges() []string {
 // Create implements the custom resource create operation
 func (command CodeCommitLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
 // Update implements the custom resource update operation
 func (command CodeCommitLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
 // Delete implements the custom resource delete operation
 func (command CodeCommitLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(false, awsSession, event, logger)
 }

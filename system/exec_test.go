@@ -1,11 +1,12 @@
 package system
 
 import (
+	"os"
 	"os/exec"
 	"runtime"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func TestRunCommand(t *testing.T) {
@@ -17,8 +18,8 @@ func TestRunCommand(t *testing.T) {
 		commandName = "date"
 	}
 	cmd := exec.Command(commandName)
-	logger := logrus.New()
-	runErr := RunOSCommand(cmd, logger)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	runErr := RunOSCommand(cmd, &logger)
 	if runErr != nil {
 		t.Fatalf("Failed to run command `%s` (OS: %s). Error: %s",
 			commandName,

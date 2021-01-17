@@ -12,22 +12,21 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	humanize "github.com/dustin/go-humanize"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // RollbackFunction called in the event of a stack provisioning failure
-type RollbackFunction func(logger *logrus.Logger) error
+type RollbackFunction func(logger *zerolog.Logger) error
 
 // CreateS3RollbackFunc creates an S3 rollback function that attempts to delete a previously
 // uploaded item. Note that s3ArtifactURL may include a `versionId` query arg
 // to denote the specific version to delete.
 func CreateS3RollbackFunc(awsSession *session.Session, s3ArtifactURL string) RollbackFunction {
-	return func(logger *logrus.Logger) error {
-		logger.WithFields(logrus.Fields{
-			"URL": s3ArtifactURL,
-		}).Info("Deleting S3 object")
+	return func(logger *zerolog.Logger) error {
+		logger.Info().
+			Str("URL", s3ArtifactURL).
+			Msg("Deleting S3 object")
 		artifactURLParts, artifactURLPartsErr := url.Parse(s3ArtifactURL)
 		if nil != artifactURLPartsErr {
 			return artifactURLPartsErr
@@ -45,9 +44,9 @@ func CreateS3RollbackFunc(awsSession *session.Session, s3ArtifactURL string) Rol
 		}
 		_, err := s3Client.DeleteObject(params)
 		if err != nil {
-			logger.WithFields(logrus.Fields{
-				"Error": err,
-			}).Warn("Failed to delete S3 item during rollback cleanup")
+			logger.Warn().
+				Err(err).
+				Msg("Failed to delete S3 item during rollback cleanup")
 		}
 		return err
 	}
@@ -60,13 +59,13 @@ func UploadLocalFileToS3(localPath string,
 	awsSession *session.Session,
 	S3Bucket string,
 	S3KeyName string,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	// Then do the actual work
 	/* #nosec */
 	reader, err := os.Open(localPath)
 	if nil != err {
-		return "", fmt.Errorf("failed to open local archive for S3 upload: %s", err.Error())
+		return "", fmt.Errorf("failed to open file for S3 upload: %s", err.Error())
 	}
 	uploadInput := &s3manager.UploadInput{
 		Bucket:      &S3Bucket,
@@ -74,6 +73,15 @@ func UploadLocalFileToS3(localPath string,
 		ContentType: aws.String(mime.TypeByExtension(path.Ext(localPath))),
 		Body:        reader,
 	}
+	// Ensure we close the reader...
+	defer func() {
+		closeErr := reader.Close()
+		if closeErr != nil {
+			logger.Warn().
+				Err(closeErr).
+				Msg("Failed to close upload Body reader input")
+		}
+	}()
 	// If we can get the current working directory, let's try and strip
 	// it from the path just to keep the log statement a bit shorter
 	logPath := localPath
@@ -89,12 +97,12 @@ func UploadLocalFileToS3(localPath string,
 	if err != nil {
 		return "", fmt.Errorf("failed to calculate upload size for file: %s", localPath)
 	}
-	logger.WithFields(logrus.Fields{
-		"Path":   logPath,
-		"Bucket": S3Bucket,
-		"Key":    S3KeyName,
-		"Size":   humanize.Bytes(uint64(stat.Size())),
-	}).Info("Uploading local file to S3")
+	logger.Info().
+		Str("Path", logPath).
+		Str("Bucket", S3Bucket).
+		Str("Key", S3KeyName).
+		Int64("Size", stat.Size()).
+		Msg("Uploading")
 
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
@@ -102,14 +110,16 @@ func UploadLocalFileToS3(localPath string,
 		return "", errors.Wrapf(err, "Failed to upload object to S3")
 	}
 	if result.VersionID != nil {
-		logger.WithFields(logrus.Fields{
-			"URL":       result.Location,
-			"VersionID": string(*result.VersionID),
-		}).Debug("S3 upload complete")
+
+		logger.Debug().
+			Str("URL", result.Location).
+			Str("VersionID", string(*result.VersionID)).
+			Msg("S3 upload complete")
+
 	} else {
-		logger.WithFields(logrus.Fields{
-			"URL": result.Location,
-		}).Debug("S3 upload complete")
+		logger.Debug().
+			Str("URL", result.Location).
+			Msg("S3 upload complete")
 	}
 	locationURL := result.Location
 	if nil != result.VersionID {
@@ -123,7 +133,7 @@ func UploadLocalFileToS3(localPath string,
 // versioning enabled.
 func BucketVersioningEnabled(awsSession *session.Session,
 	S3Bucket string,
-	logger *logrus.Logger) (bool, error) {
+	logger *zerolog.Logger) (bool, error) {
 
 	s3Svc := s3.New(awsSession)
 	params := &s3.GetBucketVersioningInput{
@@ -133,10 +143,10 @@ func BucketVersioningEnabled(awsSession *session.Session,
 	resp, err := s3Svc.GetBucketVersioning(params)
 	if err == nil && resp != nil && resp.Status != nil {
 		// What's the versioning policy?
-		logger.WithFields(logrus.Fields{
-			"VersionPolicy": *resp,
-			"BucketName":    S3Bucket,
-		}).Debug("Bucket version policy")
+		logger.Debug().
+			Interface("VersionPolicy", *resp).
+			Str("BucketName", S3Bucket).
+			Msg("Bucket version policy")
 		versioningEnabled = (strings.ToLower(*resp.Status) == "enabled")
 	}
 	return versioningEnabled, err
@@ -145,7 +155,7 @@ func BucketVersioningEnabled(awsSession *session.Session,
 // BucketRegion returns the AWS region that hosts the bucket
 func BucketRegion(awsSession *session.Session,
 	S3Bucket string,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 	regionHint := ""
 	if awsSession.Config.Region != nil {
 		regionHint = *awsSession.Config.Region

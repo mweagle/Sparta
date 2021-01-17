@@ -1,10 +1,9 @@
-<link href="{{"mermaid/mermaid.css" | relURL}}" type="text/css" rel="stylesheet"/>
-<link href="{{"css/mermaid-overrides.css" | relURL}}" type="text/css" rel="stylesheet"/>
-<script defer src="{{"mermaid/mermaid.js" | relURL}}">mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid" >
+<div class="mermaid">
+%%{init: {'themeVariables': { 'fontFamily': 'Inconsolata, Avenir, Helvetica, sans-serif', 'primaryColor': '#ff0000'}}}%%
+
 graph TD
   classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
-  classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+  classDef userHook fill:#aaa,stroke:#A00,stroke-width:2px;
 
   execute[Execute]
   class execute stdOp;
@@ -24,11 +23,11 @@ graph TD
   interceptorBeforeSetup[Interceptor BeforeSetup]
   class interceptorBeforeSetup userHook;
 
-  populateContext[Populate context]
-  class populateContext stdOp;
-
   interceptorAfterSetup[Interceptor AfterSetup]
   class interceptorAfterSetup userHook;
+
+  populateContext[Populate context]
+  class populateContext stdOp;
 
   unmarshalArgs[Introspect Arguments]
   class unmarshalArgs stdOp;

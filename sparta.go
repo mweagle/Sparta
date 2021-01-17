@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -19,7 +20,7 @@ import (
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type cloudFormationLambdaCustomResource struct {
@@ -52,17 +53,18 @@ func noopMessage(operationName string) string {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	ServiceName        string         `validate:"required"`
-	ServiceDescription string         `validate:"-"`
-	Noop               bool           `validate:"-"`
-	LogLevel           string         `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
-	LogFormat          string         `validate:"eq=txt|eq=text|eq=json"`
-	TimeStamps         bool           `validate:"-"`
-	Logger             *logrus.Logger `validate:"-"`
-	Command            string         `validate:"-"`
-	BuildTags          string         `validate:"-"`
-	LinkerFlags        string         `validate:"-"` // no requirements
-	DisableColors      bool           `validate:"-"`
+	ServiceName        string          `validate:"required"`
+	ServiceDescription string          `validate:"-"`
+	Noop               bool            `validate:"-"`
+	LogLevel           string          `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
+	LogFormat          string          `validate:"eq=txt|eq=text|eq=json"`
+	TimeStamps         bool            `validate:"-"`
+	Logger             *zerolog.Logger `validate:"-"`
+	Command            string          `validate:"-"`
+	BuildTags          string          `validate:"-"`
+	LinkerFlags        string          `validate:"-"` // no requirements
+	DisableColors      bool            `validate:"-"`
+	startTime          time.Time
 }
 
 // OptionsGlobal stores the global command line options
@@ -88,11 +90,13 @@ var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudfor
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
 var CommonIAMStatements = struct {
-	Core     []spartaIAM.PolicyStatement
-	VPC      []spartaIAM.PolicyStatement
-	DynamoDB []spartaIAM.PolicyStatement
-	Kinesis  []spartaIAM.PolicyStatement
-	SQS      []spartaIAM.PolicyStatement
+	Core           []spartaIAM.PolicyStatement
+	VPC            []spartaIAM.PolicyStatement
+	DynamoDB       []spartaIAM.PolicyStatement
+	Kinesis        []spartaIAM.PolicyStatement
+	SQS            []spartaIAM.PolicyStatement
+	MSKCluster     []spartaIAM.PolicyStatement
+	AmazonMQBroker []spartaIAM.PolicyStatement
 }{
 	Core: []spartaIAM.PolicyStatement{
 		{
@@ -159,6 +163,35 @@ var CommonIAMStatements = struct {
 				"SQS:ChangeMessageVisibility",
 				"SQS:DeleteMessage",
 				"SQS:ReceiveMessage",
+			},
+		},
+	},
+	MSKCluster: []spartaIAM.PolicyStatement{
+		{
+			Effect: "Allow",
+			Action: []string{
+				"kafka:DescribeCluster",
+				"kafka:GetBootstrapBrokers",
+				"ec2:CreateNetworkInterface",
+				"ec2:DescribeNetworkInterfaces",
+				"ec2:DescribeVpcs",
+				"ec2:DeleteNetworkInterface",
+				"ec2:DescribeSubnets",
+				"ec2:DescribeSecurityGroups",
+			},
+		},
+	},
+	AmazonMQBroker: []spartaIAM.PolicyStatement{
+		{
+			Effect: "Allow",
+			Action: []string{"mq:DescribeBroker",
+				"secretsmanager:GetSecretValue",
+				"ec2:CreateNetworkInterface",
+				"ec2:DeleteNetworkInterface",
+				"ec2:DescribeNetworkInterfaces",
+				"ec2:DescribeSecurityGroups",
+				"ec2:DescribeSubnets",
+				"ec2:DescribeVpcs",
 			},
 		},
 	},
@@ -240,7 +273,7 @@ type LambdaFunctionOptions struct {
 	// Tracing options for XRay
 	TracingConfig *gocf.LambdaFunctionTracingConfig
 	// Additional params
-	SpartaOptions *SpartaOptions
+	ExtendedOptions *ExtendedOptions
 }
 
 func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
@@ -251,12 +284,12 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 		Environment:                  make(map[string]*gocf.StringExpr),
 		KmsKeyArn:                    "",
 		ReservedConcurrentExecutions: 0,
-		SpartaOptions:                nil,
+		ExtendedOptions:              nil,
 	}
 }
 
-// SpartaOptions allow the passing in of additional options during the creation of a Lambda Function
-type SpartaOptions struct {
+// ExtendedOptions allow the passing in of additional options during the creation of a Lambda Function
+type ExtendedOptions struct {
 	// User supplied function name to use for
 	// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname
 	// value. If this is not supplied, a reflection-based
@@ -269,19 +302,11 @@ type SpartaOptions struct {
 // TODO: remove single-valued fields
 type WorkflowHooks struct {
 	// Initial hook context. May be empty
-	Context map[string]interface{}
-	// PreBuild is called before the current Sparta-binary is compiled
-	PreBuild WorkflowHook
+	Context context.Context
 	// PreBuilds are called before the current Sparta-binary is compiled
 	PreBuilds []WorkflowHookHandler
-	// PostBuild is called after the current Sparta-binary is compiled
-	PostBuild WorkflowHook
 	// PostBuilds are called after the current Sparta-binary is compiled
 	PostBuilds []WorkflowHookHandler
-	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
-	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
-	// to add additional resource files to your Lambda package
-	Archive ArchiveHook
 	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
 	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
 	// to add additional resource files to your Lambda package
@@ -291,12 +316,9 @@ type WorkflowHooks struct {
 	// PreMarshalls are called before Sparta marshalls the application contents into a CloudFormation
 	// template
 	PreMarshalls []WorkflowHookHandler
-	// ServiceDecorator is called before Sparta marshalls the CloudFormation template
-	ServiceDecorator ServiceDecoratorHook
 	// ServiceDecorators are called before Sparta marshalls the CloudFormation template
 	ServiceDecorators []ServiceDecoratorHookHandler
-	// PostMarshall is called after Sparta marshalls the application contents to a CloudFormation template
-	PostMarshall WorkflowHook
+
 	// PostMarshalls are called after Sparta marshalls the application contents to a CloudFormation
 	// template
 	PostMarshalls []WorkflowHookHandler
@@ -306,8 +328,6 @@ type WorkflowHooks struct {
 	// copy of the materialized template.
 	Validators []ServiceValidationHookHandler
 
-	// Rollback is called if there is an error performing the requested operation
-	Rollback RollbackHook
 	// Rollbacks are called if there is an error performing the requested operation
 	Rollbacks []RollbackHookHandler
 }
@@ -363,7 +383,7 @@ type IAMRoleDefinition struct {
 
 func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*EventSourceMapping,
 	options *LambdaFunctionOptions,
-	logger *logrus.Logger) gocf.IAMRole {
+	logger *zerolog.Logger) gocf.IAMRole {
 
 	statements := CommonIAMStatements.Core
 	for _, eachPrivilege := range roleDefinition.Privileges {
@@ -424,39 +444,44 @@ func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetL
 // directly correspond to the golang AWS SDK's CreateEventSourceMappingInput
 // (http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput)
 type EventSourceMapping struct {
+	BatchSize                      int64
 	StartingPosition               string
 	EventSourceArn                 interface{}
 	Disabled                       bool
-	BatchSize                      int64
 	BisectBatchOnFunctionError     bool
 	DestinationConfig              *gocf.LambdaEventSourceMappingDestinationConfig
 	MaximumBatchingWindowInSeconds int64
 	MaximumRecordAgeInSeconds      int64
 	MaximumRetryAttempts           int64
 	ParallelizationFactor          int64
+	PartialBatchResponse           bool
+	Queues                         []gocf.Stringable
+	Topics                         []gocf.Stringable
 }
 
 func (mapping *EventSourceMapping) export(serviceName string,
 	targetLambdaName string,
 	targetLambdaArn *gocf.StringExpr,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
 		StartingPosition:               marshalString(mapping.StartingPosition),
 		EventSourceArn:                 dynamicArn.String(),
 		FunctionName:                   targetLambdaArn,
-		BatchSize:                      gocf.Integer(mapping.BatchSize),
-		Enabled:                        gocf.Bool(!mapping.Disabled),
-		BisectBatchOnFunctionError:     gocf.Bool(mapping.BisectBatchOnFunctionError),
+		BatchSize:                      marshalInt(mapping.BatchSize),
+		Enabled:                        marshalBool(!mapping.Disabled),
+		BisectBatchOnFunctionError:     marshalBool(mapping.BisectBatchOnFunctionError),
 		DestinationConfig:              mapping.DestinationConfig,
 		MaximumBatchingWindowInSeconds: marshalInt(mapping.MaximumBatchingWindowInSeconds),
 		MaximumRecordAgeInSeconds:      marshalInt(mapping.MaximumRecordAgeInSeconds),
 		MaximumRetryAttempts:           marshalInt(mapping.MaximumRetryAttempts),
+		PartialBatchResponse:           marshalBool(mapping.PartialBatchResponse),
 		ParallelizationFactor:          marshalInt(mapping.ParallelizationFactor),
+		Queues:                         gocf.StringList(mapping.Queues...),
+		Topics:                         gocf.StringList(mapping.Topics...),
 	}
 
 	// Unique components for the hash for the EventSource mapping
@@ -518,11 +543,10 @@ func (resourceInfo *customResourceInfo) logicalName() string {
 
 func (resourceInfo *customResourceInfo) export(serviceName string,
 	targetLambda *gocf.StringExpr,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Is this valid
 	invalidErr := ensureValidSignature(resourceInfo.userFunctionName,
@@ -560,16 +584,13 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 	}
 
 	lambdaResource := gocf.LambdaFunction{
-		Code: &gocf.LambdaFunctionCode{
-			S3Bucket: gocf.String(S3Bucket),
-			S3Key:    gocf.String(S3Key),
-		},
+		Code:         lambdaFunctionCode,
 		FunctionName: lambdaFunctionName.String(),
 		Description:  gocf.String(lambdaDescription),
 		Handler:      gocf.String(SpartaBinaryName),
 		MemorySize:   gocf.Integer(resourceInfo.options.MemorySize),
 		Role:         roleNameMap[iamRoleArnName],
-		Runtime:      gocf.String(GoLambdaVersion),
+		Runtime:      gocf.String(string(Go1LambdaRuntime)),
 		Timeout:      gocf.Integer(resourceInfo.options.Timeout),
 		VPCConfig:    resourceInfo.options.VpcConfig,
 		// DISPATCH INFORMATION
@@ -581,7 +602,9 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 		resourceInfo.logicalName())
 
 	cfResource := template.AddResource(lambdaFunctionCFName, lambdaResource)
-	safeMetadataInsert(cfResource, "golangFunc", resourceInfo.userFunctionName)
+	safeMetadataInsert(cfResource,
+		fmt.Sprintf("%sFunc", string(Go1LambdaRuntime)),
+		resourceInfo.userFunctionName)
 
 	// And create the CustomResource that actually invokes it...
 	newResource, newResourceError := newCloudFormationResource(cloudFormationLambda, logger)
@@ -728,22 +751,30 @@ type LambdaAWSInfo struct {
 	// deprecation notices
 	deprecationNotices []string
 
+	// runtime name
+	runtimeName AWSLambdaRuntimeName
+
 	// interceptors
 	Interceptors *LambdaEventInterceptors
+
+	// Internal mutex to prevent race conditions when lazily updating lambda function name
+	rwMutex sync.Mutex
 }
 
 // lambdaFunctionName returns the internal
 // function name for lambda export binding
 func (info *LambdaAWSInfo) lambdaFunctionName() string {
+	info.rwMutex.Lock()
+	defer info.rwMutex.Unlock()
 	if info.cachedLambdaFunctionName != "" {
 		return info.cachedLambdaFunctionName
 	}
 	var lambdaFuncName string
 
 	if info.Options != nil &&
-		info.Options.SpartaOptions != nil &&
-		info.Options.SpartaOptions.Name != "" {
-		lambdaFuncName = info.Options.SpartaOptions.Name
+		info.Options.ExtendedOptions != nil &&
+		info.Options.ExtendedOptions.Name != "" {
+		lambdaFuncName = info.Options.ExtendedOptions.Name
 	} else if info.userSuppliedFunctionName != "" {
 		lambdaFuncName = info.userSuppliedFunctionName
 	} else {
@@ -818,8 +849,8 @@ func (info *LambdaAWSInfo) Description(targetNodeName string) ([]*DescriptionTri
 		SourceNodeName: info.lambdaFunctionName(),
 		DisplayInfo: &DescriptionDisplayInfo{
 			SourceIcon: &DescriptionIcon{
-				Category: "Compute",
-				Name:     "AWS-Lambda@4x.png",
+				Category: "Arch_Compute",
+				Name:     "64/Arch_AWS-Lambda_64.png",
 			},
 		},
 		TargetNodeName: targetNodeName,
@@ -926,37 +957,37 @@ func (info *LambdaAWSInfo) LogicalResourceName() string {
 	return CloudFormationResourceName(prefix, info.lambdaFunctionName())
 }
 
-func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
+func (info *LambdaAWSInfo) applyDecorators(ctx context.Context,
+	template *gocf.Template,
 	lambdaResource gocf.LambdaFunction,
 	cfResource *gocf.Resource,
 	serviceName string,
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
-	context map[string]interface{},
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	decorators := info.Decorators
 	if info.Decorator != nil {
-		logger.Debug("Decorator found for Lambda: ", info.lambdaFunctionName())
-		logger.Warn("DEPRECATED: Single `Decorator` field is superseded by `Decorators` slice")
+		logger.Debug().
+			Msgf("Decorator found for Lambda: %s",
+				info.lambdaFunctionName())
 		decorators = append(decorators, TemplateDecoratorHookFunc(info.Decorator))
 	}
 
+	decoratorCtx := ctx
 	for _, eachDecorator := range decorators {
 		// Create an empty template so that we can track whether things
 		// are overwritten
 		metadataMap := make(map[string]interface{})
 		decoratorProxyTemplate := gocf.NewTemplate()
-		decoratorErr := eachDecorator.DecorateTemplate(serviceName,
+		responseCtx, decoratorErr := eachDecorator.DecorateTemplate(decoratorCtx,
+			serviceName,
 			info.LogicalResourceName(),
 			lambdaResource,
 			metadataMap,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			buildID,
 			decoratorProxyTemplate,
-			context,
 			logger)
 		if decoratorErr != nil {
 			// Can we get the name?
@@ -964,8 +995,9 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 			errorValue := errors.Errorf("TemplateDecorator %s failed to apply. Error: %s",
 				decoratorName,
 				decoratorErr)
-			return errorValue
+			return responseCtx, errorValue
 		}
+		decoratorCtx = responseCtx
 		// This data is marshalled into a DiscoveryInfo struct s.t. it can be
 		// unmarshalled via sparta.Discover.  We're going to just stuff it into
 		// it's own same named property
@@ -976,25 +1008,23 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 		safeMergeErrs := gocc.SafeMerge(decoratorProxyTemplate,
 			template)
 		if len(safeMergeErrs) != 0 {
-			return errors.Errorf("Lambda (%s) decorator created conflicting resources: %v",
+			return decoratorCtx, errors.Errorf("Lambda (%s) decorator created conflicting resources: %v",
 				info.lambdaFunctionName(),
 				safeMergeErrs)
 		}
 	}
-	return nil
+	return decoratorCtx, nil
 }
 
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
-func (info *LambdaAWSInfo) export(serviceName string,
-	S3Bucket string,
-	S3Key string,
-	S3Version string,
+func (info *LambdaAWSInfo) export(ctx context.Context,
+	serviceName string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	// Let's make sure the handler has the proper signature...This is basically
 	// copy-pasted from the SDK
@@ -1019,28 +1049,32 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		lambdaDescription = fmt.Sprintf("%s: %s", serviceName, info.lambdaFunctionName())
 	}
 
+	handlerName := ""
+	switch info.runtimeName {
+	case Go1LambdaRuntime:
+		handlerName = SpartaBinaryName
+	}
 	// Create the primary resource
 	lambdaResource := gocf.LambdaFunction{
-		Code: &gocf.LambdaFunctionCode{
-			S3Bucket: gocf.String(S3Bucket),
-			S3Key:    gocf.String(S3Key),
-		},
+		Code:        lambdaFunctionCode,
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(SpartaBinaryName),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(GoLambdaVersion),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VPCConfig:   info.Options.VpcConfig,
+	}
+	// Pick the right kind of handler/runtime
+	if lambdaFunctionCode.ImageURI != nil {
+		lambdaResource.PackageType = gocf.String("Image")
+	} else {
+		lambdaResource.Runtime = gocf.String(string(info.runtimeName))
+		lambdaResource.Handler = gocf.String(handlerName)
 	}
 	// Layers?
 	if nil != info.Layers {
 		lambdaResource.Layers = gocf.StringList(info.Layers...)
 	}
 
-	if S3Version != "" {
-		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
-	}
 	if info.Options.ReservedConcurrentExecutions != 0 {
 		lambdaResource.ReservedConcurrentExecutions = gocf.Integer(info.Options.ReservedConcurrentExecutions)
 	}
@@ -1074,7 +1108,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		info.Options.Environment = make(map[string]*gocf.StringExpr)
 	}
 	info.Options.Environment[envVarLogLevel] =
-		gocf.String(logger.Level.String())
+		gocf.String(logger.GetLevel().String())
 
 	lambdaResource.Environment = &gocf.LambdaFunctionEnvironment{
 		Variables: info.Options.Environment,
@@ -1089,7 +1123,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	cfResource := template.AddResource(info.LogicalResourceName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
-	safeMetadataInsert(cfResource, "golangFunc", info.lambdaFunctionName())
+	safeMetadataInsert(cfResource,
+		string(info.runtimeName),
+		info.lambdaFunctionName())
 
 	// Create the lambda Ref in case we need a permission or event mapping
 	functionAttr := gocf.GetAtt(info.LogicalResourceName(), "Arn")
@@ -1100,11 +1136,10 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			info.lambdaFunctionName(),
 			info.LogicalResourceName(),
 			template,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			logger)
 		if nil != err {
-			return errors.Wrapf(err, "Failed to export lambda permission")
+			return ctx, errors.Wrapf(err, "Failed to export lambda permission")
 		}
 	}
 
@@ -1113,130 +1148,49 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		mappingErr := eachEventSourceMapping.export(serviceName,
 			info.lambdaFunctionName(),
 			functionAttr,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			template,
 			logger)
 		if nil != mappingErr {
-			return mappingErr
+			return ctx, mappingErr
 		}
 	}
 
 	// CustomResource
 	for _, eachCustomResource := range info.customResources {
-
 		resourceErr := eachCustomResource.export(serviceName,
 			functionAttr,
-			S3Bucket,
-			S3Key,
+			lambdaFunctionCode,
 			roleNameMap,
 			template,
 			logger)
 		if nil != resourceErr {
-			return resourceErr
+			return ctx, resourceErr
 		}
 	}
 
-	decoratorErr := info.applyDecorators(template,
+	responseCtx, decoratorErr := info.applyDecorators(ctx,
+		template,
 		lambdaResource,
 		cfResource,
 		serviceName,
-		S3Bucket,
-		S3Key,
+		lambdaFunctionCode,
 		buildID,
-		context,
 		logger)
 
 	if decoratorErr != nil {
-		return decoratorErr
+		return responseCtx, decoratorErr
 	}
 
 	// Log any deprecation notices
 	for _, eachDeprecation := range info.deprecationNotices {
-		logger.Warn(eachDeprecation)
+		logger.Warn().Msg(eachDeprecation)
 	}
-	return nil
+	return responseCtx, nil
 }
 
 //
 // END - LambdaAWSInfo
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// BEGIN - Private
-//
-
-func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
-	logger *logrus.Logger) error {
-
-	var errorText []string
-	collisionMemo := make(map[string]int)
-
-	incrementCounter := func(keyName string) {
-		_, exists := collisionMemo[keyName]
-		if !exists {
-			collisionMemo[keyName] = 1
-		} else {
-			collisionMemo[keyName] = collisionMemo[keyName] + 1
-		}
-	}
-	// 0 - check for nil
-	for eachIndex, eachLambda := range lambdaAWSInfos {
-		if eachLambda == nil {
-			errorText = append(errorText,
-				fmt.Sprintf("Lambda at position %d is `nil`", eachIndex))
-		}
-	}
-	// Semantic checks only iff lambdas are non-nil
-	if len(errorText) == 0 {
-
-		// 1 - check for invalid signatures
-		for _, eachLambda := range lambdaAWSInfos {
-			validationErr := ensureValidSignature(eachLambda.userSuppliedFunctionName,
-				eachLambda.handlerSymbol)
-			if validationErr != nil {
-				errorText = append(errorText, validationErr.Error())
-			}
-		}
-
-		// 2 - check for duplicate golang function references.
-		for _, eachLambda := range lambdaAWSInfos {
-			incrementCounter(eachLambda.lambdaFunctionName())
-			for _, eachCustom := range eachLambda.customResources {
-				incrementCounter(eachCustom.userFunctionName)
-			}
-		}
-		// Duplicates?
-		for eachLambdaName, eachCount := range collisionMemo {
-			if eachCount > 1 {
-				logger.WithFields(logrus.Fields{
-					"CollisionCount": eachCount,
-					"Name":           eachLambdaName,
-				}).Error("NewAWSLambda")
-				errorText = append(errorText,
-					fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
-			}
-		}
-		logger.WithFields(logrus.Fields{
-			"CollisionMap": collisionMemo,
-		}).Debug("Lambda collision map")
-	}
-	if len(errorText) != 0 {
-		return errors.New(strings.Join(errorText[:], "\n"))
-	}
-
-	return nil
-}
-
-// Sanitize the provided input by replacing illegal characters with underscores
-func sanitizedName(input string) string {
-	return reSanitize.ReplaceAllString(input, "_")
-}
-
-//
-// END - Private
-//
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1257,7 +1211,7 @@ type AWSLambdaProvider interface {
 // resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
 // name is not content-addressable.
 func CloudFormationResourceName(prefix string, parts ...string) string {
-	return spartaCF.CloudFormationResourceName(prefix, parts...)
+	return spartaCF.ResourceName(prefix, parts...)
 }
 
 // LambdaName returns the Go-reflection discovered name for a given
@@ -1309,6 +1263,7 @@ func NewAWSLambda(functionName string,
 		Permissions:              make([]LambdaPermissionExporter, 0),
 		EventSourceMappings:      make([]*EventSourceMapping, 0),
 		deprecationNotices:       make([]string, 0),
+		runtimeName:              Go1LambdaRuntime,
 	}
 
 	switch v := roleNameOrIAMRoleDefinition.(type) {
@@ -1321,19 +1276,6 @@ func NewAWSLambda(functionName string,
 		return nil, errors.Errorf("AWS Lambda function IAM role must not be empty")
 	}
 	return lambda, nil
-}
-
-// HandleAWSLambda is deprecated in favor of NewAWSLambda(...)
-func HandleAWSLambda(functionName string,
-	lambdaHandler interface{},
-	roleNameOrIAMRoleDefinition interface{}) *LambdaAWSInfo {
-
-	lambda, lambdaErr := NewAWSLambda(functionName, lambdaHandler, roleNameOrIAMRoleDefinition)
-	if lambdaErr != nil {
-		panic(lambdaErr)
-	}
-	lambda.deprecationNotices = append(lambda.deprecationNotices, "sparta.HandleAWSLambda is deprecated starting with v1.6.0. Prefer `sparta.NewAWSLambda(...) (*LambdaAWSInfo, error)`")
-	return lambda
 }
 
 // IsExecutingInLambda is a utility function to return a boolean

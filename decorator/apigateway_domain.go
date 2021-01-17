@@ -1,6 +1,7 @@
 package decorator
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -9,7 +10,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -26,19 +27,18 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 	domainName string) sparta.ServiceDecoratorHookHandler {
 
 	// Attach the domain decorator to the API GW instance
-	domainDecorator := func(context map[string]interface{},
+	domainDecorator := func(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		domainParts := strings.Split(domainName, ".")
 		if len(domainParts) != 3 {
-			return errors.Errorf("Invalid domain name supplied to APIGatewayDomainDecorator: %s",
+			return ctx, errors.Errorf("Invalid domain name supplied to APIGatewayDomainDecorator: %s",
 				domainName)
 		}
 		// Add the mapping
@@ -63,7 +63,7 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 			if len(typesList.Literal) == 1 {
 				apiGatewayType = typesList.Literal[0].Literal
 			} else {
-				return errors.Errorf("Invalid API GW types provided to decorator: %#v",
+				return ctx, errors.Errorf("Invalid API GW types provided to decorator: %#v",
 					apiGWEndpointConfiguration.Types)
 			}
 		}
@@ -86,7 +86,7 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 				attrName = "DistributionDomainName"
 			}
 		default:
-			return errors.Errorf("Unsupported API Gateway type: %#v", apiGatewayType)
+			return ctx, errors.Errorf("Unsupported API Gateway type: %#v", apiGatewayType)
 		}
 		template.AddResource(domainInfoResourceName, domainInfo)
 
@@ -119,7 +119,7 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 			Description: "Custom API Gateway Domain",
 			Value:       gocf.String(domainName),
 		}
-		return nil
+		return ctx, nil
 	}
 	return sparta.ServiceDecoratorHookFunc(domainDecorator)
 }

@@ -8,16 +8,16 @@ weight: 11
 
 This example demonstrates how to accept client request params supplied as HTTP query params and return an expiring S3 URL to access content.
 The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149)
-function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication).
+function defined as part of the [SpartaApplication](https://github.com/mweagle/SpartaApplication).
 
 ## Lambda Definition
 
 Our function will accept two params:
 
-* `bucketName` : The S3 bucket name storing the asset
-* `keyName` : The S3 item key
+- `bucketName` : The S3 bucket name storing the asset
+- `keyName` : The S3 item key
 
-Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.
+Those params will be passed as part of the URL query string. The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.
 
 Because [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) is expected to be invoked by the API Gateway, we'll use the AWS Lambda Go type in the function signature:
 
@@ -29,12 +29,12 @@ import (
 
 func s3ItemInfo(ctx context.Context,
   apigRequest spartaEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
   lambdaContext, _ := awsLambdaContext.FromContext(ctx)
 
-  logger.WithFields(logrus.Fields{
-    "RequestID": lambdaContext.AwsRequestID,
-  }).Info("Request received")
+  logger.Info().
+    Str("RequestID", lambdaContext.AwsRequestID).
+    Msg("Request received")
 
   getObjectInput := &s3.GetObjectInput{
     Bucket: aws.String(apigRequest.QueryParams["bucketName"]),
@@ -128,10 +128,10 @@ s3ItemInfoOptions.Options = &sparta.LambdaFunctionOptions{
 
 A few items to note here:
 
-* We're providing a custom `LambdaFunctionOptions` in case the request to S3 to get item metadata exceeds the default 3 second timeout.
-* We also add a custom `iamDynamicRole.Privileges` entry to the `Privileges` slice that authorizes the lambda function to _only_ access objects in a single bucket (_resourceArn_).
-  * This bucket ARN is externally created and the ARN provided to this code.
-  * While the API will accept any _bucketName_ value, it is only authorized to access a single bucket.
+- We're providing a custom `LambdaFunctionOptions` in case the request to S3 to get item metadata exceeds the default 3 second timeout.
+- We also add a custom `iamDynamicRole.Privileges` entry to the `Privileges` slice that authorizes the lambda function to _only_ access objects in a single bucket (_resourceArn_).
+  - This bucket ARN is externally created and the ARN provided to this code.
+  - While the API will accept any _bucketName_ value, it is only authorized to access a single bucket.
 
 ## Resources
 
@@ -157,9 +157,9 @@ method.Parameters["method.request.querystring.bucketName"] = true
 
 Note that the keynames in the `method.Parameters` map must be of the form: **method.request.{location}.{name}** where location is one of:
 
-* `querystring`
-* `path`
-* `header`
+- `querystring`
+- `path`
+- `header`
 
 See the [REST documentation](http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters) for more information.
 
@@ -248,40 +248,40 @@ Pretty printing the response body:
 
 ```json
 {
-    "S3": {
-        "AcceptRanges": "bytes",
-        "Body": {},
-        "CacheControl": null,
-        "ContentDisposition": null,
-        "ContentEncoding": null,
-        "ContentLanguage": null,
-        "ContentLength": 613560,
-        "ContentRange": null,
-        "ContentType": "image/jpeg",
-        "DeleteMarker": null,
-        "ETag": "\"7250a1802a5e2f94532b9ee38429a3fd\"",
-        "Expiration": null,
-        "Expires": null,
-        "LastModified": "2018-03-14T14:55:19Z",
-        "Metadata": {},
-        "MissingMeta": null,
-        "ObjectLockLegalHoldStatus": null,
-        "ObjectLockMode": null,
-        "ObjectLockRetainUntilDate": null,
-        "PartsCount": null,
-        "ReplicationStatus": null,
-        "RequestCharged": null,
-        "Restore": null,
-        "SSECustomerAlgorithm": null,
-        "SSECustomerKeyMD5": null,
-        "SSEKMSKeyId": null,
-        "ServerSideEncryption": null,
-        "StorageClass": null,
-        "TagCount": null,
-        "VersionId": null,
-        "WebsiteRedirectLocation": null
-    },
-    "URL": "https://weagle-public.s3.us-west-2.amazonaws.com/twitterAvatar.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAQMUWTUUFF65WLRLE%2F20181211%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20181211T150856Z&X-Amz-Expires=300&X-Amz-Security-Token=FQoGZXIvYXdzEIH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDMMVITmbkwrrxznAHCL9AaUQwfC%2F%2F6go%2FKBZigDuI4BLLwJzqiwhquTZ9TR1oxVKOAA0h6WzWUEfjjOjZK56SFk3cIJ%2FjKIBmImKpTIGyN7fn48s6N51RFFxra2Mamrp1pDqEcP4VswnJH8C5Q7ZfmltJDiFqLbd4FCQdgoGT228Ls49Uo24EyT%2B%2BTL%2Fl0sKTVYtI1MbGSK%2B%2BKZ6rpPEsyR%2FTuIdeDvA1P%2BRlMEyvr0NhO7Wpf7ZZMs3taNcUMQDRmARyIgAp87ziwIavUTaPqbgpGNqJ6XAO%2Byf3y0g9JurYj44HrwpLWmuF5g%2B%2FtLv8VikzqD8GuWARJuo%2BPlH54KmcMrbXBpLq9sZl2Io3KO%2F4AU%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=88976d33d4cdefff02265e1f40e4d18005231672f1a6e41ad12733f0ce97e91b"
+  "S3": {
+    "AcceptRanges": "bytes",
+    "Body": {},
+    "CacheControl": null,
+    "ContentDisposition": null,
+    "ContentEncoding": null,
+    "ContentLanguage": null,
+    "ContentLength": 613560,
+    "ContentRange": null,
+    "ContentType": "image/jpeg",
+    "DeleteMarker": null,
+    "ETag": "\"7250a1802a5e2f94532b9ee38429a3fd\"",
+    "Expiration": null,
+    "Expires": null,
+    "LastModified": "2018-03-14T14:55:19Z",
+    "Metadata": {},
+    "MissingMeta": null,
+    "ObjectLockLegalHoldStatus": null,
+    "ObjectLockMode": null,
+    "ObjectLockRetainUntilDate": null,
+    "PartsCount": null,
+    "ReplicationStatus": null,
+    "RequestCharged": null,
+    "Restore": null,
+    "SSECustomerAlgorithm": null,
+    "SSECustomerKeyMD5": null,
+    "SSEKMSKeyId": null,
+    "ServerSideEncryption": null,
+    "StorageClass": null,
+    "TagCount": null,
+    "VersionId": null,
+    "WebsiteRedirectLocation": null
+  },
+  "URL": "https://weagle-public.s3.us-west-2.amazonaws.com/twitterAvatar.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAQMUWTUUFF65WLRLE%2F20181211%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20181211T150856Z&X-Amz-Expires=300&X-Amz-Security-Token=FQoGZXIvYXdzEIH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDMMVITmbkwrrxznAHCL9AaUQwfC%2F%2F6go%2FKBZigDuI4BLLwJzqiwhquTZ9TR1oxVKOAA0h6WzWUEfjjOjZK56SFk3cIJ%2FjKIBmImKpTIGyN7fn48s6N51RFFxra2Mamrp1pDqEcP4VswnJH8C5Q7ZfmltJDiFqLbd4FCQdgoGT228Ls49Uo24EyT%2B%2BTL%2Fl0sKTVYtI1MbGSK%2B%2BKZ6rpPEsyR%2FTuIdeDvA1P%2BRlMEyvr0NhO7Wpf7ZZMs3taNcUMQDRmARyIgAp87ziwIavUTaPqbgpGNqJ6XAO%2Byf3y0g9JurYj44HrwpLWmuF5g%2B%2FtLv8VikzqD8GuWARJuo%2BPlH54KmcMrbXBpLq9sZl2Io3KO%2F4AU%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=88976d33d4cdefff02265e1f40e4d18005231672f1a6e41ad12733f0ce97e91b"
 }
 ```
 

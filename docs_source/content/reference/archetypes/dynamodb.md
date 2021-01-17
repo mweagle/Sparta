@@ -15,11 +15,12 @@ import (
 // DynamoDB reactor function
 func reactorFunc(ctx context.Context,
   dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-  logger.WithFields(logrus.Fields{
-    "Event": dynamoEvent,
-  }).Info("DynamoDB Event")
+  logger.Info().
+    Interface("Event", dynamoEvent).
+    Msg("DynamoDB Event")
+
   return "Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾", nil
 }
 

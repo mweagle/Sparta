@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // HelloWorldResourceRequest is what the UserProperties
@@ -28,13 +28,13 @@ func (command *HelloWorldResource) IAMPrivileges() []string {
 // Create implements resource create
 func (command HelloWorldResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info("create: Hello ", command.Message.Literal)
+	logger.Info().Msgf("create: Hello %s", command.Message.Literal)
 	return map[string]interface{}{
 		"Resource": "Created message: " + command.Message.Literal,
 	}, nil
@@ -43,23 +43,23 @@ func (command HelloWorldResource) Create(awsSession *session.Session,
 // Update implements resource update
 func (command HelloWorldResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info("update: ", command.Message.Literal)
+	logger.Info().Msgf("update:  %s", command.Message.Literal)
 	return nil, nil
 }
 
 // Delete implements resource delete
 func (command HelloWorldResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info("delete: ", command.Message.Literal)
+	logger.Info().Msgf("delete: %s", command.Message.Literal)
 	return nil, nil
 }

@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const userdataResourceContents = `
@@ -19,46 +19,48 @@ const userdataResourceContents = `
 func helloZipLambda(ctx context.Context,
 	props map[string]interface{}) (string, error) {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return "Event processed", nil
 }
 
-func archiveHook(context map[string]interface{},
+func archiveHook(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) (context.Context, error) {
 
-	logger.Info("Adding userResource")
+	logger.Info().Msg("Adding userResource")
 	resourceFileName := "userResource.json"
 	binaryWriter, binaryWriterErr := zipWriter.Create(resourceFileName)
 	if nil != binaryWriterErr {
-		return binaryWriterErr
+		return ctx, binaryWriterErr
 	}
 	userdataReader := strings.NewReader(userdataResourceContents)
 	_, copyErr := io.Copy(binaryWriter, userdataReader)
-	return copyErr
+	return ctx, copyErr
 }
 
 func ExampleWorkflowHooks() {
 	workflowHooks := WorkflowHooks{
-		Archive: archiveHook,
+		Archives: []ArchiveHookHandler{ArchiveHookFunc(archiveHook)},
 	}
-
 	var lambdaFunctions []*LambdaAWSInfo
 	helloWorldLambda, _ := NewAWSLambda("PreexistingAWSLambdaRoleName",
 		helloZipLambda,
 		nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
-	MainEx("HelloWorldArchiveHook",
+	mainErr := MainEx("HelloWorldArchiveHook",
 		"Description for Hello World HelloWorldArchiveHook",
 		lambdaFunctions,
 		nil,
 		nil,
 		&workflowHooks,
 		false)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

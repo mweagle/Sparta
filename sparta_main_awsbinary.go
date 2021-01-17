@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 )
 
@@ -56,13 +56,13 @@ func MainEx(serviceName string,
 	// Execute command...
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		// This can only run in AWS Lambda
-		formatter := &logrus.JSONFormatter{}
 		mainLogLevel := "info"
 		envVarLogLevel := os.Getenv(envVarLogLevel)
 		if envVarLogLevel != "" {
 			mainLogLevel = envVarLogLevel
 		}
-		logger, loggerErr := NewLoggerWithFormatter(mainLogLevel, formatter)
+		// We never want colors in AWS because the console can't show them...
+		logger, loggerErr := NewLoggerForOutput(mainLogLevel, "json", true)
 		if loggerErr != nil {
 			return loggerErr
 		}
@@ -71,13 +71,13 @@ func MainEx(serviceName string,
 		}
 
 		welcomeMessage := fmt.Sprintf("Service: %s", StampedServiceName)
-		logger.WithFields(logrus.Fields{
-			fmt.Sprintf("%sVersion", ProperName): SpartaVersion,
-			fmt.Sprintf("%sSHA", ProperName):     SpartaGitHash[0:7],
-			"go Version":                         runtime.Version(),
-			"BuildID":                            StampedBuildID,
-			"UTC":                                (time.Now().UTC().Format(time.RFC3339)),
-		}).Info(welcomeMessage)
+		logger.Info().
+			Str(fmt.Sprintf("%sVersion", ProperName), SpartaVersion).
+			Str(fmt.Sprintf("%sSHA", ProperName), SpartaGitHash[0:7]).
+			Str("go Version", runtime.Version()).
+			Str("BuildID", StampedBuildID).
+			Str("UTC", time.Now().UTC().Format(time.RFC3339)).
+			Msg(welcomeMessage)
 		OptionsGlobal.ServiceName = StampedServiceName
 		OptionsGlobal.Logger = logger
 		return nil
@@ -85,7 +85,7 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.RunE = func(cmd *cobra.Command, args []string) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
-				OptionsGlobal.Logger.Error("Panic recovered: %v", r)
+				OptionsGlobal.Logger.Error().Msgf("Panic recovered: %v", r)
 				err = errors.Errorf(fmt.Sprintf("%v", r))
 			}
 		}()
@@ -100,9 +100,29 @@ func MainEx(serviceName string,
 }
 
 // Delete is not available in the AWS Lambda binary
-func Delete(serviceName string, logger *logrus.Logger) error {
-	logger.Error("Delete() not supported in AWS Lambda binary")
+func Delete(serviceName string, logger *zerolog.Logger) error {
+	logger.Error().Msg("Delete() not supported in AWS Lambda binary")
 	return errors.New("Delete not supported for this binary")
+}
+
+// Build is not available in the AWS Lambda binary
+func Build(noop bool,
+	serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api APIGateway,
+	site *S3Site,
+	useCGO bool,
+	buildID string,
+	dockerFile string,
+	outputDirectory string,
+	buildTags string,
+	linkerFlags string,
+	templateWriter io.Writer,
+	workflowHooks *WorkflowHooks,
+	logger *zerolog.Logger) error {
+	logger.Error().Msg("Build() not supported in AWS Lambda binary")
+	return errors.New("Build not supported for this binary")
 }
 
 // Provision is not available in the AWS Lambda binary
@@ -121,8 +141,8 @@ func Provision(noop bool,
 	linkerFlags string,
 	writer io.Writer,
 	workflowHooks *WorkflowHooks,
-	logger *logrus.Logger) error {
-	logger.Error("Provision() not supported in AWS Lambda binary")
+	logger *zerolog.Logger) error {
+	logger.Error().Msg("Provision() not supported in AWS Lambda binary")
 	return errors.New("Provision not supported for this binary")
 }
 
@@ -137,8 +157,8 @@ func Describe(serviceName string,
 	linkerFlags string,
 	outputWriter io.Writer,
 	workflowHooks *WorkflowHooks,
-	logger *logrus.Logger) error {
-	logger.Error("Describe() not supported in AWS Lambda binary")
+	logger *zerolog.Logger) error {
+	logger.Error().Msg("Describe() not supported in AWS Lambda binary")
 	return errors.New("Describe not supported for this binary")
 }
 
@@ -153,7 +173,7 @@ func Explore(serviceName string,
 	s3BucketName string,
 	buildTags string,
 	linkerFlags string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 	return errors.New("Explore not supported for this binary")
 }
 
@@ -163,7 +183,7 @@ func Profile(serviceName string,
 	serviceDescription string,
 	s3Bucket string,
 	httpPort int,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 	return errors.New("Profile not supported for this binary")
 }
 
@@ -172,19 +192,19 @@ func Profile(serviceName string,
 func Status(serviceName string,
 	serviceDescription string,
 	redact bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 	return errors.New("Status not supported for this binary")
 }
 
-func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
+func platformLogSysInfo(lambdaFunc string, logger *zerolog.Logger) {
 
 	// Setup the files and their respective log levels
-	mapFilesToLoggerCall := map[logrus.Level][]string{
-		logrus.InfoLevel: {
+	mapFilesToLoggerCall := map[zerolog.Level][]string{
+		zerolog.InfoLevel: {
 			"/proc/version",
 			"/etc/os-release",
 		},
-		logrus.DebugLevel: {
+		zerolog.DebugLevel: {
 			"/proc/cpuinfo",
 			"/proc/meminfo",
 		},
@@ -194,24 +214,23 @@ func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 		for _, eachEntry := range eachList {
 			data, dataErr := ioutil.ReadFile(eachEntry)
 			if dataErr == nil && len(data) != 0 {
-				loggerFields := make(logrus.Fields, 0)
-				loggerFields["filepath"] = eachEntry
+
+				entry := logger.WithLevel(eachLevel).Str("filepath", eachEntry)
 				match := reExtractPlatInfo.FindAllStringSubmatch(string(data), -1)
 				if match != nil {
 					for _, eachMatch := range match {
-						loggerFields[eachMatch[1]] = eachMatch[2]
+						entry = entry.Str(eachMatch[1], eachMatch[2])
 					}
 				} else {
-					loggerFields["contents"] = string(data)
+					entry = entry.Str("contents", string(data))
 				}
-				logger.WithFields(loggerFields).
-					Log(eachLevel, "Host Info")
+				entry.Msg("Host Info")
 			} else if dataErr != nil || len(data) <= 0 {
-				logger.WithFields(logrus.Fields{
-					"filepath": eachEntry,
-					"error":    dataErr,
-					"length":   len(data),
-				}).Warn("Failed to read host info")
+				logger.Warn().
+					Str("filepath", eachEntry).
+					Interface("error", dataErr).
+					Int("length", len(data)).
+					Msg("Failed to read host info")
 			}
 		}
 	}
@@ -220,30 +239,4 @@ func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 // RegisterCodePipelineEnvironment is not available during lambda execution
 func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
 	return nil
-}
-
-// NewLoggerWithFormatter always returns a JSON formatted logger
-// that is aware of the environment variable that may have been
-// set and carried through to the AWS Lambda execution environment
-func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
-
-	logger := logrus.New()
-	// If there is an environment override, use that
-	envLogLevel := os.Getenv(envVarLogLevel)
-	if envLogLevel != "" {
-		level = envLogLevel
-	}
-	logLevel, err := logrus.ParseLevel(level)
-	if err != nil {
-		return nil, err
-	}
-	logger.Level = logLevel
-	// We always use JSON in AWS
-	logger.Formatter = &logrus.JSONFormatter{}
-
-	// TODO - consider writing a buffered logger that only
-	// writes output following an error.
-	// This was done as part of the XRay interceptor!
-	logger.Out = os.Stdout
-	return logger, nil
 }

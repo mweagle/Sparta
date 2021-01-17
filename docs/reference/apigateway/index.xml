@@ -6,11 +6,7 @@
     <description>Recent content on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
-    
-	<atom:link href="/reference/apigateway/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate><atom:link href="/reference/apigateway/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Echo</title>
       <link>/reference/apigateway/echo_event/</link>
@@ -19,7 +15,7 @@
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
     </item>
     
     <item>

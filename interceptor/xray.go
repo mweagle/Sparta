@@ -1,12 +1,12 @@
 package interceptor
 
 import (
-	"bytes"
 	"container/ring"
-	"io"
+	"os"
+	"strings"
 
 	sparta "github.com/mweagle/Sparta"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // XRay attributes
@@ -60,46 +60,29 @@ const (
 		XRayModeErrCaptureRequestID
 )
 
-var (
-	// devNullLogEntry is the reserved byte value that's returned by the
-	// filteringFormatter to instruct the Writer to throw away
-	// the serialized version.
-	//lint:ignore U1000 because it's actually used
-	devNullLogEntry = []byte("/dev/null")
+const (
+	reservedFieldName string = "xrsparta"
 )
-
-// So we can turn up the level to max. Which means everything will go to the
-// serializer. If that happens, we need to know which entries
-// can be thrown away. A custom formatter can be used for that. So we can fake
-// this by returning a known string that tells the Out method to discard the data...
-// This isn't recommended, but it does tie things together
-//lint:ignore U1000 because it's used
-type filteringFormatter struct {
-	targetFormatter logrus.Formatter
-	originalLevel   logrus.Level
-	logRing         *ring.Ring
-}
-
-func (ff *filteringFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	ff.logRing.Value = entry
-	ff.logRing = ff.logRing.Next()
-
-	if ff.originalLevel >= entry.Level {
-		return ff.targetFormatter.Format(entry)
-	}
-	return devNullLogEntry, nil
-}
 
 // The filteringWriter works together with the filteringFormatter
 // to ignore formatted entries that are the /dev/null log entry values
 //lint:ignore U1000 because it's used
-type filteringWriter struct {
-	targetOutput io.Writer
+type zerologXRayHandler struct {
+	logRing       *ring.Ring
+	originalLevel zerolog.Level
 }
 
-func (fw *filteringWriter) Write(p []byte) (n int, err error) {
-	if !bytes.Equal(p, devNullLogEntry) {
-		return fw.targetOutput.Write(p)
+func (zrh *zerologXRayHandler) Run(e *zerolog.Event, level zerolog.Level, msg string) {
+	if level >= zrh.originalLevel {
+		e.Str(reservedFieldName, "1")
+	}
+}
+
+func (zrh *zerologXRayHandler) Write(p []byte) (n int, err error) {
+	zrh.logRing.Value = string(p)
+	zrh.logRing = zrh.logRing.Next()
+	if strings.Contains(string(p), reservedFieldName) {
+		return os.Stdout.Write(p)
 	}
 	return len(p), nil
 }
@@ -110,9 +93,7 @@ func (fw *filteringWriter) Write(p []byte) (n int, err error) {
 type xrayInterceptor struct {
 	mode XRayInterceptorMode
 	//lint:ignore U1000 because it's used
-	filteringFormatter *filteringFormatter
-	//lint:ignore U1000 because it's used
-	filteringWriter *filteringWriter
+	zerologXRayHandler *zerologXRayHandler
 }
 
 // RegisterXRayInterceptor handles pushing the tracing information into XRay

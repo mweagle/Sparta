@@ -9,7 +9,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -30,13 +30,13 @@ const (
 // export marshals the API data to a CloudFormation compatible representation
 func (s3Site *S3Site) export(serviceName string,
 	binaryName string,
-	S3Bucket string,
-	S3Key string,
-	S3ResourcesKey string,
+	s3ArtifactBucket gocf.Stringable,
+	s3CodeResource *gocf.LambdaFunctionCode,
+	s3ResourcesKey gocf.Stringable,
 	apiGatewayOutputs map[string]*gocf.Output,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	if s3Site.WebsiteConfiguration == nil {
 		s3Site.WebsiteConfiguration = &s3.WebsiteConfiguration{
@@ -140,9 +140,9 @@ func (s3Site *S3Site) export(serviceName string,
 		Effect: "Allow",
 		Resource: gocf.Join("",
 			gocf.String("arn:aws:s3:::"),
-			gocf.String(S3Bucket),
+			s3ArtifactBucket,
 			gocf.String("/"),
-			gocf.String(S3ResourcesKey)),
+			s3ResourcesKey.String()),
 	})
 
 	iamPolicyList := gocf.IAMRolePolicyList{}
@@ -174,9 +174,9 @@ func (s3Site *S3Site) export(serviceName string,
 	// EnsureCustomResourceHandler, but due to the more complex IAM rules
 	// there's a bit of duplication
 	//	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
-	logger.WithFields(logrus.Fields{
-		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
-	}).Debug("Sparta CloudFormation custom resource handler info")
+	logger.Debug().
+		Interface("CustomResourceType", cfCustomResources.ZipToS3Bucket).
+		Msg("Sparta CloudFormation custom resource handler info")
 
 	// Since this is a custom resource command, stuff the type in the environment
 	userDispatchMap := map[string]*gocf.StringExpr{
@@ -190,15 +190,10 @@ func (s3Site *S3Site) export(serviceName string,
 		return errors.Wrapf(lambdaEnvErr, "Failed to create S3 site resource")
 	}
 	customResourceHandlerDef := gocf.LambdaFunction{
-		Code: &gocf.LambdaFunctionCode{
-			S3Bucket: gocf.String(S3Bucket),
-			S3Key:    gocf.String(S3Key),
-		},
+		Code: s3CodeResource,
 		Description: gocf.String(customResourceDescription(serviceName,
 			"S3 static site")),
-		Handler:    gocf.String(binaryName),
 		Role:       iamRoleRef,
-		Runtime:    gocf.String(GoLambdaVersion),
 		MemorySize: gocf.Integer(256),
 		Timeout:    gocf.Integer(180),
 		// Let AWS assign the function name
@@ -206,6 +201,12 @@ func (s3Site *S3Site) export(serviceName string,
 			FunctionName: lambdaFunctionName.String(),
 		*/
 		Environment: lambdaEnv,
+	}
+	if s3CodeResource.ImageURI != nil {
+		customResourceHandlerDef.PackageType = gocf.String("Image")
+	} else {
+		customResourceHandlerDef.Runtime = gocf.String(string(Go1LambdaRuntime))
+		customResourceHandlerDef.Handler = gocf.String(binaryName)
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
@@ -226,8 +227,8 @@ func (s3Site *S3Site) export(serviceName string,
 		return errors.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
 	}
 	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
-	zipResource.SrcKeyName = gocf.String(S3ResourcesKey)
-	zipResource.SrcBucket = gocf.String(S3Bucket)
+	zipResource.SrcKeyName = s3ResourcesKey.String()
+	zipResource.SrcBucket = s3ArtifactBucket.String()
 	zipResource.DestBucket = gocf.Ref(s3BucketResourceName).String()
 
 	// Build the manifest data with any output info...

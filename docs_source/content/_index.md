@@ -100,14 +100,6 @@ To get started using Sparta, begin with the [Overview](/example_service/step1/).
 
 - Problems? Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
 
-<br />
-<img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256">
-<center>
-<h6>Courtesy of <a href="https://github.com/ashleymcnamara/gophers">gophers</a>
-</h6>
-</center>
-<br />
-
 ## Questions?
 
 Get in touch via:
@@ -126,12 +118,6 @@ Get in touch via:
   - `go` types for CloudFormation resources
 - [ssm-cache](https://github.com/mweagle/ssm-cache)
   - Lightweight cache for [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
-
-### Support Sparta
-
-Help support continued Sparta development by becoming a Patreon patron!
-
-<a href="https://www.patreon.com/bePatron?u=12960916" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
 
 ## Other resources
 

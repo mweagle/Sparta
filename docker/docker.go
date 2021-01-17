@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/mweagle/Sparta/system"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,14 +27,16 @@ const (
 	BinaryNameArgument = "SPARTA_DOCKER_BINARY"
 )
 
-// BuildDockerImageWithFlags is an extended version of BuildDockerImage that includes
-// support for build time tags
-func BuildDockerImageWithFlags(serviceName string,
+// BuildDockerImageInDirectoryWithFlags is an extended version of BuildDockerImage
+// that includes support for build time tags and allows the caller to provide
+// the working directory
+func BuildDockerImageInDirectoryWithFlags(serviceName string,
 	dockerFilepath string,
+	workingDirectory string,
 	dockerTags map[string]string,
 	buildTags string,
 	linkFlags string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// BEGIN DOCKER PRECONDITIONS
 	// Ensure that serviceName and tags are lowercase to make Docker happy
@@ -72,15 +74,15 @@ func BuildDockerImageWithFlags(serviceName string,
 		false,
 		logger)
 	if buildErr != nil {
-		return errors.Wrapf(buildErr, "Attempting to build Docker binary")
+		return errors.Wrapf(buildErr, "Attempting to build Docker image")
 	}
 	defer func() {
 		removeErr := os.Remove(executableOutput)
 		if removeErr != nil {
-			logger.WithFields(logrus.Fields{
-				"Path":  executableOutput,
-				"Error": removeErr,
-			}).Warn("Failed to delete temporary Docker binary")
+			logger.Warn().
+				Str("Path", executableOutput).
+				Interface("Error", removeErr).
+				Msg("Failed to delete temporary Docker binary")
 		}
 	}()
 
@@ -99,9 +101,9 @@ func BuildDockerImageWithFlags(serviceName string,
 	}
 	// Add the latest tag
 	// dockerArgs = append(dockerArgs, "--tag", fmt.Sprintf("sparta/%s:latest", serviceName))
-	logger.WithFields(logrus.Fields{
-		"Tags": dockerTags,
-	}).Info("Creating Docker image")
+	logger.Info().
+		Interface("Tags", dockerTags).
+		Msg("Creating Docker image")
 
 	for eachKey, eachValue := range dockerTags {
 		dockerArgs = append(dockerArgs, "--tag", fmt.Sprintf("%s:%s",
@@ -109,9 +111,32 @@ func BuildDockerImageWithFlags(serviceName string,
 			strings.ToLower(eachValue)))
 	}
 
-	dockerArgs = append(dockerArgs, ".")
+	dockerArgs = append(dockerArgs, workingDirectory)
 	dockerCmd := exec.Command("docker", dockerArgs...)
 	return system.RunOSCommand(dockerCmd, logger)
+}
+
+// BuildDockerImageWithFlags is an extended version of BuildDockerImage that includes
+// support for build time tags
+func BuildDockerImageWithFlags(serviceName string,
+	dockerFilepath string,
+	dockerTags map[string]string,
+	buildTags string,
+	linkFlags string,
+	logger *zerolog.Logger) error {
+
+	curDir, curDirErr := os.Getwd()
+	if curDirErr != nil {
+		return errors.Wrapf(curDirErr, "Failed to get current directory")
+	}
+	return BuildDockerImageInDirectoryWithFlags(
+		serviceName,
+		dockerFilepath,
+		curDir,
+		dockerTags,
+		buildTags,
+		linkFlags,
+		logger)
 }
 
 // BuildDockerImage creates the smallest docker image for this Golang binary
@@ -119,7 +144,7 @@ func BuildDockerImageWithFlags(serviceName string,
 func BuildDockerImage(serviceName string,
 	dockerFilepath string,
 	tags map[string]string,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	return BuildDockerImageWithFlags(serviceName,
 		dockerFilepath,
@@ -129,14 +154,73 @@ func BuildDockerImage(serviceName string,
 		logger)
 }
 
+// PushECRTaggedImage pushes previously tagged image to ECR
+func PushECRTaggedImage(localImageTag string,
+	awsSession *session.Session,
+	logger *zerolog.Logger) error {
+
+	ecrSvc := ecr.New(awsSession)
+
+	// Push the image - if that fails attempt to reauthorize with the docker
+	// client and try again
+	var pushError error
+	dockerPushCmd := exec.Command("docker", "push", localImageTag)
+	pushError = system.RunOSCommand(dockerPushCmd, logger)
+	if pushError != nil {
+		logger.Info().
+			Err(pushError).
+			Msg("ECR push failed - reauthorizing")
+		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(
+			&ecr.GetAuthorizationTokenInput{},
+		)
+		if ecrAuthTokenResultErr != nil {
+			pushError = ecrAuthTokenResultErr
+		} else {
+			authData := ecrAuthTokenResult.AuthorizationData[0]
+			authToken, authTokenErr := base64.StdEncoding.DecodeString(*authData.AuthorizationToken)
+			if authTokenErr != nil {
+				pushError = authTokenErr
+			} else {
+				authTokenString := string(authToken)
+				authTokenParts := strings.Split(authTokenString, ":")
+
+				// Get the part of the ECR
+				ecrParts := strings.Split(localImageTag, "/")
+				dockerURL := fmt.Sprintf("https://%s", ecrParts[0])
+				dockerLoginCmd := exec.Command("docker",
+					"login",
+					"-u",
+					authTokenParts[0],
+					"--password-stdin",
+					dockerURL)
+				dockerLoginCmd.Stdout = os.Stdout
+				dockerLoginCmd.Stdin = bytes.NewReader([]byte(fmt.Sprintf("%s\n", authTokenParts[1])))
+				dockerLoginCmd.Stderr = os.Stderr
+				dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
+				if dockerLoginCmdErr != nil {
+					pushError = dockerLoginCmdErr
+				} else {
+					// Try it again...
+					dockerRetryPushCmd := exec.Command("docker", "push", localImageTag)
+					dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
+					pushError = dockerRetryPushCmdErr
+				}
+			}
+		}
+	}
+	if pushError != nil {
+		pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
+	}
+	return pushError
+}
+
 // PushDockerImageToECR pushes a local Docker image to an ECR repository
 func PushDockerImageToECR(localImageTag string,
 	ecrRepoName string,
 	awsSession *session.Session,
-	logger *logrus.Logger) (string, error) {
+	logger *zerolog.Logger) (string, error) {
 
 	stsSvc := sts.New(awsSession)
-	ecrSvc := ecr.New(awsSession)
 
 	// 1. Get the caller identity s.t. we can get the ECR URL which includes the
 	// account name
@@ -162,50 +246,53 @@ func PushDockerImageToECR(localImageTag string,
 
 	// 4. Push the image - if that fails attempt to reauthorize with the docker
 	// client and try again
-	var pushError error
-	dockerPushCmd := exec.Command("docker", "push", ecrTagValue)
-	pushError = system.RunOSCommand(dockerPushCmd, logger)
-	if pushError != nil {
-		logger.WithFields(logrus.Fields{
-			"Error": pushError,
-		}).Info("ECR push failed - reauthorizing")
-		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
-		if ecrAuthTokenResultErr != nil {
-			pushError = ecrAuthTokenResultErr
-		} else {
-			authData := ecrAuthTokenResult.AuthorizationData[0]
-			authToken, authTokenErr := base64.StdEncoding.DecodeString(*authData.AuthorizationToken)
-			if authTokenErr != nil {
-				pushError = authTokenErr
+	/*
+		var pushError error
+		dockerPushCmd := exec.Command("docker", "push", ecrTagValue)
+		pushError = system.RunOSCommand(dockerPushCmd, logger)
+		if pushError != nil {
+			logger.Info().
+				Err(pushError).
+				Msg("ECR push failed - reauthorizing")
+			ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
+			if ecrAuthTokenResultErr != nil {
+				pushError = ecrAuthTokenResultErr
 			} else {
-				authTokenString := string(authToken)
-				authTokenParts := strings.Split(authTokenString, ":")
-				dockerURL := fmt.Sprintf("https://%s.dkr.ecr.%s.amazonaws.com",
-					*stsIdentityOutput.Account,
-					*awsSession.Config.Region)
-				dockerLoginCmd := exec.Command("docker",
-					"login",
-					"-u",
-					authTokenParts[0],
-					"--password-stdin",
-					dockerURL)
-				dockerLoginCmd.Stdout = os.Stdout
-				dockerLoginCmd.Stdin = bytes.NewReader([]byte(fmt.Sprintf("%s\n", authTokenParts[1])))
-				dockerLoginCmd.Stderr = os.Stderr
-				dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
-				if dockerLoginCmdErr != nil {
-					pushError = dockerLoginCmdErr
+				authData := ecrAuthTokenResult.AuthorizationData[0]
+				authToken, authTokenErr := base64.StdEncoding.DecodeString(*authData.AuthorizationToken)
+				if authTokenErr != nil {
+					pushError = authTokenErr
 				} else {
-					// Try it again...
-					dockerRetryPushCmd := exec.Command("docker", "push", ecrTagValue)
-					dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
-					pushError = dockerRetryPushCmdErr
+					authTokenString := string(authToken)
+					authTokenParts := strings.Split(authTokenString, ":")
+					dockerURL := fmt.Sprintf("https://%s.dkr.ecr.%s.amazonaws.com",
+						*stsIdentityOutput.Account,
+						*awsSession.Config.Region)
+					dockerLoginCmd := exec.Command("docker",
+						"login",
+						"-u",
+						authTokenParts[0],
+						"--password-stdin",
+						dockerURL)
+					dockerLoginCmd.Stdout = os.Stdout
+					dockerLoginCmd.Stdin = bytes.NewReader([]byte(fmt.Sprintf("%s\n", authTokenParts[1])))
+					dockerLoginCmd.Stderr = os.Stderr
+					dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
+					if dockerLoginCmdErr != nil {
+						pushError = dockerLoginCmdErr
+					} else {
+						// Try it again...
+						dockerRetryPushCmd := exec.Command("docker", "push", ecrTagValue)
+						dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
+						pushError = dockerRetryPushCmdErr
+					}
 				}
 			}
 		}
-	}
-	if pushError != nil {
-		pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
-	}
-	return ecrTagValue, pushError
+		if pushError != nil {
+			pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
+		}
+	*/
+	pushErr := PushECRTaggedImage(ecrTagValue, awsSession, logger)
+	return ecrTagValue, pushErr
 }

@@ -51,7 +51,7 @@ type SpartaHelloWorldResource struct {
 // Create implements resource create
 func (command SpartaHelloWorldResource) Create(awsSession *session.Session,
   event *spartaAWSResource.CloudFormationLambdaEvent,
-  logger *logrus.Logger) (map[string]interface{}, error) {
+  logger *zerolog.Logger) (map[string]interface{}, error) {
 
   requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
   if requestPropsErr != nil {
@@ -66,14 +66,14 @@ func (command SpartaHelloWorldResource) Create(awsSession *session.Session,
 // Update implements resource update
 func (command SpartaHelloWorldResource) Update(awsSession *session.Session,
   event *spartaAWSResource.CloudFormationLambdaEvent,
-  logger *logrus.Logger) (map[string]interface{}, error) {
+  logger *zerolog.Logger) (map[string]interface{}, error) {
   return "", nil
 }
 
 // Delete implements resource delete
 func (command SpartaHelloWorldResource) Delete(awsSession *session.Session,
   event *spartaAWSResource.CloudFormationLambdaEvent,
-  logger *logrus.Logger) (map[string]interface{}, error) {
+  logger *zerolog.Logger) (map[string]interface{}, error) {
   return "", nil
 }
 ```
@@ -115,7 +115,7 @@ func customResourceHooks() *sparta.WorkflowHooks {
     buildID string,
     awsSession *session.Session,
     noop bool,
-    logger *logrus.Logger) error {
+    logger *zerolog.Logger) error {
 
     // 1. Ensure the Lambda Function is registered
     customResourceName, customResourceNameErr := sparta.EnsureCustomResourceHandler(serviceName,
@@ -156,4 +156,3 @@ func customResourceHooks() *sparta.WorkflowHooks {
 
 Provide the hooks structure to [MainEx](https://godoc.org/github.com/mweagle/Sparta#MainEx) to
 include this custom resource with your service's provisioning lifecycle.
-

@@ -1,13 +1,14 @@
 package decorator
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // CloudFrontSiteDistributionDecorator returns a CloudFrontSiteDecorator with
@@ -45,15 +46,14 @@ func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 	cert *gocf.CloudFrontDistributionViewerCertificate) sparta.ServiceDecoratorHookHandler {
 
 	// Setup the CF distro
-	distroDecorator := func(context map[string]interface{},
+	distroDecorator := func(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		// Computed name
 		bucketName := domainName
@@ -63,10 +63,10 @@ func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 
 		// If there isn't a domain name, then it's an issue...
 		if s3Site.BucketName == nil {
-			return errors.Errorf("CloudFrontDistribution requires an s3Site.BucketName value in the form of a DNS entry")
+			return ctx, errors.Errorf("CloudFrontDistribution requires an s3Site.BucketName value in the form of a DNS entry")
 		}
 		if s3Site.BucketName.Literal != "" && s3Site.BucketName.Literal != bucketName {
-			return errors.Errorf("Mismatch between S3Site.BucketName Literal (%s) and CloudFront DNS entry (%s)",
+			return ctx, errors.Errorf("Mismatch between S3Site.BucketName Literal (%s) and CloudFront DNS entry (%s)",
 				s3Site.BucketName.Literal,
 				bucketName)
 		}
@@ -130,7 +130,7 @@ func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 			Description: "CloudFront Distribution Route53 entry",
 			Value:       s3Site.BucketName,
 		}
-		return nil
+		return ctx, nil
 	}
 	return sparta.ServiceDecoratorHookFunc(distroDecorator)
 }

@@ -4,7 +4,7 @@ GO_GET_FLAGS="-u -v"
 
 # Workaround for https://github.com/golang/go/issues/30515
 mkdir -pv ./.sparta
-cd ./.sparta   
+cd ./.sparta
 # Prerequisites
 GO111MODULE=off go get $GO_GET_FLAGS github.com/magefile/mage
 GO111MODULE=off go get $GO_GET_FLAGS github.com/hhatto/gocloc
@@ -24,3 +24,4 @@ GO111MODULE=off go get $GO_GET_FLAGS github.com/mjibson/esc
 GO111MODULE=off go get $GO_GET_FLAGS github.com/securego/gosec/cmd/gosec
 GO111MODULE=off go get $GO_GET_FLAGS github.com/alexkohler/prealloc
 GO111MODULE=off go get $GO_GET_FLAGS github.com/client9/misspell/cmd/misspell
+GO111MODULE=on go get -u github.com/hhatto/gocloc/cmd/gocloc

@@ -1,7 +1,11 @@
 package step
 
+//go:generate go run ./generator/main.go ./generator/choice_definitions.json ./choice_rules.go
+//go:generate goimports -e -w ./choice_rules.go
+
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -14,7 +18,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Types of state machines per
@@ -518,35 +522,34 @@ func NewLambdaTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *Lambd
 		},
 		lambdaFn: lambdaFn,
 	}
-	ts.LambdaDecorator = func(serviceName string,
+	ts.LambdaDecorator = func(ctx context.Context,
+		serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		cfTemplate *gocf.Template,
-		context map[string]interface{},
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
+		passCtx := ctx
 		if ts.preexistingDecorator != nil {
-			preexistingLambdaDecoratorErr := ts.preexistingDecorator(
+			preexistingCtx, preexistingLambdaDecoratorErr := ts.preexistingDecorator(ctx,
 				serviceName,
 				lambdaResourceName,
 				lambdaResource,
 				resourceMetadata,
-				S3Bucket,
-				S3Key,
+				lambdaFunctionCode,
 				buildID,
 				cfTemplate,
-				context,
 				logger)
 			if preexistingLambdaDecoratorErr != nil {
-				return preexistingLambdaDecoratorErr
+				return preexistingCtx, preexistingLambdaDecoratorErr
 			}
+			passCtx = preexistingCtx
 		}
 		// Save the lambda name s.t. we can create the {"Ref"::"lambdaName"} entry...
 		ts.lambdaLogicalResourceName = lambdaResourceName
-		return nil
+		return passCtx, nil
 	}
 	// Make sure this Lambda decorator is included in the list of existing decorators
 
@@ -861,15 +864,14 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 // StateMachineNamedDecorator is the hook exposed by the StateMachine
 // to insert the AWS Step function into the CloudFormation template
 func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName string) sparta.ServiceDecoratorHookFunc {
-	return func(context map[string]interface{},
+	return func(ctx context.Context,
 		serviceName string,
 		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		machineErrors := sm.validate()
 		if len(machineErrors) != 0 {
@@ -877,7 +879,7 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 			for index := range machineErrors {
 				errorText[index] = machineErrors[index].Error()
 			}
-			return errors.Errorf("Invalid state machine. Errors: %s",
+			return ctx, errors.Errorf("Invalid state machine. Errors: %s",
 				strings.Join(errorText, ", "))
 		}
 
@@ -970,18 +972,18 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 		// ConvertToTemplateExpression can actually parse the inline `Ref` objects
 		jsonBytes, jsonBytesErr := json.Marshal(sm)
 		if jsonBytesErr != nil {
-			return errors.Errorf("Failed to marshal: %s", jsonBytesErr.Error())
+			return ctx, errors.Errorf("Failed to marshal: %s", jsonBytesErr.Error())
 		}
-		logger.WithFields(logrus.Fields{
-			"StateMachine": string(jsonBytes),
-		}).Debug("State machine definition")
+		logger.Debug().
+			RawJSON("StateMachine", jsonBytes).
+			Msg("State machine definition")
 
 		// Super, now parse this into an Fn::Join representation
 		// so that we can get inline expansion of the AWS pseudo params
 		smReader := bytes.NewReader(jsonBytes)
 		templateExpr, templateExprErr := spartaCF.ConvertToInlineJSONTemplateExpression(smReader, nil)
 		if nil != templateExprErr {
-			return errors.Errorf("Failed to parser: %s", templateExprErr.Error())
+			return ctx, errors.Errorf("Failed to parser: %s", templateExprErr.Error())
 		}
 
 		// Awsome - add an AWS::StepFunction to the template with this info and roll with it...
@@ -999,7 +1001,7 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 			stepFunctionResource.StateMachineType = gocf.String(sm.machineType)
 		}
 		template.AddResource(stepFunctionResourceName, stepFunctionResource)
-		return nil
+		return ctx, nil
 	}
 }
 

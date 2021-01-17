@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+
+	"github.com/rs/zerolog"
 )
 
 var discoveryDataNoTags = `
@@ -28,7 +30,7 @@ var discoveryDataNoTags = `
 
 func TestDiscoveryInitialized(t *testing.T) {
 	// Ensure that sparta.Discover() can only be called from a lambda function
-	logger, _ := NewLogger("warning")
+	logger, _ := NewLogger(zerolog.WarnLevel.String())
 
 	// Encode the data, stuff it into the environment variable
 	encodedString := base64.StdEncoding.EncodeToString([]byte(discoveryDataNoTags))

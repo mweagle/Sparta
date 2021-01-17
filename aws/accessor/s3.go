@@ -12,7 +12,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // S3Accessor to make it a bit easier to work with S3
@@ -39,7 +39,7 @@ func (svc *S3Accessor) KeysPrivilege(keyPrivileges ...string) sparta.IAMRolePriv
 }
 
 func (svc *S3Accessor) s3Svc(ctx context.Context) *s3.S3 {
-	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 	sess := spartaAWS.NewSession(logger)
 	s3Client := s3.New(sess)
 	xrayInit(s3Client.Client)
@@ -105,10 +105,11 @@ func (svc *S3Accessor) Put(ctx context.Context, keyPath string, object interface
 		return jsonBytesErr
 	}
 
-	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	logger.WithFields(logrus.Fields{
-		"Bytes":   string(jsonBytes),
-		"KeyPath": keyPath}).Debug("Saving S3 object")
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
+	logger.Debug().
+		Str("Bytes", string(jsonBytes)).
+		Str("KeyPath", keyPath).
+		Msg("Saving S3 object")
 
 	bytesReader := bytes.NewReader(jsonBytes)
 	putObjectInput := &s3.PutObjectInput{
@@ -120,9 +121,10 @@ func (svc *S3Accessor) Put(ctx context.Context, keyPath string, object interface
 		s3Svc(ctx).
 		PutObjectWithContext(ctx, putObjectInput)
 
-	logger.WithFields(logrus.Fields{
-		"Error":   putObjectRespErr,
-		"Results": putObjectResponse}).Debug("Save object results")
+	logger.Debug().
+		Err(putObjectRespErr).
+		Interface("Results", putObjectResponse).
+		Msg("Save object results")
 
 	return putObjectRespErr
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // SESLambdaEventSourceResourceAction represents an SES rule action
@@ -18,7 +18,7 @@ type SESLambdaEventSourceResourceAction struct {
 	ActionProperties map[string]interface{}
 }
 
-func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *logrus.Logger) *ses.ReceiptAction {
+func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *zerolog.Logger) *ses.ReceiptAction {
 	actionProperties := action.ActionProperties
 	switch action.ActionType.Literal {
 	case "LambdaAction":
@@ -52,7 +52,7 @@ func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *logrus
 		}
 		return action
 	default:
-		logger.Error("No SESLmabdaEventSourceResourceAction marshaler found for action: " + action.ActionType.Literal)
+		logger.Error().Msgf("No SESLmabdaEventSourceResourceAction marshaler found for action: %s", action.ActionType.Literal)
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ type SESLambdaEventSourceResourceRule struct {
 	TLSPolicy   *gocf.StringExpr `json:",omitempty"`
 }
 
-func ensureSESRuleSetName(ruleSetName string, svc *ses.SES, logger *logrus.Logger) error {
+func ensureSESRuleSetName(ruleSetName string, svc *ses.SES, logger *zerolog.Logger) error {
 	describeInput := &ses.DescribeReceiptRuleSetInput{
 		RuleSetName: aws.String(ruleSetName),
 	}
@@ -79,15 +79,16 @@ func ensureSESRuleSetName(ruleSetName string, svc *ses.SES, logger *logrus.Logge
 			createRuleSet := &ses.CreateReceiptRuleSetInput{
 				RuleSetName: aws.String(ruleSetName),
 			}
-			logger.WithFields(logrus.Fields{
-				"createRuleSet": createRuleSet,
-			}).Info("Creating Sparta SES Rule set")
+			logger.Info().
+				Interface("createRuleSet", createRuleSet).
+				Msg("Creating Sparta SES Rule set")
+
 			_, opError = svc.CreateReceiptRuleSet(createRuleSet)
 		}
 	} else {
-		logger.WithFields(logrus.Fields{
-			"describeRuleSet": describeRuleSet,
-		}).Info("SES Rule Set already exists")
+		logger.Info().
+			Interface("describeRuleSet", describeRuleSet).
+			Msg("SES Rule Set already exists")
 	}
 	return opError
 }
@@ -108,7 +109,7 @@ type SESLambdaEventSourceResource struct {
 func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
 	session *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -164,20 +165,20 @@ func (command *SESLambdaEventSourceResource) IAMPrivileges() []string {
 // Create implements the custom resource create operation
 func (command SESLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(true, awsSession, event, logger)
 }
 
 // Update implements the custom resource update operation
 func (command SESLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(true, awsSession, event, logger)
 }
 
 // Delete implements the custom resource delete operation
 func (command SESLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(false, awsSession, event, logger)
 }

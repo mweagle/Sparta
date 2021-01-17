@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/sirupsen/logrus"
 )
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
@@ -14,10 +13,10 @@ import (
 func echoS3SiteAPIGatewayEvent(ctx context.Context,
 	props map[string]interface{}) (map[string]interface{}, error) {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return props, nil
 }
 
@@ -42,5 +41,8 @@ func ExampleMain_s3Site() {
 	s3Site, _ := NewS3Site("./site")
 
 	// Provision everything
-	Main("HelloWorldS3SiteService", "Description for S3Site", []*LambdaAWSInfo{echoS3SiteAPIGatewayEventLambdaFn}, apiGateway, s3Site)
+	mainErr := Main("HelloWorldS3SiteService", "Description for S3Site", []*LambdaAWSInfo{echoS3SiteAPIGatewayEventLambdaFn}, apiGateway, s3Site)
+	if mainErr != nil {
+		panic("Failed to launch Main: " + mainErr.Error())
+	}
 }

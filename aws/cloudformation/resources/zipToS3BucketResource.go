@@ -17,7 +17,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // DefaultManifestName is the name of the file that will be created
@@ -43,7 +43,7 @@ type ZipToS3BucketResource struct {
 
 func (command ZipToS3BucketResource) unzip(session *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -137,11 +137,11 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 		}
 	}
 	// Log some information
-	logger.WithFields(logrus.Fields{
-		"TotalFileCount": totalFiles,
-		"ArchiveSize":    *s3Object.ContentLength,
-		"S3Bucket":       command.DestBucket,
-	}).Info("Expanded ZIP archive")
+	logger.Info().
+		Int("TotalFileCount", totalFiles).
+		Int64("ArchiveSize", *s3Object.ContentLength).
+		Interface("S3Bucket", command.DestBucket).
+		Msg("Expanded ZIP archive")
 
 	// All good
 	return nil, nil
@@ -156,21 +156,21 @@ func (command *ZipToS3BucketResource) IAMPrivileges() []string {
 // Create implements the custom resource create operation
 func (command ZipToS3BucketResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.unzip(awsSession, event, logger)
 }
 
 // Update implements the custom resource update operation
 func (command ZipToS3BucketResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.unzip(awsSession, event, logger)
 }
 
 // Delete implements the custom resource delete operation
 func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -220,10 +220,10 @@ func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 			Key:    aws.String(name),
 		}
 		_, deleteErr = svc.DeleteObject(manifestDeleteParams)
-		logger.WithFields(logrus.Fields{
-			"TotalDeletedCount": totalItemsDeleted,
-			"S3Bucket":          command.DestBucket,
-		}).Info("Purged S3 Bucket")
+		logger.Info().
+			Int("TotalDeletedCount", totalItemsDeleted).
+			Interface("S3Bucket", command.DestBucket).
+			Msg("Purged S3 Bucket")
 	}
 	return nil, deleteErr
 }

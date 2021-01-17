@@ -8,19 +8,20 @@ import (
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // ExampleS3Reactor illustrates how to create an S3 event subscriber
 func ExampleS3Reactor() {
 	inlineReactor := func(ctx context.Context,
 		s3Event awsLambdaEvents.S3Event) (interface{}, error) {
-		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 		if loggerOk {
 			for _, eachRecord := range s3Event.Records {
-				logger.WithField("EventType", eachRecord.EventName).
-					WithField("Entity", eachRecord.S3).
-					Info("Event info")
+				logger.Info().
+					Str("EventType", eachRecord.EventName).
+					Interface("Entity", eachRecord.S3).
+					Msg("Event info")
 			}
 		}
 		return len(s3Event.Records), nil
@@ -35,11 +36,11 @@ func ExampleS3Reactor() {
 // ExampleSNSReactor illustrates how to create an SNS notification subscriber
 func ExampleSNSReactor() {
 	inlineReactor := func(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) {
-		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 		if loggerOk {
-			logger.WithFields(logrus.Fields{
-				"Event": snsEvent,
-			}).Info("Event received")
+			logger.Info().
+				Interface("Event", snsEvent).
+				Msg("Event received")
 		}
 		return &snsEvent, nil
 	}

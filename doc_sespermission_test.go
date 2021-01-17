@@ -4,16 +4,15 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/sirupsen/logrus"
 )
 
 func sesLambdaProcessor(ctx context.Context,
 	props map[string]interface{}) (map[string]interface{}, error) {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return props, nil
 }
 
@@ -47,7 +46,10 @@ func ExampleSESPermission_messageBody() {
 	sesLambda.Permissions = append(sesLambda.Permissions, lambdaSESPermission)
 
 	lambdaFunctions = append(lambdaFunctions, sesLambda)
-	Main("SESLambdaApp", "Registers for SES events and saves the MessageBody", lambdaFunctions, nil, nil)
+	mainErr := Main("SESLambdaApp", "Registers for SES events and saves the MessageBody", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }
 
 func ExampleSESPermission_headersOnly() {
@@ -85,5 +87,8 @@ func ExampleSESPermission_headersOnly() {
 	sesLambda.Permissions = append(sesLambda.Permissions, lambdaSESPermission)
 
 	lambdaFunctions = append(lambdaFunctions, sesLambda)
-	Main("SESLambdaApp", "Registers for SES events", lambdaFunctions, nil, nil)
+	mainErr := Main("SESLambdaApp", "Registers for SES events", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

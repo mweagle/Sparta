@@ -29,7 +29,7 @@ import (
 
 const (
 	localWorkDir      = "./.sparta"
-	hugoVersion       = "0.69.2"
+	hugoVersion       = "0.79.0"
 	archIconsRootPath = "resources/describe/AWS-Architecture-Icons_PNG"
 	archIconsTreePath = "resources/describe/AWS-Architecture-Icons.tree.txt"
 )
@@ -460,7 +460,7 @@ func EnsureFormatted() error {
 // EnsureStaticChecks ensures that the source code passes static code checks
 func EnsureStaticChecks() error {
 	// https://staticcheck.io/
-	excludeChecks := "-exclude=G204,G505,G401,G601"
+	excludeChecks := "-exclude=G204,G505,G401,G404,G601"
 	staticCheckErr := sh.Run("staticcheck",
 		"github.com/mweagle/Sparta/...")
 	if staticCheckErr != nil {
@@ -544,6 +544,18 @@ func Publish() error {
 		{"git", "push", "origin"},
 	}
 	return spartamage.Script(describeCommands)
+}
+
+// UnitTest only runs the unit tests
+func UnitTest() error {
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	testCommand := [][]string{
+		{"go", "test", verboseFlag, "-cover", "-race", "./..."},
+	}
+	return spartamage.Script(testCommand)
 }
 
 // Test runs the Sparta tests

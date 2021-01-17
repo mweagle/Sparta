@@ -19,7 +19,7 @@ func TestAPIGatewayCustomDomain(t *testing.T) {
 	}
 	lambdaFuncs := func(api *sparta.API) []*sparta.LambdaAWSInfo {
 		var lambdaFunctions []*sparta.LambdaAWSInfo
-		lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
 			helloWorld,
 			sparta.IAMRoleDefinition{})
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
@@ -77,7 +77,7 @@ func ExampleAPIGatewayDomainDecorator() {
 	}
 	lambdaFuncs := func(api *sparta.API) []*sparta.LambdaAWSInfo {
 		var lambdaFunctions []*sparta.LambdaAWSInfo
-		lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
 			helloWorld,
 			sparta.IAMRoleDefinition{})
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
@@ -120,11 +120,14 @@ func ExampleAPIGatewayDomainDecorator() {
 	hooks := apigatewayHooks(apiGateway)
 	// Deploy it
 	stackName := spartaCF.UserScopedStackName("CustomAPIGateway")
-	sparta.MainEx(stackName,
+	mainErr := sparta.MainEx(stackName,
 		"CustomAPIGateway defines a stack with a custom APIGateway Domain Name",
 		lambdaFuncs(apiGateway),
 		apiGateway,
 		nil,
 		hooks,
 		false)
+	if mainErr != nil {
+		panic("Failed to launch Main: " + mainErr.Error())
+	}
 }

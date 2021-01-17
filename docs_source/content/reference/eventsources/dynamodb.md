@@ -4,11 +4,11 @@ title: DynamoDB
 weight: 10
 ---
 
-In this section we'll walkthrough how to trigger your lambda function in response to DynamoDB stream events.  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
+In this section we'll walkthrough how to trigger your lambda function in response to DynamoDB stream events. This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
 
 # Goal
 
-Assume that we're given a DynamoDB stream.  See [below](http://localhost:1313/docs/eventsources/dynamodb/#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba) for details on how to create the stream.  We've been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.
+Assume that we're given a DynamoDB stream. See [below](http://localhost:1313/docs/eventsources/dynamodb/#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba) for details on how to create the stream. We've been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.
 
 ## Getting Started
 
@@ -19,10 +19,12 @@ import (
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 )
 func echoDynamoDBEvent(ctx context.Context, ddbEvent awsLambdaEvents.DynamoDBEvent) (*awsLambdaEvents.DynamoDBEvent, error) {
-	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
-	logger.WithFields(logrus.Fields{
-		"Event": ddbEvent,
-	}).Info("Event received")
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
+
+  logger.Info().
+    Interface("Event", ddbEvent).
+    Msg("Event received")
+
 	return &ddbEvent, nil
 }
 ```
@@ -32,7 +34,7 @@ to access the record.
 
 ## Sparta Integration
 
-With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the **go** function with Sparta.  This is performed by the [appendDynamoDBLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114) function.  Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
+With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the **go** function with Sparta. This is performed by the [appendDynamoDBLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114) function. Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 ```go
 lambdaFn, _ := sparta.NewAWSLambda(
@@ -43,7 +45,7 @@ lambdaFn, _ := sparta.NewAWSLambda(
 
 ## Event Source Mappings
 
-If we were to deploy this Sparta application, the `echoDynamoDBEvent` function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda's [EventSourceMappings](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources):
+If we were to deploy this Sparta application, the `echoDynamoDBEvent` function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream. To register for notifications, we need to configure the lambda's [EventSourceMappings](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources):
 
 ```go
   lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
@@ -62,16 +64,16 @@ The `EventSourceMappings` field is transformed into the appropriate [CloudFormat
 
 ## Wrapping Up
 
-With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all DynamoDB stream based lambda functions:
+With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service. The workflow below is shared by all DynamoDB stream based lambda functions:
 
-  * Define the lambda function (`echoDynamoDBEvent`).
-  * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
-  * Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
+- Define the lambda function (`echoDynamoDBEvent`).
+- If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
+- Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
+- Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
 ## Other Resources
 
-  * [Using Triggers for Cross Region DynamoDB Replication](https://aws.amazon.com/blogs/aws/dynamodb-update-triggers-streams-lambda-cross-region-replication-app/)
+- [Using Triggers for Cross Region DynamoDB Replication](https://aws.amazon.com/blogs/aws/dynamodb-update-triggers-streams-lambda-cross-region-replication-app/)
 
 <hr />
 # Appendix
@@ -89,6 +91,7 @@ To create a DynamoDB stream for a given table, follow the steps below:
 ![Enable Stream](/images/eventsources/dynamodb/DynamoDB_Enable.png)
 
 #### Copy ARN
+
 ![Copy ARN](/images/eventsources/dynamodb/DynamoDB_StreamARN.png)
 
 The **Latest stream ARN** value is the value that should be provided as the `EventSourceArn` in to the [Event Source Mappings](http://localhost:1313/docs/eventsources/dynamodb/#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba).

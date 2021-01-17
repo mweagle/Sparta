@@ -6,16 +6,21 @@ import (
 	"container/ring"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-xray-sdk-go/xray"
 	sparta "github.com/mweagle/Sparta"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
+//lint:ignore U1000 because it's actually used
+type contextKey int
+
 const (
-	logRingSize = 1024
+	//lint:ignore U1000 because it's actually used
+	contextKeySegment contextKey = iota
 )
 
 func (xri *xrayInterceptor) Begin(ctx context.Context, msg json.RawMessage) context.Context {
@@ -42,22 +47,23 @@ func (xri *xrayInterceptor) BeforeSetup(ctx context.Context, msg json.RawMessage
 
 func (xri *xrayInterceptor) AfterSetup(ctx context.Context, msg json.RawMessage) context.Context {
 	if xri.mode&XRayModeErrCaptureLogs != 0 {
-		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+		logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 		if loggerOk {
-			// So we need a loggerWrapper that has the debug level turned on.
-			// This filtering formatter will put everything in a logring and
-			// flush iff there is an error
-			xri.filteringFormatter = &filteringFormatter{
-				targetFormatter: logger.Formatter,
-				originalLevel:   logger.Level,
-				logRing:         ring.New(logRingSize),
+			// How to have a single writer with different levels? We can keep the old logger,
+			// We need a ring buffer to store the messages, and then we send it
+			// to the original logger
+			xri.zerologXRayHandler = &zerologXRayHandler{
+				logRing:       ring.New(logRingSize),
+				originalLevel: logger.GetLevel(),
 			}
-			xri.filteringWriter = &filteringWriter{
-				targetOutput: logger.Out,
-			}
-			logger.SetLevel(logrus.TraceLevel)
-			logger.SetFormatter(xri.filteringFormatter)
-			logger.SetOutput(xri.filteringWriter)
+			// So this is the new logger, going to the same place, but
+			// tapped for the ring...
+			newLogger := zerolog.New(xri.zerologXRayHandler).
+				With().
+				Timestamp().
+				Logger().
+				Level(zerolog.TraceLevel).Hook(xri.zerologXRayHandler)
+			ctx = context.WithValue(ctx, sparta.ContextKeyLogger, &newLogger)
 		} else {
 			log.Printf("WARNING: Failed to get logger from context\n")
 		}
@@ -79,10 +85,11 @@ func (xri *xrayInterceptor) Complete(ctx context.Context, msg json.RawMessage) c
 		if segmentOk {
 			errValue, errValueOk := ctx.Value(sparta.ContextKeyLambdaError).(error)
 			if errValueOk && errValue != nil {
+				var metadataEventErr error
 
 				// Include the error value?
 				if xri.mode&XRayModeErrCaptureErrorValue != 0 {
-					metadataEventErr := segment.AddMetadataToNamespace(sparta.ProperName, XRayMetadataErrValue, errValue.Error())
+					metadataEventErr = segment.AddMetadataToNamespace(sparta.ProperName, XRayMetadataErrValue, errValue.Error())
 					if metadataEventErr != nil {
 						log.Printf("Failed to set event %s metadata: %s", XRayMetadataErrValue, metadataEventErr)
 					}
@@ -109,30 +116,30 @@ func (xri *xrayInterceptor) Complete(ctx context.Context, msg json.RawMessage) c
 
 				// Include the cached log info?
 				if xri.mode&XRayModeErrCaptureLogs != 0 {
-					logFormatter := &logrus.JSONFormatter{}
-					logMessages := make([]map[string]*json.RawMessage, 0)
-					xri.filteringFormatter.logRing.Do(func(eachLogEntry interface{}) {
+					logMessages := make([]interface{}, 0)
+					xri.zerologXRayHandler.logRing.Do(func(eachLogEntry interface{}) {
 						if eachLogEntry != nil {
-							// Format each one to text?
-							eachTypedEntry, eachTypedEntryOk := eachLogEntry.(*logrus.Entry)
-							if eachTypedEntryOk {
-								formatted, formattedErr := logFormatter.Format(eachTypedEntry)
-								if formattedErr == nil {
-									var jsonData map[string]*json.RawMessage
-									unmarshalErr := json.Unmarshal(formatted, &jsonData)
-									if unmarshalErr == nil {
-										logMessages = append(logMessages, jsonData)
-									}
+							stringVal, stringOk := eachLogEntry.(string)
+							if stringOk {
+								var unmarshalMap map[string]interface{}
+								unmarshalErr := json.Unmarshal([]byte(stringVal), &unmarshalMap)
+								if unmarshalErr == nil {
+									logMessages = append(logMessages, unmarshalMap)
+								} else {
+									logMessages = append(logMessages, fmt.Sprintf("%s", stringVal))
 								}
+							} else {
+								logMessages = append(logMessages, fmt.Sprintf("%v", eachLogEntry))
 							}
 						}
 					})
+
 					metadataEventErr = segment.AddMetadataToNamespace(sparta.ProperName, XRayMetadataLogs, logMessages)
 					if metadataEventErr != nil {
 						log.Printf("Failed to set event %s metadata: %s", XRayMetadataLogs, metadataEventErr)
 					}
 					// Either way, clear out the ring...
-					xri.filteringFormatter.logRing = ring.New(logRingSize)
+					xri.zerologXRayHandler.logRing = ring.New(logRingSize)
 				}
 			}
 			segment.Close(errValue)

@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"context"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/rs/zerolog"
 )
 
 const lambdaTestExecuteARN = "LambdaExecutor"
@@ -132,22 +135,30 @@ func testProvisionEx(t *testing.T,
 		evaluator = assertSuccess
 	}
 
-	logger, loggerErr := NewLogger("info")
+	logger, loggerErr := NewLogger(zerolog.InfoLevel.String())
 	if loggerErr != nil {
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
 	var templateWriter bytes.Buffer
-	err := Provision(true,
+
+	workingDir, workingDirErr := os.Getwd()
+	if workingDirErr != nil {
+		t.Error(workingDirErr)
+	}
+	fullPath, fullPathErr := filepath.Abs(workingDir)
+	if fullPathErr != nil {
+		t.Error(fullPathErr)
+	}
+	err := Build(true,
 		"SampleProvision",
 		"",
 		lambdaAWSInfos,
 		nil,
 		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
 		false,
 		"testBuildID",
 		"",
+		fullPath,
 		"",
 		"",
 		&templateWriter,

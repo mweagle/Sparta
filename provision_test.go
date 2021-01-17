@@ -1,11 +1,12 @@
 package sparta
 
 import (
+	"context"
 	"testing"
 
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type cloudFormationProvisionTestResource struct {
@@ -33,21 +34,20 @@ func TestProvision(t *testing.T) {
 	testProvision(t, testLambdaData(), nil)
 }
 
-func templateDecorator(serviceName string,
+func templateDecorator(ctx context.Context,
+	serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
+	lambdaFunctionCode *gocf.LambdaFunctionCode,
 	buildID string,
 	cfTemplate *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) (context.Context, error) {
 
 	// Add an empty resource
 	newResource, err := newCloudFormationResource("Custom::ProvisionTestEmpty", logger)
 	if nil != err {
-		return errors.Wrapf(err, "Failed to create test resource")
+		return ctx, errors.Wrapf(err, "Failed to create test resource")
 	}
 	customResource := newResource.(*cloudFormationProvisionTestResource)
 	customResource.ServiceToken = "arn:aws:sns:us-east-1:84969EXAMPLE:CRTest"
@@ -59,7 +59,7 @@ func templateDecorator(serviceName string,
 		Description: "Information about the value",
 		Value:       gocf.String("My key"),
 	}
-	return nil
+	return ctx, nil
 }
 
 func TestDecorateProvision(t *testing.T) {

@@ -1,60 +1,68 @@
 baseURL = "/"
-languageCode = "en-US"
 defaultContentLanguage = "en"
-title = "Sparta Documentation"
-theme = "hugo-theme-learn"
+defaultContentLanguageInSubdir = true
+enableGitInfo = true
+languageCode = "en-US"
 metaDataFormat = "yaml"
-defaultContentLanguageInSubdir= true
-enableGitInfo=true
 publishDir = "../docs"
+theme = "hugo-theme-learn"
+title = "Sparta Documentation"
 
 [markup]
-  defaultMarkdownHandler = "goldmark"
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true
-  [markup.highlight]
-    codeFences = true
-    guessSyntax = false
-    hl_Lines = ""
-    lineNoStart = 1
-    lineNos = false
-    lineNumbersInTable = true
-    noClasses = true
-    style = "vs"
-    tabWidth = 2
+defaultMarkdownHandler = "goldmark"
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+[markup.highlight]
+codeFences = true
+guessSyntax = false
+hl_Lines = ""
+lineNoStart = 1
+lineNos = false
+lineNumbersInTable = true
+noClasses = true
+style = "vs"
+tabWidth = 2
 
 [params]
-  editURL = "https://github.com/mweagle/Sparta/tree/docs/content/"
-  description = "Sparta - AWS Lambda Microservices"
-  author = "Matt Weagle"
-  showVisitedLinks = false
-  disableBreadcrumb = false
-  disableNextPrev = false
-  themeVariant = "sparta"
-  ordersectionsby = "weight"
+author = "Matt Weagle"
+description = "Sparta - AWS Lambda Microservices"
+disableBreadcrumb = false
+disableInlineCopyToClipBoard = true
+disableLandingPageButton = true
+disableNextPrev = false
+editURL = "https://github.com/mweagle/Sparta/tree/docs/content/"
+ordersectionsby = "weight"
+showVisitedLinks = true
+themeVariant = "sparta"
+titleSeparator = "::"
 
 [outputs]
-home = [ "HTML", "RSS", "JSON"]
+home = ["HTML", "RSS", "JSON"]
 
 [Languages]
 [Languages.en]
+languageName = "English"
 title = "Sparta - AWS Lambda Microservices"
 weight = 1
-languageName = "English"
 
 [[Languages.en.menu.shortcuts]]
-name = "<i class='fab fa-fw fa-github'></i> Github repo"
 identifier = "ds"
-url = "https://github.com/mweagle/Sparta"
+name = "<i class='fab fa-aws'></i> AWS Lambda"
+url = "https://aws.amazon.com/lambda/"
 weight = 10
 
 [[Languages.en.menu.shortcuts]]
-name = "<i class='fas fa-fw fa-camera'></i> Showcases"
+name = "<i class='fab fa-fw fa-github'></i> Github repo"
+url = "https://github.com/mweagle/Sparta"
+weight = 20
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fas fa-fw fa-camera'></i> Examples"
 url = "https://github.com/mweagle?utf8=%E2%9C%93&tab=repositories&q=Sparta&type=&language="
-weight = 11
+weight = 30
 
 [[Languages.en.menu.shortcuts]]
 name = "<i class='fas fa-fw fa-signal'></i> Release History"
 url = "https://github.com/mweagle/Sparta/blob/master/CHANGES.md"
-weight = 12
+weight = 40

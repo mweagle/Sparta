@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func tailParams(logGroupName string, filter string, lastEvent int64) *cloudwatchlogs.FilterLogEventsInput {
@@ -29,11 +29,14 @@ func TailWithContext(reqContext aws.Context,
 	awsSession *session.Session,
 	logGroupName string,
 	filter string,
-	logger *logrus.Logger) <-chan *cloudwatchlogs.FilteredLogEvent {
+	logger *zerolog.Logger) <-chan *cloudwatchlogs.FilteredLogEvent {
 
 	// Milliseconds...
 	lastSeenTimestamp := time.Now().Add(0).Unix() * 1000
-	logger.WithField("TS", lastSeenTimestamp).Debug("Started polling")
+	logger.Debug().
+		Int64("TS", lastSeenTimestamp).
+		Msg("Started polling")
+
 	outputChannel := make(chan *cloudwatchlogs.FilteredLogEvent)
 	tailHandler := func(res *cloudwatchlogs.FilterLogEventsOutput, lastPage bool) bool {
 		maxTime := int64(0)
@@ -41,7 +44,7 @@ func TailWithContext(reqContext aws.Context,
 			if maxTime < *eachEvent.Timestamp {
 				maxTime = *eachEvent.Timestamp
 			}
-			logger.WithField("ID", *eachEvent.EventId).Debug("Event")
+			logger.Debug().Str("ID", *eachEvent.EventId).Msg("Event")
 			outputChannel <- eachEvent
 		}
 		if maxTime != 0 {
@@ -56,7 +59,7 @@ func TailWithContext(reqContext aws.Context,
 		for {
 			select {
 			case <-closeChan:
-				logger.Debug("Exiting polling loop")
+				logger.Debug().Msg("Exiting polling loop")
 				return
 			case <-tickerChan:
 				logParam := tailParams(logGroupName, filter, lastSeenTimestamp)

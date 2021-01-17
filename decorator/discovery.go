@@ -2,6 +2,7 @@ package decorator
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"sync"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/servicediscovery"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type discoveryInfo struct {
@@ -26,7 +27,7 @@ func init() {
 
 func discoveryInfoFromIDs(namespaceID string,
 	serviceID string,
-	logger *logrus.Logger) (*discoveryInfo, error) {
+	logger *zerolog.Logger) (*discoveryInfo, error) {
 
 	// Closure to enforce proper semantic return
 	returnWrapper := func(discoveryInfo *discoveryInfo) (*discoveryInfo, error) {
@@ -40,9 +41,10 @@ func discoveryInfoFromIDs(namespaceID string,
 	}
 	// Start the lookup logic
 	existingInfo, existingInfoOk := cachedInfo[namespaceID]
-	logger.WithFields(logrus.Fields{
-		"existingInfo": existingInfo,
-		"exists":       existingInfoOk}).Info("Cached info")
+	logger.Info().
+		Interface("existingInfo", existingInfo).
+		Bool("exists", existingInfoOk).
+		Msg("Cached info")
 
 	if existingInfoOk {
 		for _, eachDiscoveryInfo := range existingInfo {
@@ -50,8 +52,8 @@ func discoveryInfoFromIDs(namespaceID string,
 				return returnWrapper(eachDiscoveryInfo)
 			}
 		}
-
 	}
+
 	// It doesn't exist, let's see if we can get the data...
 	locker := sync.RWMutex{}
 	locker.Lock()
@@ -74,12 +76,15 @@ func discoveryInfoFromIDs(namespaceID string,
 			Id: aws.String(namespaceID),
 		}
 		result, resultErr := cloudmapSvc.GetNamespace(params)
-		logger.WithFields(logrus.Fields{
-			"result":    result,
-			"resultErr": resultErr,
-		}).Debug("GetNamespace results")
+		logger.Debug().
+			Interface("result", result).
+			Str("resultErr", fmt.Sprintf("%v", resultErr)).
+			Msg("GetNamespace results")
+
 		if resultErr != nil {
-			logger.WithField("Error", resultErr).Error("Failed to lookup service")
+			logger.Error().
+				Err(resultErr).
+				Msg("Failed to lookup service")
 		} else {
 			lookupInfo.namespaceName = *result.Namespace.Name
 		}
@@ -93,12 +98,16 @@ func discoveryInfoFromIDs(namespaceID string,
 			Id: aws.String(serviceID),
 		}
 		result, resultErr := cloudmapSvc.GetService(params)
-		logger.WithFields(logrus.Fields{
-			"result":    result,
-			"resultErr": resultErr,
-		}).Debug("GetService results")
+
+		logger.Debug().
+			Interface("result", result).
+			Str("resultErr", fmt.Sprintf("%v", resultErr)).
+			Msg("GetService results")
+
 		if resultErr != nil {
-			logger.WithField("Error", resultErr).Error("Failed to lookup service")
+			logger.Error().
+				Err(resultErr).
+				Msg("Failed to lookup service")
 		} else {
 			lookupInfo.serviceName = *result.Service.Name
 		}
@@ -117,7 +126,7 @@ func discoveryInfoFromIDs(namespaceID string,
 // DiscoverInstances returns the HttpInstanceSummary items that match
 // the given attribute map
 func DiscoverInstances(attributes map[string]string,
-	logger *logrus.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
+	logger *zerolog.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
 	return DiscoverInstancesWithContext(context.Background(), attributes, logger)
 }
 
@@ -126,19 +135,19 @@ func DiscoverInstances(attributes map[string]string,
 // application
 func DiscoverInstancesWithContext(ctx context.Context,
 	attributes map[string]string,
-	logger *logrus.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
+	logger *zerolog.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
 
 	// Get the default discovery info and translate that into name/id pairs...
 	namespaceID := os.Getenv(EnvVarCloudMapNamespaceID)
 	serviceID := os.Getenv(EnvVarCloudMapServiceID)
 	discoveryInfo, discoveryInfoErr := discoveryInfoFromIDs(namespaceID, serviceID, logger)
 
-	logger.WithFields(logrus.Fields{
-		"namespaceID":      namespaceID,
-		"serviceID":        serviceID,
-		"discoveryInfo":    discoveryInfo,
-		"discoveryInfoErr": discoveryInfoErr,
-	}).Debug("Discovery info lookup results")
+	logger.Debug().
+		Str("namespaceID", namespaceID).
+		Str("serviceID", serviceID).
+		Interface("discoveryInfo", discoveryInfo).
+		Interface("discoveryInfoErr", discoveryInfoErr).
+		Msg("Discovery info lookup results")
 	if discoveryInfoErr != nil {
 		return nil, discoveryInfoErr
 	}
@@ -155,7 +164,7 @@ func DiscoverInstancesInServiceWithContext(ctx context.Context,
 	namespaceName string,
 	serviceName string,
 	attributes map[string]string,
-	logger *logrus.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
+	logger *zerolog.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
 
 	// Great, lookup the instances...
 	queryParams := make(map[string]*string)

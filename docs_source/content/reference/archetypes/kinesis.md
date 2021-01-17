@@ -15,11 +15,12 @@ import (
 // KinesisStream reactor function
 func reactorFunc(ctx context.Context,
   kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-  logger.WithFields(logrus.Fields{
-    "Event": kinesisEvent,
-  }).Info("Kinesis Event")
+  logger.Info().
+    Interface("Event", kinesisEvent).
+    Msg("Kinesis Event")
+
   return "Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾", nil
 }
 

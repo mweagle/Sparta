@@ -14,7 +14,7 @@ function showView (newElementID) {
 $(document).ready(function () {
   var cloudformationTemplate = null
   try {
-    cloudformationTemplate = JSON.parse(CLOUDFORMATION_TEMPLATE_RAW)
+    cloudformationTemplate = CLOUDFORMATION_TEMPLATE_JSON
   } catch (e) {
     console.log('Failed to parse template: ' + e.toString())
     cloudformationTemplate = {

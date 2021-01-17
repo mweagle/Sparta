@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Ref: https://github.com/aws-samples/simple-websockets-chat-app
@@ -62,7 +62,7 @@ func (apigd *APIV2GatewayDecorator) DecorateService(context map[string]interface
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Create the table...
 	dynamoDBResourceName := apigd.logicalResourceName()
@@ -243,13 +243,11 @@ func (apiv2 *APIV2) Describe(targetNodeName string) (*DescriptionInfo, error) {
 // Marshal marshals the API V2 Gateway instance to the given template instance
 func (apiv2 *APIV2) Marshal(serviceName string,
 	session *session.Session,
-	S3Bucket string,
-	S3Key string,
-	S3Version string,
+	s3CodeResource *gocf.LambdaFunctionCode,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	apiV2Entry := &gocf.APIGatewayV2API{
 		APIKeySelectionExpression: marshalString(apiv2.APIKeySelectionExpression),

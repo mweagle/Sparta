@@ -1,11 +1,11 @@
-name: Sparta_Build
+name: build
 on: [push]
 jobs:
   build:
     name: CI
     strategy:
       matrix:
-        go-version: [1.13.7]
+        go-version: [1.15.6]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
@@ -16,7 +16,7 @@ jobs:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-      - name: Set up Go 1.13
+      - name: Setup `go` version ${{ matrix.go-version }}
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go-version }}

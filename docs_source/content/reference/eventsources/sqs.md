@@ -4,8 +4,7 @@ title: SQS
 weight: 10
 ---
 
-
-In this section we'll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events.  This overview is based on the [SpartaSQS](https://github.com/mweagle/SpartaSQS) sample code if you'd rather jump to the end result.
+In this section we'll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events. This overview is based on the [SpartaSQS](https://github.com/mweagle/SpartaSQS) sample code if you'd rather jump to the end result.
 
 # Goal
 
@@ -23,11 +22,11 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func sqsHandler(ctx context.Context, sqsRequest awsLambdaGo.SQSEvent) error {
-	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
 	logger.WithField("Event", sqsRequest).Info("SQS Event Received")
 	return nil
 }
@@ -65,7 +64,7 @@ sqsDecorator := func(serviceName string,
   buildID string,
   template *gocf.Template,
   context map[string]interface{},
-  logger *logrus.Logger) error {
+  logger *zerolog.Logger) error {
 
   // Include the SQS resource in the application
   sqsResource := &gocf.SQSQueue{}
@@ -91,8 +90,8 @@ lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
 
 # Wrapping Up
 
-With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  It's also possible to use a pre-existing SQS resource by providing a string literal as the `EventSourceArn` value.
+With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service. It's also possible to use a pre-existing SQS resource by providing a string literal as the `EventSourceArn` value.
 
 ## Other Resources
 
-  * The AWS docs have an excellent [SQS event source](https://aws.amazon.com/blogs/aws/aws-lambda-adds-amazon-simple-queue-service-to-supported-event-sources/) walkthrough.
+- The AWS docs have an excellent [SQS event source](https://aws.amazon.com/blogs/aws/aws-lambda-adds-amazon-simple-queue-service-to-supported-event-sources/) walkthrough.

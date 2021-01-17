@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/sirupsen/logrus"
 )
 
 const snsTopic = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
@@ -12,10 +11,10 @@ const snsTopic = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
 func snsProcessor(ctx context.Context,
 	props map[string]interface{}) (map[string]interface{}, error) {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
-		"RequestID":  lambdaCtx.AwsRequestID,
-		"Properties": props,
-	}).Info("Lambda event")
+	Logger().Info().
+		Str("RequestID", lambdaCtx.AwsRequestID).
+		Interface("Properties", props).
+		Msg("Lambda event")
 	return props, nil
 }
 
@@ -31,5 +30,8 @@ func ExampleSNSPermission() {
 		},
 	})
 	lambdaFunctions = append(lambdaFunctions, snsLambda)
-	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil, nil)
+	mainErr := Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil, nil)
+	if mainErr != nil {
+		panic("Failed to invoke sparta.Main: %s" + mainErr.Error())
+	}
 }

@@ -6,11 +6,7 @@
     <description>Recent content on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 08 Mar 2016 21:07:13 +0100</lastBuildDate>
-    
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 08 Mar 2016 21:07:13 +0100</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Magefiles</title>
       <link>/reference/operations/magefile/</link>
@@ -68,7 +64,7 @@ The CloudMapServiceDecorator leverages the CloudMap service to support intra- an
       <description>The CodeCommit Lambda event source allows you to trigger lambda functions in response to CodeCommit repository events.
 Events Lambda functions triggered in response to CodeCommit evetms use a combination of events and branches to manage which state changes trigger your lambda function.
 To create an event subscriber use a constructor as in:
-// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: event, }).</description>
+// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, event).</description>
     </item>
     
     <item>
@@ -80,11 +76,11 @@ To create an event subscriber use a constructor as in:
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CodeCommit Events.
 Goal Assume that we&amp;rsquo;re supposed to write a Lambda function that is triggered in response to any event emitted by a CodeCommit repository.
 Getting Started Our lambda function is relatively short:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: event, }).Info(&amp;#34;Event received&amp;#34;) return &amp;amp;event, nil } Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, event). Msg(&amp;#34;Event received&amp;#34;) return &amp;amp;event, nil } Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
     </item>
     
     <item>
-      <title>Amazon DynamoDb</title>
+      <title>Amazon DynamoDB</title>
       <link>/reference/step/services/dynamodb/</link>
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
@@ -169,9 +165,10 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       <pubDate>Sat, 01 Dec 2018 06:24:24 +0000</pubDate>
       
       <guid>/reference/interceptors/xray_interceptor/</guid>
-      <description>TODO: Document the XRayInterceptor
- 🎉 Sparta v1.7.0: The Time Machine Edition 🕰 🎉 For those times when you wish you could go back in time and enable debug logging for a single request.https://t.co/BP60qQpKva#serverless #go
-&amp;mdash; Matt Weagle (@mweagle) November 12, 2018  Sparta v1.7.0 adds `Interceptors`: user defined hooks called during the lambda event handling flow to support cross-cutting concerns. The first interceptor is an XRay annotation and metadata interceptor.</description>
+      <description>Interceptors that ensure observatility information is sent to X-Ray
+TODO: Document the XRayInterceptor
+  🎉 Sparta v1.7.0: The Time Machine Edition 🕰 🎉 For those times when you wish you could go back in time and enable debug logging for a single request.https://t.co/BP60qQpKva#serverless #go
+&amp;mdash; Matt Weagle (@mweagle) November 12, 2018   Sparta v1.7.0 adds `Interceptors`: user defined hooks called during the lambda event handling flow to support cross-cutting concerns.</description>
     </item>
     
     <item>
@@ -193,7 +190,7 @@ import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; s
       
       <guid>/reference/archetypes/dynamodb/</guid>
       <description>To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: dynamoEvent, }).Info(&amp;#34;DynamoDB Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, dynamoEvent). Msg(&amp;#34;DynamoDB Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
     </item>
     
     <item>
@@ -203,7 +200,7 @@ import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; s
       
       <guid>/reference/archetypes/kinesis/</guid>
       <description>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: kinesisEvent, }).Info(&amp;#34;Kinesis Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, kinesisEvent). Msg(&amp;#34;Kinesis Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
     </item>
     
     <item>
@@ -213,7 +210,7 @@ import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; s
       
       <guid>/reference/archetypes/kinesis_firehose/</guid>
       <description>There are two ways to create a Firehose Transform reactor that transforms a KinesisFirehoseEventRecord with a Lambda function:
- NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Record&amp;#34;: record, }).Info(&amp;#34;Kinesis Firehose Event&amp;#34;) responseRecord = &amp;amp;awsEvents.</description>
+ NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Record&amp;#34;, record). Msg(&amp;#34;Kinesis Firehose Event&amp;#34;) responseRecord = &amp;amp;awsEvents.</description>
     </item>
     
     <item>
@@ -246,7 +243,7 @@ To subscribe to object events created by objects with a given prefix, use the Ne
       
       <guid>/reference/archetypes/sns/</guid>
       <description>To create a SNS reactor that subscribes via an subscription configuration, use the NewSNSReactor constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: snsEvent, }).Info(&amp;#34;SNS Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, nil) } </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, snsEvent). Msg(&amp;#34;SNS Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, nil) } </description>
     </item>
     
     <item>
@@ -430,7 +427,7 @@ Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details 
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
     </item>
     
     <item>
@@ -529,7 +526,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Paul Johnston - knows some stuff about stuff (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Paul Johnston - @home / needing a new hobby (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
     </item>
     
     <item>
@@ -669,17 +666,6 @@ import ( spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;
       <description>In addition to provisioning AWS Lambda functions, Sparta supports the creation of other CloudFormation Resources. This enables a service to move towards immutable infrastructure, where the service and its infrastructure requirements are treated as a logical unit.
 For instance, consider the case where two developers are working in the same AWS account.
  Developer 1 is working on analyzing text documents.  Their lambda code is triggered in response to uploading sample text documents to S3.</description>
-    </item>
-    
-    <item>
-      <title>Testing</title>
-      <link>/reference/testing/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>/reference/testing/</guid>
-      <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. You can test your lambda functions using standard go test functionality.
-To create proper event types, consider:
- AWS Lambda Go types Sparta types Use NewAPIGatewayMockRequest to generate API Gateway style requests.  </description>
     </item>
     
     <item>

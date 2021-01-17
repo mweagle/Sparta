@@ -6,11 +6,7 @@
     <description>Recent content on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
-    
-	<atom:link href="/reference/eventsources/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate><atom:link href="/reference/eventsources/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CodeCommit</title>
       <link>/reference/eventsources/codecommit/</link>
@@ -20,7 +16,7 @@
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CodeCommit Events.
 Goal Assume that we&amp;rsquo;re supposed to write a Lambda function that is triggered in response to any event emitted by a CodeCommit repository.
 Getting Started Our lambda function is relatively short:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: event, }).Info(&amp;#34;Event received&amp;#34;) return &amp;amp;event, nil } Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, event). Msg(&amp;#34;Event received&amp;#34;) return &amp;amp;event, nil } Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
     </item>
     
     <item>

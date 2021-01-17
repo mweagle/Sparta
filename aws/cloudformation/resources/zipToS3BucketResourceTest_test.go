@@ -7,7 +7,7 @@ import (
 	"time"
 
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 func testEnabled() bool {
@@ -45,11 +45,11 @@ func TestUnzip(t *testing.T) {
 	event := mockZipResourceEvent(t)
 
 	// Put it
-	logger := logrus.New()
-	awsSession := awsSession(logger)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	awsSession := awsSession(&logger)
 	createOutputs, createError := zipResource.Create(awsSession,
 		event,
-		logger)
+		&logger)
 	if nil != createError {
 		t.Errorf("Failed to create Unzip resource: %s", createError)
 	}
@@ -57,7 +57,7 @@ func TestUnzip(t *testing.T) {
 
 	deleteOutputs, deleteError := zipResource.Delete(awsSession,
 		event,
-		logger)
+		&logger)
 	if nil != deleteError {
 		t.Errorf("Failed to create Unzip resource: %s", createError)
 	}

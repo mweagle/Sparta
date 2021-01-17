@@ -11,7 +11,7 @@ For example, an application that provisions a SQS queue and an AWS Lambda functi
 
 Sparta supports an environment-based [discovery service](http://gosparta.io/reference/discovery/) but that discovery is limited to a single Service.
 
-The `CloudMapServiceDecorator` leverages the [CloudMap](https://aws.amazon.com/cloud-map/) service to support intra- and inter-service resource discovery. 
+The `CloudMapServiceDecorator` leverages the [CloudMap](https://aws.amazon.com/cloud-map/) service to support intra- and inter-service resource discovery.
 
 ## Definition
 
@@ -40,7 +40,7 @@ func main() {
   // ...
   cloudMapDecorator, cloudMapDecoratorErr := spartaDecorators.NewCloudMapServiceDecorator(gocf.String("SpartaServices"),
     gocf.String("SpartaSampleCloudMapService"))
-    
+
   workflowHooks := &sparta.WorkflowHooks{
     ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
       cloudMapDecorator,
@@ -77,13 +77,13 @@ The default properties published include the [Lambda Outputs](https://docs.aws.a
 
 ```json
 {
-    "Id": "CloudMapResbe2b7c536074312c-VuIPjfjuFaoc",
-    "Attributes": {
-        "Arn": "arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-123412341234_Hello_World",
-        "Name": "lambdaDiscoveryName",
-        "Ref": "MyHelloWorldStack-123412341234_Hello_World",
-        "Type": "AWS::Lambda::Function"
-    }
+  "Id": "CloudMapResbe2b7c536074312c-VuIPjfjuFaoc",
+  "Attributes": {
+    "Arn": "arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-123412341234_Hello_World",
+    "Name": "lambdaDiscoveryName",
+    "Ref": "MyHelloWorldStack-123412341234_Hello_World",
+    "Type": "AWS::Lambda::Function"
+  }
 }
 ```
 
@@ -103,7 +103,7 @@ func createSQSResourceDecorator(cloudMapDecorator *spartaDecorators.CloudMapServ
     buildID string,
     awsSession *session.Session,
     noop bool,
-    logger *logrus.Logger) error {
+    logger *zerolog.Logger) error {
 
     sqsResource := &gocf.SQSQueue{}
     template.AddResource("SQSResource", sqsResource)
@@ -119,14 +119,14 @@ The default properties published include the [SQS Outputs](https://docs.aws.amaz
 
 ```json
 {
-    "Id": "CloudMapRes21cf275e8bbbe136-CqWZ27gdLHf8",
-    "Attributes": {
-        "Arn": "arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U",
-        "Name": "SQSResource",
-        "QueueName": "MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U",
-        "Ref": "https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U",
-        "Type": "AWS::SQS::Queue"
-    }
+  "Id": "CloudMapRes21cf275e8bbbe136-CqWZ27gdLHf8",
+  "Attributes": {
+    "Arn": "arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U",
+    "Name": "SQSResource",
+    "QueueName": "MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U",
+    "Ref": "https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U",
+    "Type": "AWS::SQS::Queue"
+  }
 }
 ```
 
@@ -134,12 +134,12 @@ The default properties published include the [SQS Outputs](https://docs.aws.amaz
 
 Publishing instances to CloudMap only makes them available for other services to discover them. Call the `EnableDiscoverySupport` with your `*sparta.LambdaAWSInfo` instance as the only argument. This function updates your Lambda function's environment to include the provisioned _ServiceInstance_ and also the IAM role privileges to authorize:
 
-* _servicediscovery:DiscoverInstances_
-* _servicediscovery:GetNamespace_
-* _servicediscovery:ListInstances_
-* _servicediscovery:GetService_
+- _servicediscovery:DiscoverInstances_
+- _servicediscovery:GetNamespace_
+- _servicediscovery:ListInstances_
+- _servicediscovery:GetService_
 
-For instance: 
+For instance:
 
 ```go
 func main() {
@@ -152,7 +152,7 @@ func main() {
   // ...
 
   cloudMapDecorator.EnableDiscoverySupport(lambdaFn)
-  
+
   // ...
 }
 
@@ -173,10 +173,12 @@ func helloWorld(ctx context.Context) (string, error) {
   results, resultsErr := spartaDecorators.DiscoverInstancesWithContext(ctx,
     props,
     logger)
-  logger.WithFields(logrus.Fields{
-    "Instances": results,
-    "Error":     resultsErr,
-    }).Info("Discovered instances!")
+
+  logger.Info().
+    Interface("Instances", results).
+    Err(resultsErr).
+    Msg("Discovered instances")
+
     // ...
 }
 ```

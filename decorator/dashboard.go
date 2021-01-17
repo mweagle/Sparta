@@ -2,6 +2,7 @@ package decorator
 
 import (
 	"bytes"
+	"context"
 	"regexp"
 	"text/template"
 
@@ -9,7 +10,7 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -129,15 +130,14 @@ var templateFuncMap = template.FuncMap{
 // can be attached the workflow to create a dashboard
 func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 	timeSeriesPeriod int) sparta.ServiceDecoratorHookFunc {
-	return func(context map[string]interface{},
+	return func(ctx context.Context,
 		serviceName string,
 		cfTemplate *gocf.Template,
-		S3Bucket string,
-		S3Key string,
+		lambdaFunctionCode *gocf.LambdaFunctionCode,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
-		logger *logrus.Logger) error {
+		logger *zerolog.Logger) (context.Context, error) {
 
 		lambdaFunctions := make([]*LambdaTemplateData, len(lambdaAWSInfo))
 		for index, eachLambda := range lambdaAWSInfo {
@@ -165,36 +165,37 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 			Funcs(templateFuncMap).
 			Parse(dashboardTemplate)
 		if nil != dashboardTmplErr {
-			return dashboardTmplErr
+			return ctx, dashboardTmplErr
 		}
 		var templateResults bytes.Buffer
 		evalResultErr := dashboardTmpl.Execute(&templateResults, dashboardTemplateData)
 		if nil != evalResultErr {
-			return evalResultErr
+			return ctx, evalResultErr
 		}
 
 		// Raw template output
-		logger.WithFields(logrus.Fields{
-			"Dashboard": templateResults.String(),
-		}).Debug("CloudWatch Dashboard template result")
+		logger.Debug().
+			Str("Dashboard", templateResults.String()).
+			Msg("CloudWatch Dashboard template result")
 
 		// Replace any multiline backtick newlines with nothing, since otherwise
 		// the Fn::Joined JSON will be malformed
 		reReplace, reReplaceErr := regexp.Compile("\n")
 		if nil != reReplaceErr {
-			return reReplaceErr
+			return ctx, reReplaceErr
 		}
 		escapedBytes := reReplace.ReplaceAll(templateResults.Bytes(), []byte(""))
-		logger.WithFields(logrus.Fields{
-			"Dashboard": string(escapedBytes),
-		}).Debug("CloudWatch Dashboard post cleanup")
+
+		logger.Debug().
+			Str("Dashboard", string(escapedBytes)).
+			Msg("CloudWatch Dashboard post cleanup")
 
 		// Super, now parse this into an Fn::Join representation
 		// so that we can get inline expansion of the AWS pseudo params
 		templateReader := bytes.NewReader(escapedBytes)
 		templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
 		if nil != templateExprErr {
-			return templateExprErr
+			return ctx, templateExprErr
 		}
 
 		dashboardResource := gocf.CloudWatchDashboard{}
@@ -214,6 +215,6 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 				gocf.String("#dashboards:name="),
 				gocf.Ref(dashboardName)),
 		}
-		return nil
+		return ctx, nil
 	}
 }

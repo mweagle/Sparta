@@ -5,10 +5,6 @@
     <link>/categories/</link>
     <description>Recent content in Categories on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
-    
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-US</language><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

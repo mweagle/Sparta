@@ -13,13 +13,13 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
-func ensureMainEntrypoint(logger *logrus.Logger) error {
+func ensureMainEntrypoint(logger *zerolog.Logger) error {
 	// Don't do this for "go test" runs
 	if flag.Lookup("test.v") != nil {
-		logger.Debug("Skipping main() check for test")
+		logger.Debug().Msg("Skipping main() check for test")
 		return nil
 	}
 
@@ -28,9 +28,9 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 	if parseErr != nil {
 		return errors.Errorf("Failed to parse source input: %s", parseErr.Error())
 	}
-	logger.WithFields(logrus.Fields{
-		"SourcePackages": packageMap,
-	}).Debug("Checking working directory")
+	logger.Debug().
+		Interface("SourcePackages", packageMap).
+		Msg("Checking working directory")
 
 	// If there isn't a main defined, we're in the wrong directory..
 	mainPackageCount := 0
@@ -47,7 +47,7 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 }
 
 // GoVersion returns the configured go version for this system
-func GoVersion(logger *logrus.Logger) (string, error) {
+func GoVersion(logger *zerolog.Logger) (string, error) {
 	runtimeVersion := runtime.Version()
 	// Get the golang version from the output:
 	// Matts-MBP:Sparta mweagle$ go version
@@ -57,9 +57,9 @@ func GoVersion(logger *logrus.Logger) (string, error) {
 	if len(matches) > 2 {
 		return matches[1], nil
 	}
-	logger.WithFields(logrus.Fields{
-		"Output": runtimeVersion,
-	}).Warn("Unable to find Golang version using RegExp - using current version")
+	logger.Warn().
+		Str("Output", runtimeVersion).
+		Msg("Unable to find Golang version using RegExp - using current version")
 	return runtimeVersion, nil
 }
 
@@ -82,7 +82,7 @@ func BuildGoBinary(serviceName string,
 	userSuppliedBuildTags string,
 	linkFlags string,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Before we do anything, let's make sure there's a `main` package in this directory.
 	ensureMainPackageErr := ensureMainEntrypoint(logger)
@@ -91,12 +91,17 @@ func BuildGoBinary(serviceName string,
 	}
 	// Go generate
 	cmd := exec.Command("go", "generate")
-	if logger.Level == logrus.DebugLevel {
+	if logger.GetLevel() == zerolog.DebugLevel {
 		cmd = exec.Command("go", "generate", "-v", "-x")
 	}
 	cmd.Env = os.Environ()
-	commandString := fmt.Sprintf("%s", cmd.Args)
-	logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
+
+	logger.Info().
+		Str("Command", strings.Join(cmd.Args, " ")).
+		Msg("Build command")
+
+	//	commandString := fmt.Sprintf("%s", cmd.Args)
+	//logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
 	goGenerateErr := RunOSCommand(cmd, logger)
 	if nil != goGenerateErr {
 		return goGenerateErr
@@ -166,11 +171,6 @@ func BuildGoBinary(serviceName string,
 		volumeMountMapping := fmt.Sprintf("%s:%s", gopath, containerGoPath)
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
 
-		// If there's one from the environment, use that...
-		// TODO
-
-		// Otherwise, make one...
-
 		// Any CGO paths?
 		cgoLibPath := fmt.Sprintf("%s/cgo/lib", containerSourcePath)
 		cgoIncludePath := fmt.Sprintf("%s/cgo/include", containerSourcePath)
@@ -222,10 +222,10 @@ func BuildGoBinary(serviceName string,
 		dockerBuildArgs = append(dockerBuildArgs, userBuildFlags...)
 		cmd = exec.Command("docker", dockerBuildArgs...)
 		cmd.Env = os.Environ()
-		logger.WithFields(logrus.Fields{
-			"Name": executableOutput,
-			"Args": dockerBuildArgs,
-		}).Info("Building `cgo` library in Docker")
+		logger.Info().
+			Str("Name", executableOutput).
+			Interface("Args", dockerBuildArgs).
+			Msg("Building `cgo` library in Docker")
 		cmdError = RunOSCommand(cmd, logger)
 
 		// If this succeeded, let's find the .h file and move it into the scratch
@@ -243,9 +243,9 @@ func BuildGoBinary(serviceName string,
 				}
 			}
 			if nil != headerFileErr {
-				logger.WithFields(logrus.Fields{
-					"Path": headerFilepath,
-				}).Warn("Failed to move .h file to scratch directory")
+				logger.Warn().
+					Str("Path", headerFilepath).
+					Msg("Failed to move .h file to scratch directory")
 			}
 		}
 	} else {
@@ -256,7 +256,7 @@ func BuildGoBinary(serviceName string,
 			executableOutput,
 		}
 		// Debug flags?
-		if logger.Level == logrus.DebugLevel {
+		if logger.GetLevel() == zerolog.DebugLevel {
 			buildArgs = append(buildArgs, "-v")
 		}
 		buildArgs = append(buildArgs, userBuildFlags...)
@@ -264,15 +264,15 @@ func BuildGoBinary(serviceName string,
 		cmd = exec.Command("go", buildArgs...)
 		cmd.Env = os.Environ()
 		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
-		logger.WithFields(logrus.Fields{
-			"Name": executableOutput,
-		}).Info("Compiling binary")
+		logger.Info().
+			Str("Path", executableOutput).
+			Msg("Building `go` binary ")
 		cmdError = RunOSCommand(cmd, logger)
 	}
 	return cmdError
 }
 
-// TemporaryFile creates a stable temporary filename in the current working
+// TemporaryFile creates a stable temporary filename in the provided working
 // directory
 func TemporaryFile(scratchDir string, name string) (*os.File, error) {
 	workingDir, err := os.Getwd()
@@ -292,6 +292,5 @@ func TemporaryFile(scratchDir string, name string) (*os.File, error) {
 	if err != nil {
 		return nil, errors.New("Failed to create temporary file: " + err.Error())
 	}
-
 	return tmpFile, nil
 }

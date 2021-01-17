@@ -7,16 +7,16 @@ import (
 	"strings"
 	"testing"
 
-	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/system"
+	"github.com/rs/zerolog"
 )
 
 func TestLogin(t *testing.T) {
-	logger, _ := sparta.NewLogger("info")
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 
 	// If docker -v doesn't work, then login definitely won't
 	dockerVersionCmd := exec.Command("docker", "-v")
-	dockerVersionCmdErr := system.RunOSCommand(dockerVersionCmd, logger)
+	dockerVersionCmdErr := system.RunOSCommand(dockerVersionCmd, &logger)
 	if dockerVersionCmdErr != nil {
 		t.Logf("WARNING: failed to execute `docker -v` as prerequisite for testing STDIN password")
 		return
@@ -31,7 +31,7 @@ func TestLogin(t *testing.T) {
 	dockerLoginCmd.Stdout = os.Stdout
 	dockerLoginCmd.Stdin = bytes.NewReader([]byte("0AA421A3-931B-4985-8E99-9F5432A2BB58\n"))
 	dockerLoginCmd.Stderr = os.Stderr
-	dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
+	dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, &logger)
 	if dockerLoginCmdErr != nil {
 		if strings.Contains(dockerLoginCmdErr.Error(), "Cannot perform an interactive login") {
 			// The stdin write failed...

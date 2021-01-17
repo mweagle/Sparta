@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // S3ArtifactPublisherResourceRequest is what the UserProperties
@@ -34,7 +34,7 @@ func (command *S3ArtifactPublisherResource) IAMPrivileges() []string {
 // Create implements the S3 create operation
 func (command S3ArtifactPublisherResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -63,14 +63,14 @@ func (command S3ArtifactPublisherResource) Create(awsSession *session.Session,
 // Update implements the S3 update operation
 func (command S3ArtifactPublisherResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.Create(awsSession, event, logger)
 }
 
 // Delete implements the S3 delete operation
 func (command S3ArtifactPublisherResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
 	if unmarshalErr != nil {
@@ -85,9 +85,9 @@ func (command S3ArtifactPublisherResource) Delete(awsSession *session.Session,
 	if s3ResponseErr != nil {
 		return nil, s3ResponseErr
 	}
-	logger.WithFields(logrus.Fields{
-		"Bucket": command.Bucket.Literal,
-		"Key":    command.Key.Literal,
-	}).Info("Object deleted")
+	logger.Info().
+		Str("Bucket", command.Bucket.Literal).
+		Str("Key", command.Key.Literal).
+		Msg("Object deleted")
 	return nil, nil
 }

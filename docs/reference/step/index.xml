@@ -6,11 +6,7 @@
     <description>Recent content on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 10 Dec 2018 21:37:37 +0000</lastBuildDate>
-    
-	<atom:link href="/reference/step/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 10 Dec 2018 21:37:37 +0000</lastBuildDate><atom:link href="/reference/step/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lambda</title>
       <link>/reference/step/lambda/</link>
@@ -28,7 +24,7 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Paul Johnston - knows some stuff about stuff (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Paul Johnston - @home / needing a new hobby (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
     </item>
     
   </channel>

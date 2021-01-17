@@ -9,7 +9,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam/builder"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // NewCloudMapServiceDecorator returns an instance of CloudMapServiceDecorator
@@ -64,7 +64,7 @@ func (cmsd *CloudMapServiceDecorator) DecorateService(context map[string]interfa
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
-	logger *logrus.Logger) error {
+	logger *zerolog.Logger) error {
 
 	// Create the service entry
 	serviceDiscoveryResourceName := cmsd.LogicalResourceName()

@@ -17,7 +17,7 @@ import (
 
 func helloWorld(ctx context.Context,
   gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
-  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
   if loggerOk {
     logger.Info("Hello world structured log message")
   }
@@ -39,7 +39,7 @@ apiGateway := sparta.NewAPIGateway("MySpartaAPI", stage)
 ```
 
 In the example above, we're also including a [Stage](https://godoc.org/github.com/mweagle/Sparta#Stage) value.
-A non-`nil` Stage value will cause the registered API to be deployed.  If the Stage value is `nil`, a REST API will be created,
+A non-`nil` Stage value will cause the registered API to be deployed. If the Stage value is `nil`, a REST API will be created,
 but it will not be [deployed](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html)
 (and therefore not publicly accessible).
 
@@ -72,7 +72,7 @@ func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 }
 ```
 
-Our `helloWorld` only supports `GET`.  We'll see how a single lambda function can support multiple HTTP methods shortly.
+Our `helloWorld` only supports `GET`. We'll see how a single lambda function can support multiple HTTP methods shortly.
 
 ## Provision
 
@@ -186,19 +186,19 @@ While this demonstrates that our lambda function is publicly accessible, it's no
 
 ## Mapping Templates
 
-The event data that's actually supplied to `echoS3Event` is the complete HTTP request body.  This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
+The event data that's actually supplied to `echoS3Event` is the complete HTTP request body. This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping. This event data also includes the values of any whitelisted parameters. When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target. For this example, we're not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty. Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
 
 Sparta uses a pass-through template that passes all valid data, with minor **Body** differences based on the inbound _Content-Type_:
 
 ### _application/json_
 
-  {{% import file="./static/source/resources/provision/apigateway/inputmapping_json.vtl" language="nohighlight" %}}
+{{% import file="./static/source/resources/provision/apigateway/inputmapping_json.vtl" language="nohighlight" %}}
 
-### _*_ (Default `Content-Type`)
+### _\*_ (Default `Content-Type`)
 
-  {{% import file="./static/source/resources/provision/apigateway/inputmapping_default.vtl" language="nohighlight" %}}
+{{% import file="./static/source/resources/provision/apigateway/inputmapping_default.vtl" language="nohighlight" %}}
 
-The default mapping templates forwards all whitelisted data & body to the lambda function.  You can see by switching on the `method` field would allow a single function to handle different HTTP methods.
+The default mapping templates forwards all whitelisted data & body to the lambda function. You can see by switching on the `method` field would allow a single function to handle different HTTP methods.
 
 The next example shows how to unmarshal this data and perform request-specific actions.
 
@@ -229,4 +229,4 @@ Now that we know what data is actually being sent to our API Gateway-connected L
 
 ### Notes
 
-* [Mapping Template Reference](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)
+- [Mapping Template Reference](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)

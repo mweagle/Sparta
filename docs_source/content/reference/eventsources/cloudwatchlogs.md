@@ -3,7 +3,8 @@ date: 2016-03-09T19:56:50+01:00
 title: CloudWatch Logs
 weight: 10
 ---
-In this section we'll walkthrough how to trigger your lambda function in response to [CloudWatch Logs](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/).  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
+
+In this section we'll walkthrough how to trigger your lambda function in response to [CloudWatch Logs](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/). This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
 
 # Goal
 
@@ -18,11 +19,12 @@ import (
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 )
 func echoCloudWatchLogsEvent(ctx context.Context, cwlEvent awsLambdaEvents.CloudwatchLogsEvent) (*awsLambdaEvents.CloudwatchLogsEvent, error) {
-	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
 
-	logger.WithFields(logrus.Fields{
-		"Event": cwlEvent,
-	}).Info("Request received")
+  logger.Info().
+    Interface("Event", cwlEvent).
+		Msg("Event received")
+
 	return &cwlEvent, nil
 }
 ```
@@ -31,7 +33,7 @@ Our lambda function doesn't need to do much with the log message other than log 
 
 ## Sparta Integration
 
-With `echoCloudWatchLogsEvent()` implemented, the next step is to integrate the **go** function with Sparta.  This is done by the `appendCloudWatchLogsLambda` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
+With `echoCloudWatchLogsEvent()` implemented, the next step is to integrate the **go** function with Sparta. This is done by the `appendCloudWatchLogsLambda` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
 Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty `sparta.IAMRoleDefinition` value:
 
@@ -57,7 +59,7 @@ The `sparta.CloudWatchLogsPermission` struct provides fields for both the LogGro
 
 ## Add Permission
 
-  With the subscription information configured, the final step is to add the `sparta.CloudWatchLogsPermission` to our `sparta.LambdaAWSInfo` value:
+With the subscription information configured, the final step is to add the `sparta.CloudWatchLogsPermission` to our `sparta.LambdaAWSInfo` value:
 
 ```go
 lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
@@ -88,14 +90,14 @@ func appendCloudWatchLogsHandler(api *sparta.API,
 
 # Wrapping Up
 
-With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:
+With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service. The workflow below is shared by all CloudWatch Logs-triggered lambda functions:
 
-  * Define the lambda function (`echoCloudWatchLogsEvent`).
-  * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
-  * Create a [CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission) value.
-  * Add one or more [CloudWatchLogsSubscriptionFilter](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter) to the `CloudWatchLogsPermission.Filters` map that defines your lambda function's logfile subscription information.
-  * Append the `CloudWatchLogsPermission` value to the lambda function's `Permissions` slice.
-  * Include the reference in the call to `sparta.Main()`.
+- Define the lambda function (`echoCloudWatchLogsEvent`).
+- If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
+- Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
+- Create a [CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission) value.
+- Add one or more [CloudWatchLogsSubscriptionFilter](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter) to the `CloudWatchLogsPermission.Filters` map that defines your lambda function's logfile subscription information.
+- Append the `CloudWatchLogsPermission` value to the lambda function's `Permissions` slice.
+- Include the reference in the call to `sparta.Main()`.
 
 ## Other Resources

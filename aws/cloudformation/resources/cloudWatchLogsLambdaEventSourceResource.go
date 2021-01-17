@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // CloudWatchLogsLambdaEventSourceFilter represents a filter for a cloudwatchlogs
@@ -53,7 +53,7 @@ func cloudWatchEventSourceProperties(event *CloudFormationLambdaEvent) (*CloudWa
 func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTargetActive bool,
 	session *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 
 	requestProps, requestPropsErr := cloudWatchEventSourceProperties(event)
 	if requestPropsErr != nil {
@@ -70,11 +70,12 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 			LogGroupName: aws.String(eachFilter.LogGroupName.Literal),
 		}
 		deleteResult, deleteErr := cwLogsSvc.DeleteSubscriptionFilter(deleteSubscriptionInput)
-		logger.WithFields(logrus.Fields{
-			"DeleteInput": deleteSubscriptionInput,
-			"Result":      deleteResult,
-			"Error":       deleteErr,
-		}).Debug("DeleteSubscriptionFilter result")
+		logger.Debug().
+			Interface("DeleteInput", deleteSubscriptionInput).
+			Interface("Result", deleteResult).
+			Interface("Error", deleteErr).
+			Msg("DeleteSubscriptionFilter result")
+
 		if nil != deleteErr && strings.Contains(deleteErr.Error(), "ResourceNotFoundException") {
 			deleteErr = nil
 		}
@@ -104,11 +105,11 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 					opErr = fmt.Errorf("conflict with differently named subscription on prexisting LogGroupName: %s",
 						eachFilter.LogGroupName.Literal)
 
-					logger.WithFields(logrus.Fields{
-						"DescribeSubscriptionResult": describeResult,
-						"PutSubscriptionInput":       putSubscriptionInput,
-						"LogGroupName":               eachFilter.LogGroupName,
-					}).Error(opErr.Error())
+					logger.Error().
+						Interface("DescribeSubscriptionResult", describeResult).
+						Interface("PutSubscriptionInput", putSubscriptionInput).
+						Interface("LogGroupName", eachFilter.LogGroupName).
+						Msg(opErr.Error())
 				}
 			}
 		}
@@ -122,20 +123,20 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 // Create implements the create operation
 func (command CloudWatchLogsLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
 // Update implements the update operation
 func (command CloudWatchLogsLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
 // Delete implements the delete operation
 func (command CloudWatchLogsLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(false, awsSession, event, logger)
 }

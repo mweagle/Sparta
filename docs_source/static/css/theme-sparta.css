@@ -103,3 +103,25 @@ a:hover {
     border-color: var(--MENU-SECTION-HR-color);
 }
 
+@font-face {
+    font-family: 'FiraCode';
+    src: url('../webfonts/Fira_Code/FiraCode-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('../webfonts/Inconsolata/Inconsolata-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body,h1, h2, h3, h4, h5, h6 {
+    font-family: "Avenir", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+}
+
+code, kbd, pre, samp {
+    font-family: "Inconsolata", "Consolas", "Menlo", "Courier New", monospace;
+    font-size: 90%;
+}

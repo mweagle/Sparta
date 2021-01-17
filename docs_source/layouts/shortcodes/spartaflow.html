@@ -1,7 +1,6 @@
-<link href="{{"mermaid/mermaid.css" | relURL}}" type="text/css" rel="stylesheet"/>
-<link href="{{"css/mermaid-overrides.css" | relURL}}" type="text/css" rel="stylesheet"/>
-<script defer src="{{"mermaid/mermaid.js" | relURL}}">mermaid.initialize({startOnLoad:true});</script>
 <div class="mermaid" >
+%%{init: {'themeVariables': { 'fontFamily': 'Inconsolata, Avenir, Helvetica, sans-serif', 'primaryColor': '#ff0000'}}}%%
+
 graph TD
   classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
   classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
@@ -20,12 +19,15 @@ graph TD
   package[ZIP archive]
   class package stdOp;
 
+  package_oci[OCI Build]
+  class package_oci stdOp;
+
   userArchive[WorkflowHook - Archive]
   class userArchive userHook;
 
   upload[Upload Archive to S3]
-  packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  packageAssets[Conditionally ZIP S3 Site Assets]
   class upload,packageAssets,uploadAssets stdOp;
 
   preMarshall[WorkflowHook - PreMarshall]
@@ -55,9 +57,11 @@ graph TD
   preBuild-->|go|compile
   compile-->postBuild
   postBuild-->package
-
+  postBuild-->package_oci
   package-->packageAssets
+  package_oci-->packageAssets
   package-->userArchive
+  package_oci-->upload
   userArchive-->upload
   packageAssets-->uploadAssets
   uploadAssets-->generate

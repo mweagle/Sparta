@@ -10,61 +10,76 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-// Constant for Sparta color aware stdout logging
-const (
-	redCode = 31
+func init() {
+	validate = validator.New()
+	codePipelineEnvironments = make(map[string]map[string]string)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	instanceID = fmt.Sprintf("i-%d", r.Int63())
+}
+
+var (
+	// Have we already shown the header/usage?
+	headerDisplayed = false
+
+	// The Lambda instance ID for this execution
+	instanceID string
+
+	// Validation instance
+	validate *validator.Validate
+
+	// CodePipeline environments
+	codePipelineEnvironments map[string]map[string]string
 )
-
-// The Lambda instance ID for this execution
-var instanceID string
-
-// Validation instance
-var validate *validator.Validate
 
 func isRunningInAWS() bool {
 	return len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) != 0
 }
 
-func displayPrettyHeader(headerDivider string, disableColors bool, logger *logrus.Logger) {
-	logger.Info(headerDivider)
-	red := func(inputText string) string {
-		if disableColors {
-			return inputText
-		}
-		return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
+func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerolog.Logger) {
+	if headerDisplayed {
+		return
 	}
-	logger.Info(fmt.Sprintf(red("╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗")+"   Version : %s", SpartaVersion))
-	logger.Info(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
-	logger.Info(fmt.Sprintf(red("╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩")+"   Go      : %s", runtime.Version()))
-	logger.Info(headerDivider)
+	headerDisplayed = true
+	logger.Info().Msg(colorize(headerDivider, colorRed, disableColors))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐`, colorRed, disableColors)+"   Version : %s", SpartaVersion))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╚═╗├─┘├─┤├┬┘ │ ├─┤`, colorRed, disableColors)+"   SHA     : %s", SpartaGitHash[0:7]))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴`, colorRed, disableColors)+"   Go      : %s", runtime.Version()))
+	logger.Info().Msg(colorize(headerDivider, colorRed, disableColors))
 }
 
-var codePipelineEnvironments map[string]map[string]string
-
-func init() {
-	validate = validator.New()
-	codePipelineEnvironments = make(map[string]map[string]string)
-
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	instanceID = fmt.Sprintf("i-%d", r.Int63())
+func templateOutputFile(outputDir string, serviceName string) (*os.File, error) {
+	// Ok, for this we're going some way to tell the Build Command
+	// where to write the output...I suppose we could just use a TeeWriter...
+	sanitizedServiceName := sanitizedName(serviceName)
+	templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
+	templateFilePath := filepath.Join(outputDir, templateName)
+	mkdirErr := os.MkdirAll(outputDir, os.ModePerm)
+	if nil != mkdirErr {
+		return nil, errors.Wrapf(mkdirErr, "Attempting to create output directory: %s", outputDir)
+	}
+	return os.Create(templateFilePath)
 }
 
 // Logger returns the sparta Logger instance for this process
-func Logger() *logrus.Logger {
+func Logger() *zerolog.Logger {
 	return OptionsGlobal.Logger
 }
 
 // InstanceID returns the uniquely assigned instanceID for this lambda
-// container
+// container. The InstanceID is created at the time the this Lambda function
+// initializes
 func InstanceID() string {
 	return instanceID
 }
@@ -76,6 +91,7 @@ func InstanceID() string {
 var CommandLineOptions = struct {
 	Root      *cobra.Command
 	Version   *cobra.Command
+	Build     *cobra.Command
 	Provision *cobra.Command
 	Delete    *cobra.Command
 	Execute   *cobra.Command
@@ -86,18 +102,15 @@ var CommandLineOptions = struct {
 }{}
 
 /*============================================================================*/
-// Provision options
+// Build options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
-type optionsProvisionStruct struct {
-	S3Bucket        string `validate:"required"`
-	BuildID         string `validate:"-"` // non-whitespace
-	PipelineTrigger string `validate:"-"`
-	InPlace         bool   `validate:"-"`
+type optionsBuildStruct struct {
+	BuildID    string `validate:"-"` // non-whitespace
+	OutputDir  string `validate:"-"` // non-whitespace
+	DockerFile string `validate:"-"` // non-whitespace
 }
 
-var optionsProvision optionsProvisionStruct
-
-func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, error) {
+func computeBuildID(userSuppliedValue string, logger *zerolog.Logger) (string, error) {
 	buildID := userSuppliedValue
 	if buildID == "" {
 		// That's cool, let's see if we can find a git SHA
@@ -113,9 +126,10 @@ func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, 
 			// Great, let's use the SHA
 			buildID = strings.TrimSpace(string(stdout.String()))
 			if buildID != "" {
-				logger.WithField("SHA", buildID).
-					WithField("Command", "git rev-parse HEAD").
-					Info("Using `git` SHA for StampedBuildID")
+				logger.Info().
+					Str("SHA", buildID).
+					Str("Command", "git rev-parse HEAD").
+					Msg("Using `git` SHA for StampedBuildID")
 			}
 		}
 		// Ignore any errors and make up a random one
@@ -136,6 +150,60 @@ func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, 
 	}
 	return buildID, nil
 }
+
+var optionsBuild optionsBuildStruct
+
+/*============================================================================*/
+// Provision options
+// Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
+type optionsProvisionStruct struct {
+	optionsBuildStruct
+	StackParams     []string
+	StackTags       []string
+	S3Bucket        string `validate:"required"`
+	PipelineTrigger string `validate:"-"`
+	InPlace         bool   `validate:"-"`
+	stackParams     map[string]string
+	stackTags       map[string]string
+}
+
+func (ops *optionsProvisionStruct) parseParams() error {
+
+	splitter := func(eachVal string) []string {
+		parts := strings.SplitN(eachVal, "=", 2)
+		keyName := parts[0]
+		paramVal := ""
+		if len(parts) > 1 {
+			unquoteVal, unquoteValErr := strconv.Unquote(parts[1])
+			if unquoteValErr == nil {
+				paramVal = unquoteVal
+			} else {
+				paramVal = parts[1]
+			}
+		}
+		return []string{keyName, paramVal}
+	}
+
+	ops.stackParams = make(map[string]string)
+	for _, eachPair := range ops.StackParams {
+		pairVals := splitter(eachPair)
+		ops.stackParams[pairVals[0]] = pairVals[1]
+	}
+	// Special affordance for S3 bucket
+	ops.stackParams[StackParamArtifactBucketName] = ops.S3Bucket
+
+	// Tags, including user defined
+	ops.stackTags = map[string]string{
+		SpartaTagBuildIDKey: StampedBuildID,
+	}
+	for _, eachPair := range ops.StackTags {
+		pairVals := splitter(eachPair)
+		ops.stackTags[pairVals[0]] = pairVals[1]
+	}
+	return nil
+}
+
+var optionsProvision optionsProvisionStruct
 
 /*============================================================================*/
 // Describe options
@@ -229,6 +297,29 @@ func init() {
 
 		},
 	}
+	// Build
+	CommandLineOptions.Build = &cobra.Command{
+		Use:          "build",
+		Short:        "Build service",
+		Long:         `Builds the binary and associated CloudFormation parameterized template`,
+		SilenceUsage: true,
+	}
+	CommandLineOptions.Build.Flags().StringVarP(&optionsBuild.BuildID,
+		"buildID",
+		"i",
+		"",
+		"Optional BuildID to use")
+	CommandLineOptions.Build.Flags().StringVarP(&optionsBuild.OutputDir,
+		"outputDir",
+		"o",
+		ScratchDirectory,
+		"Optional output directory for artifacts")
+	CommandLineOptions.Build.Flags().StringVarP(&optionsBuild.DockerFile,
+		"dockerFile",
+		"d",
+		"",
+		"Optional Dockerfile path to use OCI image rather than ZIP")
+
 	// Provision
 	CommandLineOptions.Provision = &cobra.Command{
 		Use:          "provision",
@@ -236,6 +327,16 @@ func init() {
 		Long:         `Provision the service (either create or update) via CloudFormation`,
 		SilenceUsage: true,
 	}
+	CommandLineOptions.Provision.Flags().StringArrayVarP(&optionsProvision.StackParams,
+		"param",
+		"m",
+		[]string{},
+		"List of params in A=B format")
+	CommandLineOptions.Provision.Flags().StringArrayVarP(&optionsProvision.StackTags,
+		"tag",
+		"g",
+		[]string{},
+		"List of Stack Tags in A=B format")
 	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.S3Bucket,
 		"s3Bucket",
 		"s",
@@ -256,6 +357,16 @@ func init() {
 		"c",
 		false,
 		"If the provision operation results in *only* function updates, bypass CloudFormation")
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.OutputDir,
+		"outputDir",
+		"o",
+		ScratchDirectory,
+		"Optional output directory for artifacts")
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.DockerFile,
+		"dockerFile",
+		"d",
+		"",
+		"Optional Dockerfile path")
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
@@ -301,7 +412,7 @@ func init() {
 	CommandLineOptions.Explore.Flags().StringArrayVarP(&optionsExplore.InputExtensions,
 		"inputExtension",
 		"e",
-		[]string{},
+		[]string{"json"},
 		"One or more file extensions to include as sample inputs")
 
 	// Profile
@@ -385,14 +496,9 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 				return validateErr
 			}
 			// Format?
-			var formatter logrus.Formatter
-			switch OptionsGlobal.LogFormat {
-			case "text", "txt":
-				formatter = &logrus.TextFormatter{}
-			case "json":
-				formatter = &logrus.JSONFormatter{}
-			}
-			logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
+			logger, loggerErr := NewLoggerForOutput(OptionsGlobal.LogLevel,
+				OptionsGlobal.LogFormat,
+				OptionsGlobal.DisableColors)
 			if nil != loggerErr {
 				return loggerErr
 			}
@@ -411,6 +517,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 	// Then add the standard Sparta ones...
 	spartaCommands := []*cobra.Command{
 		CommandLineOptions.Version,
+		CommandLineOptions.Build,
 		CommandLineOptions.Provision,
 		CommandLineOptions.Delete,
 		CommandLineOptions.Execute,
@@ -421,9 +528,15 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 	}
 	for _, eachCommand := range spartaCommands {
 		eachCommand.PreRunE = func(cmd *cobra.Command, args []string) error {
-			if eachCommand == CommandLineOptions.Provision {
+			switch eachCommand {
+			case CommandLineOptions.Build:
+				StampedBuildID = optionsBuild.BuildID
+			case CommandLineOptions.Provision:
 				StampedBuildID = optionsProvision.BuildID
+			default:
+				// NOP
 			}
+
 			if handler != nil {
 				return handler(eachCommand)
 			}
@@ -459,10 +572,4 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		executeErr = parseCmdRoot.Root().Help()
 	}
 	return executeErr
-}
-
-// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
-// to set the formatter if needed.
-func NewLogger(level string) (*logrus.Logger, error) {
-	return NewLoggerWithFormatter(level, nil)
 }

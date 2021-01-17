@@ -20,10 +20,12 @@ import (
 )
 
 func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) {
-  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
-  logger.WithFields(logrus.Fields{
-    "Event": event,
-  }).Info("Event received")
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)
+
+  logger.Info().
+    Interface("Event", event).
+    Msg("Event received")
+
   return &event, nil
 }
 ```
@@ -97,21 +99,21 @@ func appendCodeCommitHandler(api *sparta.API,
 # Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and
-deploy our service.  The workflow below is shared by all
+deploy our service. The workflow below is shared by all
 CodeCmmit-triggered lambda functions:
 
-* Define the lambda function (`echoCodeCommit`).
-* If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
-* Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
-* Create a [CodeCommitPermission](https://godoc.org/github.com/mweagle/Sparta#CodeCommitPermission) value.
-* Define the necessary permission fields.
-* Append the `CodeCommitPermission` value to the lambda function's `Permissions` slice.
-* Include the reference in the call to `sparta.Main()`.
+- Define the lambda function (`echoCodeCommit`).
+- If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
+- Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
+- Create a [CodeCommitPermission](https://godoc.org/github.com/mweagle/Sparta#CodeCommitPermission) value.
+- Define the necessary permission fields.
+- Append the `CodeCommitPermission` value to the lambda function's `Permissions` slice.
+- Include the reference in the call to `sparta.Main()`.
 
 ## Other Resources
 
-* Consider the [archectype](https://gosparta.io/reference/archetypes/codecommit/) package to encapsulate these steps.
-* Use the AWS CLI to inspect the configured triggers:
+- Consider the [archectype](https://gosparta.io/reference/archetypes/codecommit/) package to encapsulate these steps.
+- Use the AWS CLI to inspect the configured triggers:
 
   ```bash
   $ aws codecommit get-repository-triggers --repository-name=TestCodeCommitRepo
@@ -131,7 +133,7 @@ CodeCmmit-triggered lambda functions:
   }
   ```
 
-  * Use the AWS CLI to test the configured trigger:
+  - Use the AWS CLI to test the configured trigger:
 
   ```bash
   $ aws codecommit test-repository-triggers --repository-name TestCodeCommitRepo --triggers name=MyHelloWorldStack-mweagle-MyHelloWorldStack-mweagle_main_echoCodeCommit,destinationArn=arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-mweagle_main_echoCodeCommit,branches=mainline,preprod,events=all
@@ -144,4 +146,3 @@ CodeCmmit-triggered lambda functions:
   }
 
   ```
-
