@@ -5,6 +5,9 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	sparta "github.com/mweagle/Sparta"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	spartaIAMBuilder "github.com/mweagle/Sparta/aws/iam/builder"
@@ -82,8 +85,8 @@ func (lad *LogAggregatorDecorator) KinesisLogicalResourceName() string {
 // DecorateService annotates the service with the Kinesis hook
 func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 	serviceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,
@@ -110,23 +113,22 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 		putRecordPriv,
 		passRolePriv,
 	)
-	iamPolicyList := gocf.IAMRolePolicyList{}
-	iamPolicyList = append(iamPolicyList,
-		gocf.IAMRolePolicy{
+	iamPolicyList := []gofiam.Role_Policy{
+		gofiam.Role_Policy{
 			PolicyDocument: sparta.ArbitraryJSONObject{
 				"Version":   "2012-10-17",
 				"Statement": statements,
 			},
-			PolicyName: gocf.String("LogAggregatorPolicy"),
+			PolicyName: gof.String("LogAggregatorPolicy"),
 		},
-	)
-	iamLogAggregatorRole := &gocf.IAMRole{
-		RoleName:                 gocf.String(lad.iamRoleNameResourceName),
-		AssumeRolePolicyDocument: LogAggregatorAssumePolicyDocument,
-		Policies:                 &iamPolicyList,
 	}
-	template.AddResource(lad.iamRoleNameResourceName, iamLogAggregatorRole)
 
+	iamLogAggregatorRole := &gofiam.Role{
+		RoleName:                 lad.iamRoleNameResourceName,
+		AssumeRolePolicyDocument: LogAggregatorAssumePolicyDocument,
+		Policies:                 iamPolicyList,
+	}
+	template.Resources[lad.iamRoleNameResourceName] = iamLogAggregatorRole
 	return ctx, nil
 }
 
@@ -134,11 +136,11 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 	serviceName string,
 	lambdaResourceName string,
-	lambdaResource gocf.LambdaFunction,
+	lambdaResource goflambda.Function,
 	resourceMetadata map[string]interface{},
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	template *gocf.Template,
+	template *gof.Template,
 	logger *zerolog.Logger) (context.Context, error) {
 
 	// The relay function should consume the stream
@@ -148,18 +150,18 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 			"EventSourceMapping",
 			lambdaResourceName)
 
-		template.AddResource(eventSourceMappingResourceName, &gocf.LambdaEventSourceMapping{
-			StartingPosition: gocf.String(lad.kinesisMapping.StartingPosition),
-			BatchSize:        gocf.Integer(lad.kinesisMapping.BatchSize),
-			EventSourceArn:   gocf.GetAtt(lad.kinesisStreamResourceName, "Arn"),
-			FunctionName:     gocf.GetAtt(lambdaResourceName, "Arn"),
+		template.AddResource(eventSourceMappingResourceName, &goflambda.EventSourceMapping{
+			StartingPosition: lad.kinesisMapping.StartingPosition,
+			BatchSize:        lad.kinesisMapping.BatchSize,
+			EventSourceArn:   gof.GetAtt(lad.kinesisStreamResourceName, "Arn"),
+			FunctionName:     gof.GetAtt(lambdaResourceName, "Arn"),
 		})
 	} else {
 		// The other functions should publish their logs to the stream
 		subscriptionName := logAggregatorResName(fmt.Sprintf("Lambda%s", lambdaResourceName))
 		subscriptionFilterRes := &gocf.LogsSubscriptionFilter{
-			DestinationArn: gocf.GetAtt(lad.kinesisStreamResourceName, "Arn"),
-			RoleArn:        gocf.GetAtt(lad.iamRoleNameResourceName, "Arn"),
+			DestinationArn: gof.GetAtt(lad.kinesisStreamResourceName, "Arn"),
+			RoleArn:        gof.GetAtt(lad.iamRoleNameResourceName, "Arn"),
 			LogGroupName: gocf.Join("",
 				gocf.String("/aws/lambda/"),
 				gocf.Ref(lambdaResourceName)),

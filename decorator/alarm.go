@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofcloudwatch "github.com/awslabs/goformation/v5/cloudformation/cloudwatch"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -18,57 +20,56 @@ import (
 // for more information
 func CloudWatchErrorAlarmDecorator(periodWindow int,
 	minutesPerPeriod int,
-	thresholdGreaterThanOrEqualToValue int,
-	snsTopic gocf.Stringable) sparta.TemplateDecoratorHookFunc {
+	thresholdGreaterThanOrEqualToValue float64,
+	snsTopic string) sparta.TemplateDecoratorHookFunc {
 	alarmDecorator := func(ctx context.Context,
 		serviceName string,
 		lambdaResourceName string,
-		lambdaResource gocf.LambdaFunction,
+		lambdaResource *goflambda.Function,
 		resourceMetadata map[string]interface{},
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		template *gocf.Template,
+		template *gof.Template,
 		logger *zerolog.Logger) (context.Context, error) {
 
 		periodInSeconds := minutesPerPeriod * 60
 
-		alarm := &gocf.CloudWatchAlarm{
-			AlarmName: gocf.Join("",
-				gocf.String("ERROR Alarm for "),
-				gocf.Ref(lambdaResourceName)),
-			AlarmDescription: gocf.Join(" ",
-				gocf.String("ERROR count for AWS Lambda function"),
-				gocf.Ref(lambdaResourceName),
-				gocf.String("( Stack:"),
-				gocf.Ref("AWS::StackName"),
-				gocf.String(") is greater than"),
-				gocf.String(fmt.Sprintf("%d", thresholdGreaterThanOrEqualToValue)),
-				gocf.String("over the last"),
-				gocf.String(fmt.Sprintf("%d", periodInSeconds)),
-				gocf.String("seconds"),
-			),
-			MetricName:         gocf.String("Errors"),
-			Namespace:          gocf.String("AWS/Lambda"),
-			Statistic:          gocf.String("Sum"),
-			Period:             gocf.Integer(int64(periodInSeconds)),
-			EvaluationPeriods:  gocf.Integer(int64(periodWindow)),
-			Threshold:          gocf.Integer(int64(thresholdGreaterThanOrEqualToValue)),
-			ComparisonOperator: gocf.String("GreaterThanOrEqualToThreshold"),
-			Dimensions: &gocf.CloudWatchAlarmDimensionList{
-				gocf.CloudWatchAlarmDimension{
-					Name:  gocf.String("FunctionName"),
-					Value: gocf.Ref(lambdaResourceName).String(),
+		alarm := &gofcloudwatch.Alarm{
+			AlarmName: gof.Join("", []string{
+				"ERROR Alarm for ",
+				gof.Ref(lambdaResourceName)}),
+
+			AlarmDescription: gof.Join(" ", []string{
+				"ERROR count for AWS Lambda function",
+				gof.Ref(lambdaResourceName),
+				"( Stack:",
+				gof.Ref("AWS::StackName"),
+				") is greater than",
+				fmt.Sprintf("%d", thresholdGreaterThanOrEqualToValue),
+				"over the last",
+				fmt.Sprintf("%d", periodInSeconds),
+				"seconds",
+			}),
+			MetricName:         "Errors",
+			Namespace:          "AWS/Lambda",
+			Statistic:          "Sum",
+			Period:             periodInSeconds,
+			EvaluationPeriods:  periodWindow,
+			Threshold:          thresholdGreaterThanOrEqualToValue,
+			ComparisonOperator: "GreaterThanOrEqualToThreshold",
+			Dimensions: []gofcloudwatch.Alarm_Dimension{
+				gofcloudwatch.Alarm_Dimension{
+					Name:  "FunctionName",
+					Value: lambdaResourceName,
 				},
 			},
-			TreatMissingData: gocf.String("notBreaching"),
-			AlarmActions: gocf.StringList(
-				snsTopic,
-			),
+			TreatMissingData: "notBreaching",
+			AlarmActions:     []string{snsTopic},
 		}
 		// Create the resource, add it...
 		alarmResourceName := sparta.CloudFormationResourceName("Alarm",
 			lambdaResourceName)
-		template.AddResource(alarmResourceName, alarm)
+		template.Resources[alarmResourceName] = alarm
 		return ctx, nil
 	}
 	return sparta.TemplateDecoratorHookFunc(alarmDecorator)

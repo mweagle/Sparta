@@ -4,19 +4,20 @@ import (
 	"encoding/json"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // HelloWorldResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type HelloWorldResourceRequest struct {
-	Message *gocf.StringExpr
+	Message string
 }
 
 // HelloWorldResource is a simple POC showing how to create custom resources
 type HelloWorldResource struct {
-	gocf.CloudFormationCustomResource
+	gof.CustomResource
+	ServiceToken string
 	HelloWorldResourceRequest
 }
 
@@ -34,9 +35,9 @@ func (command HelloWorldResource) Create(awsSession *session.Session,
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info().Msgf("create: Hello %s", command.Message.Literal)
+	logger.Info().Msgf("create: Hello %s", command.Message)
 	return map[string]interface{}{
-		"Resource": "Created message: " + command.Message.Literal,
+		"Resource": "Created message: " + command.Message,
 	}, nil
 }
 
@@ -48,7 +49,7 @@ func (command HelloWorldResource) Update(awsSession *session.Session,
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info().Msgf("update:  %s", command.Message.Literal)
+	logger.Info().Msgf("update:  %s", command.Message)
 	return nil, nil
 }
 
@@ -60,6 +61,6 @@ func (command HelloWorldResource) Delete(awsSession *session.Session,
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info().Msgf("delete: %s", command.Message.Literal)
+	logger.Info().Msgf("delete: %s", command.Message)
 	return nil, nil
 }

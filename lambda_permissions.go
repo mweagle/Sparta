@@ -5,7 +5,13 @@ import (
 	"fmt"
 	"strings"
 
+	goftags "github.com/awslabs/goformation/v5/cloudformation/tags"
+
 	"github.com/aws/aws-sdk-go/service/s3"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofevents "github.com/awslabs/goformation/v5/cloudformation/events"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	gofs3 "github.com/awslabs/goformation/v5/cloudformation/s3"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -22,8 +28,6 @@ import (
 func describeInfoValue(dynamicValue interface{}) string {
 	switch typedArn := dynamicValue.(type) {
 	case string:
-		return typedArn
-	case gocf.Stringable:
 		data, dataErr := json.Marshal(typedArn)
 		if dataErr != nil {
 			data = []byte(fmt.Sprintf("%v", typedArn))
@@ -50,8 +54,8 @@ type LambdaPermissionExporter interface {
 	export(serviceName string,
 		lambdaFunctionDisplayName string,
 		lambdaLogicalCFResourceName string,
-		template *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		template *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		logger *zerolog.Logger) (string, error)
 	// Return a `describe` compatible output for the given permission.  Return
 	// value is a list of tuples for node, edgeLabel
@@ -71,36 +75,36 @@ type BasePermission struct {
 	SourceArn interface{} `json:"SourceArn,omitempty"`
 }
 
-func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.StringExpr {
+func (perm *BasePermission) sourceArnExpr(joinParts ...string) string {
 	if perm.SourceArn == nil {
-		return nil
+		return ""
 	}
 	stringARN, stringARNOk := perm.SourceArn.(string)
 	if stringARNOk && strings.Contains(stringARN, "arn:aws:") {
-		return gocf.String(stringARN)
+		return stringARN
 	}
 
-	var parts []gocf.Stringable
+	var parts []string
 	if nil != joinParts {
 		parts = append(parts, joinParts...)
 	}
 	parts = append(parts,
 		spartaCF.DynamicValueToStringExpr(perm.SourceArn),
 	)
-	return gocf.Join("", parts...)
+	return gof.Join("", parts)
 }
 
-func (perm BasePermission) export(principal *gocf.StringExpr,
-	arnPrefixParts []gocf.Stringable,
+func (perm BasePermission) export(principal string,
+	arnPrefixParts []string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
-	lambdaPermission := gocf.LambdaPermission{
-		Action:       gocf.String("lambda:InvokeFunction"),
-		FunctionName: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+	lambdaPermission := &goflambda.Permission{
+		Action:       "lambda:InvokeFunction",
+		FunctionName: gof.GetAtt(lambdaLogicalCFResourceName, "Arn"),
 		Principal:    principal,
 	}
 	// If the Arn isn't the wildcard value, then include it.
@@ -109,7 +113,7 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 		case string:
 			// Don't be smart if the Arn value is a user supplied literal
 			if typedARN != "*" {
-				lambdaPermission.SourceArn = gocf.String(typedARN)
+				lambdaPermission.SourceArn = typedARN
 			}
 		default:
 			lambdaPermission.SourceArn = perm.sourceArnExpr(arnPrefixParts...)
@@ -117,7 +121,7 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 	}
 
 	if perm.SourceAccount != "" {
-		lambdaPermission.SourceAccount = gocf.String(perm.SourceAccount)
+		lambdaPermission.SourceAccount = perm.SourceAccount
 	}
 
 	arnLiteral, arnLiteralErr := json.Marshal(lambdaPermission.SourceArn)
@@ -125,10 +129,10 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 		return "", arnLiteralErr
 	}
 	resourceName := CloudFormationResourceName("LambdaPerm%s",
-		principal.Literal,
+		principal,
 		string(arnLiteral),
 		lambdaLogicalCFResourceName)
-	template.AddResource(resourceName, lambdaPermission)
+	template.Resources[resourceName] = lambdaPermission
 	return resourceName, nil
 }
 
@@ -139,8 +143,8 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 ////////////////////////////////////////////////////////////////////////////////
 // START - S3Permission
 //
-var s3SourceArnParts = []gocf.Stringable{
-	gocf.String("arn:aws:s3:::"),
+var s3SourceArnParts = []string{
+	"arn:aws:s3:::",
 }
 
 // S3Permission struct implies that the S3 BasePermission.SourceArn should be
@@ -162,11 +166,11 @@ type S3Permission struct {
 func (perm S3Permission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
-	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String("s3.amazonaws.com"),
+	targetLambdaResourceName, err := perm.BasePermission.export("s3.amazonaws.com",
 		s3SourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -199,14 +203,16 @@ func (perm S3Permission) export(serviceName string,
 	if nil != newResourceError {
 		return "", newResourceError
 	}
+
 	// Setup the reqest for the S3 action
 	s3Resource, s3ResourceOK := newResource.(*cfCustomResources.S3LambdaEventSourceResource)
 	if !s3ResourceOK {
 		return "", fmt.Errorf("failed to access typed S3CustomResource")
 	}
-	s3Resource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
+
+	s3Resource.ServiceToken = gof.GetAtt(configuratorResName, "Arn")
 	s3Resource.BucketArn = sourceArnExpression
-	s3Resource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	s3Resource.LambdaTargetArn = gof.GetAtt(lambdaLogicalCFResourceName, "Arn")
 	s3Resource.Events = perm.Events
 	if nil != perm.Filter.Key {
 		s3Resource.Filter = &perm.Filter
@@ -219,10 +225,11 @@ func (perm S3Permission) export(serviceName string,
 		fmt.Sprintf("%#v", s3Resource.Filter))
 
 	// Add it
-	cfResource := template.AddResource(resourceInvokerName, s3Resource)
-	cfResource.DependsOn = append(cfResource.DependsOn,
+	s3Resource.AWSCloudFormationDependsOn = []string{
 		targetLambdaResourceName,
-		configuratorResName)
+		configuratorResName,
+	}
+	template.Resources[resourceInvokerName] = s3Resource
 	return "", nil
 }
 
@@ -258,7 +265,7 @@ func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // SNSPermission - START
-var snsSourceArnParts = []gocf.Stringable{}
+var snsSourceArnParts = []string{}
 
 // SNSPermission struct implies that the BasePermisison.SourceArn should be
 // configured for subscriptions as part of this stacks provisioning.
@@ -271,12 +278,12 @@ type SNSPermission struct {
 func (perm SNSPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
-	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String(SNSPrincipal),
+	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal,
 		snsSourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -307,9 +314,10 @@ func (perm SNSPermission) export(serviceName string,
 	if nil != newResourceError {
 		return "", newResourceError
 	}
+
 	customResource := newResource.(*cfCustomResources.SNSLambdaEventSourceResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	customResource.ServiceToken = gof.GetAtt(configuratorResName, "Arn")
+	customResource.LambdaTargetArn = gof.GetAtt(lambdaLogicalCFResourceName, "Arn")
 	customResource.SNSTopicArn = sourceArnExpression
 
 	// Name?
@@ -318,10 +326,11 @@ func (perm SNSPermission) export(serviceName string,
 		perm.BasePermission.SourceAccount)
 
 	// Add it
-	cfResource := template.AddResource(resourceInvokerName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn,
+	customResource.AWSCloudFormationDependsOn = []string{
 		targetLambdaResourceName,
-		configuratorResName)
+		configuratorResName,
+	}
+	template.Resources[resourceInvokerName] = customResource
 	return "", nil
 }
 
@@ -372,46 +381,46 @@ type MessageBodyStorageOptions struct {
 // service is deleted.
 type MessageBodyStorage struct {
 	logicalBucketName                  string
-	bucketNameExpr                     *gocf.StringExpr
+	bucketNameExpr                     string
 	cloudFormationS3BucketResourceName string
 }
 
 // BucketArn returns an Arn value that can be used as an
 // lambdaFn.RoleDefinition.Privileges `Resource` value.
-func (storage *MessageBodyStorage) BucketArn() *gocf.StringExpr {
-	return gocf.Join("",
-		gocf.String("arn:aws:s3:::"),
-		storage.bucketNameExpr)
+func (storage *MessageBodyStorage) BucketArn() string {
+	return gof.Join("", []string{
+		"arn:aws:s3:::",
+		storage.bucketNameExpr})
 }
 
 // BucketArnAllKeys returns an Arn value that can be used
 // lambdaFn.RoleDefinition.Privileges `Resource` value.  It includes
 // the trailing `/*` wildcard to support item acccess
-func (storage *MessageBodyStorage) BucketArnAllKeys() *gocf.StringExpr {
-	return gocf.Join("",
-		gocf.String("arn:aws:s3:::"),
+func (storage *MessageBodyStorage) BucketArnAllKeys() string {
+	return gof.Join("", []string{
+		"arn:aws:s3:::",
 		storage.bucketNameExpr,
-		gocf.String("/*"))
+		"/*"})
 }
 
 func (storage *MessageBodyStorage) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
 	if storage.cloudFormationS3BucketResourceName != "" {
-		s3Bucket := &gocf.S3Bucket{
-			Tags: &gocf.TagList{
-				gocf.Tag{
-					Key:   gocf.String("sparta:logicalBucketName"),
-					Value: gocf.String(storage.logicalBucketName),
+		s3Bucket := &gofs3.Bucket{
+			Tags: []goftags.Tag{
+				goftags.Tag{
+					Key:   "sparta:logicalBucketName",
+					Value: storage.logicalBucketName,
 				},
 			},
 		}
-		cfResource := template.AddResource(storage.cloudFormationS3BucketResourceName, s3Bucket)
-		cfResource.DeletionPolicy = "Retain"
+		s3Bucket.AWSCloudFormationDeletionPolicy = "Retain"
+		template.Resources[storage.cloudFormationS3BucketResourceName] = s3Bucket
 
 		lambdaResource, lambdaResourceExists := template.Resources[lambdaLogicalCFResourceName]
 		if !lambdaResourceExists {
@@ -423,13 +432,13 @@ func (storage *MessageBodyStorage) export(serviceName string,
 			Msg("Service will orphan S3 Bucket on deletion")
 
 		// Save the output
-		template.Outputs[storage.cloudFormationS3BucketResourceName] = &gocf.Output{
+		template.Outputs[storage.cloudFormationS3BucketResourceName] = gof.Output{
 			Description: "SES Message Body Bucket",
-			Value:       gocf.Ref(storage.cloudFormationS3BucketResourceName),
+			Value:       gof.Ref(storage.cloudFormationS3BucketResourceName),
 		}
 	}
 	// Add the S3 Access policy
-	s3BodyStoragePolicy := &gocf.S3BucketPolicy{
+	s3BodyStoragePolicy := &gofs3.BucketPolicy{
 		Bucket: storage.bucketNameExpr,
 		PolicyDocument: ArbitraryJSONObject{
 			"Version": "2012-10-17",
@@ -441,13 +450,13 @@ func (storage *MessageBodyStorage) export(serviceName string,
 						"Service": "ses.amazonaws.com",
 					},
 					"Action": []string{"s3:PutObjectAcl", "s3:PutObject"},
-					"Resource": gocf.Join("",
-						gocf.String("arn:aws:s3:::"),
+					"Resource": gof.Join("", []string{
+						"arn:aws:s3:::",
 						storage.bucketNameExpr,
-						gocf.String("/*")),
+						"/*"}),
 					"Condition": ArbitraryJSONObject{
 						"StringEquals": ArbitraryJSONObject{
-							"aws:Referer": gocf.Ref("AWS::AccountId"),
+							"aws:Referer": gof.Ref("AWS::AccountId"),
 						},
 					},
 				},
@@ -457,7 +466,7 @@ func (storage *MessageBodyStorage) export(serviceName string,
 
 	s3BucketPolicyResourceName := CloudFormationResourceName("SESMessageBodyBucketPolicy",
 		fmt.Sprintf("%#v", storage.bucketNameExpr))
-	template.AddResource(s3BucketPolicyResourceName, s3BodyStoragePolicy)
+	template.Resources[s3BucketPolicyResourceName] = s3BodyStoragePolicy
 
 	// Return the name of the bucket policy s.t. the configurator resource
 	// is properly sequenced.  The configurator will fail iff the Bucket Policies aren't
@@ -553,7 +562,7 @@ func (rule *ReceiptRule) toResourceRule(serviceName string,
 // SESPermission - START
 
 // SES doesn't use ARNs to scope access
-var sesSourcePartArn = []gocf.Stringable{wildcardArn}
+var sesSourcePartArn = []string{wildcardArn}
 
 // SESPermission struct implies that the SES verified domain should be
 // updated (via createReceiptRule) to automatically request or push events
@@ -578,7 +587,7 @@ func (perm *SESPermission) NewMessageBodyStorageResource(bucketLogicalName strin
 		logicalBucketName: bucketLogicalName,
 	}
 	store.cloudFormationS3BucketResourceName = CloudFormationResourceName("SESMessageStoreBucket", bucketLogicalName)
-	store.bucketNameExpr = gocf.Ref(store.cloudFormationS3BucketResourceName).String()
+	store.bucketNameExpr = gof.Ref(store.cloudFormationS3BucketResourceName)
 	return store, nil
 }
 
@@ -587,20 +596,20 @@ func (perm *SESPermission) NewMessageBodyStorageResource(bucketLogicalName strin
 // to enable SES PutObject access.
 func (perm *SESPermission) NewMessageBodyStorageReference(prexistingBucketName string) (*MessageBodyStorage, error) {
 	store := &MessageBodyStorage{}
-	store.bucketNameExpr = gocf.String(prexistingBucketName)
+	store.bucketNameExpr = prexistingBucketName
 	return store, nil
 }
 
 func (perm SESPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
-	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String(SESPrincipal),
+	targetLambdaResourceName, err := perm.BasePermission.export(SESPrincipal,
 		sesSourcePartArn,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -648,7 +657,7 @@ func (perm SESPermission) export(serviceName string,
 		return "", newResourceError
 	}
 	customResource := newResource.(*cfCustomResources.SESLambdaEventSourceResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
+	customResource.ServiceToken = gof.GetAtt(configuratorResName, "Arn")
 	// The shared ruleset name used by all Sparta applications
 	customResource.RuleSetName = gocf.String("RuleSet")
 
@@ -676,7 +685,7 @@ func (perm SESPermission) export(serviceName string,
 		for eachIndex, eachReceiptRule := range perm.ReceiptRules {
 			sesRules[eachIndex] = eachReceiptRule.toResourceRule(
 				serviceName,
-				gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+				gof.GetAtt(lambdaLogicalCFResourceName, "Arn"),
 				perm.MessageBodyStorage)
 		}
 	}
@@ -688,10 +697,11 @@ func (perm SESPermission) export(serviceName string,
 		perm.BasePermission.SourceAccount)
 
 	// Add it
-	cfResource := template.AddResource(resourceInvokerName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn,
+	customResource.AWSCloudFormationDependsOn = []string{
 		targetLambdaResourceName,
-		configuratorResName)
+		configuratorResName,
+	}
+	template.Resources[resourceInvokerName] = customResource
 	return "", nil
 }
 
@@ -774,7 +784,7 @@ func (rule CloudWatchEventsRule) MarshalJSON() ([]byte, error) {
 ////////////////////////////////////////////////////////////////////////////////
 // START - CloudWatchEventsPermission
 //
-var cloudformationEventsSourceArnParts = []gocf.Stringable{}
+var cloudformationEventsSourceArnParts = []string{}
 
 // CloudWatchEventsPermission struct implies that the CloudWatchEvent sources
 // should be configured as part of provisioning.  The BasePermission.SourceArn
@@ -792,8 +802,8 @@ type CloudWatchEventsPermission struct {
 func (perm CloudWatchEventsPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
 	// There needs to be at least one rule to apply
@@ -803,20 +813,20 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for this.
 	if nil != perm.BasePermission.SourceArn &&
-		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...).String() != wildcardArn.String() {
+		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...) != wildcardArn {
 		logger.Warn().
 			Interface("Arn", perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...)).
 			Msg("CloudWatchEvents do not support literal ARN values")
 	}
 
-	arnPermissionForRuleName := func(ruleName string) *gocf.StringExpr {
-		return gocf.Join("",
-			gocf.String("arn:aws:events:"),
-			gocf.Ref("AWS::Region"),
-			gocf.String(":"),
-			gocf.Ref("AWS::AccountId"),
-			gocf.String(":rule/"),
-			gocf.String(ruleName))
+	arnPermissionForRuleName := func(ruleName string) string {
+		return gof.Join("", []string{
+			"arn:aws:events:",
+			gof.Ref("AWS::Region"),
+			":",
+			gof.Ref("AWS::AccountId"),
+			":rule/",
+			ruleName})
 	}
 
 	// Add the permission to invoke the lambda function
@@ -831,7 +841,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		basePerm := BasePermission{
 			SourceArn: arnPermissionForRuleName(uniqueRuleName),
 		}
-		_, exportErr := basePerm.export(gocf.String(CloudWatchEventsPrincipal),
+		_, exportErr := basePerm.export(CloudWatchEventsPrincipal,
 			cloudformationEventsSourceArnParts,
 			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
@@ -843,19 +853,17 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 			return "", exportErr
 		}
 
-		cwEventsRuleTargetList := gocf.EventsRuleTargetList{}
-		cwEventsRuleTargetList = append(cwEventsRuleTargetList,
-			gocf.EventsRuleTarget{
-				Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-				ID:  gocf.String(uniqueRuleName),
+		cwEventsRuleTargetList := []gofevents.Rule_Target{
+			gofevents.Rule_Target{
+				Arn: gof.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+				Id:  uniqueRuleName,
 			},
-		)
-
+		}
 		// Add the rule
-		eventsRule := &gocf.EventsRule{
-			Name:        gocf.String(uniqueRuleName),
-			Description: gocf.String(eachRuleDefinition.Description),
-			Targets:     &cwEventsRuleTargetList,
+		eventsRule := &gofevents.Rule{
+			Name:        uniqueRuleName,
+			Description: eachRuleDefinition.Description,
+			Targets:     cwEventsRuleTargetList,
 		}
 		if nil != eachRuleDefinition.EventPattern && eachRuleDefinition.ScheduleExpression != "" {
 			return "", fmt.Errorf("rule %s CloudWatchEvents specifies both EventPattern and ScheduleExpression", eachRuleName)
@@ -863,12 +871,13 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		if nil != eachRuleDefinition.EventPattern {
 			eventsRule.EventPattern = eachRuleDefinition.EventPattern
 		} else if eachRuleDefinition.ScheduleExpression != "" {
-			eventsRule.ScheduleExpression = gocf.String(eachRuleDefinition.ScheduleExpression)
+			eventsRule.ScheduleExpression = eachRuleDefinition.ScheduleExpression
 		}
 		cloudWatchLogsEventResName := CloudFormationResourceName(fmt.Sprintf("%s-CloudWatchEventsRule", eachRuleName),
 			lambdaLogicalCFResourceName,
 			lambdaFunctionDisplayName)
-		template.AddResource(cloudWatchLogsEventResName, eventsRule)
+
+		template.Resources[cloudWatchLogsEventResName] = eventsRule
 	}
 	// Validate it
 	for _, eachCount := range uniqueRuleNameMap {
@@ -926,13 +935,13 @@ type EventBridgeRule struct {
 func (rule EventBridgeRule) MarshalJSON() ([]byte, error) {
 	ruleJSON := map[string]interface{}{}
 
-	ruleJSON["Description"] = marshalString(rule.Description)
-	ruleJSON["EventBusName"] = marshalString(rule.EventBusName)
+	ruleJSON["Description"] = rule.Description
+	ruleJSON["EventBusName"] = rule.EventBusName
 	if rule.EventPattern != nil {
-		ruleJSON["EventPattern"] = marshalInterface(rule.EventPattern)
+		ruleJSON["EventPattern"] = rule.EventPattern
 	}
 	if rule.ScheduleExpression != "" {
-		ruleJSON["ScheduleExpression"] = marshalString(rule.ScheduleExpression)
+		ruleJSON["ScheduleExpression"] = rule.ScheduleExpression
 	}
 	return json.Marshal(ruleJSON)
 }
@@ -961,8 +970,8 @@ type EventBridgePermission struct {
 func (perm EventBridgePermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
 	// There needs to be at least one rule to apply
@@ -977,7 +986,7 @@ func (perm EventBridgePermission) export(serviceName string,
 
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for this.
 	if nil != perm.BasePermission.SourceArn &&
-		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...).String() != wildcardArn.String() {
+		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...) != wildcardArn {
 		logger.Warn().
 			Interface("Arn", perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...)).
 			Msg("EventBridge Events do not support literal ARN values")
@@ -985,9 +994,9 @@ func (perm EventBridgePermission) export(serviceName string,
 
 	// Add the permission
 	basePerm := BasePermission{
-		SourceArn: gocf.GetAtt(eventBridgeRuleResourceName, "Arn"),
+		SourceArn: gof.GetAtt(eventBridgeRuleResourceName, "Arn"),
 	}
-	_, exportErr := basePerm.export(gocf.String(EventBridgePrincipal),
+	_, exportErr := basePerm.export(EventBridgePrincipal,
 		cloudformationEventsSourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -999,13 +1008,12 @@ func (perm EventBridgePermission) export(serviceName string,
 		return "", exportErr
 	}
 
-	eventBridgeRuleTargetList := gocf.EventsRuleTargetList{}
-	eventBridgeRuleTargetList = append(eventBridgeRuleTargetList,
-		gocf.EventsRuleTarget{
-			Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-			ID:  gocf.String(serviceName),
+	eventBridgeRuleTargetList := []gofevents.Rule_Target{
+		gofevents.Rule_Target{
+			Arn: gof.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+			Id:  serviceName,
 		},
-	)
+	}
 	if nil != perm.Rule.EventPattern &&
 		perm.Rule.ScheduleExpression != "" {
 		return "", fmt.Errorf("rule %s EventBridge specifies both EventPattern and ScheduleExpression",
@@ -1013,27 +1021,27 @@ func (perm EventBridgePermission) export(serviceName string,
 	}
 
 	// Add the rule
-	eventsRule := &gocf.EventsRule{
-		Targets: &eventBridgeRuleTargetList,
+	eventsRule := &gofevents.Rule{
+		Targets: eventBridgeRuleTargetList,
 	}
 	if perm.Rule.EventBusName != "" {
-		eventsRule.EventBusName = marshalString(perm.Rule.EventBusName)
+		eventsRule.EventBusName = perm.Rule.EventBusName
 	}
 	// Setup the description placeholder...we'll set it in a bit...
 	ruleDescription := ""
 	if perm.Rule.EventPattern != nil {
-		eventsRule.EventPattern = marshalInterface(perm.Rule.EventPattern)
+		eventsRule.EventPattern = perm.Rule.EventPattern
 		ruleDescription = fmt.Sprintf("%s (Stack: %s) event pattern subscriber",
 			lambdaFunctionDisplayName,
 			serviceName)
 	} else if perm.Rule.ScheduleExpression != "" {
-		eventsRule.ScheduleExpression = marshalString(perm.Rule.ScheduleExpression)
+		eventsRule.ScheduleExpression = perm.Rule.ScheduleExpression
 		ruleDescription = fmt.Sprintf("%s (Stack: %s) scheduled subscriber",
 			lambdaFunctionDisplayName,
 			serviceName)
 	}
-	eventsRule.Description = marshalString(ruleDescription)
-	template.AddResource(eventBridgeRuleResourceName, eventsRule)
+	eventsRule.Description = ruleDescription
+	template.Resources[eventBridgeRuleResourceName] = eventsRule
 	return "", nil
 }
 
@@ -1070,8 +1078,8 @@ type CloudWatchLogsSubscriptionFilter struct {
 	LogGroupName  string
 }
 
-var cloudformationLogsSourceArnParts = []gocf.Stringable{
-	gocf.String("arn:aws:logs:"),
+var cloudformationLogsSourceArnParts = []string{
+	"arn:aws:logs:",
 }
 
 // CloudWatchLogsPermission struct implies that the corresponding
@@ -1090,8 +1098,8 @@ type CloudWatchLogsPermission struct {
 func (perm CloudWatchLogsPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
 	// If there aren't any expressions to register with?
@@ -1100,15 +1108,15 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	}
 
 	// The principal is region specific, so build that up...
-	regionalPrincipal := gocf.Join(".",
-		gocf.String("logs"),
-		gocf.Ref("AWS::Region"),
-		gocf.String("amazonaws.com"))
+	regionalPrincipal := gof.Join(".", []string{
+		"logs",
+		gof.Ref("AWS::Region"),
+		"amazonaws.com"})
 
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
 	// this.
 	if nil != perm.BasePermission.SourceArn &&
-		perm.BasePermission.sourceArnExpr(cloudformationLogsSourceArnParts...).String() != wildcardArn.String() {
+		perm.BasePermission.sourceArnExpr(cloudformationLogsSourceArnParts...) != wildcardArn {
 		logger.Warn().
 			Interface("Arn", perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...)).
 			Msg("CloudWatchLogs do not support literal ARN values")
@@ -1140,14 +1148,14 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		globallyUniqueFilters[uniqueFilterName] = eachFilter
 
 		// The ARN we supply to IAM is built up using the user supplied groupname
-		cloudWatchLogsArn := gocf.Join("",
-			gocf.String("arn:aws:logs:"),
-			gocf.Ref("AWS::Region"),
-			gocf.String(":"),
-			gocf.Ref("AWS::AccountId"),
-			gocf.String(":log-group:"),
-			gocf.String(eachFilter.LogGroupName),
-			gocf.String(":log-stream:*"))
+		cloudWatchLogsArn := gof.Join("", []string{
+			"arn:aws:logs:",
+			gof.Ref("AWS::Region"),
+			":",
+			gof.Ref("AWS::AccountId"),
+			":log-group:",
+			eachFilter.LogGroupName,
+			":log-stream:*"})
 
 		lastConfigurationResourceName, ensureCustomHandlerError := EnsureCustomResourceHandler(serviceName,
 			cfCustomResources.CloudWatchLogsLambdaEventSource,
@@ -1176,17 +1184,18 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	if nil != newResourceError {
 		return "", newResourceError
 	}
+
 	customResource := newResource.(*cfCustomResources.CloudWatchLogsLambdaEventSourceResource)
-	customResource.ServiceToken = gocf.GetAtt(configurationResourceName, "Arn")
-	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	customResource.ServiceToken = gof.GetAtt(configurationResourceName, "Arn")
+	customResource.LambdaTargetArn = gof.GetAtt(lambdaLogicalCFResourceName, "Arn")
 	// Build up the filters...
 	customResource.Filters = make([]*cfCustomResources.CloudWatchLogsLambdaEventSourceFilter, 0)
 	for eachName, eachFilter := range globallyUniqueFilters {
 		customResource.Filters = append(customResource.Filters,
 			&cfCustomResources.CloudWatchLogsLambdaEventSourceFilter{
-				Name:         gocf.String(eachName),
-				Pattern:      gocf.String(eachFilter.FilterPattern),
-				LogGroupName: gocf.String(eachFilter.LogGroupName),
+				Name:         eachName,
+				Pattern:      eachFilter.FilterPattern,
+				LogGroupName: eachFilter.LogGroupName,
 			})
 
 	}
@@ -1195,12 +1204,12 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		lambdaLogicalCFResourceName,
 		perm.BasePermission.SourceAccount)
 	// Add it
-	cfResource := template.AddResource(resourceInvokerName, customResource)
-
-	cfResource.DependsOn = append(cfResource.DependsOn,
+	customResource.AWSCloudFormationDependsOn = []string{
 		lambdaInvokePermission,
 		lambdaLogicalCFResourceName,
-		configurationResourceName)
+		configurationResourceName,
+	}
+	template.Resources[resourceInvokerName] = customResource
 	return "", nil
 }
 
@@ -1225,12 +1234,12 @@ func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error
 // START - CodeCommitPermission
 //
 // arn:aws:codecommit:us-west-2:123412341234:myRepo
-var codeCommitSourceArnParts = []gocf.Stringable{
-	gocf.String("arn:aws:codecommit:"),
-	gocf.Ref("AWS::Region"),
-	gocf.String(":"),
-	gocf.Ref("AWS::AccountId"),
-	gocf.String(":"),
+var codeCommitSourceArnParts = []string{
+	"arn:aws:codecommit:",
+	gof.Ref("AWS::Region"),
+	":",
+	gof.Ref("AWS::AccountId"),
+	":",
 }
 
 // CodeCommitPermission struct encapsulates the data necessary
@@ -1239,7 +1248,7 @@ var codeCommitSourceArnParts = []gocf.Stringable{
 type CodeCommitPermission struct {
 	BasePermission
 	// RepositoryName
-	RepositoryName *gocf.StringExpr
+	RepositoryName string
 	// Branches to register for
 	Branches []string `json:"branches,omitempty"`
 	// Events to subscribe to. Defaults to "all" if empty.
@@ -1249,14 +1258,14 @@ type CodeCommitPermission struct {
 func (perm CodeCommitPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	logger *zerolog.Logger) (string, error) {
 
-	principal := gocf.Join("",
-		gocf.String("codecommit."),
-		gocf.Ref("AWS::Region"),
-		gocf.String(".amazonaws.com"))
+	principal := gof.Join("", []string{
+		"codecommit.",
+		gof.Ref("AWS::Region"),
+		".amazonaws.com"})
 
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(codeCommitSourceArnParts...)
 
@@ -1296,10 +1305,11 @@ func (perm CodeCommitPermission) export(serviceName string,
 	if len(repoEvents) <= 0 {
 		repoEvents = []string{"all"}
 	}
+
 	customResource := newResource.(*cfCustomResources.CodeCommitLambdaEventSourceResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-	customResource.TriggerName = gocf.Ref(lambdaLogicalCFResourceName).String()
+	customResource.ServiceToken = gof.GetAtt(configuratorResName, "Arn")
+	customResource.LambdaTargetArn = gof.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	customResource.TriggerName = gof.Ref(lambdaLogicalCFResourceName)
 	customResource.RepositoryName = perm.RepositoryName
 	customResource.Events = repoEvents
 	customResource.Branches = perm.Branches
@@ -1310,10 +1320,11 @@ func (perm CodeCommitPermission) export(serviceName string,
 		perm.BasePermission.SourceAccount)
 
 	// Add it
-	cfResource := template.AddResource(resourceInvokerName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn,
+	customResource.AWSCloudFormationDependsOn = []string{
 		targetLambdaResourceName,
-		configuratorResName)
+		configuratorResName,
+	}
+	template.Resources[resourceInvokerName] = customResource
 	return "", nil
 }
 

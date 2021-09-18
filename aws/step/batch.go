@@ -2,18 +2,16 @@ package step
 
 import (
 	"math/rand"
-
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // BatchTaskParameters represents params for the Batch notification
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-batch.html
 type BatchTaskParameters struct {
-	JobDefinition      gocf.Stringable          `json:",omitempty"`
+	JobDefinition      string                   `json:",omitempty"`
 	JobName            string                   `json:",omitempty"`
-	JobQueue           gocf.Stringable          `json:",omitempty"`
+	JobQueue           string                   `json:",omitempty"`
 	ArrayProperties    map[string]interface{}   `json:",omitempty"`
-	ContainerOverrides map[string]interface{}   `json:",omitempty"`
+	ContainerOverrides []map[string]interface{} `json:",omitempty"`
 	DependsOn          []map[string]interface{} `json:",omitempty"`
 	Parameters         map[string]string        `json:",omitempty"`
 	RetryStrategy      map[string]interface{}   `json:",omitempty"`

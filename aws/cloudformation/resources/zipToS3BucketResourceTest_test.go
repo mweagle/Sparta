@@ -40,7 +40,7 @@ func TestUnzip(t *testing.T) {
 	if !testEnabled() {
 		return
 	}
-	resUnzip := gocf.NewResourceByType(ZipToS3Bucket)
+	resUnzip := CustomResourceForType(ZipToS3Bucket)
 	zipResource := resUnzip.(*ZipToS3BucketResource)
 	event := mockZipResourceEvent(t)
 

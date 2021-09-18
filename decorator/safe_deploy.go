@@ -5,8 +5,13 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofcodedeploy "github.com/awslabs/goformation/v5/cloudformation/codedeploy"
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	gofpolicies "github.com/awslabs/goformation/v5/cloudformation/policies"
 	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+
 	"github.com/rs/zerolog"
 )
 
@@ -18,11 +23,11 @@ func codeDeployLambdaUpdateDecorator(updateType string,
 	return func(ctx context.Context,
 		serviceName string,
 		lambdaResourceName string,
-		lambdaResource gocf.LambdaFunction,
+		lambdaResource *goflambda.Function,
 		resourceMetadata map[string]interface{},
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		template *gocf.Template,
+		template *gof.Template,
 		logger *zerolog.Logger) (context.Context, error) {
 
 		safeDeployResourceName := func(resType string) string {
@@ -32,45 +37,47 @@ func codeDeployLambdaUpdateDecorator(updateType string,
 		}
 		// Create the AWS::Lambda::Version, with DeletionPolicy=Retain
 		versionResourceName := safeDeployResourceName("version" + buildID)
-		versionResource := &gocf.LambdaVersion{
-			FunctionName: gocf.Ref(lambdaResourceName).String(),
+		versionResource := &goflambda.Version{
+			FunctionName: gof.Ref(lambdaResourceName),
 		}
-		entry := template.AddResource(versionResourceName, versionResource)
-		entry.DeletionPolicy = "Retain"
+		versionResource.AWSCloudFormationDeletionPolicy = "Retain"
+		template.Resources[versionResourceName] = versionResource
 
 		// Create the AWS::CodeDeploy::DeploymentGroup entry that includes a reference
 		// to the IAM role
 		codeDeploymentGroupResourceName := safeDeployResourceName("deploymentGroup")
-		codeDeploymentGroup := &gocf.CodeDeployDeploymentGroup{
-			ApplicationName: gocf.Ref(codeDeployApplicationName).String(),
-			AutoRollbackConfiguration: &gocf.CodeDeployDeploymentGroupAutoRollbackConfiguration{
-				Enabled: gocf.Bool(true),
-				Events: gocf.StringList(gocf.String("DEPLOYMENT_FAILURE"),
-					gocf.String("DEPLOYMENT_STOP_ON_ALARM"),
-					gocf.String("DEPLOYMENT_STOP_ON_REQUEST")),
+		codeDeploymentGroup := &gofcodedeploy.DeploymentGroup{
+			ApplicationName: gof.Ref(codeDeployApplicationName),
+			AutoRollbackConfiguration: &gofcodedeploy.DeploymentGroup_AutoRollbackConfiguration{
+				Enabled: true,
+				Events: []string{"DEPLOYMENT_FAILURE",
+					"DEPLOYMENT_STOP_ON_ALARM",
+					"DEPLOYMENT_STOP_ON_REQUEST"},
 			},
-			ServiceRoleArn:       gocf.GetAtt(codeDeployRoleName, "Arn"),
-			DeploymentConfigName: gocf.String(fmt.Sprintf("CodeDeployDefault.Lambda%s", updateType)),
-			DeploymentStyle: &gocf.CodeDeployDeploymentGroupDeploymentStyle{
-				DeploymentType:   gocf.String("BLUE_GREEN"),
-				DeploymentOption: gocf.String("WITH_TRAFFIC_CONTROL"),
+			ServiceRoleArn:       gof.GetAtt(codeDeployRoleName, "Arn"),
+			DeploymentConfigName: fmt.Sprintf("CodeDeployDefault.Lambda%s", updateType),
+			DeploymentStyle: &gofcodedeploy.DeploymentGroup_DeploymentStyle{
+				DeploymentType:   "BLUE_GREEN",
+				DeploymentOption: "WITH_TRAFFIC_CONTROL",
 			},
 		}
-		template.AddResource(codeDeploymentGroupResourceName, codeDeploymentGroup)
+		template.Resources[codeDeploymentGroupResourceName] = codeDeploymentGroup
+
 		// Create the Alias entry...
 		aliasResourceName := safeDeployResourceName("alias")
-		aliasResource := &gocf.LambdaAlias{
-			FunctionVersion: gocf.GetAtt(versionResourceName, "Version").String(),
-			FunctionName:    gocf.Ref(lambdaResourceName).String(),
-			Name:            gocf.String("live"),
+		aliasResource := &goflambda.Alias{
+			FunctionVersion: gof.GetAtt(versionResourceName, "Version"),
+			FunctionName:    gof.Ref(lambdaResourceName),
+			Name:            "live",
 		}
-		aliasEntry := template.AddResource(aliasResourceName, aliasResource)
-		aliasEntry.UpdatePolicy = &gocf.UpdatePolicy{
-			CodeDeployLambdaAliasUpdate: &gocf.UpdatePolicyCodeDeployLambdaAliasUpdate{
-				ApplicationName:     gocf.Ref(codeDeployApplicationName).String(),
-				DeploymentGroupName: gocf.Ref(codeDeploymentGroupResourceName).String(),
+		aliasResource.AWSCloudFormationUpdatePolicy = &gofpolicies.UpdatePolicy{
+			CodeDeployLambdaAliasUpdate: &gofpolicies.CodeDeployLambdaAliasUpdate{
+				ApplicationName:     codeDeployApplicationName,
+				DeploymentGroupName: codeDeploymentGroupResourceName,
 			},
 		}
+
+		template.Resources[aliasResourceName] = aliasResource
 		return ctx, nil
 	}
 }
@@ -98,15 +105,15 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 			eachFunc.RoleDefinition.Privileges = append(preHook.RoleDefinition.Privileges,
 				sparta.IAMRolePrivilege{
 					Actions: []string{"codedeploy:PutLifecycleEventHookExecutionStatus"},
-					Resource: gocf.Join("",
-						gocf.String("arn:aws:codedeploy:"),
-						gocf.Ref("AWS::Region"),
-						gocf.String(":"),
-						gocf.Ref("AWS::AccountId"),
-						gocf.String(":deploymentgroup:"),
-						gocf.String(codeDeployApplicationName),
-						gocf.String("/*"),
-					)},
+					Resource: []string{"",
+						"arn:aws:codedeploy:",
+						gof.Ref("AWS::Region"),
+						":",
+						gof.Ref("AWS::AccountId"),
+						":deploymentgroup:",
+						codeDeployApplicationName,
+						"/*"},
+				},
 			)
 		}
 	}
@@ -123,24 +130,24 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 	// Return the service decorator...
 	return func(ctx context.Context,
 		serviceName string,
-		template *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		template *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 		// So what we really need to do is walk over all the lambda functions in the template
 		// and setup all the Deployment groups...
-		codeDeployApplication := &gocf.CodeDeployApplication{
-			ComputePlatform: gocf.String("Lambda"),
+		codeDeployApplication := &gofcodedeploy.Application{
+			ComputePlatform: "Lambda",
 		}
-		template.AddResource(codeDeployApplicationName, codeDeployApplication)
+		template.Resources[codeDeployApplicationName] = codeDeployApplication
 		// Create the CodeDeploy role
 		// Ensure there is an IAM role for this...
 		// CodeDeployServiceRole
 
-		codeDeployRoleResource := gocf.IAMRole{
-			ManagedPolicyArns: gocf.StringList(gocf.String("arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda")),
+		codeDeployRoleResource := &gofiam.Role{
+			ManagedPolicyArns: []string{"arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda"},
 			AssumeRolePolicyDocument: sparta.ArbitraryJSONObject{
 				"Version": "2012-10-17",
 				"Statement": []sparta.ArbitraryJSONObject{{
@@ -152,7 +159,7 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 				},
 			},
 		}
-		template.AddResource(codeDeployRoleResourceName, codeDeployRoleResource)
+		template.Resources[codeDeployRoleResourceName] = codeDeployRoleResource
 
 		// Ship it...
 		return ctx, nil

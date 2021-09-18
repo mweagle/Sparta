@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	spartaDocker "github.com/mweagle/Sparta/docker"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -17,7 +16,7 @@ func BuildDockerImageHook(dockerFilePath string,
 	dockerTags map[string]string) sparta.WorkflowHookHandler {
 	dockerBuild := func(ctx context.Context,
 		serviceName string,
-		S3Bucket gocf.Stringable,
+		S3Bucket string,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,

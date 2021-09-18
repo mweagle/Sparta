@@ -2,19 +2,17 @@ package step
 
 import (
 	"math/rand"
-
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // GlueParameters represents params for Glue step
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-glue.html
 type GlueParameters struct {
-	JobName               gocf.Stringable        `json:",omitempty"`
+	JobName               string                 `json:",omitempty"`
 	JobRunID              string                 `json:"JobRunId,omitempty"`
 	Arguments             map[string]interface{} `json:",omitempty"`
-	AllocatedCapacity     *gocf.IntegerExpr      `json:",omitempty"`
-	Timeout               *gocf.IntegerExpr      `json:",omitempty"`
-	SecurityConfiguration gocf.Stringable        `json:",omitempty"`
+	AllocatedCapacity     int                    `json:",omitempty"`
+	Timeout               int                    `json:",omitempty"`
+	SecurityConfiguration string                 `json:",omitempty"`
 	NotificationProperty  interface{}            `json:",omitempty"`
 }
 

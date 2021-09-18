@@ -9,12 +9,13 @@ import (
 	"os"
 	"strings"
 
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+
 	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -55,30 +56,77 @@ var (
 	S3ArtifactPublisher = cloudFormationResourceType("S3ArtifactPublisher")
 )
 
-func customTypeProvider(resourceType string) gocf.ResourceProperties {
+// CustomResourceForType returns a gof.Resource instance if one has been defined
+func CustomResourceForType(resourceType string) gof.Resource {
+	var entry gof.Resource
 	switch resourceType {
 	case HelloWorld:
-		return &HelloWorldResource{}
+		return &HelloWorldResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case S3LambdaEventSource:
-		return &S3LambdaEventSourceResource{}
+		return &S3LambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case CloudWatchLogsLambdaEventSource:
-		return &CloudWatchLogsLambdaEventSourceResource{}
+		return &CloudWatchLogsLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case CodeCommitLambdaEventSource:
-		return &CodeCommitLambdaEventSourceResource{}
+		return &CodeCommitLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case SNSLambdaEventSource:
-		return &SNSLambdaEventSourceResource{}
+		return &SNSLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case SESLambdaEventSource:
-		return &SESLambdaEventSourceResource{}
+		return &SESLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case ZipToS3Bucket:
-		return &ZipToS3BucketResource{}
+		return &ZipToS3BucketResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case S3ArtifactPublisher:
-		return &S3ArtifactPublisherResource{}
+		return &S3ArtifactPublisherResource{
+			CustomResource: gof.CustomResource{
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	}
-	return nil
-}
-
-func init() {
-	gocf.RegisterCustomResourceProvider(customTypeProvider)
+	return entry
 }
 
 // CustomResourceCommand defines operations that a CustomResource must implement.
@@ -291,7 +339,8 @@ func awsSession(logger *zerolog.Logger) *session.Session {
 // function that transforms an implementing CustomResourceCommand
 // into something that that can respond to the lambda custom
 // resource lifecycle
-func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, logger *zerolog.Logger) interface{} {
+func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand,
+	logger *zerolog.Logger) interface{} {
 	return func(ctx context.Context,
 		event CloudFormationLambdaEvent) error {
 		lambdaCtx, lambdaCtxOk := awsLambdaCtx.FromContext(ctx)
@@ -360,12 +409,13 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 
 // NewCustomResourceLambdaHandler returns a handler for the given
 // type
-func NewCustomResourceLambdaHandler(resourceType string, logger *zerolog.Logger) interface{} {
+func NewCustomResourceLambdaHandler(resourceType string,
+	logger *zerolog.Logger) interface{} {
 
 	// TODO - eliminate this factory stuff and just register
 	// the custom resources as normal lambda handlers...
 	var lambdaCmd CustomResourceCommand
-	cfResource := customTypeProvider(resourceType)
+	cfResource := CustomResourceForType(resourceType)
 	if cfResource != nil {
 		cmd, cmdOK := cfResource.(CustomResourceCommand)
 		if cmdOK {

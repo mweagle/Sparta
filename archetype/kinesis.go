@@ -7,7 +7,6 @@ import (
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 )
 
@@ -38,9 +37,9 @@ func (reactorFunc KinesisReactorFunc) ReactorName() string {
 
 // NewKinesisReactor returns an Kinesis reactor lambda function
 func NewKinesisReactor(reactor KinesisReactor,
-	kinesisStream gocf.Stringable,
+	kinesisStream string,
 	startingPosition string,
-	batchSize int64,
+	batchSize int,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 
 	reactorLambda := func(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) {

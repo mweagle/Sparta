@@ -21,8 +21,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	"github.com/briandowns/spinner"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -75,7 +76,7 @@ type templateConverter struct {
 	// internals
 	doQuote          bool
 	expandedTemplate string
-	contents         []gocf.Stringable
+	contents         []string
 	conversionError  error
 }
 
@@ -124,7 +125,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				// If there's anything at the head, push it.
 				if matchInfo[0] != 0 {
 					head := curContents[0:matchInfo[0]]
-					converter.contents = append(converter.contents, gocf.String(head))
+					converter.contents = append(converter.contents, head)
 					curContents = curContents[len(head):]
 				}
 
@@ -141,16 +142,17 @@ func (converter *templateConverter) parseData() *templateConverter {
 								return converter
 							}
 							if converter.doQuote {
-								converter.contents = append(converter.contents, gocf.Join("",
-									gocf.String("\""),
-									parsedContents,
-									gocf.String("\"")))
+								converter.contents = append(converter.contents,
+									gof.Join("", []string{
+										"\"",
+										parsedContents,
+										"\""}))
 							} else {
 								converter.contents = append(converter.contents, parsedContents)
 							}
 							curContents = curContents[indexPos+1:]
 							if len(curContents) <= 0 && (eachLineIndex < (splitDataLineCount - 1)) {
-								converter.contents = append(converter.contents, gocf.String("\n"))
+								converter.contents = append(converter.contents, "\n")
 							}
 							break
 						}
@@ -169,7 +171,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				}
 				// Always include a newline at a minimum
 				appendLine := fmt.Sprintf("%s%s", curContents, newlineValue)
-				converter.contents = append(converter.contents, gocf.String(appendLine))
+				converter.contents = append(converter.contents, appendLine)
 				break
 			}
 		}
@@ -177,11 +179,11 @@ func (converter *templateConverter) parseData() *templateConverter {
 	return converter
 }
 
-func (converter *templateConverter) results() (*gocf.StringExpr, error) {
+func (converter *templateConverter) results() (string, error) {
 	if nil != converter.conversionError {
-		return nil, converter.conversionError
+		return "", converter.conversionError
 	}
-	return gocf.Join("", converter.contents...), nil
+	return gof.Join("", converter.contents), nil
 }
 
 // END - templateConverter
@@ -191,7 +193,7 @@ func cloudformationPollingDelay() time.Duration {
 }
 
 func updateStackViaChangeSet(serviceName string,
-	cfTemplate *gocf.Template,
+	cfTemplate *gof.Template,
 	cfTemplateURL string,
 	stackParameters map[string]string,
 	awsTags map[string]string,
@@ -247,49 +249,49 @@ func toExpressionSlice(input interface{}) ([]string, error) {
 	}
 	return expressions, nil
 }
-func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
+
+func parseFnJoinExpr(data map[string]interface{}) (string, error) {
 	if len(data) <= 0 {
-		return nil, fmt.Errorf("data for FnJoinExpr is empty")
+		return "", fmt.Errorf("data for FnJoinExpr is empty")
 	}
 	for eachKey, eachValue := range data {
 		switch eachKey {
 		case "Ref":
-			return gocf.Ref(eachValue.(string)).String(), nil
+			return gof.Ref(eachValue.(string)), nil
 		case "Fn::GetAtt":
 			attrValues, attrValuesErr := toExpressionSlice(eachValue)
 			if nil != attrValuesErr {
-				return nil, attrValuesErr
+				return "", attrValuesErr
 			}
 			if len(attrValues) != 2 {
-				return nil, fmt.Errorf("invalid params for Fn::GetAtt: %s", eachValue)
+				return "", fmt.Errorf("invalid params for Fn::GetAtt: %s", eachValue)
 			}
-			return gocf.GetAtt(attrValues[0], attrValues[1]).String(), nil
+			return gof.GetAtt(attrValues[0], attrValues[1]), nil
 		case "Fn::FindInMap":
 			attrValues, attrValuesErr := toExpressionSlice(eachValue)
 			if nil != attrValuesErr {
-				return nil, attrValuesErr
+				return "", attrValuesErr
 			}
 			if len(attrValues) != 3 {
-				return nil, fmt.Errorf("invalid params for Fn::FindInMap: %s", eachValue)
+				return "", fmt.Errorf("invalid params for Fn::FindInMap: %s", eachValue)
 			}
-			return gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])), nil
+			return gof.FindInMap(attrValues[0],
+				attrValues[1], attrValues[2]), nil
 		}
 	}
-	return nil, fmt.Errorf("unsupported AWS Function detected: %#v", data)
+	return "", fmt.Errorf("unsupported AWS Function detected: %#v", data)
 }
 
-func stackCapabilities(template *gocf.Template) []*string {
+func stackCapabilities(template *gof.Template) []*string {
 	capabilitiesMap := make(map[string]bool)
 
 	// Only require IAM capability if the definition requires it.
 	for _, eachResource := range template.Resources {
-		if eachResource.Properties.CfnResourceType() == "AWS::IAM::Role" {
+		if eachResource.AWSCloudFormationType() == "AWS::IAM::Role" {
 			capabilitiesMap["CAPABILITY_IAM"] = true
-			switch typedResource := eachResource.Properties.(type) {
-			case gocf.IAMRole:
-				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != nil)
-			case *gocf.IAMRole:
-				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != nil)
+			switch typedResource := eachResource.(type) {
+			case *gofiam.Role:
+				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != "")
 			}
 		}
 	}
@@ -307,17 +309,14 @@ func stackCapabilities(template *gocf.Template) []*string {
 ////////////////////////////////////////////////////////////////////////////////
 
 // DynamicValueToStringExpr is a DRY function to type assert
-// a potentiall dynamic value into a gocf.Stringable
+// a potentiall dynamic value into a string
 // satisfying type
-func DynamicValueToStringExpr(dynamicValue interface{}) gocf.Stringable {
-	var stringExpr gocf.Stringable
+func DynamicValueToStringExpr(dynamicValue interface{}) string {
+	var stringExpr string
+
 	switch typedValue := dynamicValue.(type) {
 	case string:
-		stringExpr = gocf.String(typedValue)
-	case *gocf.StringExpr:
 		stringExpr = typedValue
-	case gocf.Stringable:
-		stringExpr = typedValue.String()
 	default:
 		panic(fmt.Sprintf("Unsupported dynamic value type: %+v", typedValue))
 	}
@@ -328,25 +327,25 @@ func DynamicValueToStringExpr(dynamicValue interface{}) gocf.Stringable {
 // (string or Ref) for all bucket keys (`/*`).  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
-func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{
-		gocf.String("arn:aws:s3:::"),
+func S3AllKeysArnForBucket(bucket interface{}) string {
+	arnParts := []string{
+		"arn:aws:s3:::",
 		DynamicValueToStringExpr(bucket),
-		gocf.String("/*"),
+		"/*",
 	}
-	return gocf.Join("", arnParts...).String()
+	return gof.Join("", arnParts)
 }
 
 // S3ArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) suitable for template reference.  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
-func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{
-		gocf.String("arn:aws:s3:::"),
+func S3ArnForBucket(bucket interface{}) string {
+	arnParts := []string{
+		"arn:aws:s3:::",
 		DynamicValueToStringExpr(bucket),
 	}
-	return gocf.Join("", arnParts...).String()
+	return gof.Join("", arnParts)
 }
 
 // MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant
@@ -369,7 +368,7 @@ func MapToResourceTags(tagMap map[string]string) []interface{} {
 // The templateData contents may include both golang text/template properties
 // and single-line JSON Fn::Join supported serializations.
 func ConvertToTemplateExpression(templateData io.Reader,
-	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	additionalUserTemplateProperties map[string]interface{}) (string, error) {
 	converter := &templateConverter{
 		templateReader:          templateData,
 		additionalTemplateProps: additionalUserTemplateProperties,
@@ -382,7 +381,7 @@ func ConvertToTemplateExpression(templateData io.Reader,
 // The templateData contents may include both golang text/template properties
 // and single-line JSON Fn::Join supported serializations.
 func ConvertToInlineJSONTemplateExpression(templateData io.Reader,
-	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	additionalUserTemplateProperties map[string]interface{}) (string, error) {
 	converter := &templateConverter{
 		templateReader:          templateData,
 		additionalTemplateProps: additionalUserTemplateProperties,
@@ -553,7 +552,7 @@ func ResourceName(prefix string, parts ...string) string {
 // UploadTemplate marshals the given cfTemplate and uploads it to the
 // supplied bucket using the given KeyName
 func UploadTemplate(serviceName string,
-	cfTemplate *gocf.Template,
+	cfTemplate *gof.Template,
 	s3Bucket string,
 	s3KeyName string,
 	awsSession *session.Session,
@@ -629,7 +628,7 @@ func StackExists(stackNameOrID string, awsSession *session.Session, logger *zero
 // for a given stack transformation
 func CreateStackChangeSet(changeSetRequestName string,
 	serviceName string,
-	cfTemplate *gocf.Template,
+	cfTemplate *gof.Template,
 	templateURL string,
 	stackParameters map[string]string,
 	stackTags map[string]string,
@@ -797,7 +796,7 @@ func ListStacks(session *session.Session,
 // state defined by cfTemplate. This function establishes a polling loop to determine
 // when the stack operation has completed.
 func ConvergeStackState(serviceName string,
-	cfTemplate *gocf.Template,
+	cfTemplate *gof.Template,
 	templateURL string,
 	stackParameters map[string]string,
 	tags map[string]string,
@@ -808,14 +807,16 @@ func ConvergeStackState(serviceName string,
 	dividerWidth int,
 	logger *zerolog.Logger) (*cloudformation.Stack, error) {
 
-	logger.Info().
-		Interface("Parameters", stackParameters).
-		Interface("Tags", tags).
+	// Create the parameter values.
+	logEntry := logger.Info()
+	for eachKey, eachValue := range stackParameters {
+		logEntry = logEntry.Str(fmt.Sprintf("Parameter: %s", eachKey), eachValue)
+	}
+	logEntry.Interface("Tags", tags).
 		Str("Name", serviceName).
 		Msg("Stack configuration")
 
 	awsCloudFormation := cloudformation.New(awsSession)
-	// Create the parameter values.
 	// Update the tags
 	exists, existsErr := StackExists(serviceName, awsSession, logger)
 	if nil != existsErr {
@@ -853,6 +854,7 @@ func ConvergeStackState(serviceName string,
 					})
 			}
 		}
+
 		// Create stack
 		createStackInput := &cloudformation.CreateStackInput{
 			StackName:        aws.String(serviceName),
@@ -862,9 +864,15 @@ func ConvergeStackState(serviceName string,
 			Capabilities:     stackCapabilities(cfTemplate),
 			Parameters:       cloudFormationParameters,
 		}
+
 		if len(awsTags) != 0 {
 			createStackInput.Tags = awsTags
 		}
+
+		logger.Info().
+			Interface("StackInput", createStackInput).
+			Msg("Create stack input")
+
 		createStackResponse, createStackResponseErr := awsCloudFormation.CreateStack(createStackInput)
 		if nil != createStackResponseErr {
 			return nil, createStackResponseErr
@@ -872,14 +880,9 @@ func ConvergeStackState(serviceName string,
 		logger.Info().
 			Str("StackID", *createStackResponse.StackId).
 			Msg("Creating stack")
-		for eachKey, eachVal := range stackParameters {
-			logger.Info().
-				Str(eachKey, eachVal).
-				Msg("Stack parameter")
-
-		}
 		stackID = *createStackResponse.StackId
 	}
+
 	// Wait for the operation to succeed
 	pollingMessage := "Waiting for CloudFormation operation to complete"
 	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,

@@ -6,10 +6,13 @@ import (
 	"regexp"
 	"text/template"
 
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofcloudwatch "github.com/awslabs/goformation/v5/cloudformation/cloudwatch"
+
 	"github.com/aws/aws-sdk-go/aws/session"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -132,8 +135,8 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 	timeSeriesPeriod int) sparta.ServiceDecoratorHookFunc {
 	return func(ctx context.Context,
 		serviceName string,
-		cfTemplate *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		cfTemplate *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
@@ -198,22 +201,24 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 			return ctx, templateExprErr
 		}
 
-		dashboardResource := gocf.CloudWatchDashboard{}
-		dashboardResource.DashboardBody = templateExpr
-		dashboardResource.DashboardName = gocf.String(serviceName)
+		dashboardResource := &gofcloudwatch.Dashboard{
+			DashboardName: serviceName,
+			DashboardBody: templateExpr,
+		}
 		dashboardName := sparta.CloudFormationResourceName("Dashboard", "Dashboard")
-		cfTemplate.AddResource(dashboardName, &dashboardResource)
+		cfTemplate.Resources[dashboardName] = dashboardResource
 
 		// Add the output
-		cfTemplate.Outputs[OutputDashboardURL] = &gocf.Output{
+		cfTemplate.Outputs[OutputDashboardURL] = gof.Output{
 			Description: "CloudWatch Dashboard URL",
-			Value: gocf.Join("",
-				gocf.String("https://"),
-				gocf.Ref("AWS::Region"),
-				gocf.String(".console.aws.amazon.com/cloudwatch/home?region="),
-				gocf.Ref("AWS::Region"),
-				gocf.String("#dashboards:name="),
-				gocf.Ref(dashboardName)),
+			Value: gof.Join("", []string{
+				"https://",
+				gof.Ref("AWS::Region"),
+				".console.aws.amazon.com/cloudwatch/home?region=",
+				gof.Ref("AWS::Region"),
+				"#dashboards:name=",
+				gof.Ref(dashboardName),
+			}),
 		}
 		return ctx, nil
 	}

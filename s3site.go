@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"github.com/aws/aws-sdk-go/service/s3"
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 func stableCloudformationResourceName(prefix string) string {
@@ -20,7 +19,7 @@ type S3Site struct {
 	WebsiteConfiguration *s3.WebsiteConfiguration
 	// BucketName is the name of the bucket to create. Required
 	// to specify a CloudFront Distribution
-	BucketName *gocf.StringExpr
+	BucketName string
 	// UserManifestData is a map of optional data to include
 	// in the MANIFEST.json data at the site root. These optional
 	// values will be scoped to a `userdata` key in the MANIFEST.json

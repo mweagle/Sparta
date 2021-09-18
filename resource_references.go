@@ -1,12 +1,10 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
 
 import (
-	"encoding/json"
-	"reflect"
-	"strings"
-
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -36,47 +34,49 @@ type resolvedResourceVisitor func(lambdaAWSInfo *LambdaAWSInfo,
 // resolveResourceRef takes an interface representing a dynamic ARN
 // and tries to determine the CloudFormation resource name it resolves to
 func resolveResourceRef(expr interface{}) (*resourceRef, error) {
+	return nil, errors.New("UNUNIMPEMENTED")
+	/*
+		// Is there any chance it's just a string?
+		typedString, typedStringOk := expr.(string)
+		if typedStringOk {
+			return &resourceRef{
+				RefType:      resourceLiteral,
+				ResourceName: typedString,
+			}, nil
+		}
+		// Some type of intrinsic function?
+		marshalled, marshalledErr := json.Marshal(expr)
+		if marshalledErr != nil {
+			return nil, errors.Errorf("Failed to unmarshal dynamic resource ref %v", expr)
+		}
+		var refFunc gocf.RefFunc
+		if json.Unmarshal(marshalled, &refFunc) == nil &&
+			len(refFunc.Name) != 0 {
+			return &resourceRef{
+				RefType:      resourceRefFunc,
+				ResourceName: refFunc.Name,
+			}, nil
+		}
 
-	// Is there any chance it's just a string?
-	typedString, typedStringOk := expr.(string)
-	if typedStringOk {
-		return &resourceRef{
-			RefType:      resourceLiteral,
-			ResourceName: typedString,
-		}, nil
-	}
-	// Some type of intrinsic function?
-	marshalled, marshalledErr := json.Marshal(expr)
-	if marshalledErr != nil {
-		return nil, errors.Errorf("Failed to unmarshal dynamic resource ref %v", expr)
-	}
-	var refFunc gocf.RefFunc
-	if json.Unmarshal(marshalled, &refFunc) == nil &&
-		len(refFunc.Name) != 0 {
-		return &resourceRef{
-			RefType:      resourceRefFunc,
-			ResourceName: refFunc.Name,
-		}, nil
-	}
+		var getAttFunc gof.GetAttFunc
+		if json.Unmarshal(marshalled, &getAttFunc) == nil && len(getAttFunc.Resource) != 0 {
+			return &resourceRef{
+				RefType:      resourceGetAttrFunc,
+				ResourceName: getAttFunc.Resource,
+			}, nil
+		}
+		// Any chance it's a string?
+		var stringExprFunc gocf.StringExpr
+		if json.Unmarshal(marshalled, &stringExprFunc) == nil && len(stringExprFunc.Literal) != 0 {
+			return &resourceRef{
+				RefType:      resourceStringFunc,
+				ResourceName: stringExprFunc.Literal,
+			}, nil
+		}
 
-	var getAttFunc gocf.GetAttFunc
-	if json.Unmarshal(marshalled, &getAttFunc) == nil && len(getAttFunc.Resource) != 0 {
-		return &resourceRef{
-			RefType:      resourceGetAttrFunc,
-			ResourceName: getAttFunc.Resource,
-		}, nil
-	}
-	// Any chance it's a string?
-	var stringExprFunc gocf.StringExpr
-	if json.Unmarshal(marshalled, &stringExprFunc) == nil && len(stringExprFunc.Literal) != 0 {
-		return &resourceRef{
-			RefType:      resourceStringFunc,
-			ResourceName: stringExprFunc.Literal,
-		}, nil
-	}
-
-	// Nope
-	return nil, nil
+		// Nope
+		return nil, nil
+	*/
 }
 
 // isResolvedResourceType is a utility function to determine if a resolved
@@ -87,21 +87,24 @@ func resolveResourceRef(expr interface{}) (*resourceRef, error) {
 // isResolvedResourceType(resourceRef, template, ":dynamodb:", &gocf.DynamoDBTable{}) {
 //
 func isResolvedResourceType(resource *resourceRef,
-	template *gocf.Template,
+	template *gof.Template,
 	literalTokenIndicator string,
 	templateType gocf.ResourceProperties) bool {
-	if resource.RefType == resourceLiteral ||
-		resource.RefType == resourceStringFunc {
-		return strings.Contains(resource.ResourceName, literalTokenIndicator)
-	}
 
-	// Dynamically provisioned resource included in the template definition?
-	existingResource, existingResourceExists := template.Resources[resource.ResourceName]
-	if existingResourceExists {
-		if reflect.TypeOf(existingResource.Properties) == reflect.TypeOf(templateType) {
-			return true
+	panic("NOT IMPLEMENTED")
+	/*
+		if resource.RefType == resourceLiteral ||
+			resource.RefType == resourceStringFunc {
+			return strings.Contains(resource.ResourceName, literalTokenIndicator)
 		}
-	}
+
+		// Dynamically provisioned resource included in the template definition?
+		existingResource, existingResourceExists := template.Resources[resource.ResourceName]
+		if existingResourceExists {
+			if reflect.TypeOf(existingResource.Properties) == reflect.TypeOf(templateType) {
+				return true
+			}
+		}*/
 	return false
 }
 
@@ -109,7 +112,7 @@ func isResolvedResourceType(resource *resourceRef,
 // the EventSourceMapping entries for the given lambdaAWSInfo struct
 func visitResolvedEventSourceMapping(visitor resolvedResourceVisitor,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	template *gocf.Template,
+	template *gof.Template,
 	logger *zerolog.Logger) error {
 
 	//

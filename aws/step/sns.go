@@ -2,8 +2,6 @@ package step
 
 import (
 	"math/rand"
-
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // SNSTaskParameters represents params for the SNS notification
@@ -14,8 +12,8 @@ type SNSTaskParameters struct {
 	MessageAttributes map[string]interface{} `json:",omitempty"`
 	MessageStructure  string                 `json:",omitempty"`
 	PhoneNumber       string                 `json:",omitempty"`
-	TargetArn         gocf.Stringable        `json:",omitempty"`
-	TopicArn          gocf.Stringable        `json:",omitempty"`
+	TargetArn         string                 `json:",omitempty"`
+	TopicArn          string                 `json:",omitempty"`
 }
 
 // SNSTaskState represents bindings for

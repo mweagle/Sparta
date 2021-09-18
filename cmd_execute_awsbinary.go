@@ -1,3 +1,4 @@
+//go:build lambdabinary
 // +build lambdabinary
 
 package sparta
@@ -34,17 +35,17 @@ func initDiscoveryInfo() {
 	discoveryInfo = info
 }
 
-func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
+func awsLambdaFunctionName(internalFunctionName string) string {
 	// TODO - move this to use SSM so that it's not human editable?
 	// But discover information is per-function, not per stack.
 	// Could we put the stack discovery info in there?
 	once.Do(initDiscoveryInfo)
 	sanitizedName := awsLambdaInternalName(internalFunctionName)
 
-	return gocf.String(fmt.Sprintf("%s%s%s",
+	return fmt.Sprintf("%s%s%s",
 		discoveryInfo.StackName,
 		functionNameDelimiter,
-		sanitizedName))
+		sanitizedName)
 }
 
 func takesContext(handler reflect.Type) bool {
@@ -183,7 +184,7 @@ func Execute(serviceName string,
 			- Sparta custom resources
 	*/
 	// Based on the environment variable, setup the proper listener...
-	var lambdaFunctionName gocf.Stringable
+	var lambdaFunctionName string
 	testAWSName := ""
 	var handlerSymbol interface{}
 	knownNames := []string{}
@@ -194,7 +195,7 @@ func Execute(serviceName string,
 	logger.Debug().Msg("Checking user-defined lambda functions")
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		lambdaFunctionName = awsLambdaFunctionName(eachLambdaInfo.lambdaFunctionName())
-		testAWSName = lambdaFunctionName.String().Literal
+		testAWSName = lambdaFunctionName
 
 		knownNames = append(knownNames, testAWSName)
 		if requestedLambdaFunctionName == testAWSName {
@@ -206,7 +207,7 @@ func Execute(serviceName string,
 		// User defined custom resource handler?
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
 			lambdaFunctionName = awsLambdaFunctionName(eachCustomResource.userFunctionName)
-			testAWSName = lambdaFunctionName.String().Literal
+			testAWSName = lambdaFunctionName
 			knownNames = append(knownNames, testAWSName)
 			if requestedLambdaFunctionName == testAWSName {
 				handlerSymbol = eachCustomResource.handlerSymbol

@@ -1,3 +1,4 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
@@ -8,6 +9,10 @@ import (
 	"runtime"
 	"strings"
 
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -18,7 +23,7 @@ import (
 // eventSourceMappingPoliciesForResource returns the IAM specific privileges for each
 // type of supported AWS Lambda EventSourceMapping
 func eventSourceMappingPoliciesForResource(resource *resourceRef,
-	template *gocf.Template,
+	template *gof.Template,
 	logger *zerolog.Logger) ([]spartaIAM.PolicyStatement, error) {
 
 	policyStatements := []spartaIAM.PolicyStatement{}
@@ -53,13 +58,13 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 // annotationFunc represents an internal annotation function
 // called to stich the template together
 type annotationFunc func(lambdaAWSInfos []*LambdaAWSInfo,
-	template *gocf.Template,
+	template *gof.Template,
 	logger *zerolog.Logger) error
 
 func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
-	template *gocf.Template,
+	template *gof.Template,
 	buildID string,
-	logger *zerolog.Logger) (*gocf.Template, error) {
+	logger *zerolog.Logger) (*gof.Template, error) {
 
 	// Add the build id s.t. the logger can get stamped...
 	if lambdaAWSInfo.Options == nil {
@@ -67,14 +72,14 @@ func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
 	}
 	lambdaEnvironment := lambdaAWSInfo.Options.Environment
 	if lambdaEnvironment == nil {
-		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
+		lambdaAWSInfo.Options.Environment = make(map[string]string)
 	}
 	return template, nil
 }
 
 func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
-	template *gocf.Template,
-	logger *zerolog.Logger) (*gocf.Template, error) {
+	template *gof.Template,
+	logger *zerolog.Logger) (*gof.Template, error) {
 	depMap := make(map[string]string)
 
 	// Update the metdata with a reference to the output of each
@@ -94,7 +99,7 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 	}
 	lambdaEnvironment := lambdaAWSInfo.Options.Environment
 	if lambdaEnvironment == nil {
-		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
+		lambdaAWSInfo.Options.Environment = make(map[string]string)
 	}
 
 	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(),
@@ -114,7 +119,7 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *zero
 			lambdaAWSInfo.Options = defaultLambdaFunctionOptions()
 		}
 		if nil == lambdaAWSInfo.Options.Environment {
-			lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
+			lambdaAWSInfo.Options.Environment = make(map[string]string)
 		}
 		for _, eachEnvironment := range codePipelineEnvironments {
 
@@ -124,14 +129,14 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *zero
 				Msg("Annotating Lambda environment for CodePipeline")
 
 			for eachKey := range eachEnvironment {
-				lambdaAWSInfo.Options.Environment[eachKey] = gocf.Ref(eachKey).String()
+				lambdaAWSInfo.Options.Environment[eachKey] = gof.Ref(eachKey)
 			}
 		}
 	}
 }
 
 func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
-	template *gocf.Template,
+	template *gof.Template,
 	logger *zerolog.Logger) error {
 
 	// TODO - this is brittle
@@ -163,7 +168,7 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 				spartaIAM.PolicyStatement{
 					Action:   eachStatement.Action,
 					Effect:   "Allow",
-					Resource: spartaCF.DynamicValueToStringExpr(eventSourceMapping.EventSourceArn).String(),
+					Resource: spartaCF.DynamicValueToStringExpr(eventSourceMapping.EventSourceArn),
 				})
 		}
 
@@ -175,11 +180,11 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 		if !cfResourceOk {
 			return errors.Errorf("Unable to locate lambda function for annotation")
 		}
-		lambdaResource, lambdaResourceOk := cfResource.Properties.(gocf.LambdaFunction)
+		lambdaResource, lambdaResourceOk := cfResource.(*goflambda.Function)
 		if !lambdaResourceOk {
 			return errors.Errorf("CloudFormation resource exists, but is incorrect type: %s (%v)",
-				cfResource.Properties.CfnResourceType(),
-				cfResource.Properties)
+				cfResource.AWSCloudFormationType(),
+				lambdaAWSInfo.LogicalResourceName())
 		}
 		// Ok, go get the IAM Role
 		resourceRef, resourceRefErr := resolveResourceRef(lambdaResource.Role)
@@ -198,21 +203,21 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 				return errors.Errorf("IAM role not found: %s", resourceRef.ResourceName)
 			}
 			// Coerce to the IAMRole and update the statements
-			typedIAMRole, typedIAMRoleOk := iamRole.Properties.(gocf.IAMRole)
+			typedIAMRole, typedIAMRoleOk := iamRole.(*gofiam.Role)
 			if !typedIAMRoleOk {
 				return errors.Errorf("Failed to type convert iamRole to proper IAMRole resource")
 			}
 			policyList := typedIAMRole.Policies
 			if policyList == nil {
-				policyList = &gocf.IAMRolePolicyList{}
+				policyList = []gofiam.Role_Policy{}
 			}
-			*policyList = append(*policyList,
-				gocf.IAMRolePolicy{
+			policyList = append(policyList,
+				gofiam.Role_Policy{
 					PolicyDocument: ArbitraryJSONObject{
 						"Version":   "2012-10-17",
 						"Statement": populatedStatements,
 					},
-					PolicyName: gocf.String("LambdaEventSourceMappingPolicy"),
+					PolicyName: "LambdaEventSourceMappingPolicy",
 				})
 			typedIAMRole.Policies = policyList
 		}
@@ -235,8 +240,8 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 
 func annotateMaterializedTemplate(
 	lambdaAWSInfos []*LambdaAWSInfo,
-	template *gocf.Template,
-	logger *zerolog.Logger) (*gocf.Template, error) {
+	template *gof.Template,
+	logger *zerolog.Logger) (*gof.Template, error) {
 	// Setup the annotation functions
 	annotationFuncs := []annotationFunc{
 		annotateEventSourceMappings,

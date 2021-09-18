@@ -7,7 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+
 	"github.com/rs/zerolog"
 )
 
@@ -102,7 +104,8 @@ type SESLambdaEventSourceResourceRequest struct {
 
 // SESLambdaEventSourceResource handles configuring SES configuration
 type SESLambdaEventSourceResource struct {
-	gocf.CloudFormationCustomResource
+	gof.CustomResource
+	ServiceToken string
 	SESLambdaEventSourceResourceRequest
 }
 

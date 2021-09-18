@@ -19,7 +19,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/archetype/xformer"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -120,8 +119,8 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 	}
 
 	// Borrow the resource name creator to get a name for the archive
-	lambdaFn.Options.Environment[envVarKinesisFirehoseTransformName] = gocf.String(archiveEntryName)
-	lambdaFn.Options.Timeout = (timeout.Milliseconds() / 1000)
+	lambdaFn.Options.Environment[envVarKinesisFirehoseTransformName] = archiveEntryName
+	lambdaFn.Options.Timeout = (int)(timeout.Milliseconds() / 1000)
 
 	// Create the decorator that adds the file to the ZIP archive using
 	// the transform name...

@@ -2,14 +2,14 @@ package sparta
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
 	"time"
 
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofs3 "github.com/awslabs/goformation/v5/cloudformation/s3"
 	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -169,97 +169,61 @@ func TestInvalidFunctionSignature(t *testing.T) {
 }
 
 func TestNOP(t *testing.T) {
-	template := gocf.NewTemplate()
-	s3Resources := gocf.S3Bucket{
-		BucketEncryption: &gocf.S3BucketBucketEncryption{
-			ServerSideEncryptionConfiguration: &gocf.S3BucketServerSideEncryptionRuleList{
-				gocf.S3BucketServerSideEncryptionRule{
-					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
-						KMSMasterKeyID: gocf.String("SomeKey"),
+	template := gof.NewTemplate()
+	s3Resources := &gofs3.Bucket{
+		BucketEncryption: &gofs3.Bucket_BucketEncryption{
+			ServerSideEncryptionConfiguration: []gofs3.Bucket_ServerSideEncryptionRule{
+				gofs3.Bucket_ServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
+						KMSMasterKeyID: "SomeKey",
 					},
 				},
-				gocf.S3BucketServerSideEncryptionRule{
-					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
-						KMSMasterKeyID: gocf.String("SomeOtherKey"),
+				gofs3.Bucket_ServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
+						KMSMasterKeyID: "SomeOtherKey",
 					},
 				},
 			},
 		},
 	}
-	template.AddResource("S3Bucket", s3Resources)
-	json, _ := json.MarshalIndent(template, "", " ")
-	fmt.Printf("\n%s\n", string(json))
+	template.Resources["S3Bucket"] = s3Resources
+	yaml, _ := template.YAML()
+	fmt.Printf("\n%s\n", string(yaml))
 }
 
 func TestGlobalTransform(t *testing.T) {
 	transformName := fmt.Sprintf("Echo%d", time.Now().Unix())
-	template := gocf.NewTemplate()
-	s3Resources := gocf.S3Bucket{
-		BucketEncryption: &gocf.S3BucketBucketEncryption{
-			ServerSideEncryptionConfiguration: &gocf.S3BucketServerSideEncryptionRuleList{
-				gocf.S3BucketServerSideEncryptionRule{
-					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
-						KMSMasterKeyID: gocf.String("SomeKey"),
+	template := gof.NewTemplate()
+	s3Resources := &gofs3.Bucket{
+		BucketEncryption: &gofs3.Bucket_BucketEncryption{
+			ServerSideEncryptionConfiguration: []gofs3.Bucket_ServerSideEncryptionRule{
+				gofs3.Bucket_ServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
+						KMSMasterKeyID: "SomeKey",
 					},
 				},
-				gocf.S3BucketServerSideEncryptionRule{
-					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
-						KMSMasterKeyID: gocf.String("SomeOtherKey"),
+				gofs3.Bucket_ServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
+						KMSMasterKeyID: "SomeOtherKey",
 					},
 				},
 			},
 		},
 	}
-	template.AddResource("S3Bucket", s3Resources)
-	template.Transform = []string{transformName}
-	json, _ := json.MarshalIndent(template, "", " ")
-	output := string(json)
-	fmt.Printf("\n%s\n", output)
+	template.Resources["S3Bucket"] = s3Resources
+	xform := "Transform"
+	template.Transform = &gof.Transform{
+		String: &xform,
+	}
+	yaml, _ := template.YAML()
+	output := string(yaml)
+	fmt.Printf("\n%s\n", string(yaml))
 
 	if !strings.Contains(output, transformName) {
 		t.Fatalf("Failed to find global Transform in template")
 	}
 }
 
-func TestResourceTransform(t *testing.T) {
-	transformName := fmt.Sprintf("Echo%d", time.Now().Unix())
-	template := gocf.NewTemplate()
-	s3Resources := gocf.S3Bucket{
-		BucketEncryption: &gocf.S3BucketBucketEncryption{
-			ServerSideEncryptionConfiguration: &gocf.S3BucketServerSideEncryptionRuleList{
-				gocf.S3BucketServerSideEncryptionRule{
-					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
-						KMSMasterKeyID: gocf.String("SomeKey"),
-					},
-				},
-				gocf.S3BucketServerSideEncryptionRule{
-					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
-						KMSMasterKeyID: gocf.String("SomeOtherKey"),
-					},
-				},
-			},
-		},
-	}
-	bucketResource := template.AddResource("S3Bucket", s3Resources)
-	bucketResource.Transform = &gocf.FnTransform{
-		Name: gocf.String(transformName),
-		Parameters: map[string]interface{}{
-			"SomeValue": gocf.Integer(42),
-		},
-	}
-
-	template.Transform = []string{transformName}
-	json, _ := json.MarshalIndent(template, "", " ")
-	output := string(json)
-	fmt.Printf("\n%s\n", output)
-
-	if !strings.Contains(output, transformName) {
-		t.Fatalf("Failed to find resource Transform in template")
-	}
-	if !strings.Contains(output, "SomeValue") {
-		t.Fatalf("Failed to find resource Parameters in template")
-	}
-}
 func TestProvisionID(t *testing.T) {
 	logger, _ := NewLogger(zerolog.InfoLevel.String())
 	testUserValues := []string{

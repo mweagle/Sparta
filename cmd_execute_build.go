@@ -1,9 +1,10 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
 
 import (
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -28,13 +29,13 @@ func Execute(serviceName string,
 // is dependent on the CloudFormation stack name so that
 // CodePipeline based builds can properly create unique FunctionNAmes
 // within an account
-func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
+func awsLambdaFunctionName(internalFunctionName string) string {
 	sanitizedName := awsLambdaInternalName(internalFunctionName)
 	// When we build, we return a gocf.Join that
 	// will use the stack name and the internal name. When we run, we're going
 	// to use the name discovered from the environment.
-	return gocf.Join("",
-		gocf.Ref("AWS::StackName"),
-		gocf.String(functionNameDelimiter),
-		gocf.String(sanitizedName))
+	return gof.Join("", []string{
+		gof.Ref("AWS::StackName"),
+		functionNameDelimiter,
+		sanitizedName})
 }

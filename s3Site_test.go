@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	spartaSystem "github.com/mweagle/Sparta/system"
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 func TestS3Site(t *testing.T) {
@@ -17,7 +16,7 @@ func TestS3Site(t *testing.T) {
 	if s3SiteErr != nil {
 		t.Fatalf("Failed to create S3 Site: %s", s3SiteErr)
 	}
-	s3Site.BucketName = gocf.String("sparta-site.spartademo.net")
+	s3Site.BucketName = "sparta-site.spartademo.net"
 	apiStage := NewStage("v1")
 	apiGateway := NewAPIGateway("SpartaTestSite", apiStage)
 

@@ -7,21 +7,22 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // S3ArtifactPublisherResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type S3ArtifactPublisherResourceRequest struct {
-	Bucket *gocf.StringExpr
-	Key    *gocf.StringExpr
+	Bucket string
+	Key    string
 	Body   map[string]interface{}
 }
 
 // S3ArtifactPublisherResource is a simple POC showing how to create custom resources
 type S3ArtifactPublisherResource struct {
-	gocf.CloudFormationCustomResource
+	gof.CustomResource
+	ServiceToken string
 	S3ArtifactPublisherResourceRequest
 }
 
@@ -47,8 +48,8 @@ func (command S3ArtifactPublisherResource) Create(awsSession *session.Session,
 	itemInput := bytes.NewReader(mapData)
 	s3PutObjectParams := &s3.PutObjectInput{
 		Body:   itemInput,
-		Bucket: aws.String(command.Bucket.Literal),
-		Key:    aws.String(command.Key.Literal),
+		Bucket: aws.String(command.Bucket),
+		Key:    aws.String(command.Key),
 	}
 	s3Svc := s3.New(awsSession)
 	s3Response, s3ResponseErr := s3Svc.PutObject(s3PutObjectParams)
@@ -77,8 +78,8 @@ func (command S3ArtifactPublisherResource) Delete(awsSession *session.Session,
 		return nil, unmarshalErr
 	}
 	s3DeleteObjectParams := &s3.DeleteObjectInput{
-		Bucket: aws.String(command.Bucket.Literal),
-		Key:    aws.String(command.Key.Literal),
+		Bucket: aws.String(command.Bucket),
+		Key:    aws.String(command.Key),
 	}
 	s3Svc := s3.New(awsSession)
 	_, s3ResponseErr := s3Svc.DeleteObject(s3DeleteObjectParams)
@@ -86,8 +87,8 @@ func (command S3ArtifactPublisherResource) Delete(awsSession *session.Session,
 		return nil, s3ResponseErr
 	}
 	logger.Info().
-		Str("Bucket", command.Bucket.Literal).
-		Str("Key", command.Key.Literal).
+		Str("Bucket", command.Bucket).
+		Str("Key", command.Key).
 		Msg("Object deleted")
 	return nil, nil
 }

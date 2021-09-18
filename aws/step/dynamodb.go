@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +19,7 @@ import (
 // parameters. Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ddb.html
 type DynamoDBGetItemParameters struct {
 	Key                      map[string]*dynamodb.AttributeValue `json:",omitempty"`
-	TableName                gocf.Stringable                     `json:",omitempty"`
+	TableName                string                              `json:",omitempty"`
 	AttributesToGet          []string                            `json:",omitempty"`
 	ConsistentRead           bool                                `json:",omitempty"`
 	ExpressionAttributeNames map[string]string                   `json:",omitempty"`
@@ -73,7 +72,7 @@ func NewDynamoDBGetItemState(stateName string,
 // Ref: https://docs.aws.amazon.com/sns/latest/api/API_Publish.html#API_Publish_RequestParameters
 type DynamoDBPutItemParameters struct {
 	Item                        map[string]*dynamodb.AttributeValue
-	TableName                   gocf.Stringable
+	TableName                   string
 	ConditionExpression         string
 	ConsistentRead              bool
 	ExpressionAttributeNames    map[string]string

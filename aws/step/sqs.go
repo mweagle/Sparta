@@ -2,15 +2,13 @@ package step
 
 import (
 	"math/rand"
-
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // SQSTaskParameters represents params for the SQS notification
 // Ref: https://docs.aws.amazon.com/sns/latest/api/API_Publish.html#API_Publish_RequestParameters
 type SQSTaskParameters struct {
 	MessageBody            string                 `json:",omitempty"`
-	QueueURL               gocf.Stringable        `json:",omitempty"`
+	QueueURL               string                 `json:",omitempty"`
 	DelaySeconds           int                    `json:",omitempty"`
 	MessageAttributes      map[string]interface{} `json:",omitempty"`
 	MessageDeduplicationID string                 `json:"MessageDeduplicationId,omitempty"`

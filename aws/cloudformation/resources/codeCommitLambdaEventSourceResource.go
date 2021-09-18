@@ -6,23 +6,24 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/codecommit"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // CodeCommitLambdaEventSourceResourceRequest defines the request properties to configure
 // SNS
 type CodeCommitLambdaEventSourceResourceRequest struct {
-	LambdaTargetArn *gocf.StringExpr
-	RepositoryName  *gocf.StringExpr
-	TriggerName     *gocf.StringExpr
+	LambdaTargetArn string
+	RepositoryName  string
+	TriggerName     string
 	Events          []string `json:",omitempty"`
 	Branches        []string `json:",omitempty"`
 }
 
 // CodeCommitLambdaEventSourceResource is a simple POC showing how to create custom resources
 type CodeCommitLambdaEventSourceResource struct {
-	gocf.CloudFormationCustomResource
+	gof.CustomResource
+	ServiceToken string
 	CodeCommitLambdaEventSourceResourceRequest
 }
 
@@ -44,7 +45,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 
 	// Get the current subscriptions...
 	ccInput := &codecommit.GetRepositoryTriggersInput{
-		RepositoryName: aws.String(command.RepositoryName.Literal),
+		RepositoryName: aws.String(command.RepositoryName),
 	}
 	triggers, triggersErr := codeCommitSvc.GetRepositoryTriggers(ccInput)
 	if triggersErr != nil {
@@ -56,7 +57,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 	var preexistingTrigger *codecommit.RepositoryTrigger
 	for _, eachTrigger := range triggers.Triggers {
 		// Treat the preexisting one specially
-		if *eachTrigger.DestinationArn == command.LambdaTargetArn.Literal {
+		if *eachTrigger.DestinationArn == command.LambdaTargetArn {
 			preexistingTrigger = eachTrigger
 		} else {
 			putTriggers = append(putTriggers, eachTrigger)
@@ -65,7 +66,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 
 	// Just log it...
 	logger.Info().
-		Str("RepositoryName", command.RepositoryName.Literal).
+		Str("RepositoryName", command.RepositoryName).
 		Interface("Trigger", preexistingTrigger).
 		Interface("LambdaArn", command.LambdaTargetArn).
 		Msg("Current CodeCommit trigger status")
@@ -87,8 +88,8 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 	if isTargetActive && preexistingTrigger == nil {
 		// Add one...
 		putTriggers = append(putTriggers, &codecommit.RepositoryTrigger{
-			DestinationArn: aws.String(command.LambdaTargetArn.Literal),
-			Name:           aws.String(command.TriggerName.Literal),
+			DestinationArn: aws.String(command.LambdaTargetArn),
+			Name:           aws.String(command.TriggerName),
 			Branches:       reqBranches,
 			Events:         reqEvents,
 		})
@@ -99,7 +100,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 	}
 	// Put it back...
 	putTriggersInput := &codecommit.PutRepositoryTriggersInput{
-		RepositoryName: aws.String(command.RepositoryName.Literal),
+		RepositoryName: aws.String(command.RepositoryName),
 		Triggers:       putTriggers,
 	}
 	putTriggersResp, putTriggersRespErr := codeCommitSvc.PutRepositoryTriggers(putTriggersInput)

@@ -7,22 +7,23 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // S3LambdaEventSourceResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type S3LambdaEventSourceResourceRequest struct {
-	BucketArn       *gocf.StringExpr
+	BucketArn       string
 	Events          []string
-	LambdaTargetArn *gocf.StringExpr
+	LambdaTargetArn string
 	Filter          *s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
 // S3LambdaEventSourceResource manages registering a Lambda function with S3 event
 type S3LambdaEventSourceResource struct {
-	gocf.CloudFormationCustomResource
+	gof.CustomResource
+	ServiceToken string
 	S3LambdaEventSourceResourceRequest
 }
 
@@ -46,7 +47,7 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	}
 
 	s3Svc := s3.New(session)
-	bucketParts := strings.Split(command.BucketArn.Literal, ":")
+	bucketParts := strings.Split(command.BucketArn, ":")
 	bucketName := bucketParts[len(bucketParts)-1]
 
 	params := &s3.GetBucketNotificationConfigurationRequest{
@@ -59,7 +60,7 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	// First thing, eliminate existing references...
 	var lambdaConfigurations []*s3.LambdaFunctionConfiguration
 	for _, eachLambdaConfig := range config.LambdaFunctionConfigurations {
-		if *eachLambdaConfig.LambdaFunctionArn != command.LambdaTargetArn.Literal {
+		if *eachLambdaConfig.LambdaFunctionArn != command.LambdaTargetArn {
 			lambdaConfigurations = append(lambdaConfigurations, eachLambdaConfig)
 		}
 	}
@@ -70,7 +71,7 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 			eventPtrs = append(eventPtrs, aws.String(eachString))
 		}
 		commandConfig := &s3.LambdaFunctionConfiguration{
-			LambdaFunctionArn: aws.String(command.LambdaTargetArn.Literal),
+			LambdaFunctionArn: aws.String(command.LambdaTargetArn),
 			Events:            eventPtrs,
 		}
 		if command.Filter != nil {

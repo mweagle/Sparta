@@ -3,19 +3,19 @@ package step
 import (
 	"math/rand"
 
-	gocf "github.com/mweagle/go-cloudformation"
+	gofecs "github.com/awslabs/goformation/v5/cloudformation/ecs"
 )
 
 // FargateNetworkConfiguration contains the AWSVPCConfiguration
 // information
 type FargateNetworkConfiguration struct {
-	AWSVPCConfiguration *gocf.ECSServiceAwsVPCConfiguration `json:"AwsvpcConfiguration,omitempty"`
+	AWSVPCConfiguration *gofecs.Service_AwsVpcConfiguration `json:"AwsvpcConfiguration,omitempty"`
 }
 
 // FargateTaskParameters contains the information
 // for a Fargate task
 type FargateTaskParameters struct {
-	Cluster              gocf.Stringable              `json:",omitempty"`
+	Cluster              string                       `json:",omitempty"`
 	Group                string                       `json:",omitempty"`
 	LaunchType           string                       `json:",omitempty"`
 	NetworkConfiguration *FargateNetworkConfiguration `json:",omitempty"`
@@ -23,7 +23,7 @@ type FargateTaskParameters struct {
 	PlacementConstraints []map[string]string          `json:",omitempty"`
 	PlacementStrategy    []map[string]string          `json:",omitempty"`
 	PlatformVersion      string                       `json:",omitempty"`
-	TaskDefinition       gocf.Stringable              `json:",omitempty"`
+	TaskDefinition       string                       `json:",omitempty"`
 }
 
 // FargateTaskState represents a FargateTask

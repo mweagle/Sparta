@@ -3,86 +3,62 @@ package sparta
 import (
 	"bytes"
 	"fmt"
+	jmesPath "github.com/jmespath/go-jmespath"
+	"reflect"
 	"strings"
 	"text/template"
 
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
-// Utility function to marshal an interface
-func marshalInterface(item interface{}) interface{} {
-	if item != nil {
-		return item
-	}
-	return nil
-}
-
-// Utility function to marshal an int
-func marshalInt(intVal int64) *gocf.IntegerExpr {
-	if intVal != 0 {
-		return gocf.Integer(intVal)
-	}
-	return nil
-}
-
-// Utility function to marshal a string
-func marshalString(stringVal string) *gocf.StringExpr {
-	if stringVal != "" {
-		return gocf.String(stringVal)
-	}
-	return nil
-}
-
-func marshalStringExpr(stringExpr gocf.Stringable) *gocf.StringExpr {
-	if stringExpr != nil {
-		return stringExpr.String()
-	}
-	return nil
-}
-
-// Utility function to marshal a string lsit
-func marshalStringList(stringVals []string) *gocf.StringListExpr {
-	if len(stringVals) != 0 {
-		stringableList := make([]gocf.Stringable, len(stringVals))
-		for eachIndex, eachStringVal := range stringVals {
-			stringableList[eachIndex] = gocf.String(eachStringVal)
-		}
-		return gocf.StringList(stringableList...)
-	}
-	return nil
-}
-
-// Utility function to marshal a boolean
-func marshalBool(boolValue bool) *gocf.BoolExpr {
-	if !boolValue {
-		return gocf.Bool(boolValue)
-	}
-	return nil
-}
+var metadataInterface = reflect.TypeOf(map[string]interface{}{})
+var dependsOnInterface = reflect.TypeOf([]string{})
 
 // resourceOutputs is responsible for returning the conditional
 // set of CloudFormation outputs for a given resource type. These are
 // produced from the schema
 func resourceOutputs(resourceName string,
-	resource gocf.ResourceProperties,
+	resource gof.Resource,
 	logger *zerolog.Logger) ([]string, error) {
 
-	outputProps := resource.CfnResourceAttributes()
-	return outputProps, nil
+	// Get the schema
+	resource, resourceErr := _escFSString(false, "/resources/cloudformation-schema.json")
+	if resourceErr != nil {
+		return nil, resourceErr
+	}
+
+	var jsonData interface{}
+	unmarshalErr := json.Unmarshal([]byte(resource), &jsonData)
+	if unmarshalErr != nil {
+		return nil, unmarshalErr
+	}
+
+	// Issue the JMES query to find this resource in the schema...
+	jmesQuery = fmt.Sprintf("keys(Resources.\"%s\".Attributes)", resource.AWSCloudFormationType)
+	result, resultErr = jmesPath.search(jmesQuery, jsonData)
+	if resultErr != nil {
+		return nil
+	}
+	typedArr, typedArrErr := result.([]string)
+	return typedArr, typedArrErr
 }
 
-func newCloudFormationResource(resourceType string, logger *zerolog.Logger) (gocf.ResourceProperties, error) {
-	resProps := gocf.NewResourceByType(resourceType)
-	if nil == resProps {
+func newCloudFormationResource(resourceType string, logger *zerolog.Logger) (gof.Resource, error) {
+	/*
+		TODO - implmement
+		esProps := gocf.NewResourceByType(resourceType)
+		if nil == resProps {
 
-		logger.Fatal().
-			Str("Type", resourceType).
-			Msg("Failed to create CloudFormation CustomResource!")
+			logger.Fatal().
+				Str("Type", resourceType).
+				Msg("Failed to create CloudFormation CustomResource!")
 
-		return nil, fmt.Errorf("unsupported CustomResourceType: %s", resourceType)
-	}
-	return resProps, nil
+			return nil, fmt.Errorf("unsupported CustomResourceType: %s", resourceType)
+		}
+		return resProps, nil
+	*/
+	return nil, nil
 }
 
 type discoveryDataTemplate struct {
@@ -102,7 +78,7 @@ var discoveryDataForResourceDependency = `
 	}
 `
 
-func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
+func discoveryResourceInfoForDependency(cfTemplate *gof.Template,
 	logicalResourceName string,
 	logger *zerolog.Logger) ([]byte, error) {
 
@@ -111,7 +87,7 @@ func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 		return nil, nil
 	}
 	resourceOutputs, resourceOutputsErr := resourceOutputs(logicalResourceName,
-		item.Properties,
+		item,
 		logger)
 	if resourceOutputsErr != nil {
 		return nil, resourceOutputsErr
@@ -119,7 +95,7 @@ func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 	// Template data
 	templateData := &discoveryDataTemplate{
 		ResourceID:   logicalResourceName,
-		ResourceType: item.Properties.CfnResourceType(),
+		ResourceType: item.AWSCloudFormationType(),
 	}
 	quotedAttrs := make([]string, len(resourceOutputs))
 	for eachIndex, eachOutput := range resourceOutputs {
@@ -142,15 +118,28 @@ func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 	evalResultErr := discoveryTemplate.Execute(&templateResults, templateData)
 	return templateResults.Bytes(), evalResultErr
 }
-func safeAppendDependency(resource *gocf.Resource, dependencyName string) {
-	if nil == resource.DependsOn {
-		resource.DependsOn = []string{}
+
+func safeAppendDependency(resource gof.Resource, dependencyName string) {
+
+	val := reflect.ValueOf(resource).Elem()
+	dependsOnField := val.FieldByName("AWSCloudFormationDependsOn")
+	if dependsOnField.IsValid() && dependsOnField.CanConvert(dependsOnInterface) {
+		dependsArray := dependsOnField.Interface().([]string)
+		if dependsArray == nil {
+			dependsArray = []string{}
+		}
+		dependsArray = append(dependsArray, dependencyName)
 	}
-	resource.DependsOn = append(resource.DependsOn, dependencyName)
 }
-func safeMetadataInsert(resource *gocf.Resource, key string, value interface{}) {
-	if nil == resource.Metadata {
-		resource.Metadata = make(map[string]interface{})
+
+func safeMetadataInsert(resource gof.Resource, key string, value interface{}) {
+	val := reflect.ValueOf(resource).Elem()
+	metadataField := val.FieldByName("AWSCloudFormationMetadata")
+	if metadataField.IsValid() && metadataField.CanConvert(metadataInterface) {
+		metadataMap := metadataField.Interface().(map[string]interface{})
+		if metadataMap == nil {
+			metadataMap = make(map[string]interface{})
+		}
+		metadataMap[key] = value
 	}
-	resource.Metadata[key] = value
 }

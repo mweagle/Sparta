@@ -7,20 +7,21 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // SNSLambdaEventSourceResourceRequest defines the request properties to configure
 // SNS
 type SNSLambdaEventSourceResourceRequest struct {
-	LambdaTargetArn *gocf.StringExpr
-	SNSTopicArn     *gocf.StringExpr
+	LambdaTargetArn string
+	SNSTopicArn     string
 }
 
 // SNSLambdaEventSourceResource is a simple POC showing how to create custom resources
 type SNSLambdaEventSourceResource struct {
-	gocf.CloudFormationCustomResource
+	gof.CustomResource
+	ServiceToken string
 	SNSLambdaEventSourceResourceRequest
 }
 
@@ -37,7 +38,7 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	// Get the current subscriptions...
 	snsSvc := sns.New(session)
 	snsInput := &sns.ListSubscriptionsByTopicInput{
-		TopicArn: aws.String(command.SNSTopicArn.Literal),
+		TopicArn: aws.String(command.SNSTopicArn),
 	}
 	listSubscriptions, listSubscriptionsErr := snsSvc.ListSubscriptionsByTopic(snsInput)
 	if listSubscriptionsErr != nil {
@@ -46,11 +47,11 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	var lambdaSubscriptionArn string
 	for _, eachSubscription := range listSubscriptions.Subscriptions {
 		if *eachSubscription.Protocol == "lambda" &&
-			*eachSubscription.Endpoint == command.LambdaTargetArn.Literal {
+			*eachSubscription.Endpoint == command.LambdaTargetArn {
 			if lambdaSubscriptionArn != "" {
 				return nil, fmt.Errorf("multiple SNS %s registrations found for lambda: %s",
 					*snsInput.TopicArn,
-					command.LambdaTargetArn.Literal)
+					command.LambdaTargetArn)
 			}
 			lambdaSubscriptionArn = *eachSubscription.SubscriptionArn
 		}
@@ -66,8 +67,8 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	if isTargetActive && lambdaSubscriptionArn == "" {
 		subscribeInput := &sns.SubscribeInput{
 			Protocol: aws.String("lambda"),
-			TopicArn: aws.String(command.SNSTopicArn.Literal),
-			Endpoint: aws.String(command.LambdaTargetArn.Literal),
+			TopicArn: aws.String(command.SNSTopicArn),
+			Endpoint: aws.String(command.LambdaTargetArn),
 		}
 		_, opErr = snsSvc.Subscribe(subscribeInput)
 	} else if !isTargetActive && lambdaSubscriptionArn != "" {

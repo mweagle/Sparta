@@ -1,3 +1,4 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
@@ -11,7 +12,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
@@ -24,12 +24,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	gofroot "github.com/awslabs/goformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaDocker "github.com/mweagle/Sparta/docker"
 	"github.com/mweagle/Sparta/system"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -74,7 +75,7 @@ func newS3UploadURL(s3URL string) *s3UploadURL {
 // TemplateMetadataReader encapsulates a reader of Metadata from the
 // template
 type templateMetadataReader struct {
-	template *gocf.Template
+	template *gof.Template
 }
 
 func (tmr *templateMetadataReader) AsString(keyName string) (string, error) {
@@ -104,7 +105,7 @@ type provisionContext struct {
 	// Path to cfTemplate
 	cfTemplatePath string
 	// CloudFormation Template
-	cfTemplate *gocf.Template
+	cfTemplate *gof.Template
 	// Is the S3 bucket version enabled?
 	isVersionAwareBucket bool
 	// Is this a NOOP operation?
@@ -133,13 +134,13 @@ type provisionContext struct {
 // of resources that it provisions. In general the timeout
 // is short with an exception made for CloudFront
 // distributions
-func maximumStackOperationTimeout(template *gocf.Template, logger *zerolog.Logger) time.Duration {
+func maximumStackOperationTimeout(template *gof.Template, logger *zerolog.Logger) time.Duration {
 	stackOperationTimeout := 20 * time.Minute
 	// If there is a CloudFront distributon in there then
 	// let's give that a bit more time to settle down...In general
 	// the initial CloudFront distribution takes ~30 minutes
 	for _, eachResource := range template.Resources {
-		if eachResource.Properties.CfnResourceType() == "AWS::CloudFront::Distribution" {
+		if eachResource.AWSCloudFormationType() == "AWS::CloudFront::Distribution" {
 			stackOperationTimeout = 60 * time.Minute
 			break
 		}
@@ -276,7 +277,7 @@ func (pwo *provisionWorkflowOp) stackParameters() map[string]string {
 		if !userValExists {
 			noUserVal, noUserValErr := pwo.MetadataString(eachKey)
 			if noUserValErr == nil && len(noUserVal) > 0 {
-				userVal = eachParam.Default
+				userVal = fmt.Sprintf("%v", eachParam.Default)
 			}
 		}
 		stackParameterValues[eachKey] = userVal
@@ -527,8 +528,10 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 				Str("Tag", ecrTag).
 				Msg("Image will not be deleted from repository")
 		}
-
 		wg.Wait()
+	} else {
+		logger.Info().
+			Msg("Nothing to rollback from S3 in NOOP mode")
 	}
 	return nil
 }
@@ -563,7 +566,7 @@ func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.L
 		return errors.Wrapf(bytesWriterErr, "Failed to create Zip writer")
 	}
 	// We need to get the template bytes into a reader...
-	jsonTemplateBytes, jsonTemplateBytesErr := json.Marshal(cpto.provisionContext.cfTemplate)
+	jsonTemplateBytes, jsonTemplateBytesErr := cpto.provisionContext.cfTemplate.JSON()
 	if jsonTemplateBytesErr != nil {
 		return errors.Wrapf(jsonTemplateBytesErr, "Failed to Marshal CloudFormation template")
 	}
@@ -863,7 +866,7 @@ func Provision(noop bool,
 	pc := &provisionContext{
 		awsSession:           spartaAWS.NewSession(logger),
 		cfTemplatePath:       templatePath,
-		cfTemplate:           gocf.NewTemplate(),
+		cfTemplate:           gof.NewTemplate(),
 		codePipelineTrigger:  codePipelineTrigger,
 		stackParameterValues: stackParamValues,
 		stackTags:            stackTags,
@@ -874,14 +877,11 @@ func Provision(noop bool,
 
 	// Unmarshal the JSON template into the struct
 	/* #nosec G304 */
-	templateBytes, templateBytesErr := ioutil.ReadFile(templatePath)
-	if templateBytesErr != nil {
-		return templateBytesErr
+	targetTemplate, targetTemplateErr := gofroot.Open(templatePath)
+	if targetTemplateErr != nil {
+		return targetTemplateErr
 	}
-	unmarshalErr := json.Unmarshal(templateBytes, &pc.cfTemplate)
-	if unmarshalErr != nil {
-		return unmarshalErr
-	}
+	pc.cfTemplate = targetTemplate
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Workflow
@@ -892,49 +892,55 @@ func Provision(noop bool,
 
 	/* #nosec G104 */
 	stagePreconditions := &pipelineStage{}
-	stagePreconditions.Append("validatePreconditions", &ensureProvisionPreconditionsOp{
-		provisionWorkflowOp: provisionWorkflowOp{
-			provisionContext: pc,
-		}})
+	stagePreconditions.Append("validatePreconditions",
+		&ensureProvisionPreconditionsOp{
+			provisionWorkflowOp: provisionWorkflowOp{
+				provisionContext: pc,
+			}})
 	provisionPipeline.Append("preconditions", stagePreconditions)
 
 	// Build Package
 	stageBuild := &pipelineStage{}
 	if pc.codePipelineTrigger == "" {
-		stageBuild.Append("uploadPackages", &uploadPackageOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageBuild.Append("uploadPackages",
+			&uploadPackageOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 		provisionPipeline.Append("upload", stageBuild)
 	} else {
-		stageBuild.Append("codePipelinePackage", &codePipelineTriggerOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageBuild.Append("codePipelinePackage",
+			&codePipelineTriggerOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 		provisionPipeline.Append("build", stageBuild)
 	}
 
 	// Which mutation to apply?
 	stageApply := &pipelineStage{}
 	if inPlaceUpdates {
-		stageApply.Append("inPlaceUpdates", &inPlaceUpdatesOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageApply.Append("inPlaceUpdates",
+			&inPlaceUpdatesOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 	} else {
-		stageApply.Append("cloudformationUpdate", &cloudformationStackUpdateOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageApply.Append("cloudformationUpdate",
+			&cloudformationStackUpdateOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 	}
 	provisionPipeline.Append("apply", stageApply)
 
 	// Describe tbe output...
 	stageDescribe := &pipelineStage{}
-	stageDescribe.Append("describeStack", &outputStackInfoOp{
-		provisionWorkflowOp: provisionWorkflowOp{
-			provisionContext: pc,
-		}})
+	stageDescribe.Append("describeStack",
+		&outputStackInfoOp{
+			provisionWorkflowOp: provisionWorkflowOp{
+				provisionContext: pc,
+			}})
 	provisionPipeline.Append("describe", stageDescribe)
 
 	// Run

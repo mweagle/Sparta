@@ -10,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 )
 
@@ -44,11 +43,11 @@ func (reactorFunc S3ReactorFunc) ReactorName() string {
 
 // s3NotificationPrefixFilter is a DRY spec for setting up a notification configuration
 // filter
-func s3NotificationPrefixBasedPermission(bucketName gocf.Stringable, keyPathPrefix string) sparta.S3Permission {
+func s3NotificationPrefixBasedPermission(bucketName string, keyPathPrefix string) sparta.S3Permission {
 
 	permission := sparta.S3Permission{
 		BasePermission: sparta.BasePermission{
-			SourceArn: bucketName.String(),
+			SourceArn: bucketName,
 		},
 		Events: []string{"s3:ObjectCreated:*",
 			"s3:ObjectRemoved:*"},
@@ -68,13 +67,13 @@ func s3NotificationPrefixBasedPermission(bucketName gocf.Stringable, keyPathPref
 }
 
 // NewS3Reactor returns an S3 reactor lambda function
-func NewS3Reactor(reactor S3Reactor, s3Bucket gocf.Stringable, additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
+func NewS3Reactor(reactor S3Reactor, s3Bucket string, additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 	return NewS3ScopedReactor(reactor, s3Bucket, "", additionalLambdaPermissions)
 }
 
 // NewS3ScopedReactor returns an S3 reactor lambda function scoped to the given S3 key prefix
 func NewS3ScopedReactor(reactor S3Reactor,
-	s3Bucket gocf.Stringable,
+	s3Bucket string,
 	keyPathPrefix string,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 

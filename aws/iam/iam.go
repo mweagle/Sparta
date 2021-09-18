@@ -1,16 +1,16 @@
 package iam
 
 import (
-	gocf "github.com/mweagle/go-cloudformation"
+	iamtypes "github.com/mweagle/Sparta/aws/iam/builder/types"
 )
 
 // PolicyStatement represents an entry in an IAM policy document
 type PolicyStatement struct {
 	Effect    string
 	Action    []string
-	Resource  *gocf.StringExpr   `json:",omitempty"`
-	Principal *gocf.IAMPrincipal `json:",omitempty"`
-	Condition interface{}        `json:",omitempty"`
+	Resource  string                 `json:",omitempty"`
+	Principal *iamtypes.IAMPrincipal `json:",omitempty"`
+	Condition interface{}            `json:",omitempty"`
 }
 
 // AssumeRolePolicyDocumentForServicePrincipal returns the document

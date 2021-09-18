@@ -7,8 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	gocf "github.com/mweagle/go-cloudformation"
-
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/system"
@@ -28,7 +26,7 @@ ENTRYPOINT [ "/usr/bin/upx" ]
 func PostBuildUPXCompressHook(dockerImageName string) sparta.WorkflowHookHandler {
 	upxHook := func(ctx context.Context,
 		serviceName string,
-		S3Bucket gocf.Stringable,
+		S3Bucket string,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,

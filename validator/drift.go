@@ -9,8 +9,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -22,8 +23,8 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 
 	driftDetector := func(ctx context.Context,
 		serviceName string,
-		template *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		template *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
@@ -77,20 +78,12 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 			if !templateResExists {
 				return ""
 			}
-			metadata := templateRes.Metadata
-			if len(metadata) <= 0 {
-				metadata = make(map[string]interface{})
+			typedRes, typedResOk := templateRes.(*goflambda.Function)
+			funcName := fmt.Sprintf("ResourceID: %s", logicalResourceID)
+			if typedResOk && typedRes.AWSCloudFormationMetadata != nil {
+				funcName = fmt.Sprintf("%#v", typedRes.AWSCloudFormationMetadata["golangFunc"])
 			}
-			golangFunc, golangFuncExists := metadata["golangFunc"]
-			if !golangFuncExists {
-				return ""
-			}
-			switch typedFunc := golangFunc.(type) {
-			case string:
-				return typedFunc
-			default:
-				return fmt.Sprintf("%#v", typedFunc)
-			}
+			return funcName
 		}
 
 		// Log the drifts

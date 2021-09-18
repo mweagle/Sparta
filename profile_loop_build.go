@@ -1,3 +1,4 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
@@ -11,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+
 	survey "github.com/AlecAivazis/survey/v2"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,7 +23,6 @@ import (
 	"github.com/google/pprof/profile"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -487,33 +489,33 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 			Msg("Instrumenting function for profiling")
 
 		// The bucket is either a literal or a gocf.StringExpr - which one?
-		var bucketValue gocf.Stringable
+		var bucketValue string
 		if s3BucketArchive != nil {
 			bucketValue = spartaCF.DynamicValueToStringExpr(s3BucketArchive)
 		} else {
-			bucketValue = gocf.String(S3Bucket)
+			bucketValue = S3Bucket
 		}
 
 		// 1. Add the env vars to the map
 		if info.Options.Environment == nil {
-			info.Options.Environment = make(map[string]*gocf.StringExpr)
+			info.Options.Environment = make(map[string]string)
 		}
-		info.Options.Environment[envVarStackName] = gocf.Ref("AWS::StackName").String()
-		info.Options.Environment[envVarStackInstanceID] = gocf.Ref("AWS::StackId").String()
-		info.Options.Environment[envVarProfileBucketName] = bucketValue.String()
+		info.Options.Environment[envVarStackName] = gof.Ref("AWS::StackName")
+		info.Options.Environment[envVarStackInstanceID] = gof.Ref("AWS::StackId")
+		info.Options.Environment[envVarProfileBucketName] = bucketValue
 
 		// Update the IAM role...
 		if info.RoleDefinition != nil {
-			arn := gocf.Join("",
-				gocf.String("arn:aws:s3:::"),
+			arn := gof.Join("", []string{
+				"arn:aws:s3:::",
 				bucketValue,
-				gocf.String("/"),
-				gocf.String(profileSnapshotRootKeypath(stackName)),
-				gocf.String("/*"))
+				"/",
+				profileSnapshotRootKeypath(stackName),
+				"/*"})
 
 			info.RoleDefinition.Privileges = append(info.RoleDefinition.Privileges, IAMRolePrivilege{
 				Actions:  []string{"s3:PutObject"},
-				Resource: arn.String(),
+				Resource: arn,
 			})
 		}
 		return nil

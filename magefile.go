@@ -1,3 +1,4 @@
+//go:build mage
 // +build mage
 
 // lint:file-ignore U1000 Ignore all  code, it's only for development
@@ -28,10 +29,11 @@ import (
 )
 
 const (
-	localWorkDir      = "./.sparta"
-	hugoVersion       = "0.79.0"
-	archIconsRootPath = "resources/describe/AWS-Architecture-Icons_PNG"
-	archIconsTreePath = "resources/describe/AWS-Architecture-Icons.tree.txt"
+	localWorkDir            = "./.sparta"
+	hugoVersion             = "0.79.0"
+	archIconsRootPath       = "resources/describe/AWS-Architecture-Icons_PNG"
+	archIconsTreePath       = "resources/describe/AWS-Architecture-Icons.tree.txt"
+	urlCloudFormationSchema = "https://d201a2mn26r7lk.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -322,9 +324,35 @@ const SpartaGitHash = "%s"
 
 }
 
+// Ensure we have the latest CloudFormation schema as part of generating
+// constants. To do this, we'll grab the JSON and put it into a local
+// folder.
+func FetchCloudFormationSchema() error {
+	// Get the data
+	httpResp, httpErr := http.Get(urlCloudFormationSchema)
+	if httpErr != nil {
+		return httpErr
+	}
+	defer httpResp.Body.Close()
+
+	// Create the file
+	outputFile, outputFileErr := os.Create("./resources/cloudformation-schema.json")
+	if outputFileErr != nil {
+		return outputFileErr
+	}
+	defer outputFile.Close()
+
+	// Write the body to file
+	_, copyErr := io.Copy(outputFile, httpResp.Body)
+	return copyErr
+}
+
 // GenerateConstants runs the set of commands that update the embedded CONSTANTS
 // for both local and AWS Lambda execution
 func GenerateConstants() error {
+	mg.SerialDeps(FetchCloudFormationSchema)
+
+	// TODO - use go:embed
 	generateCommands := [][]string{
 		// Remove the tree output
 		{"rm",

@@ -4,18 +4,21 @@ import (
 	"context"
 	"testing"
 
+	gofcloudformation "github.com/awslabs/goformation/v5/cloudformation/cloudformation"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
 
 type cloudFormationProvisionTestResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken string
-	TestKey      interface{}
+	gofcloudformation.CustomResource
+	TestKey interface{}
 }
 
-func customResourceTestProvider(resourceType string) gocf.ResourceProperties {
+func customResourceTestProvider(resourceType string) gof.Resource {
 	switch resourceType {
 	case "Custom::ProvisionTestEmpty":
 		{
@@ -27,7 +30,8 @@ func customResourceTestProvider(resourceType string) gocf.ResourceProperties {
 }
 
 func init() {
-	gocf.RegisterCustomResourceProvider(customResourceTestProvider)
+	panic("CUSTOM RESOURCE NOT IMPLEMENTED")
+	//gocf.RegisterCustomResourceProvider(customResourceTestProvider)
 }
 
 func TestProvision(t *testing.T) {
@@ -37,11 +41,11 @@ func TestProvision(t *testing.T) {
 func templateDecorator(ctx context.Context,
 	serviceName string,
 	lambdaResourceName string,
-	lambdaResource gocf.LambdaFunction,
+	lambdaResource *goflambda.Function,
 	resourceMetadata map[string]interface{},
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	cfTemplate *gocf.Template,
+	cfTemplate *gof.Template,
 	logger *zerolog.Logger) (context.Context, error) {
 
 	// Add an empty resource
@@ -52,10 +56,10 @@ func templateDecorator(ctx context.Context,
 	customResource := newResource.(*cloudFormationProvisionTestResource)
 	customResource.ServiceToken = "arn:aws:sns:us-east-1:84969EXAMPLE:CRTest"
 	customResource.TestKey = "Hello World"
-	cfTemplate.AddResource("ProvisionTestResource", customResource)
+	cfTemplate.Resources["ProvisionTestResource"] = customResource
 
 	// Add an output
-	cfTemplate.Outputs["OutputDecorationTest"] = &gocf.Output{
+	cfTemplate.Outputs["OutputDecorationTest"] = gof.Output{
 		Description: "Information about the value",
 		Value:       gocf.String("My key"),
 	}

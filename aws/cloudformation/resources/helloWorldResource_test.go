@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -30,27 +29,27 @@ func mockHelloWorldResourceEvent(t *testing.T) *CloudFormationLambdaEvent {
 }
 
 func TestCreateHelloWorld(t *testing.T) {
-	resHello := gocf.NewResourceByType(HelloWorld)
+	resHello := CustomResourceForType(HelloWorld)
 	customResource := resHello.(*HelloWorldResource)
-	customResource.Message = gocf.String("Hello world")
+	customResource.Message = "Hello world"
 }
 
 func TestCreateHelloWorldNewInstances(t *testing.T) {
-	resHello1 := gocf.NewResourceByType(HelloWorld)
+	resHello1 := CustomResourceForType(HelloWorld)
 	customResource1 := resHello1.(*HelloWorldResource)
 
-	resHello2 := gocf.NewResourceByType(HelloWorld)
+	resHello2 := CustomResourceForType(HelloWorld)
 	customResource2 := resHello2.(*HelloWorldResource)
 
 	if &customResource1 == &customResource2 {
-		t.Errorf("gocf.NewResourceByType failed to make new instances")
+		t.Errorf("CustomResourceForType failed to make new instances")
 	}
 }
 
 func TestExecuteCreateHelloWorld(t *testing.T) {
-	resHello1 := gocf.NewResourceByType(HelloWorld)
+	resHello1 := CustomResourceForType(HelloWorld)
 	customResource1 := resHello1.(*HelloWorldResource)
-	customResource1.Message = gocf.String("Create resource here")
+	customResource1.Message = "Create resource here"
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 	awsSession := awsSession(&logger)
