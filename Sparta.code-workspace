@@ -1,0 +1,13 @@
+{
+  "folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../SpartaHelloWorld"
+		}
+	],
+  "settings": {
+    "git.ignoreLimitWarning": true
+  }
+}

@@ -7,11 +7,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
+	gofkinesis "github.com/awslabs/goformation/v5/cloudformation/kinesis"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	goflogs "github.com/awslabs/goformation/v5/cloudformation/logs"
 	sparta "github.com/mweagle/Sparta"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	spartaIAMBuilder "github.com/mweagle/Sparta/aws/iam/builder"
-	gocf "github.com/mweagle/go-cloudformation"
+
 	"github.com/rs/zerolog"
 )
 
@@ -67,7 +69,7 @@ func logAggregatorResName(baseName string) string {
 type LogAggregatorDecorator struct {
 	kinesisStreamResourceName string
 	iamRoleNameResourceName   string
-	kinesisResource           *gocf.KinesisStream
+	kinesisResource           *gofkinesis.Stream
 	kinesisMapping            *sparta.EventSourceMapping
 	logRelay                  *sparta.LambdaAWSInfo
 }
@@ -93,7 +95,7 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 	logger *zerolog.Logger) (context.Context, error) {
 
 	// Create the Kinesis Stream
-	template.AddResource(lad.kinesisStreamResourceName, lad.kinesisResource)
+	template.Resources[lad.kinesisStreamResourceName] = lad.kinesisResource
 
 	// Create the IAM role
 	putRecordPriv := spartaIAMBuilder.Allow("kinesis:PutRecord").
@@ -119,7 +121,7 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 				"Version":   "2012-10-17",
 				"Statement": statements,
 			},
-			PolicyName: gof.String("LogAggregatorPolicy"),
+			PolicyName: "LogAggregatorPolicy",
 		},
 	}
 
@@ -136,7 +138,7 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 	serviceName string,
 	lambdaResourceName string,
-	lambdaResource goflambda.Function,
+	lambdaResource *goflambda.Function,
 	resourceMetadata map[string]interface{},
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
@@ -150,24 +152,26 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 			"EventSourceMapping",
 			lambdaResourceName)
 
-		template.AddResource(eventSourceMappingResourceName, &goflambda.EventSourceMapping{
+		template.Resources[eventSourceMappingResourceName] = &goflambda.EventSourceMapping{
 			StartingPosition: lad.kinesisMapping.StartingPosition,
 			BatchSize:        lad.kinesisMapping.BatchSize,
 			EventSourceArn:   gof.GetAtt(lad.kinesisStreamResourceName, "Arn"),
 			FunctionName:     gof.GetAtt(lambdaResourceName, "Arn"),
-		})
+		}
+
 	} else {
 		// The other functions should publish their logs to the stream
 		subscriptionName := logAggregatorResName(fmt.Sprintf("Lambda%s", lambdaResourceName))
-		subscriptionFilterRes := &gocf.LogsSubscriptionFilter{
+		subscriptionFilterRes := &goflogs.SubscriptionFilter{
 			DestinationArn: gof.GetAtt(lad.kinesisStreamResourceName, "Arn"),
 			RoleArn:        gof.GetAtt(lad.iamRoleNameResourceName, "Arn"),
-			LogGroupName: gocf.Join("",
-				gocf.String("/aws/lambda/"),
-				gocf.Ref(lambdaResourceName)),
-			FilterPattern: gocf.String("{$.level = info || $.level = warning || $.level = error }"),
+			LogGroupName: gof.Join("", []string{
+				"/aws/lambda/",
+				gof.Ref(lambdaResourceName),
+			}),
+			FilterPattern: "{$.level = info || $.level = warning || $.level = error }",
 		}
-		template.AddResource(subscriptionName, subscriptionFilterRes)
+		template.Resources[subscriptionName] = subscriptionFilterRes
 	}
 	return ctx, nil
 }
@@ -175,7 +179,7 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 // NewLogAggregatorDecorator returns a ServiceDecoratorHook that registers a Kinesis
 // stream lambda log aggregator
 func NewLogAggregatorDecorator(
-	kinesisResource *gocf.KinesisStream,
+	kinesisResource *gofkinesis.Stream,
 	kinesisMapping *sparta.EventSourceMapping,
 	relay *sparta.LambdaAWSInfo) *LogAggregatorDecorator {
 

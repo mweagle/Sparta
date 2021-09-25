@@ -2,11 +2,14 @@ package sparta
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	jmesPath "github.com/jmespath/go-jmespath"
 	"reflect"
 	"strings"
 	"text/template"
+
+	"github.com/jmespath/go-jmespath"
+	"github.com/pkg/errors"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
@@ -23,25 +26,40 @@ func resourceOutputs(resourceName string,
 	logger *zerolog.Logger) ([]string, error) {
 
 	// Get the schema
-	resource, resourceErr := _escFSString(false, "/resources/cloudformation-schema.json")
-	if resourceErr != nil {
-		return nil, resourceErr
+	schemaDef, schemaDefErr := _escFSString(false, "/resources/cloudformation-schema.json")
+	if schemaDefErr != nil {
+		return nil, schemaDefErr
 	}
 
-	var jsonData interface{}
-	unmarshalErr := json.Unmarshal([]byte(resource), &jsonData)
+	var rawData interface{}
+	unmarshalErr := json.Unmarshal([]byte(schemaDef), &rawData)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
 
 	// Issue the JMES query to find this resource in the schema...
-	jmesQuery = fmt.Sprintf("keys(Resources.\"%s\".Attributes)", resource.AWSCloudFormationType)
-	result, resultErr = jmesPath.search(jmesQuery, jsonData)
+	jmesQuery := fmt.Sprintf("ResourceTypes.\"%s\".Attributes", resource.AWSCloudFormationType())
+	result, resultErr := jmespath.Search(jmesQuery, rawData)
 	if resultErr != nil {
-		return nil
+		return nil, resultErr
 	}
-	typedArr, typedArrErr := result.([]string)
-	return typedArr, typedArrErr
+
+	resultMap, resultMapOk := result.(map[string]interface{})
+	if !resultMapOk {
+		return nil, errors.Errorf("Failed to extract outputs for resource type: %s", resource.AWSCloudFormationType())
+	}
+
+	vals := []string{}
+	for eachKey := range resultMap {
+		vals = append(vals, eachKey)
+	}
+	return vals, nil
+
+	// typedArr, typedArrOk := result.([]string)
+	// if !typedArrOk {
+	// 	return nil, errors.Errorf("Failed to extract outputs for resource type: %s", resource.AWSCloudFormationType())
+	// }
+	// return typedArr, nil
 }
 
 func newCloudFormationResource(resourceType string, logger *zerolog.Logger) (gof.Resource, error) {

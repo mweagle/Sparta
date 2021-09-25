@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-lambda-go v1.22.0
 	github.com/aws/aws-sdk-go v1.36.28
 	github.com/aws/aws-xray-sdk-go v1.2.0
+	github.com/awslabs/goformation/v5 v5.2.9 // indirect
 	github.com/briandowns/spinner v1.12.0
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
@@ -26,7 +27,6 @@ require (
 	github.com/hhatto/gocloc v0.4.1 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519
 	github.com/huandu/xstrings v1.3.2 // indirect
-	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jessevdk/go-flags v1.5.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/leodido/go-urn v1.2.1 // indirect

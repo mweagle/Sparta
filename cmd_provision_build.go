@@ -24,7 +24,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	gofroot "github.com/awslabs/goformation"
+	gofroot "github.com/awslabs/goformation/v5"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
