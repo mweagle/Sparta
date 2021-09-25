@@ -152,7 +152,7 @@ func TestDynamoDBArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewDynamoDBReactor(testStruct,
-		"arn:dynamo",
+		"arn:aws:dynamo",
 		"TRIM_HORIZON",
 		10,
 		nil)
@@ -162,7 +162,7 @@ func TestDynamoDBArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewDynamoDBReactor(DynamoDBReactorFunc(testStruct.OnDynamoEvent),
-		"arn:dynamo",
+		"arn:aws:dynamo",
 		"TRIM_HORIZON",
 		10,
 		nil)
@@ -184,7 +184,7 @@ func TestKinesisArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewKinesisReactor(testStruct,
-		"arn:kinesis",
+		"arn:aws:kinesis",
 		"TRIM_HORIZON",
 		10,
 		nil)
@@ -194,7 +194,7 @@ func TestKinesisArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewKinesisReactor(KinesisReactorFunc(testStruct.OnKinesisMessage),
-		"arn:kinesis",
+		"arn:aws:kinesis",
 		"TRIM_HORIZON",
 		10,
 		nil)

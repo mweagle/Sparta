@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	gofintrinsics "github.com/awslabs/goformation/v5/intrinsics"
 	sparta "github.com/mweagle/Sparta"
 )
 
@@ -64,9 +65,15 @@ func TestIAMBuilder(t *testing.T) {
 		if readFileErr != nil {
 			t.Fatalf("Failed to read file: %s", testFile)
 		}
-		builderJSON, builderJSONErr := json.Marshal(eachBuilder)
+		// Need to dump this through gof.marshaler
+		rawJSON, rawJSONErr := json.Marshal(eachBuilder)
+		if rawJSONErr != nil {
+			t.Fatalf("Failed to marshal JSON : %s", rawJSONErr)
+		}
+		// The goformation them...
+		builderJSON, builderJSONErr := gofintrinsics.ProcessJSON(rawJSON, nil)
 		if builderJSONErr != nil {
-			t.Fatalf("Failed to marshal JSON : %s", builderJSONErr)
+			t.Fatalf("Failed to process JSON")
 		}
 		var expected map[string]interface{}
 		expectedUnmarshalErr := json.Unmarshal(readFile, &expected)

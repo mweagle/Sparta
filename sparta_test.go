@@ -211,9 +211,8 @@ func TestGlobalTransform(t *testing.T) {
 		},
 	}
 	template.Resources["S3Bucket"] = s3Resources
-	xform := "Transform"
 	template.Transform = &gof.Transform{
-		String: &xform,
+		String: &transformName,
 	}
 	yaml, _ := template.YAML()
 	output := string(yaml)

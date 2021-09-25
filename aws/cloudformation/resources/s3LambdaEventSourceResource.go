@@ -23,7 +23,7 @@ type S3LambdaEventSourceResourceRequest struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 // TODO - update all the custom resources to use this approach so that
-// the properties object is propertly serialized. We'll also need to deserialize
+// the properties object is properly serialized. We'll also need to deserialize
 // the request for the custom handler.
 ////////////////////////////////////////////////////////////////////////////////
 

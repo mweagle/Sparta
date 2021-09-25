@@ -27,6 +27,7 @@ require (
 	github.com/go-enry/go-enry/v2 v2.7.1 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
+	github.com/go-test/deep v1.0.7 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/pprof v0.0.0-20210827144239-02619b876842
 	github.com/google/uuid v1.1.5 // indirect
