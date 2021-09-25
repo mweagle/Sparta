@@ -11,14 +11,13 @@ import (
 // HelloWorldResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type HelloWorldResourceRequest struct {
+	CustomResourceRequest
 	Message string
 }
 
 // HelloWorldResource is a simple POC showing how to create custom resources
 type HelloWorldResource struct {
 	gof.CustomResource
-	ServiceToken string
-	HelloWorldResourceRequest
 }
 
 // IAMPrivileges returns the IAM privs for this custom action
@@ -30,14 +29,14 @@ func (command *HelloWorldResource) IAMPrivileges() []string {
 func (command HelloWorldResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-
-	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := HelloWorldResourceRequest{}
+	requestPropsErr := json.Unmarshal(event.ResourceProperties, &request)
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info().Msgf("create: Hello %s", command.Message)
+	logger.Info().Msgf("create: Hello %s", request.Message)
 	return map[string]interface{}{
-		"Resource": "Created message: " + command.Message,
+		"Resource": "Created message: " + request.Message,
 	}, nil
 }
 
@@ -45,11 +44,12 @@ func (command HelloWorldResource) Create(awsSession *session.Session,
 func (command HelloWorldResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := HelloWorldResourceRequest{}
+	requestPropsErr := json.Unmarshal(event.ResourceProperties, &request)
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info().Msgf("update:  %s", command.Message)
+	logger.Info().Msgf("update:  %s", request.Message)
 	return nil, nil
 }
 
@@ -57,10 +57,12 @@ func (command HelloWorldResource) Update(awsSession *session.Session,
 func (command HelloWorldResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := HelloWorldResourceRequest{}
+
+	requestPropsErr := json.Unmarshal(event.ResourceProperties, &request)
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-	logger.Info().Msgf("delete: %s", command.Message)
+	logger.Info().Msgf("delete: %s", request.Message)
 	return nil, nil
 }

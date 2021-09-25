@@ -308,9 +308,11 @@ func (cts *TestScenario) Run(t *testing.T) {
 	errGroup, _ := errgroup.WithContext(errContext)
 
 	for _, eachEvaluator := range cts.evaluators {
-		errGroup.Go(func() error {
-			return eachEvaluator.Evaluate(ct, functionOutput)
-		})
+		curEvaluator := eachEvaluator
+		errGroup.Go(
+			func() error {
+				return curEvaluator.Evaluate(ct, functionOutput)
+			})
 	}
 
 	// Finally, call the trigger, so that we can trigger everything...

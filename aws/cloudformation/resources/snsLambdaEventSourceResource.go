@@ -14,6 +14,7 @@ import (
 // SNSLambdaEventSourceResourceRequest defines the request properties to configure
 // SNS
 type SNSLambdaEventSourceResourceRequest struct {
+	CustomResourceRequest
 	LambdaTargetArn string
 	SNSTopicArn     string
 }
@@ -21,8 +22,6 @@ type SNSLambdaEventSourceResourceRequest struct {
 // SNSLambdaEventSourceResource is a simple POC showing how to create custom resources
 type SNSLambdaEventSourceResource struct {
 	gof.CustomResource
-	ServiceToken string
-	SNSLambdaEventSourceResourceRequest
 }
 
 func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bool,
@@ -30,7 +29,8 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := SNSLambdaEventSourceResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &request)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
@@ -38,7 +38,7 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	// Get the current subscriptions...
 	snsSvc := sns.New(session)
 	snsInput := &sns.ListSubscriptionsByTopicInput{
-		TopicArn: aws.String(command.SNSTopicArn),
+		TopicArn: aws.String(request.SNSTopicArn),
 	}
 	listSubscriptions, listSubscriptionsErr := snsSvc.ListSubscriptionsByTopic(snsInput)
 	if listSubscriptionsErr != nil {
@@ -47,19 +47,19 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	var lambdaSubscriptionArn string
 	for _, eachSubscription := range listSubscriptions.Subscriptions {
 		if *eachSubscription.Protocol == "lambda" &&
-			*eachSubscription.Endpoint == command.LambdaTargetArn {
+			*eachSubscription.Endpoint == request.LambdaTargetArn {
 			if lambdaSubscriptionArn != "" {
 				return nil, fmt.Errorf("multiple SNS %s registrations found for lambda: %s",
 					*snsInput.TopicArn,
-					command.LambdaTargetArn)
+					request.LambdaTargetArn)
 			}
 			lambdaSubscriptionArn = *eachSubscription.SubscriptionArn
 		}
 	}
 	// Just log it...
 	logger.Info().
-		Interface("SNSTopicArn", command.SNSTopicArn).
-		Interface("LambdaArn", command.LambdaTargetArn).
+		Interface("SNSTopicArn", request.SNSTopicArn).
+		Interface("LambdaArn", request.LambdaTargetArn).
 		Interface("ExistingSubscriptionArn", lambdaSubscriptionArn).
 		Msg("Current SNS subscription status")
 
@@ -67,8 +67,8 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	if isTargetActive && lambdaSubscriptionArn == "" {
 		subscribeInput := &sns.SubscribeInput{
 			Protocol: aws.String("lambda"),
-			TopicArn: aws.String(command.SNSTopicArn),
-			Endpoint: aws.String(command.LambdaTargetArn),
+			TopicArn: aws.String(request.SNSTopicArn),
+			Endpoint: aws.String(request.LambdaTargetArn),
 		}
 		_, opErr = snsSvc.Subscribe(subscribeInput)
 	} else if !isTargetActive && lambdaSubscriptionArn != "" {

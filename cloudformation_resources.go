@@ -8,10 +8,10 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/jmespath/go-jmespath"
-	"github.com/pkg/errors"
-
 	gof "github.com/awslabs/goformation/v5/cloudformation"
+	"github.com/jmespath/go-jmespath"
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
 
@@ -54,29 +54,18 @@ func resourceOutputs(resourceName string,
 		vals = append(vals, eachKey)
 	}
 	return vals, nil
-
-	// typedArr, typedArrOk := result.([]string)
-	// if !typedArrOk {
-	// 	return nil, errors.Errorf("Failed to extract outputs for resource type: %s", resource.AWSCloudFormationType())
-	// }
-	// return typedArr, nil
 }
 
 func newCloudFormationResource(resourceType string, logger *zerolog.Logger) (gof.Resource, error) {
-	/*
-		TODO - implmement
-		esProps := gocf.NewResourceByType(resourceType)
-		if nil == resProps {
+	resProps, _ := cwCustomProvider.NewCloudFormationCustomResource(resourceType, logger)
+	if nil == resProps {
+		logger.Fatal().
+			Str("Type", resourceType).
+			Msg("Failed to create CloudFormation CustomResource!")
 
-			logger.Fatal().
-				Str("Type", resourceType).
-				Msg("Failed to create CloudFormation CustomResource!")
-
-			return nil, fmt.Errorf("unsupported CustomResourceType: %s", resourceType)
-		}
-		return resProps, nil
-	*/
-	return nil, nil
+		return nil, fmt.Errorf("unsupported CustomResourceType: %s", resourceType)
+	}
+	return resProps, nil
 }
 
 type discoveryDataTemplate struct {

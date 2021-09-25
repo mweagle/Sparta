@@ -23,6 +23,7 @@ type CloudWatchLogsLambdaEventSourceFilter struct {
 // CloudWatchEventSourceResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type CloudWatchEventSourceResourceRequest struct {
+	CustomResourceRequest
 	LambdaTargetArn string
 	Filters         []*CloudWatchLogsLambdaEventSourceFilter
 	RoleARN         string `json:",omitempty"`
@@ -31,8 +32,6 @@ type CloudWatchEventSourceResourceRequest struct {
 // CloudWatchLogsLambdaEventSourceResource is a simple POC showing how to create custom resources
 type CloudWatchLogsLambdaEventSourceResource struct {
 	gof.CustomResource
-	ServiceToken string
-	CloudWatchEventSourceResourceRequest
 }
 
 // IAMPrivileges returns the IAM privs for this custom action
@@ -91,7 +90,7 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 				FilterPattern:  aws.String(eachFilter.Pattern),
 				LogGroupName:   aws.String(eachFilter.LogGroupName),
 			}
-			if "" != requestProps.RoleARN {
+			if requestProps.RoleARN != "" {
 				putSubscriptionInput.RoleArn = aws.String(requestProps.RoleARN)
 			}
 			_, opErr = cwLogsSvc.PutSubscriptionFilter(putSubscriptionInput)

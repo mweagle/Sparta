@@ -14,8 +14,8 @@ import (
 	awsLambdaGo "github.com/aws/aws-lambda-go/lambda"
 	awsLambdaContext "github.com/aws/aws-lambda-go/lambdacontext"
 	spartaAWS "github.com/mweagle/Sparta/aws"
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
 	cloudformationResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -232,7 +232,11 @@ func Execute(serviceName string,
 				Interface("customResourceTypeName", requestCustomResourceType).
 				Msg("Checking to see if there is a custom resource")
 
-			resource := gocf.NewResourceByType(requestCustomResourceType)
+			resource, resourceErr := cwCustomProvider.NewCloudFormationCustomResource(requestCustomResourceType, logger)
+			if resourceErr != nil {
+				return resourceErr
+			}
+
 			if resource != nil {
 				// Handler?
 				command, commandOk := resource.(cloudformationResources.CustomResourceCommand)

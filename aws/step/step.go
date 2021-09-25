@@ -20,7 +20,6 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -925,10 +924,12 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 		}
 
 		// Assume policy document
-		regionalPrincipal := gocf.Join(".",
-			gocf.String("states"),
-			gocf.Ref("AWS::Region"),
-			gocf.String("amazonaws.com"))
+		regionalPrincipal := gof.Join(".", []string{
+			"states",
+			gof.Ref("AWS::Region"),
+			"amazonaws.com",
+		})
+
 		var AssumePolicyDocument = sparta.ArbitraryJSONObject{
 			"Version": "2012-10-17",
 			"Statement": []sparta.ArbitraryJSONObject{

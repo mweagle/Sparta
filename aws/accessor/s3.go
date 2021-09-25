@@ -8,10 +8,10 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -26,7 +26,7 @@ type S3Accessor struct {
 func (svc *S3Accessor) BucketPrivilege(bucketPrivs ...string) sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  bucketPrivs,
-		Resource: spartaCF.S3ArnForBucket(gocf.Ref(svc.S3BucketResourceName)),
+		Resource: spartaCF.S3ArnForBucket(svc.S3BucketResourceName),
 	}
 }
 
@@ -34,7 +34,7 @@ func (svc *S3Accessor) BucketPrivilege(bucketPrivs ...string) sparta.IAMRolePriv
 func (svc *S3Accessor) KeysPrivilege(keyPrivileges ...string) sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  keyPrivileges,
-		Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(svc.S3BucketResourceName)),
+		Resource: spartaCF.S3AllKeysArnForBucket(gof.Ref(svc.S3BucketResourceName)),
 	}
 }
 

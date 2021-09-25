@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+
 	"github.com/rs/zerolog"
 )
 
@@ -29,16 +31,21 @@ func mockHelloWorldResourceEvent(t *testing.T) *CloudFormationLambdaEvent {
 }
 
 func TestCreateHelloWorld(t *testing.T) {
-	resHello := CustomResourceForType(HelloWorld)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	resHello, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
 	customResource := resHello.(*HelloWorldResource)
-	customResource.Message = "Hello world"
+	customResource.Properties = ToCustomResourceProperties(&HelloWorldResourceRequest{
+		Message: "Hello world",
+	})
 }
 
 func TestCreateHelloWorldNewInstances(t *testing.T) {
-	resHello1 := CustomResourceForType(HelloWorld)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+
+	resHello1, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
 	customResource1 := resHello1.(*HelloWorldResource)
 
-	resHello2 := CustomResourceForType(HelloWorld)
+	resHello2, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
 	customResource2 := resHello2.(*HelloWorldResource)
 
 	if &customResource1 == &customResource2 {
@@ -47,11 +54,14 @@ func TestCreateHelloWorldNewInstances(t *testing.T) {
 }
 
 func TestExecuteCreateHelloWorld(t *testing.T) {
-	resHello1 := CustomResourceForType(HelloWorld)
-	customResource1 := resHello1.(*HelloWorldResource)
-	customResource1.Message = "Create resource here"
-
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+
+	resHello1, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
+	customResource1 := resHello1.(*HelloWorldResource)
+	customResource1.Properties = ToCustomResourceProperties(&HelloWorldResourceRequest{
+		Message: "Hello world",
+	})
+
 	awsSession := awsSession(&logger)
 	createOutputs, createError := customResource1.Create(awsSession,
 		mockHelloWorldResourceEvent(t),

@@ -31,7 +31,7 @@ func Execute(serviceName string,
 // within an account
 func awsLambdaFunctionName(internalFunctionName string) string {
 	sanitizedName := awsLambdaInternalName(internalFunctionName)
-	// When we build, we return a gocf.Join that
+	// When we build, we return a gof.Join that
 	// will use the stack name and the internal name. When we run, we're going
 	// to use the name discovered from the environment.
 	return gof.Join("", []string{

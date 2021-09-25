@@ -27,6 +27,7 @@ const DefaultManifestName = "MANIFEST.json"
 // ZipToS3BucketResourceRequest is the data request made to a ZipToS3BucketResource
 // lambda handler
 type ZipToS3BucketResourceRequest struct {
+	CustomResourceRequest
 	SrcBucket    string
 	SrcKeyName   string
 	DestBucket   string
@@ -38,15 +39,13 @@ type ZipToS3BucketResourceRequest struct {
 // of a ZIP file...
 type ZipToS3BucketResource struct {
 	gof.CustomResource
-	ServiceToken string
-	ZipToS3BucketResourceRequest
 }
 
 func (command ZipToS3BucketResource) unzip(session *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := ZipToS3BucketResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &request)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
@@ -54,8 +53,8 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 	// Fetch the ZIP contents and unpack them to the S3 bucket
 	svc := s3.New(session)
 	s3Object, s3ObjectErr := svc.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(command.SrcBucket),
-		Key:    aws.String(command.SrcKeyName),
+		Bucket: aws.String(request.SrcBucket),
+		Key:    aws.String(request.SrcKeyName),
 	})
 	if nil != s3ObjectErr {
 		return nil, s3ObjectErr
@@ -102,7 +101,7 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 		if len(normalizedName) > 0 {
 			s3PutObject := &s3.PutObjectInput{
 				Body:        bytes.NewReader(bodySource),
-				Bucket:      aws.String(command.DestBucket),
+				Bucket:      aws.String(request.DestBucket),
 				Key:         aws.String(fmt.Sprintf("/%s", eachFile.Name)),
 				ContentType: aws.String(mimeType),
 			}
@@ -117,18 +116,18 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 		}
 	}
 	// Need to add the manifest data iff defined
-	if nil != command.Manifest {
-		manifestBytes, manifestErr := json.Marshal(command.Manifest)
+	if nil != request.Manifest {
+		manifestBytes, manifestErr := json.Marshal(request.Manifest)
 		if nil != manifestErr {
 			return nil, manifestErr
 		}
-		name := command.ManifestName
+		name := request.ManifestName
 		if name == "" {
 			name = DefaultManifestName
 		}
 		s3PutObject := &s3.PutObjectInput{
 			Body:        bytes.NewReader(manifestBytes),
-			Bucket:      aws.String(command.DestBucket),
+			Bucket:      aws.String(request.DestBucket),
 			Key:         aws.String(name),
 			ContentType: aws.String("application/json"),
 		}
@@ -141,7 +140,7 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 	logger.Info().
 		Int("TotalFileCount", totalFiles).
 		Int64("ArchiveSize", *s3Object.ContentLength).
-		Interface("S3Bucket", command.DestBucket).
+		Interface("S3Bucket", request.DestBucket).
 		Msg("Expanded ZIP archive")
 
 	// All good
@@ -172,8 +171,8 @@ func (command ZipToS3BucketResource) Update(awsSession *session.Session,
 func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := ZipToS3BucketResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &request)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
@@ -183,7 +182,7 @@ func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 	svc := s3.New(awsSession)
 	deleteItemsHandler := func(objectOutputs *s3.ListObjectsOutput, lastPage bool) bool {
 		params := &s3.DeleteObjectsInput{
-			Bucket: aws.String(command.DestBucket),
+			Bucket: aws.String(request.DestBucket),
 			Delete: &s3.Delete{ // Required
 				Objects: []*s3.ObjectIdentifier{},
 				Quiet:   aws.Bool(true),
@@ -201,7 +200,7 @@ func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 
 	// Walk the bucket and cleanup...
 	params := &s3.ListObjectsInput{
-		Bucket:  aws.String(command.DestBucket),
+		Bucket:  aws.String(request.DestBucket),
 		MaxKeys: aws.Int64(1000),
 	}
 	err := svc.ListObjectsPages(params, deleteItemsHandler)
@@ -211,19 +210,19 @@ func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 
 	// Cleanup the Manifest iff defined
 	var deleteErr error
-	if nil != command.Manifest {
-		name := command.ManifestName
+	if nil != request.Manifest {
+		name := request.ManifestName
 		if name == "" {
 			name = DefaultManifestName
 		}
 		manifestDeleteParams := &s3.DeleteObjectInput{
-			Bucket: aws.String(command.DestBucket),
+			Bucket: aws.String(request.DestBucket),
 			Key:    aws.String(name),
 		}
 		_, deleteErr = svc.DeleteObject(manifestDeleteParams)
 		logger.Info().
 			Int("TotalDeletedCount", totalItemsDeleted).
-			Interface("S3Bucket", command.DestBucket).
+			Interface("S3Bucket", request.DestBucket).
 			Msg("Purged S3 Bucket")
 	}
 	return nil, deleteErr

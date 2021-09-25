@@ -12,10 +12,15 @@ import (
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofamazonmq "github.com/awslabs/goformation/v5/cloudformation/amazonmq"
+	gofdynamodb "github.com/awslabs/goformation/v5/cloudformation/dynamodb"
+	gofkinesis "github.com/awslabs/goformation/v5/cloudformation/kinesis"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	gofmsk "github.com/awslabs/goformation/v5/cloudformation/msk"
+	gofsqs "github.com/awslabs/goformation/v5/cloudformation/sqs"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	gocf "github.com/mweagle/go-cloudformation"
+
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -29,17 +34,17 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 	policyStatements := []spartaIAM.PolicyStatement{}
 
 	// Map the types to their common statements
-	resourceToStatementsMap := map[gocf.ResourceProperties][]spartaIAM.PolicyStatement{
-		&gocf.DynamoDBTable{}:  CommonIAMStatements.DynamoDB,
-		&gocf.KinesisStream{}:  CommonIAMStatements.Kinesis,
-		&gocf.SQSQueue{}:       CommonIAMStatements.SQS,
-		&gocf.MSKCluster{}:     CommonIAMStatements.MSKCluster,
-		&gocf.AmazonMQBroker{}: CommonIAMStatements.AmazonMQBroker,
+	resourceToStatementsMap := map[gof.Resource][]spartaIAM.PolicyStatement{
+		&gofdynamodb.Table{}:  CommonIAMStatements.DynamoDB,
+		&gofkinesis.Stream{}:  CommonIAMStatements.Kinesis,
+		&gofsqs.Queue{}:       CommonIAMStatements.SQS,
+		&gofmsk.Cluster{}:     CommonIAMStatements.MSKCluster,
+		&gofamazonmq.Broker{}: CommonIAMStatements.AmazonMQBroker,
 	}
 	preLengthStatements := len(policyStatements)
 	for eachResource, eachPolicyStatements := range resourceToStatementsMap {
 		// Split the type
-		splitTypes := strings.Split(eachResource.CfnResourceType(), "::")
+		splitTypes := strings.Split(eachResource.AWSCloudFormationType(), "::")
 		if len(splitTypes) == 3 {
 			typeHint := fmt.Sprintf(":%s:", strings.ToLower(splitTypes[1]))
 			if isResolvedResourceType(resource, template, typeHint, eachResource) {
@@ -194,8 +199,7 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 		}
 		// If it's not nil and also not a literal, go ahead and try and update it
 		if resourceRef != nil &&
-			resourceRef.RefType != resourceLiteral &&
-			resourceRef.RefType != resourceStringFunc {
+			resourceRef.RefType != resourceLiteral {
 			// Excellent, go ahead and find the role in the template
 			// and stitch things together
 			iamRole, iamRoleExists := template.Resources[resourceRef.ResourceName]

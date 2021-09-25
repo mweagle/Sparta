@@ -8,7 +8,6 @@ import (
 	gofapigv2 "github.com/awslabs/goformation/v5/cloudformation/apigatewayv2"
 	gofddb "github.com/awslabs/goformation/v5/cloudformation/dynamodb"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -72,13 +71,13 @@ func (apigd *APIV2GatewayDecorator) DecorateService(context map[string]interface
 	dynamoDBResourceName := apigd.logicalResourceName()
 	dynamoDBResource := &gofddb.Table{
 		AttributeDefinitions: []gofddb.Table_AttributeDefinition{
-			gofddb.Table_AttributeDefinition{
+			{
 				AttributeName: apigd.propertyName,
 				AttributeType: "S",
 			},
 		},
 		KeySchema: []gofddb.Table_KeySchema{
-			gofddb.Table_KeySchema{
+			{
 				AttributeName: apigd.propertyName,
 				KeyType:       "HASH",
 			},
@@ -108,15 +107,15 @@ func (apigd *APIV2GatewayDecorator) AnnotateLambdas(lambdaFns []*LambdaAWSInfo) 
 				"dynamodb:UpdateItem",
 				"dynamodb:BatchWriteItem",
 				"dynamodb:BatchGetItem"},
-			Resource: gocf.Join("",
-				gocf.String("arn:"),
-				gocf.Ref("AWS::Partition"),
-				gocf.String(":dynamodb:"),
-				gocf.Ref("AWS::Region"),
-				gocf.String(":"),
-				gocf.Ref("AWS::AccountId"),
-				gocf.String(":table/"),
-				gocf.Ref(apigd.logicalResourceName())),
+			Resource: gof.Join("", []string{
+				"arn:",
+				gof.Ref("AWS::Partition"),
+				":dynamodb:",
+				gof.Ref("AWS::Region"),
+				":",
+				gof.Ref("AWS::AccountId"),
+				":table/",
+				gof.Ref(apigd.logicalResourceName())}),
 		},
 		{
 			Actions: []string{"dynamodb:GetItem",
@@ -127,16 +126,17 @@ func (apigd *APIV2GatewayDecorator) AnnotateLambdas(lambdaFns []*LambdaAWSInfo) 
 				"dynamodb:UpdateItem",
 				"dynamodb:BatchWriteItem",
 				"dynamodb:BatchGetItem"},
-			Resource: gocf.Join("",
-				gocf.String("arn:"),
-				gocf.Ref("AWS::Partition"),
-				gocf.String(":dynamodb:"),
-				gocf.Ref("AWS::Region"),
-				gocf.String(":"),
-				gocf.Ref("AWS::AccountId"),
-				gocf.String(":table/"),
-				gocf.Ref(apigd.logicalResourceName()),
-				gocf.String("/index/*")),
+			Resource: gof.Join("", []string{
+				"arn:",
+				gof.Ref("AWS::Partition"),
+				":dynamodb:",
+				gof.Ref("AWS::Region"),
+				":",
+				gof.Ref("AWS::AccountId"),
+				":table/",
+				gof.Ref(apigd.logicalResourceName()),
+				"/index/*",
+			}),
 		},
 	}
 

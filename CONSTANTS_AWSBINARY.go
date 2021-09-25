@@ -1,3 +1,4 @@
+//go:build lambdabinary
 // +build lambdabinary
 
 //lint:file-ignore U1000,ST1018 Ignore all unused code, it's generated

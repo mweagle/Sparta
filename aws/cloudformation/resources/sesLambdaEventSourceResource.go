@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 
 	"github.com/rs/zerolog"
 )
@@ -16,13 +15,13 @@ import (
 // SESLambdaEventSourceResourceAction represents an SES rule action
 // TODO - specialized types for Actions
 type SESLambdaEventSourceResourceAction struct {
-	ActionType       *gocf.StringExpr
+	ActionType       string
 	ActionProperties map[string]interface{}
 }
 
 func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *zerolog.Logger) *ses.ReceiptAction {
 	actionProperties := action.ActionProperties
-	switch action.ActionType.Literal {
+	switch action.ActionType {
 	case "LambdaAction":
 		action := &ses.ReceiptAction{
 			LambdaAction: &ses.LambdaAction{
@@ -54,7 +53,7 @@ func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *zerolo
 		}
 		return action
 	default:
-		logger.Error().Msgf("No SESLmabdaEventSourceResourceAction marshaler found for action: %s", action.ActionType.Literal)
+		logger.Error().Msgf("No SESLmabdaEventSourceResourceAction marshaler found for action: %s", action.ActionType)
 	}
 	return nil
 }
@@ -62,12 +61,12 @@ func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *zerolo
 // SESLambdaEventSourceResourceRule stores settings necessary to configure an SES
 // inbound rule
 type SESLambdaEventSourceResourceRule struct {
-	Name        *gocf.StringExpr
+	Name        string
 	Actions     []*SESLambdaEventSourceResourceAction
-	ScanEnabled *gocf.BoolExpr `json:",omitempty"`
-	Enabled     *gocf.BoolExpr `json:",omitempty"`
-	Recipients  []*gocf.StringExpr
-	TLSPolicy   *gocf.StringExpr `json:",omitempty"`
+	ScanEnabled bool `json:",omitempty"`
+	Enabled     bool `json:",omitempty"`
+	Recipients  []string
+	TLSPolicy   string `json:",omitempty"`
 }
 
 func ensureSESRuleSetName(ruleSetName string, svc *ses.SES, logger *zerolog.Logger) error {
@@ -98,15 +97,14 @@ func ensureSESRuleSetName(ruleSetName string, svc *ses.SES, logger *zerolog.Logg
 // SESLambdaEventSourceResourceRequest defines the request properties to configure
 // SES
 type SESLambdaEventSourceResourceRequest struct {
-	RuleSetName *gocf.StringExpr
+	CustomResourceRequest
+	RuleSetName string
 	Rules       []*SESLambdaEventSourceResourceRule
 }
 
 // SESLambdaEventSourceResource handles configuring SES configuration
 type SESLambdaEventSourceResource struct {
 	gof.CustomResource
-	ServiceToken string
-	SESLambdaEventSourceResourceRequest
 }
 
 func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
@@ -114,25 +112,26 @@ func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := SESLambdaEventSourceResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &request)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
 
 	svc := ses.New(session)
-	opError := ensureSESRuleSetName(command.RuleSetName.Literal, svc, logger)
+	opError := ensureSESRuleSetName(request.RuleSetName, svc, logger)
 	if nil == opError {
-		for _, eachRule := range command.Rules {
+		for _, eachRule := range request.Rules {
 			if areRulesActive {
 				createReceiptRule := &ses.CreateReceiptRuleInput{
-					RuleSetName: aws.String(command.RuleSetName.Literal),
+					RuleSetName: aws.String(request.RuleSetName),
 					Rule: &ses.ReceiptRule{
-						Name:        aws.String(eachRule.Name.Literal),
+						Name:        aws.String(eachRule.Name),
 						Recipients:  make([]*string, 0),
 						Actions:     make([]*ses.ReceiptAction, 0),
-						ScanEnabled: aws.Bool(eachRule.ScanEnabled.Literal),
-						TlsPolicy:   aws.String(eachRule.TLSPolicy.Literal),
-						Enabled:     aws.Bool(eachRule.Enabled.Literal),
+						ScanEnabled: aws.Bool(eachRule.ScanEnabled),
+						TlsPolicy:   aws.String(eachRule.TLSPolicy),
+						Enabled:     aws.Bool(eachRule.Enabled),
 					},
 				}
 				for _, eachAction := range eachRule.Actions {
@@ -143,8 +142,8 @@ func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
 			} else {
 				// Delete them...
 				deleteReceiptRule := &ses.DeleteReceiptRuleInput{
-					RuleSetName: aws.String(command.RuleSetName.Literal),
-					RuleName:    aws.String(eachRule.Name.Literal),
+					RuleSetName: aws.String(request.RuleSetName),
+					RuleName:    aws.String(eachRule.Name),
 				}
 				_, opError = svc.DeleteReceiptRule(deleteReceiptRule)
 			}

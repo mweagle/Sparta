@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 
 	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
@@ -31,33 +33,51 @@ const (
 	// @enum CloudFormationOperation
 	UpdateOperation = "Update"
 )
+
+// TODO - hookup CustomResoureces
+// 20 Sep 21 23:41 PDT |ERROR| Failed to execute command                        error="cloudformationUpdate=>ValidationError: Template format error: Unrecognized resource types: [Custom::Sparta::S3EventSource]\n\tstatus code: 400, request id: c90eabe9-7c41-411e-ad20-60ff1fcd62b1"
 const (
 	// CustomResourceTypePrefix is the known custom resource
 	// type prefix
-	CustomResourceTypePrefix = "Custom::goAWS"
+	CustomResourceTypePrefix = "Custom::Sparta"
 )
 
 var (
 	// HelloWorld is the typename for HelloWorldResource
-	HelloWorld = cloudFormationResourceType("HelloWorldResource")
+	HelloWorld = cloudFormationCustomResourceType("HelloWorldResource")
 	// S3LambdaEventSource is the typename for S3LambdaEventSourceResource
-	S3LambdaEventSource = cloudFormationResourceType("S3EventSource")
+	S3LambdaEventSource = cloudFormationCustomResourceType("S3EventSource")
 	// SNSLambdaEventSource is the typename for SNSLambdaEventSourceResource
-	SNSLambdaEventSource = cloudFormationResourceType("SNSEventSource")
+	SNSLambdaEventSource = cloudFormationCustomResourceType("SNSEventSource")
 	// CodeCommitLambdaEventSource is the type name for CodeCommitEventSourceResource
-	CodeCommitLambdaEventSource = cloudFormationResourceType("CodeCommitEventSource")
+	CodeCommitLambdaEventSource = cloudFormationCustomResourceType("CodeCommitEventSource")
 	// SESLambdaEventSource is the typename for SESLambdaEventSourceResource
-	SESLambdaEventSource = cloudFormationResourceType("SESEventSource")
+	SESLambdaEventSource = cloudFormationCustomResourceType("SESEventSource")
 	// CloudWatchLogsLambdaEventSource is the typename for SESLambdaEventSourceResource
-	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsEventSource")
+	CloudWatchLogsLambdaEventSource = cloudFormationCustomResourceType("CloudWatchLogsEventSource")
 	// ZipToS3Bucket is the typename for ZipToS3Bucket
-	ZipToS3Bucket = cloudFormationResourceType("ZipToS3Bucket")
+	ZipToS3Bucket = cloudFormationCustomResourceType("ZipToS3Bucket")
 	// S3ArtifactPublisher is the typename for publishing an S3Artifact
-	S3ArtifactPublisher = cloudFormationResourceType("S3ArtifactPublisher")
+	S3ArtifactPublisher = cloudFormationCustomResourceType("S3ArtifactPublisher")
 )
 
-// CustomResourceForType returns a gof.Resource instance if one has been defined
-func CustomResourceForType(resourceType string) gof.Resource {
+// CustomResourceRequest is the default type for all
+// requests that support ServiceToken
+type CustomResourceRequest struct {
+	ServiceToken string
+}
+
+func ToCustomResourceProperties(crr interface{}) map[string]interface{} {
+	var props map[string]interface{}
+	jsonData, jsonDataErr := json.Marshal(crr)
+	if jsonDataErr == nil {
+		_ = json.Unmarshal(jsonData, &props)
+	}
+	return props
+}
+
+//  customTypeProvider returns a gof.Resource instance if one has been defined
+func customTypeProvider(resourceType string) gof.Resource {
 	var entry gof.Resource
 	switch resourceType {
 	case HelloWorld:
@@ -72,6 +92,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case S3LambdaEventSource:
 		return &S3LambdaEventSourceResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -80,6 +101,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case CloudWatchLogsLambdaEventSource:
 		return &CloudWatchLogsLambdaEventSourceResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -88,6 +110,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case CodeCommitLambdaEventSource:
 		return &CodeCommitLambdaEventSourceResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -96,6 +119,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case SNSLambdaEventSource:
 		return &SNSLambdaEventSourceResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -104,6 +128,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case SESLambdaEventSource:
 		return &SESLambdaEventSourceResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -112,6 +137,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case ZipToS3Bucket:
 		return &ZipToS3BucketResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -120,6 +146,7 @@ func CustomResourceForType(resourceType string) gof.Resource {
 	case S3ArtifactPublisher:
 		return &S3ArtifactPublisherResource{
 			CustomResource: gof.CustomResource{
+				Type: resourceType,
 				Properties: map[string]interface{}{
 					"io.sparta.restype": resourceType,
 				},
@@ -127,6 +154,10 @@ func CustomResourceForType(resourceType string) gof.Resource {
 		}
 	}
 	return entry
+}
+
+func init() {
+	cwCustomProvider.RegisterCustomResourceProvider(customTypeProvider)
 }
 
 // CustomResourceCommand defines operations that a CustomResource must implement.
@@ -151,10 +182,12 @@ type CustomResourcePrivilegedCommand interface {
 	IAMPrivileges() []string
 }
 
-// cloudFormationResourceType a string for the resource name that represents a
+// cloudFormationCustomResourceType a string for the resource name that represents a
 // custom CloudFormation resource typename
-func cloudFormationResourceType(resType string) string {
-	return fmt.Sprintf("%s::%s", CustomResourceTypePrefix, resType)
+func cloudFormationCustomResourceType(resType string) string {
+	// Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
+	// Use the AWS::CloudFormation::CustomResource or Custom::MyCustomResourceTypeName
+	return fmt.Sprintf("%s%s", CustomResourceTypePrefix, resType)
 }
 
 type zerologProxy struct {
@@ -415,7 +448,7 @@ func NewCustomResourceLambdaHandler(resourceType string,
 	// TODO - eliminate this factory stuff and just register
 	// the custom resources as normal lambda handlers...
 	var lambdaCmd CustomResourceCommand
-	cfResource := CustomResourceForType(resourceType)
+	cfResource, _ := cwCustomProvider.NewCloudFormationCustomResource(resourceType, logger)
 	if cfResource != nil {
 		cmd, cmdOK := cfResource.(CustomResourceCommand)
 		if cmdOK {

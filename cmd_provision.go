@@ -6,13 +6,14 @@ import (
 	"reflect"
 	"text/template"
 
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -124,7 +125,10 @@ func EnsureCustomResourceHandler(serviceName string,
 	// CustomResourceCommand type and then apply the workflow. Doing this means
 	// we can decouple the lookup logic for custom resource...
 
-	resource := gocf.NewResourceByType(customResourceCloudFormationTypeName)
+	resource, resourceErr := cwCustomProvider.NewCloudFormationCustomResource(customResourceCloudFormationTypeName, logger)
+	if resourceErr != nil {
+		return "", resourceErr
+	}
 	if resource == nil {
 		return "", errors.Errorf("Unable to create custom resource handler of type: %v", customResourceCloudFormationTypeName)
 	}
@@ -244,7 +248,7 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 		statements := CommonIAMStatements.Core
 
 		iamPolicyList := []gofiam.Role_Policy{
-			gofiam.Role_Policy{
+			{
 				PolicyDocument: ArbitraryJSONObject{
 					"Version":   "2012-10-17",
 					"Statement": statements,

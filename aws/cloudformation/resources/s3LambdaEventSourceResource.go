@@ -14,17 +14,22 @@ import (
 // S3LambdaEventSourceResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type S3LambdaEventSourceResourceRequest struct {
+	CustomResourceRequest
 	BucketArn       string
 	Events          []string
 	LambdaTargetArn string
 	Filter          *s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// TODO - update all the custom resources to use this approach so that
+// the properties object is propertly serialized. We'll also need to deserialize
+// the request for the custom handler.
+////////////////////////////////////////////////////////////////////////////////
+
 // S3LambdaEventSourceResource manages registering a Lambda function with S3 event
 type S3LambdaEventSourceResource struct {
 	gof.CustomResource
-	ServiceToken string
-	S3LambdaEventSourceResourceRequest
 }
 
 // IAMPrivileges returns the IAM privs for this custom action
@@ -41,13 +46,14 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	s3EventRequest := S3LambdaEventSourceResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &s3EventRequest)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
 
 	s3Svc := s3.New(session)
-	bucketParts := strings.Split(command.BucketArn, ":")
+	bucketParts := strings.Split(s3EventRequest.BucketArn, ":")
 	bucketName := bucketParts[len(bucketParts)-1]
 
 	params := &s3.GetBucketNotificationConfigurationRequest{
@@ -60,22 +66,22 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	// First thing, eliminate existing references...
 	var lambdaConfigurations []*s3.LambdaFunctionConfiguration
 	for _, eachLambdaConfig := range config.LambdaFunctionConfigurations {
-		if *eachLambdaConfig.LambdaFunctionArn != command.LambdaTargetArn {
+		if *eachLambdaConfig.LambdaFunctionArn != s3EventRequest.LambdaTargetArn {
 			lambdaConfigurations = append(lambdaConfigurations, eachLambdaConfig)
 		}
 	}
 
 	if isTargetActive {
 		var eventPtrs []*string
-		for _, eachString := range command.Events {
+		for _, eachString := range s3EventRequest.Events {
 			eventPtrs = append(eventPtrs, aws.String(eachString))
 		}
 		commandConfig := &s3.LambdaFunctionConfiguration{
-			LambdaFunctionArn: aws.String(command.LambdaTargetArn),
+			LambdaFunctionArn: aws.String(s3EventRequest.LambdaTargetArn),
 			Events:            eventPtrs,
 		}
-		if command.Filter != nil {
-			commandConfig.Filter = command.Filter
+		if s3EventRequest.Filter != nil {
+			commandConfig.Filter = s3EventRequest.Filter
 		}
 		lambdaConfigurations = append(lambdaConfigurations, commandConfig)
 	}

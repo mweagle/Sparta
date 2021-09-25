@@ -21,6 +21,7 @@ import (
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	goftags "github.com/awslabs/goformation/v5/cloudformation/tags"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	"github.com/pkg/errors"
@@ -45,7 +46,7 @@ func customResourceProvider(resourceType string) gof.Resource {
 }
 
 func init() {
-	//gocf.RegisterCustomResourceProvider(customResourceProvider)
+	cwCustomProvider.RegisterCustomResourceProvider(customResourceProvider)
 	rand.Seed(time.Now().Unix())
 }
 
@@ -448,7 +449,7 @@ func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetL
 type EventSourceMapping struct {
 	BatchSize                      int
 	StartingPosition               string
-	EventSourceArn                 interface{}
+	EventSourceArn                 string
 	Disabled                       bool
 	BisectBatchOnFunctionError     bool
 	DestinationConfig              *goflambda.EventSourceMapping_DestinationConfig

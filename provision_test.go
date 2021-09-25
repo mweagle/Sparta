@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	gofcloudformation "github.com/awslabs/goformation/v5/cloudformation/cloudformation"
+	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -30,8 +30,7 @@ func customResourceTestProvider(resourceType string) gof.Resource {
 }
 
 func init() {
-	panic("CUSTOM RESOURCE NOT IMPLEMENTED")
-	//gocf.RegisterCustomResourceProvider(customResourceTestProvider)
+	cwCustomProvider.RegisterCustomResourceProvider(customResourceTestProvider)
 }
 
 func TestProvision(t *testing.T) {
@@ -61,7 +60,7 @@ func templateDecorator(ctx context.Context,
 	// Add an output
 	cfTemplate.Outputs["OutputDecorationTest"] = gof.Output{
 		Description: "Information about the value",
-		Value:       gocf.String("My key"),
+		Value:       "My key",
 	}
 	return ctx, nil
 }

@@ -1,3 +1,4 @@
+//go:build lambdabinary
 // +build lambdabinary
 
 package cloudwatch

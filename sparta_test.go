@@ -173,12 +173,12 @@ func TestNOP(t *testing.T) {
 	s3Resources := &gofs3.Bucket{
 		BucketEncryption: &gofs3.Bucket_BucketEncryption{
 			ServerSideEncryptionConfiguration: []gofs3.Bucket_ServerSideEncryptionRule{
-				gofs3.Bucket_ServerSideEncryptionRule{
+				{
 					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
 						KMSMasterKeyID: "SomeKey",
 					},
 				},
-				gofs3.Bucket_ServerSideEncryptionRule{
+				{
 					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
 						KMSMasterKeyID: "SomeOtherKey",
 					},
@@ -197,12 +197,12 @@ func TestGlobalTransform(t *testing.T) {
 	s3Resources := &gofs3.Bucket{
 		BucketEncryption: &gofs3.Bucket_BucketEncryption{
 			ServerSideEncryptionConfiguration: []gofs3.Bucket_ServerSideEncryptionRule{
-				gofs3.Bucket_ServerSideEncryptionRule{
+				{
 					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
 						KMSMasterKeyID: "SomeKey",
 					},
 				},
-				gofs3.Bucket_ServerSideEncryptionRule{
+				{
 					ServerSideEncryptionByDefault: &gofs3.Bucket_ServerSideEncryptionByDefault{
 						KMSMasterKeyID: "SomeOtherKey",
 					},

@@ -49,12 +49,19 @@ func S3ArtifactPublisherDecorator(bucket string,
 		}
 
 		// Create the invocation of the custom action...
-		s3PublishResource := &cfCustomResources.S3ArtifactPublisherResource{}
-		s3PublishResource.ServiceToken = gof.GetAtt(configuratorResName, "Arn")
-		s3PublishResource.Bucket = bucket
-		s3PublishResource.Key = key
-		s3PublishResource.Body = data
-
+		s3PublishRequest := &cfCustomResources.S3ArtifactPublisherResourceRequest{
+			CustomResourceRequest: cfCustomResources.CustomResourceRequest{
+				ServiceToken: gof.GetAtt(configuratorResName, "Arn"),
+			},
+			Bucket: bucket,
+			Key:    key,
+			Body:   data,
+		}
+		s3PublishResource := &cfCustomResources.S3ArtifactPublisherResource{
+			CustomResource: gof.CustomResource{
+				Properties: cfCustomResources.ToCustomResourceProperties(s3PublishRequest),
+			},
+		}
 		// Name?
 		resourceInvokerName := sparta.CloudFormationResourceName("ArtifactS3",
 			fmt.Sprintf("%v", bucket),
