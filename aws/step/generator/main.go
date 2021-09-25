@@ -102,6 +102,7 @@ func main() {
 		fmt.Printf("Failed to open %s: %v\n", outputSourceFile, outputSourceErr)
 		os.Exit(1)
 	}
+	/* #nosec */
 	defer func() {
 		closeErr := outputSource.Close()
 		if closeErr != nil {

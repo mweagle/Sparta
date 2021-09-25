@@ -74,6 +74,7 @@ func UploadLocalFileToS3(localPath string,
 		Body:        reader,
 	}
 	// Ensure we close the reader...
+	/* #nosec */
 	defer func() {
 		closeErr := reader.Close()
 		if closeErr != nil {

@@ -222,6 +222,7 @@ func downloaderTask(profileType string,
 				err: outputFileErr,
 			}
 		}
+		/* #nosec */
 		defer func() {
 			closeErr := outputFile.Close()
 			if closeErr != nil {

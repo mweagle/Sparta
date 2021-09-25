@@ -113,9 +113,10 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		if err != nil {
 			return errors.Wrapf(err, "Failed to open file: %s", path)
 		}
+
+		/* #nosec */
 		defer func() {
-			closeErr := file.Close()
-			if closeErr != nil {
+			if closeErr := file.Close(); closeErr != nil {
 				logger.Warn().
 					Err(closeErr).
 					Msg("Failed to close zip writer")

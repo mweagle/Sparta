@@ -230,6 +230,7 @@ func MainEx(serviceName string,
 				workflowHooks,
 				OptionsGlobal.Logger)
 
+			/* #nosec */
 			defer func() {
 				closeErr := templateFile.Close()
 				if closeErr != nil {
@@ -299,6 +300,7 @@ func MainEx(serviceName string,
 			if fileWriterErr != nil {
 				return fileWriterErr
 			}
+			/* #nosec */
 			defer func() {
 				closeErr := fileWriter.Close()
 				if closeErr != nil {

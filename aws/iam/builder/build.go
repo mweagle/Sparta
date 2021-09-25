@@ -26,10 +26,9 @@ type IAMResourceBuilder struct {
 func (iamRes *IAMResourceBuilder) Ref(resName string, delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref(resName))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
+
 	return iamRes
 }
 
@@ -37,10 +36,8 @@ func (iamRes *IAMResourceBuilder) Ref(resName string, delimiter ...string) *IAMR
 func (iamRes *IAMResourceBuilder) Attr(resName string, propName string, delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.GetAtt(resName, propName))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -48,10 +45,8 @@ func (iamRes *IAMResourceBuilder) Attr(resName string, propName string, delimite
 func (iamRes *IAMResourceBuilder) Region(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::Region"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -59,10 +54,8 @@ func (iamRes *IAMResourceBuilder) Region(delimiter ...string) *IAMResourceBuilde
 func (iamRes *IAMResourceBuilder) AccountID(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::AccountId"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -70,10 +63,8 @@ func (iamRes *IAMResourceBuilder) AccountID(delimiter ...string) *IAMResourceBui
 func (iamRes *IAMResourceBuilder) NotificationARNS(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::NotificationARNs"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -81,10 +72,8 @@ func (iamRes *IAMResourceBuilder) NotificationARNS(delimiter ...string) *IAMReso
 func (iamRes *IAMResourceBuilder) Partition(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::Partition"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -92,10 +81,8 @@ func (iamRes *IAMResourceBuilder) Partition(delimiter ...string) *IAMResourceBui
 func (iamRes *IAMResourceBuilder) StackID(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::StackId"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -103,10 +90,8 @@ func (iamRes *IAMResourceBuilder) StackID(delimiter ...string) *IAMResourceBuild
 func (iamRes *IAMResourceBuilder) StackName(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::StackName"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -114,10 +99,8 @@ func (iamRes *IAMResourceBuilder) StackName(delimiter ...string) *IAMResourceBui
 func (iamRes *IAMResourceBuilder) URLSuffix(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gof.Ref("AWS::URLSuffix"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			eachDelimiter)
-	}
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
@@ -189,9 +172,7 @@ type IAMPrincipalBuilder struct {
 // which can be finalized into an IAMRolePrivilege
 func (iamRes *IAMBuilder) ForPrincipals(principals ...string) *IAMPrincipalBuilder {
 	stringablePrincipals := make([]string, len(principals))
-	for index, eachPrincipal := range principals {
-		stringablePrincipals[index] = eachPrincipal
-	}
+	copy(stringablePrincipals, principals)
 
 	return &IAMPrincipalBuilder{
 		builder: iamRes,
@@ -205,9 +186,7 @@ func (iamRes *IAMBuilder) ForPrincipals(principals ...string) *IAMPrincipalBuild
 // which can be finalized into an IAMRolePrivilege
 func (iamRes *IAMBuilder) ForFederatedPrincipals(principals ...string) *IAMPrincipalBuilder {
 	stringablePrincipals := make([]string, len(principals))
-	for index, eachPrincipal := range principals {
-		stringablePrincipals[index] = eachPrincipal
-	}
+	copy(stringablePrincipals, principals)
 
 	return &IAMPrincipalBuilder{
 		builder: iamRes,

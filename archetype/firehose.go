@@ -140,6 +140,7 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		if fileReaderErr != nil {
 			return ctx, errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
 		}
+		/* #nosec */
 		defer func() {
 			closeErr := fileReader.Close()
 
