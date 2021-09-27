@@ -17,7 +17,7 @@ import (
 // UPX image to do the compression.
 const UPXDockerFile = `
 FROM alpine:edge
-RUN apk add --no-cache upx=3.96-r0
+RUN apk add --no-cache upx=3.96-r1
 ENTRYPOINT [ "/usr/bin/upx" ]
 `
 
