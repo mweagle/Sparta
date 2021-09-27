@@ -43,14 +43,14 @@ require (
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magefile/mage v1.11.0
-	github.com/mattn/go-colorable v0.1.9
+	github.com/mattn/go-colorable v0.1.10
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
+	github.com/mweagle/go-cloudcondenser v0.0.0-20210927040427-ccf888fc5e58
 	github.com/mweagle/go-cloudformation v0.0.0-20210117063902-00aa242fdc67
 	github.com/nwaples/rardecode v1.1.2 // indirect
 	github.com/otiai10/copy v1.6.0
@@ -58,7 +58,7 @@ require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v0.9.3 // indirect
-	github.com/rivo/tview v0.0.0-20210923051754-2cb20002bc4c
+	github.com/rivo/tview v0.0.0-20210926181611-ee97a7ab3975
 	github.com/rs/zerolog v1.25.0
 	github.com/shirou/gopsutil/v3 v3.20.12
 	github.com/soheilhy/cmux v0.1.4 // indirect
