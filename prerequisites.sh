@@ -6,22 +6,22 @@ GO_GET_FLAGS="-u -v"
 mkdir -pv ./.sparta
 cd ./.sparta
 # Prerequisites
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/magefile/mage
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/hhatto/gocloc
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/mholt/archiver
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/pkg/browser
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/otiai10/copy
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/pkg/errors
-GO111MODULE=on -v go get $GO_GET_FLAGS honnef.co/go/tools/cmd/...
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/atombender/go-jsonschema/...
+GO111MODULE=on go get $GO_GET_FLAGS github.com/magefile/mage
+GO111MODULE=on go get $GO_GET_FLAGS github.com/hhatto/gocloc
+GO111MODULE=on go get $GO_GET_FLAGS github.com/mholt/archiver
+GO111MODULE=on go get $GO_GET_FLAGS github.com/pkg/browser
+GO111MODULE=on go get $GO_GET_FLAGS github.com/otiai10/copy
+GO111MODULE=on go get $GO_GET_FLAGS github.com/pkg/errors
+GO111MODULE=on go get $GO_GET_FLAGS honnef.co/go/tools/cmd/...
+GO111MODULE=on go get $GO_GET_FLAGS github.com/atombender/go-jsonschema/...
 
 # Static analysis
-GO111MODULE=on -v go get $GO_GET_FLAGS honnef.co/go/tools/cmd/...
-GO111MODULE=on -v go get $GO_GET_FLAGS golang.org/x/tools/cmd/goimports
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/fzipp/gocyclo
-GO111MODULE=on -v go get $GO_GET_FLAGS golang.org/x/lint/golint
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/mjibson/esc
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/securego/gosec/cmd/gosec
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/alexkohler/prealloc
-GO111MODULE=on -v go get $GO_GET_FLAGS github.com/client9/misspell/cmd/misspell
+GO111MODULE=on go get $GO_GET_FLAGS honnef.co/go/tools/cmd/...
+GO111MODULE=on go get $GO_GET_FLAGS golang.org/x/tools/cmd/goimports
+GO111MODULE=on go get $GO_GET_FLAGS github.com/fzipp/gocyclo
+GO111MODULE=on go get $GO_GET_FLAGS golang.org/x/lint/golint
+GO111MODULE=on go get $GO_GET_FLAGS github.com/mjibson/esc
+GO111MODULE=on go get $GO_GET_FLAGS github.com/securego/gosec/cmd/gosec
+GO111MODULE=on go get $GO_GET_FLAGS github.com/alexkohler/prealloc
+GO111MODULE=on go get $GO_GET_FLAGS github.com/client9/misspell/cmd/misspell
 GO111MODULE=on go get -u github.com/hhatto/gocloc/cmd/gocloc
