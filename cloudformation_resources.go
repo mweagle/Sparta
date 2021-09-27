@@ -46,6 +46,10 @@ func resourceOutputs(resourceName string,
 
 	resultMap, resultMapOk := result.(map[string]interface{})
 	if !resultMapOk {
+		// If this a custom resource, there are no outputs...
+		if resource.AWSCloudFormationType() == "AWS::CloudFormation::CustomResource" {
+			return nil, nil
+		}
 		return nil, errors.Errorf("Failed to extract outputs for resource type: %s", resource.AWSCloudFormationType())
 	}
 
@@ -126,7 +130,7 @@ func discoveryResourceInfoForDependency(cfTemplate *gof.Template,
 	return templateResults.Bytes(), evalResultErr
 }
 
-func safeAppendDependency(resource gof.Resource, dependencyName string) {
+func safeAppendDependency(resource gof.Resource, dependencyName string) error {
 
 	val := reflect.ValueOf(resource).Elem()
 	dependsOnField := val.FieldByName("AWSCloudFormationDependsOn")
@@ -136,10 +140,14 @@ func safeAppendDependency(resource gof.Resource, dependencyName string) {
 			dependsArray = []string{}
 		}
 		dependsArray = append(dependsArray, dependencyName)
+		reflectMapVal := reflect.ValueOf(dependsArray)
+		dependsOnField.Set(reflectMapVal)
+		return nil
 	}
+	return errors.Errorf("Failed to set Dependencies for resource: %v", resource)
 }
 
-func safeMetadataInsert(resource gof.Resource, key string, value interface{}) {
+func safeMetadataInsert(resource gof.Resource, key string, value interface{}) error {
 	val := reflect.ValueOf(resource).Elem()
 	metadataField := val.FieldByName("AWSCloudFormationMetadata")
 	if metadataField.IsValid() && metadataField.CanConvert(metadataInterface) {
@@ -148,5 +156,9 @@ func safeMetadataInsert(resource gof.Resource, key string, value interface{}) {
 			metadataMap = make(map[string]interface{})
 		}
 		metadataMap[key] = value
+		reflectMapVal := reflect.ValueOf(metadataMap)
+		metadataField.Set(reflectMapVal)
+		return nil
 	}
+	return errors.Errorf("Failed to set Metadata for resource: %v", resource)
 }

@@ -1002,7 +1002,10 @@ func (info *LambdaAWSInfo) applyDecorators(ctx context.Context,
 		// unmarshalled via sparta.Discover.  We're going to just stuff it into
 		// it's own same named property
 		if len(metadataMap) != 0 {
-			safeMetadataInsert(lambdaResource, info.LogicalResourceName(), metadataMap)
+			errInsert := safeMetadataInsert(lambdaResource, info.LogicalResourceName(), metadataMap)
+			if errInsert != nil {
+				return ctx, errInsert
+			}
 		}
 		// Append the custom resources
 		safeMergeErrs := gocc.SafeMerge(decoratorProxyTemplate,

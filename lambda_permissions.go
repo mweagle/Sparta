@@ -431,7 +431,10 @@ func (storage *MessageBodyStorage) export(serviceName string,
 
 		lambdaResource, lambdaResourceExists := template.Resources[lambdaLogicalCFResourceName]
 		if !lambdaResourceExists {
-			safeAppendDependency(lambdaResource, storage.cloudFormationS3BucketResourceName)
+			appendErr := safeAppendDependency(lambdaResource, storage.cloudFormationS3BucketResourceName)
+			if appendErr != nil {
+				return "", errors.Errorf("Failed to append: %s", appendErr)
+			}
 		}
 
 		logger.Info().
