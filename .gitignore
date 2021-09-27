@@ -8,7 +8,7 @@ resources/describe/AWS-Architecture-Assets/*
 Sparta.lambda.amd64
 SampleProvision-code.zip
 mage_output_file.go
-*.code-workspace
+Sparta.code-workspace
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
