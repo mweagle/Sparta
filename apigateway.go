@@ -141,10 +141,10 @@ func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, 
 
 func methodRequestTemplates(method *Method) (map[string]string, error) {
 	supportedTemplates := map[string]string{
-		"application/json":                  _escFSMustString(false, "/resources/provision/apigateway/inputmapping_json.vtl"),
-		"text/plain":                        _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
-		"application/x-www-form-urlencoded": _escFSMustString(false, "/resources/provision/apigateway/inputmapping_formencoded.vtl"),
-		"multipart/form-data":               _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
+		"application/json":                  embeddedMustString("resources/provision/apigateway/inputmapping_json.vtl"),
+		"text/plain":                        embeddedMustString("resources/provision/apigateway/inputmapping_default.vtl"),
+		"application/x-www-form-urlencoded": embeddedMustString("resources/provision/apigateway/inputmapping_formencoded.vtl"),
+		"multipart/form-data":               embeddedMustString("resources/provision/apigateway/inputmapping_default.vtl"),
 	}
 	if len(method.SupportedRequestContentTypes) <= 0 {
 		return supportedTemplates, nil
@@ -875,14 +875,15 @@ func (resource *Resource) NewMethod(httpMethod string,
 
 	// So we need to return everything here, but that means we'll need some other
 	// place to mutate the response body...where?
-	templateString, templateStringErr := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
+	templateString, templateStringErr := embeddedString("resources/provision/apigateway/outputmapping_json.vtl")
+
 	// Ignore any error when running in AWS, since that version of the binary won't
 	// have the embedded asset. This ideally would be done only when we're exporting
 	// the Method, but that would involve changing caller behavior since
 	// callers currently expect the method.Integration.Responses to be populated
 	// when this constructor returns.
 	if templateStringErr != nil {
-		templateString = _escFSMustString(false, "/resources/awsbinary/README.md")
+		templateString = embeddedMustString("resources/awsbinary/README.md")
 	}
 
 	// TODO - tell the caller that we don't need the list of all HTTP status

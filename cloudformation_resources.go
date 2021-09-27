@@ -26,7 +26,7 @@ func resourceOutputs(resourceName string,
 	logger *zerolog.Logger) ([]string, error) {
 
 	// Get the schema
-	schemaDef, schemaDefErr := _escFSString(false, "/resources/cloudformation-schema.json")
+	schemaDef, schemaDefErr := embeddedString("resources/cloudformation-schema.json")
 	if schemaDefErr != nil {
 		return nil, schemaDefErr
 	}

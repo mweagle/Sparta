@@ -20,7 +20,6 @@ GO111MODULE=on go get $GO_GET_FLAGS honnef.co/go/tools/cmd/...
 GO111MODULE=on go get $GO_GET_FLAGS golang.org/x/tools/cmd/goimports
 GO111MODULE=on go get $GO_GET_FLAGS github.com/fzipp/gocyclo
 GO111MODULE=on go get $GO_GET_FLAGS golang.org/x/lint/golint
-GO111MODULE=on go get $GO_GET_FLAGS github.com/mjibson/esc
 GO111MODULE=on go get $GO_GET_FLAGS github.com/securego/gosec/cmd/gosec
 GO111MODULE=on go get $GO_GET_FLAGS github.com/alexkohler/prealloc
 GO111MODULE=on go get $GO_GET_FLAGS github.com/client9/misspell/cmd/misspell

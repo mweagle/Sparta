@@ -157,7 +157,7 @@ func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *tem
 	keyParts := strings.Split(resourcePath, "/")
 	keyName := keyParts[len(keyParts)-1]
 
-	data, dataErr := _escFSString(false, resourcePath)
+	data, dataErr := embeddedString(resourcePath)
 	if dataErr == nil {
 		resource = &templateResource{
 			KeyName: keyName,
@@ -173,7 +173,7 @@ func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *tem
 			Str("Path", resourcePath).
 			Msg("Failed to find resource. Using default image.")
 
-		data, dataErr = _escFSString(false, defaultImagePath)
+		data, dataErr = embeddedString(defaultImagePath)
 		if dataErr == nil {
 			resource = &templateResource{
 				KeyName: keyName,

@@ -84,7 +84,7 @@ func Describe(serviceName string,
 		return buildErr
 	}
 
-	tmpl, err := template.New("description").Parse(_escFSMustString(false, "/resources/describe/template.html"))
+	tmpl, err := template.New("description").Parse(embeddedMustString("resources/describe/template.html"))
 	if err != nil {
 		return errors.New(err.Error())
 	}

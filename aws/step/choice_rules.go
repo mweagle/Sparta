@@ -20,534 +20,6 @@ import (
 // documentation
 
 ////////////////////////////////////////////////////////////////////////////////
-// NumericGreaterThanPath
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericGreaterThanPath comparison
-type NumericGreaterThanPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericGreaterThanPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable               string
-		NumericGreaterThanPath string
-	}{
-		Variable:               cmp.Variable,
-		NumericGreaterThanPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampLessThanPath
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampLessThanPath comparison
-type TimestampLessThanPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampLessThanPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable              string
-		TimestampLessThanPath string
-	}{
-		Variable:              cmp.Variable,
-		TimestampLessThanPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringGreaterThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// StringGreaterThanEquals comparison
-type StringGreaterThanEquals struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringGreaterThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                string
-		StringGreaterThanEquals string
-	}{
-		Variable:                cmp.Variable,
-		StringGreaterThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericGreaterThan
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericGreaterThan comparison
-type NumericGreaterThan struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericGreaterThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable           string
-		NumericGreaterThan int64
-	}{
-		Variable:           cmp.Variable,
-		NumericGreaterThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampEquals comparison
-type TimestampEquals struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable        string
-		TimestampEquals time.Time
-	}{
-		Variable:        cmp.Variable,
-		TimestampEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampLessThan
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampLessThan comparison
-type TimestampLessThan struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampLessThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable          string
-		TimestampLessThan time.Time
-	}{
-		Variable:          cmp.Variable,
-		TimestampLessThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampGreaterThanPath
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampGreaterThanPath comparison
-type TimestampGreaterThanPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampGreaterThanPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                 string
-		TimestampGreaterThanPath string
-	}{
-		Variable:                 cmp.Variable,
-		TimestampGreaterThanPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// IsPresent
-////////////////////////////////////////////////////////////////////////////////
-
-// IsPresent comparison
-type IsPresent struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *IsPresent) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable  string
-		IsPresent string
-	}{
-		Variable:  cmp.Variable,
-		IsPresent: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// IsString
-////////////////////////////////////////////////////////////////////////////////
-
-// IsString comparison
-type IsString struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *IsString) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable string
-		IsString string
-	}{
-		Variable: cmp.Variable,
-		IsString: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringLessThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// StringLessThanEquals comparison
-type StringLessThanEquals struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringLessThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable             string
-		StringLessThanEquals string
-	}{
-		Variable:             cmp.Variable,
-		StringLessThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericEquals comparison
-type NumericEquals struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable      string
-		NumericEquals int64
-	}{
-		Variable:      cmp.Variable,
-		NumericEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// BooleanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// BooleanEquals comparison
-type BooleanEquals struct {
-	Comparison
-	Variable string
-	Value    interface{}
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *BooleanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable      string
-		BooleanEquals interface{}
-	}{
-		Variable:      cmp.Variable,
-		BooleanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringGreaterThanPath
-////////////////////////////////////////////////////////////////////////////////
-
-// StringGreaterThanPath comparison
-type StringGreaterThanPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringGreaterThanPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable              string
-		StringGreaterThanPath string
-	}{
-		Variable:              cmp.Variable,
-		StringGreaterThanPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringGreaterThan
-////////////////////////////////////////////////////////////////////////////////
-
-// StringGreaterThan comparison
-type StringGreaterThan struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringGreaterThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable          string
-		StringGreaterThan string
-	}{
-		Variable:          cmp.Variable,
-		StringGreaterThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringMatches
-////////////////////////////////////////////////////////////////////////////////
-
-// StringMatches comparison
-type StringMatches struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringMatches) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable      string
-		StringMatches string
-	}{
-		Variable:      cmp.Variable,
-		StringMatches: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// IsTimestamp
-////////////////////////////////////////////////////////////////////////////////
-
-// IsTimestamp comparison
-type IsTimestamp struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *IsTimestamp) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable    string
-		IsTimestamp string
-	}{
-		Variable:    cmp.Variable,
-		IsTimestamp: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericEqualsPath
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericEqualsPath comparison
-type NumericEqualsPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericEqualsPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable          string
-		NumericEqualsPath string
-	}{
-		Variable:          cmp.Variable,
-		NumericEqualsPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampLessThanEqualsPath
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampLessThanEqualsPath comparison
-type TimestampLessThanEqualsPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampLessThanEqualsPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                    string
-		TimestampLessThanEqualsPath string
-	}{
-		Variable:                    cmp.Variable,
-		TimestampLessThanEqualsPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampGreaterThanEqualsPath
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampGreaterThanEqualsPath comparison
-type TimestampGreaterThanEqualsPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampGreaterThanEqualsPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                       string
-		TimestampGreaterThanEqualsPath string
-	}{
-		Variable:                       cmp.Variable,
-		TimestampGreaterThanEqualsPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericGreaterThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericGreaterThanEquals comparison
-type NumericGreaterThanEquals struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericGreaterThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                 string
-		NumericGreaterThanEquals int64
-	}{
-		Variable:                 cmp.Variable,
-		NumericGreaterThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampLessThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampLessThanEquals comparison
-type TimestampLessThanEquals struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampLessThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                string
-		TimestampLessThanEquals time.Time
-	}{
-		Variable:                cmp.Variable,
-		TimestampLessThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringEqualsPath
-////////////////////////////////////////////////////////////////////////////////
-
-// StringEqualsPath comparison
-type StringEqualsPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringEqualsPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable         string
-		StringEqualsPath string
-	}{
-		Variable:         cmp.Variable,
-		StringEqualsPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringLessThanPath
-////////////////////////////////////////////////////////////////////////////////
-
-// StringLessThanPath comparison
-type StringLessThanPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringLessThanPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable           string
-		StringLessThanPath string
-	}{
-		Variable:           cmp.Variable,
-		StringLessThanPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericLessThanPath
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericLessThanPath comparison
-type NumericLessThanPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericLessThanPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable            string
-		NumericLessThanPath string
-	}{
-		Variable:            cmp.Variable,
-		NumericLessThanPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // NumericLessThanEquals
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -566,138 +38,6 @@ func (cmp *NumericLessThanEquals) MarshalJSON() ([]byte, error) {
 	}{
 		Variable:              cmp.Variable,
 		NumericLessThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampGreaterThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampGreaterThanEquals comparison
-type TimestampGreaterThanEquals struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampGreaterThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                   string
-		TimestampGreaterThanEquals time.Time
-	}{
-		Variable:                   cmp.Variable,
-		TimestampGreaterThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// IsNumeric
-////////////////////////////////////////////////////////////////////////////////
-
-// IsNumeric comparison
-type IsNumeric struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *IsNumeric) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable  string
-		IsNumeric string
-	}{
-		Variable:  cmp.Variable,
-		IsNumeric: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringLessThanEqualsPath
-////////////////////////////////////////////////////////////////////////////////
-
-// StringLessThanEqualsPath comparison
-type StringLessThanEqualsPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringLessThanEqualsPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                 string
-		StringLessThanEqualsPath string
-	}{
-		Variable:                 cmp.Variable,
-		StringLessThanEqualsPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericLessThanEqualsPath
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericLessThanEqualsPath comparison
-type NumericLessThanEqualsPath struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericLessThanEqualsPath) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                  string
-		NumericLessThanEqualsPath string
-	}{
-		Variable:                  cmp.Variable,
-		NumericLessThanEqualsPath: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringLessThan
-////////////////////////////////////////////////////////////////////////////////
-
-// StringLessThan comparison
-type StringLessThan struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringLessThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable       string
-		StringLessThan string
-	}{
-		Variable:       cmp.Variable,
-		StringLessThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampGreaterThan
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampGreaterThan comparison
-type TimestampGreaterThan struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampGreaterThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable             string
-		TimestampGreaterThan time.Time
-	}{
-		Variable:             cmp.Variable,
-		TimestampGreaterThan: cmp.Value,
 	})
 }
 
@@ -724,24 +64,156 @@ func (cmp *IsBoolean) MarshalJSON() ([]byte, error) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// StringGreaterThanEqualsPath
+// StringLessThanPath
 ////////////////////////////////////////////////////////////////////////////////
 
-// StringGreaterThanEqualsPath comparison
-type StringGreaterThanEqualsPath struct {
+// StringLessThanPath comparison
+type StringLessThanPath struct {
 	Comparison
 	Variable string
 	Value    string
 }
 
 // MarshalJSON for custom marshalling
-func (cmp *StringGreaterThanEqualsPath) MarshalJSON() ([]byte, error) {
+func (cmp *StringLessThanPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable           string
+		StringLessThanPath string
+	}{
+		Variable:           cmp.Variable,
+		StringLessThanPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampLessThanPath
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampLessThanPath comparison
+type TimestampLessThanPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampLessThanPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable              string
+		TimestampLessThanPath string
+	}{
+		Variable:              cmp.Variable,
+		TimestampLessThanPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampLessThanEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampLessThanEqualsPath comparison
+type TimestampLessThanEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampLessThanEqualsPath) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Variable                    string
-		StringGreaterThanEqualsPath string
+		TimestampLessThanEqualsPath string
 	}{
 		Variable:                    cmp.Variable,
-		StringGreaterThanEqualsPath: cmp.Value,
+		TimestampLessThanEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringLessThanEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// StringLessThanEquals comparison
+type StringLessThanEquals struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringLessThanEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable             string
+		StringLessThanEquals string
+	}{
+		Variable:             cmp.Variable,
+		StringLessThanEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringGreaterThanEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// StringGreaterThanEquals comparison
+type StringGreaterThanEquals struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringGreaterThanEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                string
+		StringGreaterThanEquals string
+	}{
+		Variable:                cmp.Variable,
+		StringGreaterThanEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericEquals comparison
+type NumericEquals struct {
+	Comparison
+	Variable string
+	Value    int64
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable      string
+		NumericEquals int64
+	}{
+		Variable:      cmp.Variable,
+		NumericEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericGreaterThanPath
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericGreaterThanPath comparison
+type NumericGreaterThanPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericGreaterThanPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable               string
+		NumericGreaterThanPath string
+	}{
+		Variable:               cmp.Variable,
+		NumericGreaterThanPath: cmp.Value,
 	})
 }
 
@@ -790,24 +262,90 @@ func (cmp *BooleanEqualsPath) MarshalJSON() ([]byte, error) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// TimestampEqualsPath
+// TimestampGreaterThanPath
 ////////////////////////////////////////////////////////////////////////////////
 
-// TimestampEqualsPath comparison
-type TimestampEqualsPath struct {
+// TimestampGreaterThanPath comparison
+type TimestampGreaterThanPath struct {
 	Comparison
 	Variable string
 	Value    string
 }
 
 // MarshalJSON for custom marshalling
-func (cmp *TimestampEqualsPath) MarshalJSON() ([]byte, error) {
+func (cmp *TimestampGreaterThanPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                 string
+		TimestampGreaterThanPath string
+	}{
+		Variable:                 cmp.Variable,
+		TimestampGreaterThanPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringMatches
+////////////////////////////////////////////////////////////////////////////////
+
+// StringMatches comparison
+type StringMatches struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringMatches) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable      string
+		StringMatches string
+	}{
+		Variable:      cmp.Variable,
+		StringMatches: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringGreaterThanPath
+////////////////////////////////////////////////////////////////////////////////
+
+// StringGreaterThanPath comparison
+type StringGreaterThanPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringGreaterThanPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable              string
+		StringGreaterThanPath string
+	}{
+		Variable:              cmp.Variable,
+		StringGreaterThanPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericLessThanPath
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericLessThanPath comparison
+type NumericLessThanPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericLessThanPath) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Variable            string
-		TimestampEqualsPath string
+		NumericLessThanPath string
 	}{
 		Variable:            cmp.Variable,
-		TimestampEqualsPath: cmp.Value,
+		NumericLessThanPath: cmp.Value,
 	})
 }
 
@@ -856,6 +394,94 @@ func (cmp *NumericLessThan) MarshalJSON() ([]byte, error) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// BooleanEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// BooleanEquals comparison
+type BooleanEquals struct {
+	Comparison
+	Variable string
+	Value    interface{}
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *BooleanEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable      string
+		BooleanEquals interface{}
+	}{
+		Variable:      cmp.Variable,
+		BooleanEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericGreaterThanEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericGreaterThanEquals comparison
+type NumericGreaterThanEquals struct {
+	Comparison
+	Variable string
+	Value    int64
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericGreaterThanEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                 string
+		NumericGreaterThanEquals int64
+	}{
+		Variable:                 cmp.Variable,
+		NumericGreaterThanEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// IsTimestamp
+////////////////////////////////////////////////////////////////////////////////
+
+// IsTimestamp comparison
+type IsTimestamp struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *IsTimestamp) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable    string
+		IsTimestamp string
+	}{
+		Variable:    cmp.Variable,
+		IsTimestamp: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringGreaterThanEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// StringGreaterThanEqualsPath comparison
+type StringGreaterThanEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringGreaterThanEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                    string
+		StringGreaterThanEqualsPath string
+	}{
+		Variable:                    cmp.Variable,
+		StringGreaterThanEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // IsNull
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -874,5 +500,379 @@ func (cmp *IsNull) MarshalJSON() ([]byte, error) {
 	}{
 		Variable: cmp.Variable,
 		IsNull:   cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// IsString
+////////////////////////////////////////////////////////////////////////////////
+
+// IsString comparison
+type IsString struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *IsString) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable string
+		IsString string
+	}{
+		Variable: cmp.Variable,
+		IsString: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringLessThanEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// StringLessThanEqualsPath comparison
+type StringLessThanEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringLessThanEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                 string
+		StringLessThanEqualsPath string
+	}{
+		Variable:                 cmp.Variable,
+		StringLessThanEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampGreaterThanEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampGreaterThanEqualsPath comparison
+type TimestampGreaterThanEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampGreaterThanEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                       string
+		TimestampGreaterThanEqualsPath string
+	}{
+		Variable:                       cmp.Variable,
+		TimestampGreaterThanEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericGreaterThan
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericGreaterThan comparison
+type NumericGreaterThan struct {
+	Comparison
+	Variable string
+	Value    int64
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericGreaterThan) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable           string
+		NumericGreaterThan int64
+	}{
+		Variable:           cmp.Variable,
+		NumericGreaterThan: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampEquals comparison
+type TimestampEquals struct {
+	Comparison
+	Variable string
+	Value    time.Time
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable        string
+		TimestampEquals time.Time
+	}{
+		Variable:        cmp.Variable,
+		TimestampEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampGreaterThan
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampGreaterThan comparison
+type TimestampGreaterThan struct {
+	Comparison
+	Variable string
+	Value    time.Time
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampGreaterThan) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable             string
+		TimestampGreaterThan time.Time
+	}{
+		Variable:             cmp.Variable,
+		TimestampGreaterThan: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampLessThanEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampLessThanEquals comparison
+type TimestampLessThanEquals struct {
+	Comparison
+	Variable string
+	Value    time.Time
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampLessThanEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                string
+		TimestampLessThanEquals time.Time
+	}{
+		Variable:                cmp.Variable,
+		TimestampLessThanEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampGreaterThanEquals
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampGreaterThanEquals comparison
+type TimestampGreaterThanEquals struct {
+	Comparison
+	Variable string
+	Value    time.Time
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampGreaterThanEquals) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                   string
+		TimestampGreaterThanEquals time.Time
+	}{
+		Variable:                   cmp.Variable,
+		TimestampGreaterThanEquals: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// IsNumeric
+////////////////////////////////////////////////////////////////////////////////
+
+// IsNumeric comparison
+type IsNumeric struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *IsNumeric) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable  string
+		IsNumeric string
+	}{
+		Variable:  cmp.Variable,
+		IsNumeric: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// StringEqualsPath comparison
+type StringEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable         string
+		StringEqualsPath string
+	}{
+		Variable:         cmp.Variable,
+		StringEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericEqualsPath comparison
+type NumericEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable          string
+		NumericEqualsPath string
+	}{
+		Variable:          cmp.Variable,
+		NumericEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringLessThan
+////////////////////////////////////////////////////////////////////////////////
+
+// StringLessThan comparison
+type StringLessThan struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringLessThan) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable       string
+		StringLessThan string
+	}{
+		Variable:       cmp.Variable,
+		StringLessThan: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// StringGreaterThan
+////////////////////////////////////////////////////////////////////////////////
+
+// StringGreaterThan comparison
+type StringGreaterThan struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *StringGreaterThan) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable          string
+		StringGreaterThan string
+	}{
+		Variable:          cmp.Variable,
+		StringGreaterThan: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampLessThan
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampLessThan comparison
+type TimestampLessThan struct {
+	Comparison
+	Variable string
+	Value    time.Time
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampLessThan) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable          string
+		TimestampLessThan time.Time
+	}{
+		Variable:          cmp.Variable,
+		TimestampLessThan: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TimestampEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// TimestampEqualsPath comparison
+type TimestampEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *TimestampEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable            string
+		TimestampEqualsPath string
+	}{
+		Variable:            cmp.Variable,
+		TimestampEqualsPath: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// IsPresent
+////////////////////////////////////////////////////////////////////////////////
+
+// IsPresent comparison
+type IsPresent struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *IsPresent) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable  string
+		IsPresent string
+	}{
+		Variable:  cmp.Variable,
+		IsPresent: cmp.Value,
+	})
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NumericLessThanEqualsPath
+////////////////////////////////////////////////////////////////////////////////
+
+// NumericLessThanEqualsPath comparison
+type NumericLessThanEqualsPath struct {
+	Comparison
+	Variable string
+	Value    string
+}
+
+// MarshalJSON for custom marshalling
+func (cmp *NumericLessThanEqualsPath) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable                  string
+		NumericLessThanEqualsPath string
+	}{
+		Variable:                  cmp.Variable,
+		NumericLessThanEqualsPath: cmp.Value,
 	})
 }

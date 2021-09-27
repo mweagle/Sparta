@@ -519,9 +519,7 @@ func (rule *ReceiptRule) toResourceRule(serviceName string,
 		Actions:     make([]*cfCustomResources.SESLambdaEventSourceResourceAction, 0),
 		Recipients:  make([]string, 0),
 	}
-	for _, eachRecipient := range rule.Recipients {
-		resourceRule.Recipients = append(resourceRule.Recipients, eachRecipient)
-	}
+	resourceRule.Recipients = append(resourceRule.Recipients, rule.Recipients...)
 	if rule.TLSPolicy != "" {
 		resourceRule.TLSPolicy = rule.TLSPolicy
 	}
