@@ -1,10 +1,13 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
 	"time"
+
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
 
 	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
 
@@ -47,8 +50,8 @@ func TestUnzip(t *testing.T) {
 	event := mockZipResourceEvent(t)
 
 	// Put it
-	awsSession := awsSession(&logger)
-	createOutputs, createError := zipResource.Create(awsSession,
+	awsConfig, _ := awsv2Config.LoadDefaultConfig(context.Background())
+	createOutputs, createError := zipResource.Create(awsConfig,
 		event,
 		&logger)
 	if nil != createError {
@@ -56,7 +59,7 @@ func TestUnzip(t *testing.T) {
 	}
 	t.Logf("TestUnzip outputs: %#v", createOutputs)
 
-	deleteOutputs, deleteError := zipResource.Delete(awsSession,
+	deleteOutputs, deleteError := zipResource.Delete(awsConfig,
 		event,
 		&logger)
 	if nil != deleteError {

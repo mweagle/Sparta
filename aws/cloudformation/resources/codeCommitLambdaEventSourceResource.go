@@ -1,11 +1,13 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/codecommit"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CodeCommit "github.com/aws/aws-sdk-go-v2/service/codecommit"
+	awsv2CodeCommitTypes "github.com/aws/aws-sdk-go-v2/service/codecommit/types"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
@@ -27,7 +29,7 @@ type CodeCommitLambdaEventSourceResource struct {
 }
 
 func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetActive bool,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := CodeCommitLambdaEventSourceResourceRequest{}
@@ -40,24 +42,24 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 		Msg("CodeCommit Custom Resource info")
 
 	// We need the repo in here...
-	codeCommitSvc := codecommit.New(session)
+	codeCommitSvc := awsv2CodeCommit.NewFromConfig(awsConfig)
 
 	// Get the current subscriptions...
-	ccInput := &codecommit.GetRepositoryTriggersInput{
-		RepositoryName: aws.String(request.RepositoryName),
+	ccInput := &awsv2CodeCommit.GetRepositoryTriggersInput{
+		RepositoryName: awsv2.String(request.RepositoryName),
 	}
-	triggers, triggersErr := codeCommitSvc.GetRepositoryTriggers(ccInput)
+	triggers, triggersErr := codeCommitSvc.GetRepositoryTriggers(context.Background(), ccInput)
 	if triggersErr != nil {
 		return nil, triggersErr
 	}
 
 	// Find the lambda ARN for this function...
-	putTriggers := make([]*codecommit.RepositoryTrigger, 0)
-	var preexistingTrigger *codecommit.RepositoryTrigger
+	putTriggers := make([]awsv2CodeCommitTypes.RepositoryTrigger, 0)
+	var preexistingTrigger *awsv2CodeCommitTypes.RepositoryTrigger
 	for _, eachTrigger := range triggers.Triggers {
 		// Treat the preexisting one specially
 		if *eachTrigger.DestinationArn == request.LambdaTargetArn {
-			preexistingTrigger = eachTrigger
+			preexistingTrigger = &eachTrigger
 		} else {
 			putTriggers = append(putTriggers, eachTrigger)
 		}
@@ -70,39 +72,39 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 		Interface("LambdaArn", request.LambdaTargetArn).
 		Msg("Current CodeCommit trigger status")
 
-	reqBranches := make([]*string, len(request.Branches))
+	reqBranches := make([]string, len(request.Branches))
 	for idx, eachBranch := range request.Branches {
-		reqBranches[idx] = aws.String(eachBranch)
+		reqBranches[idx] = eachBranch
 	}
-	reqEvents := make([]*string, len(request.Events))
+	reqEvents := make([]awsv2CodeCommitTypes.RepositoryTriggerEventEnum, len(request.Events))
 	for idx, eachEvent := range request.Events {
-		reqEvents[idx] = aws.String(eachEvent)
+		reqEvents[idx] = awsv2CodeCommitTypes.RepositoryTriggerEventEnum(eachEvent)
 	}
 	if len(reqEvents) <= 0 {
 		logger.Info().Msg("No events found. Defaulting to `all`.")
-		reqEvents = []*string{
-			aws.String("all"),
+		reqEvents = []awsv2CodeCommitTypes.RepositoryTriggerEventEnum{
+			awsv2CodeCommitTypes.RepositoryTriggerEventEnumAll,
 		}
 	}
 	if isTargetActive && preexistingTrigger == nil {
 		// Add one...
-		putTriggers = append(putTriggers, &codecommit.RepositoryTrigger{
-			DestinationArn: aws.String(request.LambdaTargetArn),
-			Name:           aws.String(request.TriggerName),
+		putTriggers = append(putTriggers, awsv2CodeCommitTypes.RepositoryTrigger{
+			DestinationArn: awsv2.String(request.LambdaTargetArn),
+			Name:           awsv2.String(request.TriggerName),
 			Branches:       reqBranches,
 			Events:         reqEvents,
 		})
 	} else if !isTargetActive {
 		// It's already removed...
-	} else if isTargetActive && preexistingTrigger != nil {
-		putTriggers = append(putTriggers, preexistingTrigger)
+	} else if isTargetActive {
+		putTriggers = append(putTriggers, *preexistingTrigger)
 	}
 	// Put it back...
-	putTriggersInput := &codecommit.PutRepositoryTriggersInput{
-		RepositoryName: aws.String(request.RepositoryName),
+	putTriggersInput := &awsv2CodeCommit.PutRepositoryTriggersInput{
+		RepositoryName: awsv2.String(request.RepositoryName),
 		Triggers:       putTriggers,
 	}
-	putTriggersResp, putTriggersRespErr := codeCommitSvc.PutRepositoryTriggers(putTriggersInput)
+	putTriggersResp, putTriggersRespErr := codeCommitSvc.PutRepositoryTriggers(context.Background(), putTriggersInput)
 	// Just log it...
 	logger.Info().
 		Interface("Response", putTriggersResp).
@@ -119,22 +121,22 @@ func (command *CodeCommitLambdaEventSourceResource) IAMPrivileges() []string {
 }
 
 // Create implements the custom resource create operation
-func (command CodeCommitLambdaEventSourceResource) Create(awsSession *session.Session,
+func (command CodeCommitLambdaEventSourceResource) Create(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsSession, event, logger)
+	return command.updateRegistration(true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command CodeCommitLambdaEventSourceResource) Update(awsSession *session.Session,
+func (command CodeCommitLambdaEventSourceResource) Update(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsSession, event, logger)
+	return command.updateRegistration(true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command CodeCommitLambdaEventSourceResource) Delete(awsSession *session.Session,
+func (command CodeCommitLambdaEventSourceResource) Delete(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(false, awsSession, event, logger)
+	return command.updateRegistration(false, awsConfig, event, logger)
 }

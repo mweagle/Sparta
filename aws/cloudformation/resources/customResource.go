@@ -9,15 +9,17 @@ import (
 	"os"
 	"strings"
 
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+
+	smithyLogging "github.com/aws/smithy-go/logging"
 	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 
 	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -162,15 +164,15 @@ func init() {
 
 // CustomResourceCommand defines operations that a CustomResource must implement.
 type CustomResourceCommand interface {
-	Create(session *session.Session,
+	Create(awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 
-	Update(session *session.Session,
+	Update(awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 
-	Delete(session *session.Session,
+	Delete(awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 }
@@ -185,7 +187,7 @@ type CustomResourcePrivilegedCommand interface {
 // cloudFormationCustomResourceType a string for the resource name that represents a
 // custom CloudFormation resource typename
 func cloudFormationCustomResourceType(resType string) string {
-	// Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
+	// Ref: https://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
 	// Use the AWS::CloudFormation::CustomResource or Custom::MyCustomResourceTypeName
 	return fmt.Sprintf("%s%s", CustomResourceTypePrefix, resType)
 }
@@ -194,8 +196,11 @@ type zerologProxy struct {
 	logger *zerolog.Logger
 }
 
-func (proxy *zerologProxy) Log(args ...interface{}) {
-	proxy.logger.Info().Msgf("%v", args)
+// Log is a utility function to comply with the AWS signature
+func (proxy *zerologProxy) Logf(classification smithyLogging.Classification,
+	format string,
+	args ...interface{}) {
+	proxy.logger.Debug().Msg(fmt.Sprintf(format, args...))
 }
 
 // CloudFormationLambdaEvent is the event to a resource
@@ -224,7 +229,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 		status = "SUCCESS"
 	}
 	// Env vars:
-	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+	// https://docs.awsv2.amazon.com/lambda/latest/dg/current-supported-versions.html
 	logGroupName := os.Getenv("AWS_LAMBDA_LOG_GROUP_NAME")
 	logStreamName := os.Getenv("AWS_LAMBDA_LOG_STREAM_NAME")
 	reasonText := ""
@@ -242,7 +247,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	// This value should be an identifier unique to the custom resource vendor,
 	// and can be up to 1 Kb in size. The value must be a non-empty string and
 	// must be identical for all responses for the same resource.
-	// Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes-create.html
+	// Ref: https://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes-create.html
 	physicalResourceID := fmt.Sprintf("LogStreamName: %s", logStreamName)
 	responseData := map[string]interface{}{
 		"Status":             status,
@@ -307,7 +312,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	// Although it seems reasonable to set the Content-Type to "application/json" - don't.
 	// The Content-Type must be an empty string in order for the
 	// AWS Signature checker to pass.
-	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
+	// Ref: http://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
 	req.Header.Set("content-type", "")
 
 	client := &http.Client{}
@@ -338,34 +343,24 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 // Returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
-func awsSession(logger *zerolog.Logger) *session.Session {
-	awsConfig := &aws.Config{
-		CredentialsChainVerboseErrors: aws.Bool(true),
-	}
+func newAWSConfig(logger *zerolog.Logger) awsv2.Config {
 
+	logger.Debug().
+		Str("Name", awsv2.SDKName).
+		Str("Version", awsv2.SDKVersion).
+		Msg("AWS SDK Info.")
+
+	awsConfig, awsConfigErr := awsv2Config.LoadDefaultConfig(context.Background())
+	if awsConfigErr != nil {
+		panic("WAT")
+	}
 	// Log AWS calls if needed
 	switch logger.GetLevel() {
 	case zerolog.DebugLevel:
-		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
+		awsConfig.ClientLogMode = awsv2.LogRequest | awsv2.LogResponse | awsv2.LogRetries
 	}
 	awsConfig.Logger = &zerologProxy{logger}
-	sess, sessionErr := session.NewSession(awsConfig)
-	if sessionErr != nil {
-		logger.Warn().
-			Err(sessionErr).
-			Msg("Failed to attach AWS Session logger")
-	} else {
-		sess.Handlers.Send.PushFront(func(r *request.Request) {
-			logger.Debug().
-				Str("Service", r.ClientInfo.ServiceName).
-				Str("Operation", r.Operation.Name).
-				Str("Method", r.Operation.HTTPMethod).
-				Str("Path", r.Operation.HTTPPath).
-				Interface("Payload", r.Params).
-				Msg("AWS Request")
-		})
-	}
-	return sess
+	return awsConfig
 }
 
 // CloudFormationLambdaCustomResourceHandler is an adapter
@@ -380,26 +375,24 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand,
 		if !lambdaCtxOk {
 			return errors.Errorf("Failed to access AWS Lambda Context from ctx argument")
 		}
-		customResourceSession := awsSession(logger)
+		customResourceConfig := newAWSConfig(logger)
 		var opResults map[string]interface{}
 		var opErr error
 		executeOperation := false
 		// If we're in cleanup mode, then skip it...
 		// Don't forward to the CustomAction handler iff we're in CLEANUP mode
-		describeStacksInput := &cloudformation.DescribeStacksInput{
-			StackName: aws.String(event.StackID),
+		describeStacksInput := &awsv2CF.DescribeStacksInput{
+			StackName: awsv2.String(event.StackID),
 		}
-		cfSvc := cloudformation.New(customResourceSession)
-		describeStacksOutput, describeStacksOutputErr := cfSvc.DescribeStacks(describeStacksInput)
+		cfSvc := awsv2CF.NewFromConfig(customResourceConfig)
+		describeStacksOutput, describeStacksOutputErr := cfSvc.DescribeStacks(context.Background(), describeStacksInput)
 		if nil != describeStacksOutputErr {
 			opErr = describeStacksOutputErr
+		} else if len(describeStacksOutput.Stacks) <= 0 {
+			opErr = errors.Errorf("DescribeStack failed: %s", event.StackID)
 		} else {
 			stackDesc := describeStacksOutput.Stacks[0]
-			if stackDesc == nil {
-				opErr = errors.Errorf("DescribeStack failed: %s", event.StackID)
-			} else {
-				executeOperation = (*stackDesc.StackStatus != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
-			}
+			executeOperation = (stackDesc.StackStatus != awsv2CFTypes.StackStatusUpdateCompleteCleanupInProgress)
 		}
 
 		logger.Debug().
@@ -411,11 +404,11 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand,
 		if opErr == nil && executeOperation {
 			switch event.RequestType {
 			case CreateOperation:
-				opResults, opErr = command.Create(customResourceSession, &event, logger)
+				opResults, opErr = command.Create(customResourceConfig, &event, logger)
 			case DeleteOperation:
-				opResults, opErr = command.Delete(customResourceSession, &event, logger)
+				opResults, opErr = command.Delete(customResourceConfig, &event, logger)
 			case UpdateOperation:
-				opResults, opErr = command.Update(customResourceSession, &event, logger)
+				opResults, opErr = command.Update(customResourceConfig, &event, logger)
 			}
 		}
 		// Notify CloudFormation of the result

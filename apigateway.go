@@ -1,15 +1,16 @@
 package sparta
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/apigateway"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2APIG "github.com/aws/aws-sdk-go-v2/service/apigateway"
+	awsv2APIGTypes "github.com/aws/aws-sdk-go-v2/service/apigateway/types"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofapig "github.com/awslabs/goformation/v5/cloudformation/apigateway"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
@@ -20,7 +21,7 @@ import (
 type APIGateway interface {
 	LogicalResourceName() string
 	Marshal(serviceName string,
-		session *session.Session,
+		awsConfig awsv2.Config,
 		lambdaFunctionCode *goflambda.Function_Code,
 		roleNameMap map[string]string,
 		template *gof.Template,
@@ -203,9 +204,9 @@ func corsOptionsGatewayMethod(api *API, restAPIID string, resourceID string) *go
 
 func apiStageInfo(apiName string,
 	stageName string,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
-	logger *zerolog.Logger) (*apigateway.Stage, error) {
+	logger *zerolog.Logger) (*awsv2APIGTypes.Stage, error) {
 
 	logger.Info().
 		Str("APIName", apiName).
@@ -216,13 +217,13 @@ func apiStageInfo(apiName string,
 		logger.Info().Msg(noopMessage("API Gateway check"))
 		return nil, nil
 	}
-
-	svc := apigateway.New(session)
-	restApisInput := &apigateway.GetRestApisInput{
-		Limit: aws.Int64(500),
+	ctxStageInfo := context.Background()
+	svc := awsv2APIG.NewFromConfig(awsConfig)
+	restApisInput := &awsv2APIG.GetRestApisInput{
+		Limit: awsv2.Int32(500),
 	}
 
-	restApisOutput, restApisOutputErr := svc.GetRestApis(restApisInput)
+	restApisOutput, restApisOutputErr := svc.GetRestApis(ctxStageInfo, restApisInput)
 	if nil != restApisOutputErr {
 		return nil, restApisOutputErr
 	}
@@ -240,22 +241,22 @@ func apiStageInfo(apiName string,
 		return nil, nil
 	}
 	// API exists...does the stage name exist?
-	stagesInput := &apigateway.GetStagesInput{
-		RestApiId: aws.String(restAPIID),
+	stagesInput := &awsv2APIG.GetStagesInput{
+		RestApiId: awsv2.String(restAPIID),
 	}
-	stagesOutput, stagesOutputErr := svc.GetStages(stagesInput)
+	stagesOutput, stagesOutputErr := svc.GetStages(ctxStageInfo, stagesInput)
 	if nil != stagesOutputErr {
 		return nil, stagesOutputErr
 	}
 
 	// Find this stage name...
-	var matchingStageOutput *apigateway.Stage
+	var matchingStageOutput *awsv2APIGTypes.Stage
 	for _, eachStage := range stagesOutput.Item {
 		if *eachStage.StageName == stageName {
 			if nil != matchingStageOutput {
 				return nil, fmt.Errorf("multiple stage matches for name: %s", stageName)
 			}
-			matchingStageOutput = eachStage
+			matchingStageOutput = &eachStage
 		}
 	}
 	if nil != matchingStageOutput {
@@ -553,7 +554,7 @@ func (api *API) Describe(targetNodeName string) (*DescriptionInfo, error) {
 
 // Marshal marshals the API data to a CloudFormation compatible representation
 func (api *API) Marshal(serviceName string,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	lambdaFunctionCode *goflambda.Function_Code,
 	roleNameMap map[string]string,
 	template *gof.Template,
@@ -706,7 +707,7 @@ func (api *API) Marshal(serviceName string,
 		stageName := api.stage.name
 		stageInfo, stageInfoErr := apiStageInfo(api.name,
 			stageName,
-			session,
+			awsConfig,
 			noop,
 			logger)
 		if nil != stageInfoErr {

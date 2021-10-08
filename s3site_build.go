@@ -4,15 +4,14 @@
 package sparta
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofs3 "github.com/awslabs/goformation/v5/cloudformation/s3"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -44,23 +43,23 @@ func (s3Site *S3Site) export(serviceName string,
 	logger *zerolog.Logger) error {
 
 	if s3Site.WebsiteConfiguration == nil {
-		s3Site.WebsiteConfiguration = &s3.WebsiteConfiguration{
-			ErrorDocument: &s3.ErrorDocument{
+		s3Site.WebsiteConfiguration = &awsv2S3Types.WebsiteConfiguration{
+			ErrorDocument: &awsv2S3Types.ErrorDocument{
 				Key: aws.String("error.html"),
 			},
-			IndexDocument: &s3.IndexDocument{
+			IndexDocument: &awsv2S3Types.IndexDocument{
 				Suffix: aws.String("index.html"),
 			},
 		}
 	}
 	// Ensure everything is set
 	if s3Site.WebsiteConfiguration.ErrorDocument == nil {
-		s3Site.WebsiteConfiguration.ErrorDocument = &s3.ErrorDocument{
+		s3Site.WebsiteConfiguration.ErrorDocument = &awsv2S3Types.ErrorDocument{
 			Key: aws.String("error.html"),
 		}
 	}
 	if s3Site.WebsiteConfiguration.IndexDocument == nil {
-		s3Site.WebsiteConfiguration.IndexDocument = &s3.IndexDocument{
+		s3Site.WebsiteConfiguration.IndexDocument = &awsv2S3Types.IndexDocument{
 			Suffix: aws.String("index.html"),
 		}
 	}

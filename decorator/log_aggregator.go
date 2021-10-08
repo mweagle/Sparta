@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	gofkinesis "github.com/awslabs/goformation/v5/cloudformation/kinesis"
@@ -90,7 +90,7 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/rs/zerolog"
 )
 
@@ -29,7 +29,7 @@ func helloZipLambda(ctx context.Context,
 func archiveHook(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 

@@ -29,7 +29,7 @@ package environments
 import (
   "fmt"
   "github.com/rs/zerolog"
-  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
   sparta "github.com/mweagle/Sparta"
 )
@@ -58,7 +58,7 @@ package environments
 
 import (
   "github.com/rs/zerolog"
-  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
   sparta "github.com/mweagle/Sparta"
 )
@@ -76,7 +76,7 @@ package environments
 
 import (
   "github.com/rs/zerolog"
-  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
   sparta "github.com/mweagle/Sparta"
 )

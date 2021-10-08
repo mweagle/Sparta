@@ -7,7 +7,7 @@ weight: 100
 
 # API V2 Gateway
 
-The API V2 Gateway service provides a way to expose a WebSocket API that is 
+The API V2 Gateway service provides a way to expose a WebSocket API that is
 supported by a set of Lambda functions. The AWS [blog post](https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/) supplies an excellent overview of
 the pros and cons of this approach that enables a near real time, pushed-based
 application. This section will provide an overview of how to configure a WebSocket
@@ -19,8 +19,8 @@ Similar to the AWS blog post, our WebSocket API will transmit messages of the fo
 
 ```json
 {
-    "message":"sendmessage",
-    "data":"hello world !"
+  "message": "sendmessage",
+  "data": "hello world !"
 }
 ```
 
@@ -30,13 +30,13 @@ We'll use [ws](https://github.com/hashrocket/ws) to test the API from the comman
 
 The Sparta service consists of three lambda functions:
 
-* `connectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
-* `disconnectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
-* `sendMessage(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
+- `connectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
+- `disconnectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
+- `sendMessage(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
 
 Our functions will use the [PROXY](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-create-api-as-simple-proxy) style integration and therefore accept an instance of the [APIGatewayWebsocketProxyRequest](https://godoc.org/github.com/aws/aws-lambda-gevents#APIGatewayWebsocketProxyRequest) type.
 
-Each function returns a `*wsResponse` instance that satisfies the __PROXY__ response:
+Each function returns a `*wsResponse` instance that satisfies the **PROXY** response:
 
 ```go
 type wsResponse struct {
@@ -84,7 +84,7 @@ The complement to `connectWorld` is `disconnectWorld` which is responsible for r
 
 ### sendMessage
 
-With the `connectWorld` and `disconnectWorld` connection management functions created, the core of the WebSocket API is `sendMessage`. This function is responsible for scanning over the set of registered _connectionIDs_ and forwarding a request to [PostConnectionWithContext](https://godoc.org/github.com/aws/aws-sdk-go/service/apigatewaymanagementapi#ApiGatewayManagementApi.PostToConnectionWithContext). This function sends the message to the registered connections.
+With the `connectWorld` and `disconnectWorld` connection management functions created, the core of the WebSocket API is `sendMessage`. This function is responsible for scanning over the set of registered _connectionIDs_ and forwarding a request to [PostConnectionWithContext](https://godoc.org/github.com/aws/aws-sdk-go-v2/service/apigatewaymanagementapi#ApiGatewayManagementApi.PostToConnectionWithContext). This function sends the message to the registered connections.
 
 The `sendMessage` function can be broken down into a few sections.
 
@@ -101,7 +101,7 @@ The first requirement is to setup the API Gateway Management service instance us
     apigwMgmtClient := apigwManagement.New(sess, aws.NewConfig().WithEndpoint(endpointURL))
 ```
 
-#### Validate Input 
+#### Validate Input
 
 The new step is to unmarshal and validate the incoming JSON request body:
 
@@ -169,9 +169,9 @@ These three functions are the core of the WebSocket service.
 
 The next step is to create the API V2 API object which is comprised of:
 
-* [Stage](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-stage.html)
-* [API](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html)
-* [Routes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html)
+- [Stage](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-stage.html)
+- [API](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html)
+- [Routes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html)
 
 There is one Stage and one API per service, but a given service (including this one) may include multiple Routes.
 
@@ -188,10 +188,10 @@ apiGateway, _ := sparta.NewAPIV2(sparta.Websocket,
 
 The `NewAPIV2` creation function requires:
 
-* The protocol to use (`sparta.Websocket`)
-* The name of the API (`sample`)
-* The [route selection expression](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-selection-expressions.html#apigateway-websocket-api-route-selection-expressions) that represents a JSONPath selection expression to map input data to the corresponding lambda function.
-* The stage
+- The protocol to use (`sparta.Websocket`)
+- The name of the API (`sample`)
+- The [route selection expression](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-selection-expressions.html#apigateway-websocket-api-route-selection-expressions) that represents a JSONPath selection expression to map input data to the corresponding lambda function.
+- The stage
 
 Once the API is defined, each route is associated with the API as in:
 
@@ -212,8 +212,8 @@ In comparison, the `sendmessage` routeKey value of `sendmessage` means that a pa
 
 ```json
 {
-    "message":"sendmessage",
-    "data":"hello world !"
+  "message": "sendmessage",
+  "data": "hello world !"
 }
 ```
 
@@ -244,17 +244,17 @@ Because the `lambdaSend` function also needs to invoke the API Gateway Managemen
 
 The final configuration step is to use the API gateway to create an instance of the `APIV2GatewayDecorator`. This decorator is responsible for:
 
-* Provisioning the DynamoDB table.
-* Ensuring DynamoDB CRUD permissions for all the AWS Lambda functions.
-* Publishing the table name into the Lambda function's Environment block.
-* Adding the WebSocket `wss://...` URL to the Stack's Outputs.
+- Provisioning the DynamoDB table.
+- Ensuring DynamoDB CRUD permissions for all the AWS Lambda functions.
+- Publishing the table name into the Lambda function's Environment block.
+- Adding the WebSocket `wss://...` URL to the Stack's Outputs.
 
 The decorator is created by a call to `NewConnectionTableDecorator` which accepts:
 
-* The environment variable to populate with the dynamically assigned DynamoDB table
-* The DynamoDB attribute name to use to store the connectionID
-* The read capacity units
-* The write capacity units
+- The environment variable to populate with the dynamically assigned DynamoDB table
+- The DynamoDB attribute name to use to store the connectionID
+- The read capacity units
+- The write capacity units
 
 For instance:
 
@@ -369,4 +369,4 @@ Remember to terminate the stack when you're done to avoid any unintentional cost
 
 ## References
 
-* The SpartaWebSocket application is modeled after the [https://github.com/aws-samples/simple-websockets-chat-app](https://github.com/aws-samples/simple-websockets-chat-app) sample.
+- The SpartaWebSocket application is modeled after the [https://github.com/aws-samples/simple-websockets-chat-app](https://github.com/aws-samples/simple-websockets-chat-app) sample.

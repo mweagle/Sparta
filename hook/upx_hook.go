@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/system"
 	"github.com/rs/zerolog"
@@ -28,7 +28,7 @@ func PostBuildUPXCompressHook(dockerImageName string) sparta.WorkflowHookHandler
 		serviceName string,
 		S3Bucket string,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 		logger.Info().

@@ -4,8 +4,11 @@
 package sparta
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"context"
+
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+
 	broadcast "github.com/dustin/go-broadcast"
 	tcell "github.com/gdamore/tcell/v2"
 	spartaAWS "github.com/mweagle/Sparta/aws"
@@ -36,6 +39,8 @@ func ExploreWithInputFilter(serviceName string,
 	linkerFlags string,
 	logger *zerolog.Logger) error {
 
+	exploreContext := context.Background()
+
 	// We need to setup the log output view so that we have a writer for the
 	// log output
 	logDataView := tview.NewTextView().
@@ -50,14 +55,14 @@ func ExploreWithInputFilter(serviceName string,
 	logger = &newLogger
 
 	// Great - everybody get's an aws session
-	awsSession := spartaAWS.NewSession(logger)
+	awsConfig := spartaAWS.NewConfig(logger)
 	// Go get the stack and put the ARNs in the list of things. For that
 	// we need to get the stack resources...
-	cfSvc := cloudformation.New(awsSession)
-	input := &cloudformation.DescribeStackResourcesInput{
-		StackName: aws.String(serviceName),
+	cfSvc := awsv2CF.NewFromConfig(awsConfig)
+	input := &awsv2CF.DescribeStackResourcesInput{
+		StackName: awsv2.String(serviceName),
 	}
-	stackResourceOutputs, stackResourceOutputsErr := cfSvc.DescribeStackResources(input)
+	stackResourceOutputs, stackResourceOutputsErr := cfSvc.DescribeStackResources(exploreContext, input)
 	if stackResourceOutputsErr != nil {
 		return stackResourceOutputsErr
 	}
@@ -73,21 +78,21 @@ func ExploreWithInputFilter(serviceName string,
 
 	// Setup the rest of them...
 	focusTargets := []tview.Primitive{}
-	dropdown, selectorFocusable := newFunctionSelector(awsSession,
+	dropdown, selectorFocusable := newFunctionSelector(awsConfig,
 		stackResourceOutputs.StackResources,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
 		channelMap[broadcasterFunctionSelect],
 		logger)
-	eventDropdown, eventFocusable := newEventInputSelector(awsSession,
+	eventDropdown, eventFocusable := newEventInputSelector(awsConfig,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
 		inputExtensions,
 		channelMap[broadcasterFunctionSelect],
 		logger)
-	outputView, outputViewFocusable := newCloudWatchLogTailView(awsSession,
+	outputView, outputViewFocusable := newCloudWatchLogTailView(awsConfig,
 		application,
 		lambdaAWSInfos,
 		settingsMap,

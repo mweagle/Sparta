@@ -11,8 +11,8 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3/s3manager"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rs/zerolog"
 )

@@ -4,12 +4,13 @@
 package sparta
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -30,17 +31,17 @@ func Status(serviceName string,
 	redact bool,
 	logger *zerolog.Logger) error {
 
-	awsSession := spartaAWS.NewSession(logger)
-	cfSvc := cloudformation.New(awsSession)
+	awsConfig := spartaAWS.NewConfig(logger)
+	cfSvc := awsv2CF.NewFromConfig(awsConfig)
 
-	params := &cloudformation.DescribeStacksInput{
+	params := &awsv2CF.DescribeStacksInput{
 		StackName: aws.String(serviceName),
 	}
-	describeStacksResponse, describeStacksResponseErr := cfSvc.DescribeStacks(params)
+	describeStacksResponse, describeStacksResponseErr := cfSvc.DescribeStacks(context.Background(), params)
 
 	if describeStacksResponseErr != nil {
 		if strings.Contains(describeStacksResponseErr.Error(), "does not exist") {
-			logger.Info().Str("Region", *awsSession.Config.Region).Msg("Stack does not exist")
+			logger.Info().Str("Region", awsConfig.Region).Msg("Stack does not exist")
 			return nil
 		}
 		return describeStacksResponseErr
@@ -56,9 +57,10 @@ func Status(serviceName string,
 		return stringValue
 	}
 	if redact {
-		input := &sts.GetCallerIdentityInput{}
-		stsSvc := sts.New(awsSession)
-		identityResponse, identityResponseErr := stsSvc.GetCallerIdentity(input)
+		input := &awsv2STS.GetCallerIdentityInput{}
+
+		stsSvc := awsv2STS.NewFromConfig(awsConfig)
+		identityResponse, identityResponseErr := stsSvc.GetCallerIdentity(context.Background(), input)
 		if identityResponseErr != nil {
 			return identityResponseErr
 		}
@@ -76,7 +78,7 @@ func Status(serviceName string,
 	stackInfo := describeStacksResponse.Stacks[0]
 	logger.Info().Str("Id", redactor(*stackInfo.StackId)).Msg("StackId")
 	logger.Info().Str("Description", redactor(*stackInfo.Description)).Msg("Description")
-	logger.Info().Str("State", *stackInfo.StackStatus).Msg("Status")
+	logger.Info().Str("State", string(stackInfo.StackStatus)).Msg("Status")
 	if stackInfo.StackStatusReason != nil {
 		logger.Info().Str("Reason", *stackInfo.StackStatusReason).Msg("Reason")
 	}

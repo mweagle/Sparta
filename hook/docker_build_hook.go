@@ -3,7 +3,7 @@ package hook
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	sparta "github.com/mweagle/Sparta"
 	spartaDocker "github.com/mweagle/Sparta/docker"
 	"github.com/rs/zerolog"
@@ -18,7 +18,7 @@ func BuildDockerImageHook(dockerFilePath string,
 		serviceName string,
 		S3Bucket string,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 

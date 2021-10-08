@@ -17,10 +17,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
 	broadcast "github.com/dustin/go-broadcast"
 	tcell "github.com/gdamore/tcell/v2"
 	prettyjson "github.com/hokaccha/go-prettyjson"
@@ -124,8 +124,8 @@ func writePrettyString(writer io.Writer, input string) {
 //
 // Select the function to test
 //
-func newFunctionSelector(awsSession *session.Session,
-	stackResources []*cloudformation.StackResource,
+func newFunctionSelector(awsConfig awsv2.Config,
+	stackResources []awsv2CFTypes.StackResource,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
@@ -188,7 +188,7 @@ func newFunctionSelector(awsSession *session.Session,
 //
 // Select the event to use to invoke the function
 //
-func newEventInputSelector(awsSession *session.Session,
+func newEventInputSelector(awsConfig awsv2.Config,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
@@ -206,7 +206,7 @@ func newEventInputSelector(awsSession *session.Session,
 			activeFunction = funcSelected.(string)
 		}
 	}()
-	lambdaSvc := lambda.New(awsSession)
+	lambdaSvc := awsv2Lambda.NewFromConfig(awsConfig)
 
 	// First walk the directory for anything that looks
 	// like a JSON file...
@@ -286,11 +286,11 @@ func newEventInputSelector(awsSession *session.Session,
 		logger.Debug().Str("ActiveFunction", activeFunction).Msg("Invoking function")
 		// Submit it to lambda
 		if activeFunction != "" {
-			lambdaInput := &lambda.InvokeInput{
+			lambdaInput := &awsv2Lambda.InvokeInput{
 				FunctionName: aws.String(activeFunction),
 				Payload:      selectedJSONData,
 			}
-			invokeOutput, invokeOutputErr := lambdaSvc.Invoke(lambdaInput)
+			invokeOutput, invokeOutputErr := lambdaSvc.Invoke(context.Background(), lambdaInput)
 			if invokeOutputErr != nil {
 				logger.Error().
 					Err(invokeOutputErr).
@@ -332,7 +332,7 @@ func newEventInputSelector(awsSession *session.Session,
 //
 // Tail the cloudwatch logs for the active function
 //
-func newCloudWatchLogTailView(awsSession *session.Session,
+func newCloudWatchLogTailView(awsConfig awsv2.Config,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
@@ -420,7 +420,7 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 			doneChan = make(chan bool)
 			messages := spartaCWLogs.TailWithContext(context.Background(),
 				doneChan,
-				awsSession,
+				awsConfig,
 				logGroupName,
 				"",
 				logger)

@@ -4,6 +4,7 @@
 package sparta
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -12,13 +13,12 @@ import (
 	"strings"
 	"time"
 
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3Downloader "github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 
 	survey "github.com/AlecAivazis/survey/v2"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/google/pprof/driver"
 	"github.com/google/pprof/profile"
 	spartaAWS "github.com/mweagle/Sparta/aws"
@@ -145,40 +145,42 @@ func askQuestions(userStackName string, stackNameToIDMap map[string]string) (*us
 func objectKeysForProfileType(profileType string,
 	stackName string,
 	s3BucketName string,
-	maxCount int64,
-	awsSession *session.Session,
+	maxCount int32,
+	awsConfig awsv2.Config,
 	logger *zerolog.Logger) ([]string, error) {
 	// http://weagle.s3.amazonaws.com/gosparta.io/pprof/SpartaPPropStack/profiles/cpu/cpu.42.profile
 
 	// gosparta.io/pprof/SpartaPPropStack/profiles/cpu/cpu.42.profile
 	// List all these...
 	rootPath := profileSnapshotRootKeypathForType(profileType, stackName)
-	listObjectInput := &s3.ListObjectsInput{
-		Bucket: aws.String(s3BucketName),
-		//	Delimiter: aws.String("/"),
-		Prefix:  aws.String(rootPath),
-		MaxKeys: aws.Int64(maxCount),
+	listObjectInput := &awsv2S3.ListObjectsInput{
+		Bucket: awsv2.String(s3BucketName),
+		//	Delimiter: awsv2.String("/"),
+		Prefix:  awsv2.String(rootPath),
+		MaxKeys: maxCount,
 	}
 	allItems := []string{}
-	s3Svc := s3.New(awsSession)
+
+	s3Svc := awsv2S3.NewFromConfig(awsConfig)
 	for {
-		listItemResults, listItemResultsErr := s3Svc.ListObjects(listObjectInput)
+		listItemResults, listItemResultsErr := s3Svc.ListObjects(context.Background(),
+			listObjectInput)
 		if listItemResultsErr != nil {
 			return nil, errors.Wrapf(listItemResultsErr, "Attempting to list bucket: %s", s3BucketName)
 		}
 		for _, eachEntry := range listItemResults.Contents {
 			logger.Debug().
 				Str("FoundItem", *eachEntry.Key).
-				Int64("Size", *eachEntry.Size).
+				Int64("Size", eachEntry.Size).
 				Msg("Profile file")
 		}
 
 		for _, eachItem := range listItemResults.Contents {
-			if *eachItem.Size > 0 {
+			if eachItem.Size > 0 {
 				allItems = append(allItems, *eachItem.Key)
 			}
 		}
-		if int64(len(allItems)) >= maxCount || listItemResults.NextMarker == nil {
+		if int32(len(allItems)) >= maxCount || listItemResults.NextMarker == nil {
 			return allItems, nil
 		}
 		listObjectInput.Marker = listItemResults.NextMarker
@@ -206,14 +208,14 @@ func downloaderTask(profileType string,
 	bucketName string,
 	cacheRootPath string,
 	downloadKey string,
-	s3Service *s3.S3,
-	downloader *s3manager.Downloader,
+	s3Service *awsv2S3.Client,
+	downloader *awsv2S3Downloader.Downloader,
 	logger *zerolog.Logger) taskFunc {
 
 	return func() workResult {
-		downloadInput := &s3.GetObjectInput{
-			Bucket: aws.String(bucketName),
-			Key:    aws.String(downloadKey),
+		downloadInput := &awsv2S3.GetObjectInput{
+			Bucket: awsv2.String(bucketName),
+			Key:    awsv2.String(downloadKey),
 		}
 		cachedFilename := filepath.Join(cacheRootPath, filepath.Base(downloadKey))
 		outputFile, outputFileErr := os.Create(cachedFilename)
@@ -232,14 +234,15 @@ func downloaderTask(profileType string,
 			}
 		}()
 
-		_, downloadErr := downloader.Download(outputFile, downloadInput)
+		opContext := context.Background()
+		_, downloadErr := downloader.Download(opContext, outputFile, downloadInput)
 		// If we're all good, delete the one on s3...
 		if downloadErr == nil {
-			deleteObjectInput := &s3.DeleteObjectInput{
-				Bucket: aws.String(bucketName),
-				Key:    aws.String(downloadKey),
+			deleteObjectInput := &awsv2S3.DeleteObjectInput{
+				Bucket: awsv2.String(bucketName),
+				Key:    awsv2.String(downloadKey),
 			}
-			_, deleteErr := s3Service.DeleteObject(deleteObjectInput)
+			_, deleteErr := s3Service.DeleteObject(opContext, deleteObjectInput)
 			if deleteErr != nil {
 				logger.Warn().
 					Err(deleteErr).
@@ -263,7 +266,7 @@ func syncStackProfileSnapshots(profileType string,
 	stackName string,
 	stackInstance string,
 	s3BucketName string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	logger *zerolog.Logger) ([]string, error) {
 	s3KeyRoot := profileSnapshotRootKeypathForType(profileType, stackName)
 
@@ -301,13 +304,13 @@ func syncStackProfileSnapshots(profileType string,
 	}
 
 	// Ok, let's get some user information
-	s3Svc := s3.New(awsSession)
-	downloader := s3manager.NewDownloader(awsSession)
+	s3Svc := awsv2S3.NewFromConfig(awsConfig)
+	downloader := awsv2S3Downloader.NewDownloader(s3Svc)
 	downloadKeys, downloadKeysErr := objectKeysForProfileType(profileType,
 		stackName,
 		s3BucketName,
 		1024,
-		awsSession,
+		awsConfig,
 		logger)
 
 	if downloadKeys != nil {
@@ -421,11 +424,11 @@ func Profile(serviceName string,
 	httpPort int,
 	logger *zerolog.Logger) error {
 
-	awsSession := spartaAWS.NewSession(logger)
+	awsConfig := spartaAWS.NewConfig(logger)
 
 	// Get the currently active stacks...
 	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-describing-stacks.html#w2ab2c15c15c17c11
-	stackSummaries, stackSummariesErr := spartaCF.ListStacks(awsSession, 1024, "CREATE_COMPLETE",
+	stackSummaries, stackSummariesErr := spartaCF.ListStacks(awsConfig, 1024, "CREATE_COMPLETE",
 		"UPDATE_COMPLETE",
 		"UPDATE_ROLLBACK_COMPLETE")
 
@@ -448,7 +451,7 @@ func Profile(serviceName string,
 		responses.StackName,
 		responses.StackInstance,
 		s3BucketName,
-		awsSession,
+		awsConfig,
 		logger)
 	if tempFilePathsErr != nil {
 		return tempFilePathsErr

@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/aws/aws-sdk-go/service/sts"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2IAM "github.com/aws/aws-sdk-go-v2/service/iam"
+	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	spartaAWS "github.com/mweagle/Sparta/aws"
@@ -86,7 +86,7 @@ type buildContext struct {
 	outputDirectory string
 	// AWS Session to be used for all API calls made in the process of provisioning
 	// this service.
-	awsSession *session.Session
+	awsConfig awsv2.Config
 	// Cached IAM role name map.  Used to support dynamic and static IAM role
 	// names.  Static ARN role names are checked for existence via AWS APIs
 	// prior to CloudFormation provisioning. Values in the map are either
@@ -133,7 +133,7 @@ func callArchiveHook(lambdaArchive *zip.Writer,
 		hookCtx, hookErr := eachArchiveHook.DecorateArchive(buildContext.workflowHooksContext,
 			userdata.serviceName,
 			lambdaArchive,
-			buildContext.awsSession,
+			buildContext.awsConfig,
 			userdata.noop,
 			logger)
 		if hookErr != nil {
@@ -178,7 +178,7 @@ func callWorkflowHook(hookPhase string,
 			userdata.serviceName,
 			gof.Ref(StackParamArtifactBucketName),
 			userdata.buildID,
-			buildContext.awsSession,
+			buildContext.awsConfig,
 			userdata.noop,
 			logger)
 		if hookErr != nil {
@@ -220,7 +220,7 @@ func callServiceDecoratorHook(lambdaFunctionCode *goflambda.Function_Code,
 			serviceTemplate,
 			lambdaFunctionCode,
 			userdata.buildID,
-			buildContext.awsSession,
+			buildContext.awsConfig,
 			userdata.noop,
 			logger)
 		if nil != decoratorError {
@@ -271,7 +271,7 @@ func callValidationHooks(validationHooks []ServiceValidationHookHandler,
 			&loopTemplate,
 			lambdaFunctionCode,
 			userdata.buildID,
-			buildContext.awsSession,
+			buildContext.awsConfig,
 			userdata.noop,
 			logger)
 		if hookErr != nil {
@@ -425,7 +425,7 @@ func (viro *verifyIAMRolesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	// or an intrinsic.
 	// Don't verify them, just create them...
 	viro.buildContext.lambdaIAMRoleNameMap = make(map[string]string)
-	iamSvc := iam.New(viro.buildContext.awsSession)
+	iamSvc := awsv2IAM.NewFromConfig(viro.buildContext.awsConfig)
 
 	// Assemble all the RoleNames and validate the inline IAMRoleDefinitions
 	var allRoleNames []string
@@ -492,12 +492,12 @@ func (viro *verifyIAMRolesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 		if !exists {
 			totalRemoteChecks++
 			// Check the role
-			params := &iam.GetRoleInput{
-				RoleName: aws.String(eachRoleName),
+			params := &awsv2IAM.GetRoleInput{
+				RoleName: awsv2.String(eachRoleName),
 			}
 
 			logger.Debug().Msgf("Checking IAM RoleName: %s", eachRoleName)
-			resp, err := iamSvc.GetRole(params)
+			resp, err := iamSvc.GetRole(ctx, params)
 			if err != nil {
 				return err
 			}
@@ -608,13 +608,14 @@ func (cpo *createPackageOp) buildDockerImage(sanitizedServiceName string,
 	imageTag := fmt.Sprintf("sparta/%s:%s",
 		strings.ToLower(cpo.userdata.serviceName),
 		cpo.userdata.buildID)
-
+	buildCtx := context.Background()
 	// Get the current account id...
 	accountID := "123412341234"
 	if !cpo.userdata.noop {
-		stsService := sts.New(cpo.buildContext.awsSession)
+		stsService := awsv2STS.NewFromConfig(cpo.buildContext.awsConfig)
 
-		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+		callerInfo, callerInfoErr := stsService.GetCallerIdentity(buildCtx,
+			&awsv2STS.GetCallerIdentityInput{})
 		if callerInfoErr != nil {
 			return callerInfoErr
 		}
@@ -638,7 +639,7 @@ func (cpo *createPackageOp) buildDockerImage(sanitizedServiceName string,
 		"--build-arg",
 		dockerBuildTag(DockerArgAWSAccountID, accountID),
 		"--build-arg",
-		dockerBuildTag(DockerArgAWSRegion, *cpo.buildContext.awsSession.Config.Region),
+		dockerBuildTag(DockerArgAWSRegion, cpo.buildContext.awsConfig.Region),
 		"--build-arg",
 		dockerBuildTag(DockerArgECRLabelName, spartaECRLabelName),
 		"--build-arg",
@@ -1023,7 +1024,7 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 	if nil != cto.userdata.api {
 		err := cto.userdata.api.Marshal(
 			cto.userdata.serviceName,
-			cto.buildContext.awsSession,
+			cto.buildContext.awsConfig,
 			s3CodeResource,
 			cto.buildContext.lambdaIAMRoleNameMap,
 			apiGatewayTemplate,
@@ -1238,7 +1239,7 @@ func Build(noop bool,
 	}
 	buildContext := &buildContext{
 		cfTemplate:           gof.NewTemplate(),
-		awsSession:           spartaAWS.NewSession(logger),
+		awsConfig:            spartaAWS.NewConfig(logger),
 		outputDirectory:      absOutputDirectory,
 		workflowHooksContext: nil,
 		templateWriter:       templateWriter,
@@ -1280,7 +1281,7 @@ func Build(noop bool,
 	}
 	buildPipeline := newUserRollbackEnabledPipeline(
 		serviceName,
-		buildContext.awsSession,
+		buildContext.awsConfig,
 		rollbackFuncs,
 		noop)
 

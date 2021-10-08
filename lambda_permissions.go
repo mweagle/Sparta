@@ -7,7 +7,8 @@ import (
 
 	goftags "github.com/awslabs/goformation/v5/cloudformation/tags"
 
-	"github.com/aws/aws-sdk-go/service/s3"
+	awsv2S3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofevents "github.com/awslabs/goformation/v5/cloudformation/events"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
@@ -159,7 +160,7 @@ type S3Permission struct {
 	// to scope event forwarding.  See
 	// 		http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html
 	// for more information.
-	Filter s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
+	Filter awsv2S3Types.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
 func (perm S3Permission) export(serviceName string,
@@ -250,7 +251,7 @@ func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 		for _, eachFilter := range perm.Filter.Key.FilterRules {
 			filterRel := fmt.Sprintf("%s (%s = %s)",
 				s3Events,
-				*eachFilter.Name,
+				eachFilter.Name,
 				*eachFilter.Value)
 			nodes = append(nodes, descriptionNode{
 				Name:     describeInfoValue(perm.SourceArn),

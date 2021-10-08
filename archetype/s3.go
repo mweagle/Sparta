@@ -5,9 +5,10 @@ import (
 	"reflect"
 	"runtime"
 
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/pkg/errors"
@@ -54,12 +55,14 @@ func s3NotificationPrefixBasedPermission(bucketName string, keyPathPrefix string
 	}
 
 	if keyPathPrefix != "" {
-		permission.Filter = s3.NotificationConfigurationFilter{
-			Key: &s3.KeyFilter{
-				FilterRules: []*s3.FilterRule{{
-					Name:  aws.String("prefix"),
-					Value: aws.String(keyPathPrefix),
-				}},
+		permission.Filter = awsv2S3Types.NotificationConfigurationFilter{
+			Key: &awsv2S3Types.S3KeyFilter{
+				FilterRules: []awsv2S3Types.FilterRule{
+					{
+						Name:  "prefix",
+						Value: awsv2.String(keyPathPrefix),
+					},
+				},
 			},
 		}
 	}

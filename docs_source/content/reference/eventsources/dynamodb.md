@@ -69,7 +69,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 - Define the lambda function (`echoDynamoDBEvent`).
 - If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
 - Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
-- Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
+- Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go-v2/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
 ## Other Resources
 

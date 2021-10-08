@@ -165,8 +165,8 @@ func TestUserScopedStackName(t *testing.T) {
 }
 func TestPlatformScopedName(t *testing.T) {
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
-	awsSession := spartaAWS.NewSession(&logger)
-	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsSession)
+	awsConfig := spartaAWS.NewConfig(&logger)
+	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsConfig)
 	if stackNameErr != nil {
 		t.Fatalf("Failed to create AWS account based stack name: %s", stackNameErr)
 	}

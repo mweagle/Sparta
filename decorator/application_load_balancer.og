@@ -7,7 +7,7 @@ import (
 	gofelbv2 "github.com/awslabs/goformation/cloudformation/elasticloadbalancingv2"
 	goflambda "github.com/awslabs/goformation/cloudformation/lambda"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws/session"
 	gof "github.com/awslabs/goformation/cloudformation"
 	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"

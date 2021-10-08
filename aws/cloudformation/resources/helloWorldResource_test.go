@@ -62,8 +62,8 @@ func TestExecuteCreateHelloWorld(t *testing.T) {
 		Message: "Hello world",
 	})
 
-	awsSession := awsSession(&logger)
-	createOutputs, createError := customResource1.Create(awsSession,
+	awsConfig := newAWSConfig(&logger)
+	createOutputs, createError := customResource1.Create(awsConfig,
 		mockHelloWorldResourceEvent(t),
 		&logger)
 	if nil != createError {

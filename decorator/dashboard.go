@@ -6,10 +6,10 @@ import (
 	"regexp"
 	"text/template"
 
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofcloudwatch "github.com/awslabs/goformation/v5/cloudformation/cloudwatch"
 
-	"github.com/aws/aws-sdk-go/aws/session"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -138,7 +138,7 @@ func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
 		cfTemplate *gof.Template,
 		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 

@@ -4,15 +4,16 @@
 package cloudformation
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/iam"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2IAM "github.com/aws/aws-sdk-go-v2/service/iam"
 )
 
-func platformAccountUserName(awsSession *session.Session) (string, error) {
-	iamSvc := iam.New(awsSession)
-	userInfo, userInfoErr := iamSvc.GetUser(&iam.GetUserInput{})
+func platformAccountUserName(awsConfig awsv2.Config) (string, error) {
+	iamSvc := awsv2IAM.NewFromConfig(awsConfig)
+	userInfo, userInfoErr := iamSvc.GetUser(context.Background(), &awsv2IAM.GetUserInput{})
 	if userInfoErr != nil {
 		return "", userInfoErr
 	}

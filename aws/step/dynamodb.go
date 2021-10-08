@@ -3,6 +3,7 @@ package step
 import (
 	"math/rand"
 
+	awsv2DynamoTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
@@ -18,13 +19,13 @@ import (
 // DynamoDBGetItemParameters represents params for the DynamoDBGetItem
 // parameters. Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ddb.html
 type DynamoDBGetItemParameters struct {
-	Key                      map[string]*dynamodb.AttributeValue `json:",omitempty"`
-	TableName                string                              `json:",omitempty"`
-	AttributesToGet          []string                            `json:",omitempty"`
-	ConsistentRead           bool                                `json:",omitempty"`
-	ExpressionAttributeNames map[string]string                   `json:",omitempty"`
-	ProjectionExpression     string                              `json:",omitempty"`
-	ReturnConsumedCapacity   string                              `json:",omitempty"`
+	Key                      map[string]awsv2DynamoTypes.AttributeValue `json:",omitempty"`
+	TableName                string                                     `json:",omitempty"`
+	AttributesToGet          []string                                   `json:",omitempty"`
+	ConsistentRead           bool                                       `json:",omitempty"`
+	ExpressionAttributeNames map[string]string                          `json:",omitempty"`
+	ProjectionExpression     string                                     `json:",omitempty"`
+	ReturnConsumedCapacity   string                                     `json:",omitempty"`
 }
 
 // DynamoDBGetItemState represents bindings for

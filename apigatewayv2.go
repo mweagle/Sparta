@@ -3,7 +3,8 @@ package sparta
 import (
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofapigv2 "github.com/awslabs/goformation/v5/cloudformation/apigatewayv2"
 	gofddb "github.com/awslabs/goformation/v5/cloudformation/dynamodb"
@@ -63,7 +64,7 @@ func (apigd *APIV2GatewayDecorator) DecorateService(context map[string]interface
 	S3Bucket string,
 	S3Key string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) error {
 
@@ -246,7 +247,7 @@ func (apiv2 *APIV2) Describe(targetNodeName string) (*DescriptionInfo, error) {
 
 // Marshal the API V2 Gateway instance to the given template instane
 func (apiv2 *APIV2) Marshal(serviceName string,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	lambdaFunctionCode *goflambda.Function_Code,
 	roleNameMap map[string]string,
 	template *gof.Template,

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gofapig "github.com/awslabs/goformation/v5/cloudformation/apigateway"
 
-	"github.com/aws/aws-sdk-go/aws/session"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofroute53 "github.com/awslabs/goformation/v5/cloudformation/route53"
@@ -36,7 +36,7 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 		template *gof.Template,
 		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 

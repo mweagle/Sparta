@@ -3,7 +3,8 @@ package resources
 import (
 	"encoding/json"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
@@ -26,7 +27,7 @@ func (command *HelloWorldResource) IAMPrivileges() []string {
 }
 
 // Create implements resource create
-func (command HelloWorldResource) Create(awsSession *session.Session,
+func (command HelloWorldResource) Create(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := HelloWorldResourceRequest{}
@@ -41,7 +42,7 @@ func (command HelloWorldResource) Create(awsSession *session.Session,
 }
 
 // Update implements resource update
-func (command HelloWorldResource) Update(awsSession *session.Session,
+func (command HelloWorldResource) Update(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := HelloWorldResourceRequest{}
@@ -54,7 +55,7 @@ func (command HelloWorldResource) Update(awsSession *session.Session,
 }
 
 // Delete implements resource delete
-func (command HelloWorldResource) Delete(awsSession *session.Session,
+func (command HelloWorldResource) Delete(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := HelloWorldResourceRequest{}

@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	awsCloudWatch "github.com/aws/aws-sdk-go/service/cloudwatch"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsCloudWatch "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rs/zerolog"

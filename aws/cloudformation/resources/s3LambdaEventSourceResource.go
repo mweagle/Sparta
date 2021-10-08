@@ -1,12 +1,14 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
+	awsv2S3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
@@ -18,7 +20,7 @@ type S3LambdaEventSourceResourceRequest struct {
 	BucketArn       string
 	Events          []string
 	LambdaTargetArn string
-	Filter          *s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
+	Filter          *awsv2S3Types.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +44,7 @@ func (command *S3LambdaEventSourceResource) IAMPrivileges() []string {
 }
 
 func (command S3LambdaEventSourceResource) updateNotification(isTargetActive bool,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
@@ -52,19 +54,19 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 		return nil, unmarshalErr
 	}
 
-	s3Svc := s3.New(session)
+	s3Svc := awsv2S3.NewFromConfig(awsConfig)
 	bucketParts := strings.Split(s3EventRequest.BucketArn, ":")
 	bucketName := bucketParts[len(bucketParts)-1]
 
-	params := &s3.GetBucketNotificationConfigurationRequest{
-		Bucket: aws.String(bucketName),
+	params := &awsv2S3.GetBucketNotificationConfigurationInput{
+		Bucket: awsv2.String(bucketName),
 	}
-	config, configErr := s3Svc.GetBucketNotificationConfiguration(params)
+	config, configErr := s3Svc.GetBucketNotificationConfiguration(context.Background(), params)
 	if nil != configErr {
 		return nil, configErr
 	}
 	// First thing, eliminate existing references...
-	var lambdaConfigurations []*s3.LambdaFunctionConfiguration
+	var lambdaConfigurations []awsv2S3Types.LambdaFunctionConfiguration
 	for _, eachLambdaConfig := range config.LambdaFunctionConfigurations {
 		if *eachLambdaConfig.LambdaFunctionArn != s3EventRequest.LambdaTargetArn {
 			lambdaConfigurations = append(lambdaConfigurations, eachLambdaConfig)
@@ -72,12 +74,12 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	}
 
 	if isTargetActive {
-		var eventPtrs []*string
+		var eventPtrs []awsv2S3Types.Event
 		for _, eachString := range s3EventRequest.Events {
-			eventPtrs = append(eventPtrs, aws.String(eachString))
+			eventPtrs = append(eventPtrs, awsv2S3Types.Event(eachString))
 		}
-		commandConfig := &s3.LambdaFunctionConfiguration{
-			LambdaFunctionArn: aws.String(s3EventRequest.LambdaTargetArn),
+		commandConfig := awsv2S3Types.LambdaFunctionConfiguration{
+			LambdaFunctionArn: awsv2.String(s3EventRequest.LambdaTargetArn),
 			Events:            eventPtrs,
 		}
 		if s3EventRequest.Filter != nil {
@@ -85,38 +87,39 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 		}
 		lambdaConfigurations = append(lambdaConfigurations, commandConfig)
 	}
-	config.LambdaFunctionConfigurations = lambdaConfigurations
 
-	putBucketNotificationConfigurationInput := &s3.PutBucketNotificationConfigurationInput{
-		Bucket:                    aws.String(bucketName),
-		NotificationConfiguration: config,
+	putBucketNotificationConfigurationInput := &awsv2S3.PutBucketNotificationConfigurationInput{
+		Bucket: awsv2.String(bucketName),
+		NotificationConfiguration: &awsv2S3Types.NotificationConfiguration{
+			LambdaFunctionConfigurations: lambdaConfigurations,
+		},
 	}
 
 	logger.Debug().
 		Interface("PutBucketNotificationConfigurationInput", putBucketNotificationConfigurationInput).
 		Msg("Updating bucket configuration")
 
-	_, putErr := s3Svc.PutBucketNotificationConfiguration(putBucketNotificationConfigurationInput)
+	_, putErr := s3Svc.PutBucketNotificationConfiguration(context.Background(), putBucketNotificationConfigurationInput)
 	return nil, putErr
 }
 
 // Create implements the custom resource create operation
-func (command S3LambdaEventSourceResource) Create(awsSession *session.Session,
+func (command S3LambdaEventSourceResource) Create(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateNotification(true, awsSession, event, logger)
+	return command.updateNotification(true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command S3LambdaEventSourceResource) Update(awsSession *session.Session,
+func (command S3LambdaEventSourceResource) Update(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateNotification(true, awsSession, event, logger)
+	return command.updateNotification(true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command S3LambdaEventSourceResource) Delete(awsSession *session.Session,
+func (command S3LambdaEventSourceResource) Delete(awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateNotification(false, awsSession, event, logger)
+	return command.updateNotification(false, awsConfig, event, logger)
 }

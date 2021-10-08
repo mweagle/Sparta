@@ -4,7 +4,7 @@ import (
 	"archive/zip"
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	"github.com/rs/zerolog"
@@ -91,7 +91,7 @@ type WorkflowHook func(ctx context.Context,
 	serviceName string,
 	S3Bucket string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -101,7 +101,7 @@ type WorkflowHookFunc func(ctx context.Context,
 	serviceName string,
 	S3Bucket string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -110,14 +110,14 @@ func (whf WorkflowHookFunc) DecorateWorkflow(ctx context.Context,
 	serviceName string,
 	S3Bucket string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 	return whf(ctx,
 		serviceName,
 		S3Bucket,
 		buildID,
-		awsSession,
+		awsConfig,
 		noop,
 		logger)
 }
@@ -129,7 +129,7 @@ type WorkflowHookHandler interface {
 		serviceName string,
 		S3Bucket string,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error)
 }
@@ -144,7 +144,7 @@ type WorkflowHookHandler interface {
 type ArchiveHook func(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -153,7 +153,7 @@ type ArchiveHook func(ctx context.Context,
 type ArchiveHookFunc func(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -161,13 +161,13 @@ type ArchiveHookFunc func(ctx context.Context,
 func (ahf ArchiveHookFunc) DecorateArchive(ctx context.Context,
 	serviceName string,
 	zipWriter *zip.Writer,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 	return ahf(ctx,
 		serviceName,
 		zipWriter,
-		awsSession,
+		awsConfig,
 		noop,
 		logger)
 }
@@ -178,7 +178,7 @@ type ArchiveHookHandler interface {
 	DecorateArchive(ctx context.Context,
 		serviceName string,
 		zipWriter *zip.Writer,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error)
 }
@@ -193,7 +193,7 @@ type ServiceDecoratorHook func(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -204,7 +204,7 @@ type ServiceDecoratorHookFunc func(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -214,7 +214,7 @@ func (sdhf ServiceDecoratorHookFunc) DecorateService(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 	return sdhf(ctx,
@@ -222,7 +222,7 @@ func (sdhf ServiceDecoratorHookFunc) DecorateService(ctx context.Context,
 		template,
 		lambdaFunctionCode,
 		buildID,
-		awsSession,
+		awsConfig,
 		noop,
 		logger)
 }
@@ -235,7 +235,7 @@ type ServiceDecoratorHookHandler interface {
 		template *gof.Template,
 		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error)
 }
@@ -251,7 +251,7 @@ type ServiceValidationHook func(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -262,7 +262,7 @@ type ServiceValidationHookFunc func(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error)
 
@@ -272,7 +272,7 @@ func (sdhf ServiceValidationHookFunc) ValidateService(ctx context.Context,
 	template *gof.Template,
 	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 	return sdhf(ctx,
@@ -280,7 +280,7 @@ func (sdhf ServiceValidationHookFunc) ValidateService(ctx context.Context,
 		template,
 		lambdaFunctionCode,
 		buildID,
-		awsSession,
+		awsConfig,
 		noop,
 		logger)
 }
@@ -293,7 +293,7 @@ type ServiceValidationHookHandler interface {
 		template *gof.Template,
 		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error)
 }
@@ -305,7 +305,7 @@ type ServiceValidationHookHandler interface {
 // associated with failing to perform the requested operation
 type RollbackHook func(ctx context.Context,
 	serviceName string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger)
 
@@ -313,19 +313,19 @@ type RollbackHook func(ctx context.Context,
 // RollbackHook into a RollbackHookHandler satisfier
 type RollbackHookFunc func(ctx context.Context,
 	serviceName string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger)
 
 // Rollback calls sdhf(...) to satisfy ArchiveHookHandler
 func (rhf RollbackHookFunc) Rollback(ctx context.Context,
 	serviceName string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 	rhf(ctx,
 		serviceName,
-		awsSession,
+		awsConfig,
 		noop,
 		logger)
 	return ctx, nil
@@ -336,7 +336,7 @@ func (rhf RollbackHookFunc) Rollback(ctx context.Context,
 type RollbackHookHandler interface {
 	Rollback(ctx context.Context,
 		serviceName string,
-		awsSession *session.Session,
+		config awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error)
 }

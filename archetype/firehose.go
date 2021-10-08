@@ -16,7 +16,7 @@ import (
 
 	"github.com/Masterminds/sprig"
 	awsEvents "github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/archetype/xformer"
 	"github.com/pkg/errors"
@@ -127,7 +127,7 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 	archiveDecorator := func(ctx context.Context,
 		serviceName string,
 		zipWriter *zip.Writer,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 		fileInfo, fileInfoErr := os.Stat(xformFilePath)
