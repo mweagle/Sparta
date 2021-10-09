@@ -8,7 +8,6 @@ import (
 
 	awsv2CWLogs "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
@@ -69,8 +68,8 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(ctx co
 
 		// Always delete the filter by name if we can find it...
 		deleteSubscriptionInput := &awsv2CWLogs.DeleteSubscriptionFilterInput{
-			FilterName:   aws.String(eachFilter.Name),
-			LogGroupName: aws.String(eachFilter.LogGroupName),
+			FilterName:   awsv2.String(eachFilter.Name),
+			LogGroupName: awsv2.String(eachFilter.LogGroupName),
 		}
 		deleteResult, deleteErr := cwLogsSvc.DeleteSubscriptionFilter(context.Background(), deleteSubscriptionInput)
 		logger.Debug().
@@ -88,20 +87,20 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(ctx co
 		if isTargetActive && nil == opErr {
 			// Put the subscription filter
 			putSubscriptionInput := &awsv2CWLogs.PutSubscriptionFilterInput{
-				DestinationArn: aws.String(requestProps.LambdaTargetArn),
-				FilterName:     aws.String(eachFilter.Name),
-				FilterPattern:  aws.String(eachFilter.Pattern),
-				LogGroupName:   aws.String(eachFilter.LogGroupName),
+				DestinationArn: awsv2.String(requestProps.LambdaTargetArn),
+				FilterName:     awsv2.String(eachFilter.Name),
+				FilterPattern:  awsv2.String(eachFilter.Pattern),
+				LogGroupName:   awsv2.String(eachFilter.LogGroupName),
 			}
 			if requestProps.RoleARN != "" {
-				putSubscriptionInput.RoleArn = aws.String(requestProps.RoleARN)
+				putSubscriptionInput.RoleArn = awsv2.String(requestProps.RoleARN)
 			}
 			_, opErr = cwLogsSvc.PutSubscriptionFilter(context.Background(), putSubscriptionInput)
 			// If there was an error, see if there's a differently named filter for the given
 			// CloudWatchLogs stream.
 			if nil != opErr {
 				describeSubscriptionFilters := &awsv2CWLogs.DescribeSubscriptionFiltersInput{
-					LogGroupName: aws.String(eachFilter.LogGroupName),
+					LogGroupName: awsv2.String(eachFilter.LogGroupName),
 				}
 				describeResult, describeResultErr := cwLogsSvc.DescribeSubscriptionFilters(context.Background(), describeSubscriptionFilters)
 				if nil == describeResultErr {
