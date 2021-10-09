@@ -215,7 +215,6 @@ func MainEx(serviceName string,
 				return templateFileErr
 			}
 
-			// TODO: Build, then Provision
 			buildErr := Build(context.Background(),
 				OptionsGlobal.Noop,
 				serviceName,

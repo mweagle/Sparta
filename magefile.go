@@ -352,7 +352,6 @@ func FetchCloudFormationSchema() error {
 func GenerateConstants() error {
 	mg.SerialDeps(FetchCloudFormationSchema)
 
-	// TODO - use go:embed
 	generateCommands := [][]string{
 		// Remove the tree output
 		{"rm",
