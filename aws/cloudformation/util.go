@@ -929,9 +929,9 @@ func ConvergeStackState(ctx context.Context,
 			awsv2CFTypes.ResourceStatusDeleteFailed,
 			awsv2CFTypes.ResourceStatusUpdateFailed:
 			errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
-				eachEvent.ResourceType,
-				eachEvent.LogicalResourceId,
-				eachEvent.ResourceStatusReason)
+				*eachEvent.ResourceType,
+				*eachEvent.LogicalResourceId,
+				*eachEvent.ResourceStatusReason)
 			// Only append if the resource failed because something else failed
 			// and this resource was canceled.
 			if !strings.Contains(errMsg, "cancelled") {

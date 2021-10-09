@@ -51,7 +51,7 @@ func (svc *DynamoAccessor) dynamoTableName() string {
 
 func dynamoKeyValueAttrMap(keyPath string) map[string]awsv2DynamoTypes.AttributeValue {
 	return map[string]awsv2DynamoTypes.AttributeValue{
-		attrID: awsv2DynamoTypes.AttributeValueMemberS{
+		attrID: &awsv2DynamoTypes.AttributeValueMemberS{
 			Value: keyPath,
 		},
 	}
@@ -82,7 +82,7 @@ func (svc *DynamoAccessor) DeleteAll(ctx context.Context) error {
 			stringVal, stringValOk := eachItem[attrID]
 			if stringValOk {
 				switch typedVal := stringVal.(type) {
-				case awsv2DynamoTypes.AttributeValueMemberS:
+				case *awsv2DynamoTypes.AttributeValueMemberS:
 					keyID = typedVal.Value
 				}
 			}
