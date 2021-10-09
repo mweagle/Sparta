@@ -8,9 +8,8 @@ import (
 	"testing"
 	"time"
 
-	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
-
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
 	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
