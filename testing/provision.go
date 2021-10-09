@@ -2,6 +2,7 @@ package testing
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
 	sparta "github.com/mweagle/Sparta"
@@ -60,7 +61,8 @@ func ProvisionEx(t *testing.T,
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
 	var templateWriter bytes.Buffer
-	err := sparta.Build(true,
+	err := sparta.Build(context.Background(),
+		true,
 		"SampleProvision",
 		"",
 		lambdaAWSInfos,

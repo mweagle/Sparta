@@ -36,7 +36,7 @@ func NewConfig(logger *zerolog.Logger) awsv2.Config {
 	return NewConfigWithLevel(awsv2.ClientLogMode(0), logger)
 }
 
-// NewConfigWithLevel returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
+// NewConfigWithLevel returns an AWS Session (https://github.com/aws/aws-sdk-go-v2/blob/main/config/doc)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
 func NewConfigWithLevel(level awsv2.ClientLogMode, logger *zerolog.Logger) awsv2.Config {
@@ -44,7 +44,7 @@ func NewConfigWithLevel(level awsv2.ClientLogMode, logger *zerolog.Logger) awsv2
 	return NewConfigWithConfigLevel(awsConfig, level, logger)
 }
 
-// NewConfigWithConfigLevel returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
+// NewConfigWithConfigLevel returns an AWS Session (https://github.com/aws/aws-sdk-go-v2/blob/main/config/doc)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
 func NewConfigWithConfigLevel(awsConfig awsv2.Config,

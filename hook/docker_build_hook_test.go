@@ -2,6 +2,7 @@ package hook
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -46,7 +47,8 @@ func TestBuildUPXImage(t *testing.T) {
 		t.Fatalf("Failed to create test logger: %s", loggerErr)
 	}
 	var templateWriter bytes.Buffer
-	err := sparta.Build(true,
+	err := sparta.Build(context.Background(),
+		true,
 		"SampleProvision",
 		"",
 		nil,

@@ -97,21 +97,21 @@ func (command *SNSLambdaEventSourceResource) IAMPrivileges() []string {
 }
 
 // Create implements the custom resource create operation
-func (command SNSLambdaEventSourceResource) Create(awsConfig awsv2.Config,
+func (command SNSLambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command SNSLambdaEventSourceResource) Update(awsConfig awsv2.Config,
+func (command SNSLambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command SNSLambdaEventSourceResource) Delete(awsConfig awsv2.Config,
+func (command SNSLambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(false, awsConfig, event, logger)

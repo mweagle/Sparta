@@ -195,7 +195,8 @@ func cloudformationPollingDelay() time.Duration {
 	return time.Duration(3+rand.Int31n(5)) * time.Second
 }
 
-func updateStackViaChangeSet(serviceName string,
+func updateStackViaChangeSet(ctx context.Context,
+	serviceName string,
 	cfTemplate *gof.Template,
 	cfTemplateURL string,
 	stackParameters map[string]string,
@@ -205,7 +206,8 @@ func updateStackViaChangeSet(serviceName string,
 
 	// Create a change set name...
 	changeSetRequestName := ResourceName(fmt.Sprintf("%sChangeSet", serviceName))
-	_, changesErr := CreateStackChangeSet(changeSetRequestName,
+	_, changesErr := CreateStackChangeSet(ctx,
+		changeSetRequestName,
 		serviceName,
 		cfTemplate,
 		cfTemplateURL,
@@ -223,7 +225,7 @@ func updateStackViaChangeSet(serviceName string,
 		ChangeSetName: awsv2.String(changeSetRequestName),
 		StackName:     awsv2.String(serviceName),
 	}
-	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(context.Background(),
+	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(ctx,
 		&executeChangeSetInput)
 
 	logger.Debug().
@@ -395,7 +397,8 @@ func ConvertToInlineJSONTemplateExpression(templateData io.Reader,
 }
 
 // StackEvents returns the slice of awsv2CF.StackEvents for the given stackID or stackName
-func StackEvents(stackID string,
+func StackEvents(ctx context.Context,
+	stackID string,
 	eventFilterLowerBoundInclusive time.Time,
 	awsConfig awsv2.Config) ([]awsv2CFTypes.StackEvent, error) {
 
@@ -411,7 +414,7 @@ func StackEvents(stackID string,
 			params.NextToken = awsv2.String(nextToken)
 		}
 
-		resp, err := cfService.DescribeStackEvents(context.Background(), params)
+		resp, err := cfService.DescribeStackEvents(ctx, params)
 		if nil != err {
 			return nil, err
 		}
@@ -440,7 +443,8 @@ type WaitForStackOperationCompleteResult struct {
 // WaitForStackOperationComplete is a blocking, polling based call that
 // periodically fetches the stackID set of events and uses the state value
 // to determine if an operation is complete
-func WaitForStackOperationComplete(stackID string,
+func WaitForStackOperationComplete(ctx context.Context,
+	stackID string,
 	pollingMessage string,
 	awsCloudFormation *awsv2CF.Client,
 	logger *zerolog.Logger) (*WaitForStackOperationCompleteResult, error) {
@@ -485,7 +489,7 @@ func WaitForStackOperationComplete(stackID string,
 		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
 		time.Sleep(sleepDuration)
 
-		describeStacksOutput, err := awsCloudFormation.DescribeStacks(context.Background(), describeStacksInput)
+		describeStacksOutput, err := awsCloudFormation.DescribeStacks(ctx, describeStacksInput)
 
 		if nil != err {
 			// TODO - add retry iff we're RateExceeded due to collective access
@@ -557,7 +561,8 @@ func ResourceName(prefix string, parts ...string) string {
 
 // UploadTemplate marshals the given cfTemplate and uploads it to the
 // supplied bucket using the given KeyName
-func UploadTemplate(serviceName string,
+func UploadTemplate(ctx context.Context,
+	serviceName string,
 	cfTemplate *gof.Template,
 	s3Bucket string,
 	s3KeyName string,
@@ -588,7 +593,7 @@ func UploadTemplate(serviceName string,
 		ContentType: awsv2.String("application/json"),
 		Body:        strings.NewReader(contentBody),
 	}
-	templateUploadResult, templateUploadResultErr := s3Uploader.Upload(context.Background(), uploadInput)
+	templateUploadResult, templateUploadResultErr := s3Uploader.Upload(ctx, uploadInput)
 	if nil != templateUploadResultErr {
 		return "", templateUploadResultErr
 	}
@@ -610,7 +615,7 @@ func StackExists(ctx context.Context,
 	describeStacksInput := &awsv2CF.DescribeStacksInput{
 		StackName: awsv2.String(stackNameOrID),
 	}
-	describeStacksOutput, err := cf.DescribeStacks(context.Background(), describeStacksInput)
+	describeStacksOutput, err := cf.DescribeStacks(ctx, describeStacksInput)
 
 	logger.Debug().
 		Interface("DescribeStackOutput", describeStacksOutput).
@@ -636,7 +641,8 @@ func StackExists(ctx context.Context,
 
 // CreateStackChangeSet returns the DescribeChangeSetOutput
 // for a given stack transformation
-func CreateStackChangeSet(changeSetRequestName string,
+func CreateStackChangeSet(ctx context.Context,
+	changeSetRequestName string,
 	serviceName string,
 	cfTemplate *gof.Template,
 	templateURL string,
@@ -676,7 +682,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 		}
 		changeSetInput.Tags = awsTags
 	}
-	_, changeSetError := awsCloudFormation.CreateChangeSet(context.Background(), changeSetInput)
+	_, changeSetError := awsCloudFormation.CreateChangeSet(ctx, changeSetInput)
 	if nil != changeSetError {
 		return nil, changeSetError
 	}
@@ -699,7 +705,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 		sleepDuration := cloudformationPollingDelay()
 		time.Sleep(sleepDuration)
 
-		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(context.Background(), &describeChangeSetInput)
+		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(ctx, &describeChangeSetInput)
 
 		if nil != describeChangeSetError {
 			return nil, describeChangeSetError
@@ -736,7 +742,8 @@ func CreateStackChangeSet(changeSetRequestName string,
 			Msg("No changes detected for service")
 
 		// Delete it...
-		_, deleteChangeSetResultErr := DeleteChangeSet(serviceName,
+		_, deleteChangeSetResultErr := DeleteChangeSet(ctx,
+			serviceName,
 			changeSetRequestName,
 			awsCloudFormation)
 		return nil, deleteChangeSetResultErr
@@ -747,7 +754,8 @@ func CreateStackChangeSet(changeSetRequestName string,
 // DeleteChangeSet is a utility function that attempts to delete
 // an existing CloudFormation change set, with a bit of retry
 // logic in case of EC
-func DeleteChangeSet(stackName string,
+func DeleteChangeSet(ctx context.Context,
+	stackName string,
 	changeSetRequestName string,
 	awsCloudFormation *awsv2CF.Client) (*awsv2CF.DeleteChangeSetOutput, error) {
 
@@ -761,7 +769,7 @@ func DeleteChangeSet(stackName string,
 	for {
 		elapsedTime := time.Since(startTime)
 
-		deleteChangeSetResults, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(context.Background(), &deleteChangeSetInput)
+		deleteChangeSetResults, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(ctx, &deleteChangeSetInput)
 		if nil == deleteChangeSetResultErr {
 			return deleteChangeSetResults, nil
 		} else if strings.Contains(deleteChangeSetResultErr.Error(), "CREATE_IN_PROGRESS") {
@@ -777,9 +785,10 @@ func DeleteChangeSet(stackName string,
 }
 
 // ListStacks returns a slice of stacks that meet the given filter.
-func ListStacks(awsConfig awsv2.Config,
+func ListStacks(ctx context.Context,
+	awsConfig awsv2.Config,
 	maxReturned int,
-	stackFilters ...string) ([]awsv2CFTypes.StackSummary, error) {
+	stackFilters ...awsv2CFTypes.StackStatus) ([]awsv2CFTypes.StackSummary, error) {
 
 	listStackInput := &awsv2CF.ListStacksInput{
 		StackStatusFilter: []awsv2CFTypes.StackStatus{},
@@ -790,7 +799,7 @@ func ListStacks(awsConfig awsv2.Config,
 	cloudformationSvc := awsv2CF.NewFromConfig(awsConfig)
 	accumulator := []awsv2CFTypes.StackSummary{}
 	for {
-		listResult, listResultErr := cloudformationSvc.ListStacks(context.Background(), listStackInput)
+		listResult, listResultErr := cloudformationSvc.ListStacks(ctx, listStackInput)
 		if listResultErr != nil {
 			return nil, listResultErr
 		}
@@ -805,7 +814,8 @@ func ListStacks(awsConfig awsv2.Config,
 // ConvergeStackState ensures that the serviceName converges to the template
 // state defined by cfTemplate. This function establishes a polling loop to determine
 // when the stack operation has completed.
-func ConvergeStackState(serviceName string,
+func ConvergeStackState(ctx context.Context,
+	serviceName string,
 	cfTemplate *gof.Template,
 	templateURL string,
 	stackParameters map[string]string,
@@ -828,13 +838,14 @@ func ConvergeStackState(serviceName string,
 
 	cloudformationSvc := awsv2CF.NewFromConfig(awsConfig)
 	// Update the tags
-	exists, existsErr := StackExists(context.Background(), serviceName, awsConfig, logger)
+	exists, existsErr := StackExists(ctx, serviceName, awsConfig, logger)
 	if nil != existsErr {
 		return nil, existsErr
 	}
 	stackID := ""
 	if exists {
-		updateErr := updateStackViaChangeSet(serviceName,
+		updateErr := updateStackViaChangeSet(ctx,
+			serviceName,
 			cfTemplate,
 			templateURL,
 			stackParameters,
@@ -883,7 +894,7 @@ func ConvergeStackState(serviceName string,
 			Interface("StackInput", createStackInput).
 			Msg("Create stack input")
 
-		createStackResponse, createStackResponseErr := cloudformationSvc.CreateStack(context.Background(), createStackInput)
+		createStackResponse, createStackResponseErr := cloudformationSvc.CreateStack(ctx, createStackInput)
 		if nil != createStackResponseErr {
 			return nil, createStackResponseErr
 		}
@@ -895,7 +906,8 @@ func ConvergeStackState(serviceName string,
 
 	// Wait for the operation to succeed
 	pollingMessage := "Waiting for CloudFormation operation to complete"
-	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,
+	convergeResult, convergeErr := WaitForStackOperationComplete(ctx,
+		stackID,
 		pollingMessage,
 		cloudformationSvc,
 		logger)
@@ -906,7 +918,7 @@ func ConvergeStackState(serviceName string,
 	// or summary information
 	resourceMetrics := make(map[string]*resourceProvisionMetrics)
 	errorMessages := []string{}
-	events, err := StackEvents(stackID, startTime, awsConfig)
+	events, err := StackEvents(ctx, stackID, startTime, awsConfig)
 	if nil != err {
 		return nil, fmt.Errorf("failed to retrieve stack events: %s", err.Error())
 	}
@@ -993,7 +1005,7 @@ func ConvergeStackState(serviceName string,
 			logger.Info().
 				Str("Value", *eachOutput.OutputValue).
 				Str("Description", *eachOutput.Description).
-				Msgf("    %s", eachOutput.OutputKey)
+				Msgf("    %s", *eachOutput.OutputKey)
 		}
 	}
 	return convergeResult.stackInfo, nil

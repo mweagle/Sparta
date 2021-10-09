@@ -33,7 +33,7 @@ func (command *S3ArtifactPublisherResource) IAMPrivileges() []string {
 }
 
 // Create implements the S3 create operation
-func (command S3ArtifactPublisherResource) Create(awsConfig awsv2.Config,
+func (command S3ArtifactPublisherResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
@@ -63,14 +63,14 @@ func (command S3ArtifactPublisherResource) Create(awsConfig awsv2.Config,
 }
 
 // Update implements the S3 update operation
-func (command S3ArtifactPublisherResource) Update(awsConfig awsv2.Config,
+func (command S3ArtifactPublisherResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.Create(awsConfig, event, logger)
+	return command.Create(ctx, awsConfig, event, logger)
 }
 
 // Delete implements the S3 delete operation
-func (command S3ArtifactPublisherResource) Delete(awsConfig awsv2.Config,
+func (command S3ArtifactPublisherResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
@@ -84,7 +84,7 @@ func (command S3ArtifactPublisherResource) Delete(awsConfig awsv2.Config,
 		Key:    awsv2.String(s3ArtifactPublisherRequest.Key),
 	}
 	s3Svc := awsv2S3.NewFromConfig(awsConfig)
-	_, s3ResponseErr := s3Svc.DeleteObject(context.Background(), s3DeleteObjectParams)
+	_, s3ResponseErr := s3Svc.DeleteObject(ctx, s3DeleteObjectParams)
 	if s3ResponseErr != nil {
 		return nil, s3ResponseErr
 	}

@@ -169,21 +169,21 @@ func (command *SESLambdaEventSourceResource) IAMPrivileges() []string {
 }
 
 // Create implements the custom resource create operation
-func (command SESLambdaEventSourceResource) Create(awsConfig awsv2.Config,
+func (command SESLambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command SESLambdaEventSourceResource) Update(awsConfig awsv2.Config,
+func (command SESLambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command SESLambdaEventSourceResource) Delete(awsConfig awsv2.Config,
+func (command SESLambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(false, awsConfig, event, logger)

@@ -149,7 +149,8 @@ func testProvisionEx(t *testing.T,
 	if fullPathErr != nil {
 		t.Error(fullPathErr)
 	}
-	err := Build(true,
+	err := Build(context.Background(),
+		true,
 		"SampleProvision",
 		"",
 		lambdaAWSInfos,

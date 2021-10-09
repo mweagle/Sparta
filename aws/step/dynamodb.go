@@ -4,7 +4,6 @@ import (
 	"math/rand"
 
 	awsv2DynamoTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,12 +71,12 @@ func NewDynamoDBGetItemState(stateName string,
 // DynamoDBPutItemParameters represents params for the SNS notification
 // Ref: https://docs.aws.amazon.com/sns/latest/api/API_Publish.html#API_Publish_RequestParameters
 type DynamoDBPutItemParameters struct {
-	Item                        map[string]*dynamodb.AttributeValue
+	Item                        map[string]*awsv2DynamoTypes.AttributeValue
 	TableName                   string
 	ConditionExpression         string
 	ConsistentRead              bool
 	ExpressionAttributeNames    map[string]string
-	ExpressionAttributeValues   map[string]*dynamodb.AttributeValue
+	ExpressionAttributeValues   map[string]*awsv2DynamoTypes.AttributeValue
 	ReturnConsumedCapacity      string // INDEXES | TOTAL | NONE
 	ReturnItemCollectionMetrics string // SIZE | NONE
 	ReturnValues                string // NONE | ALL_OLD | UPDATED_OLD | ALL_NEW | UPDATED_NEW

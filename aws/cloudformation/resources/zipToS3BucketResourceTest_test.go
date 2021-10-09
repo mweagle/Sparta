@@ -50,8 +50,10 @@ func TestUnzip(t *testing.T) {
 	event := mockZipResourceEvent(t)
 
 	// Put it
+	testContext := context.Background()
 	awsConfig, _ := awsv2Config.LoadDefaultConfig(context.Background())
-	createOutputs, createError := zipResource.Create(awsConfig,
+	createOutputs, createError := zipResource.Create(testContext,
+		awsConfig,
 		event,
 		&logger)
 	if nil != createError {
@@ -59,7 +61,8 @@ func TestUnzip(t *testing.T) {
 	}
 	t.Logf("TestUnzip outputs: %#v", createOutputs)
 
-	deleteOutputs, deleteError := zipResource.Delete(awsConfig,
+	deleteOutputs, deleteError := zipResource.Delete(testContext,
+		awsConfig,
 		event,
 		&logger)
 	if nil != deleteError {

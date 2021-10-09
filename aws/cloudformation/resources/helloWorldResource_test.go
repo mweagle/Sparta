@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
@@ -63,7 +64,8 @@ func TestExecuteCreateHelloWorld(t *testing.T) {
 	})
 
 	awsConfig := newAWSConfig(&logger)
-	createOutputs, createError := customResource1.Create(awsConfig,
+	createOutputs, createError := customResource1.Create(context.Background(),
+		awsConfig,
 		mockHelloWorldResourceEvent(t),
 		&logger)
 	if nil != createError {

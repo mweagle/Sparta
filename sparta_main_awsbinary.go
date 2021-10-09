@@ -7,6 +7,7 @@ package sparta
 // in the Lambda context
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -107,7 +108,8 @@ func Delete(serviceName string, logger *zerolog.Logger) error {
 }
 
 // Build is not available in the AWS Lambda binary
-func Build(noop bool,
+func Build(ctx context.Context,
+	noop bool,
 	serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
@@ -206,8 +208,11 @@ func platformLogSysInfo(lambdaFunc string, logger *zerolog.Logger) {
 			"/etc/os-release",
 		},
 		zerolog.DebugLevel: {
+			"/proc/stat",
 			"/proc/cpuinfo",
 			"/proc/meminfo",
+			"/proc/loadavg",
+			"/proc/diskstats",
 		},
 	}
 

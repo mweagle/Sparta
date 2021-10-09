@@ -18,7 +18,7 @@ const (
 )
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "2.0.0"
+	SpartaVersion = "3.0.0.alpha"
 	// LambdaBinaryTag is the build tag name used when building the binary
 	LambdaBinaryTag = "lambdabinary"
 )
@@ -105,9 +105,9 @@ const (
 	// ContextKeyLambdaResponse is the possible response that
 	// was returned from the lambda function
 	ContextKeyLambdaResponse
-	// ContextKeyAWSSession is the aws Session instance for this
+	// ContextKeyAWSConfig is the aws Session instance for this
 	// request
-	ContextKeyAWSSession
+	ContextKeyAWSConfig
 )
 
 const (

@@ -187,7 +187,8 @@ func versionAwareS3KeyName(s3DefaultKey string,
 // Upload a local file to S3.  Returns the full S3 URL to the file that was
 // uploaded. If the target bucket does not have versioning enabled,
 // this function will automatically make a new key to ensure uniqueness
-func uploadLocalFileToS3(awsConfig awsv2.Config,
+func uploadLocalFileToS3(ctx context.Context,
+	awsConfig awsv2.Config,
 	localPath string,
 	serviceName string,
 	s3ObjectKey string,
@@ -228,7 +229,7 @@ func uploadLocalFileToS3(awsConfig awsv2.Config,
 			s3ObjectKey)
 	} else {
 		// Then upload it
-		uploadLocation, uploadURLErr := spartaS3.UploadLocalFileToS3(context.Background(),
+		uploadLocation, uploadURLErr := spartaS3.UploadLocalFileToS3(ctx,
 			localPath,
 			awsConfig,
 			s3ObjectBucket,
@@ -419,7 +420,8 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 			uploadKeyPath := fmt.Sprintf("%s/%s", upo.provisionContext.serviceName,
 				archiveBaseName)
 			// Create the S3 key...
-			zipS3URL, zipS3URLErr := uploadLocalFileToS3(upo.provisionContext.awsConfig,
+			zipS3URL, zipS3URLErr := uploadLocalFileToS3(ctx,
+				upo.provisionContext.awsConfig,
 				localPath,
 				upo.provisionContext.serviceName,
 				uploadKeyPath,
@@ -466,7 +468,8 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 				Str("Tag", ecrImageTag).
 				Msg("Pushing local image to ECR")
 
-			pushErr := spartaDocker.PushECRTaggedImage(ecrImageTag,
+			pushErr := spartaDocker.PushECRTaggedImage(ctx,
+				ecrImageTag,
 				upo.provisionContext.awsConfig,
 				logger)
 			return newTaskResult(ecrImageTag, pushErr)
@@ -650,7 +653,8 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	awsCloudFormation := awsv2CF.NewFromConfig(ipuo.provisionContext.awsConfig)
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sInPlaceChangeSet",
 		ipuo.provisionContext.serviceName))
-	changes, changesErr := spartaCF.CreateStackChangeSet(changeSetRequestName,
+	changes, changesErr := spartaCF.CreateStackChangeSet(ctx,
+		changeSetRequestName,
 		ipuo.provisionContext.serviceName,
 		ipuo.provisionContext.cfTemplate,
 		ipuo.provisionContext.s3Uploads[s3UploadCloudFormationStackKey].location,
@@ -737,7 +741,8 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	// Add the request to delete the change set...
 	// TODO: add some retry logic in here to handle failures.
 	deleteChangeSetTask := func() workResult {
-		_, deleteChangeSetResultErr := spartaCF.DeleteChangeSet(ipuo.provisionContext.serviceName,
+		_, deleteChangeSetResultErr := spartaCF.DeleteChangeSet(ctx,
+			ipuo.provisionContext.serviceName,
 			changeSetRequestName,
 			awsCloudFormation)
 		return newTaskResult("", deleteChangeSetResultErr)
@@ -783,7 +788,8 @@ func (cfsu *cloudformationStackUpdateOp) Invoke(ctx context.Context, logger *zer
 	startTime := time.Now()
 
 	// Regular update, go ahead with the CloudFormation changes
-	stack, stackErr := spartaCF.ConvergeStackState(cfsu.provisionContext.serviceName,
+	stack, stackErr := spartaCF.ConvergeStackState(ctx,
+		cfsu.provisionContext.serviceName,
 		cfsu.provisionContext.cfTemplate,
 		cfsu.provisionContext.s3Uploads[s3UploadCloudFormationStackKey].location,
 		cfsu.provisionContext.stackParameterValues,

@@ -104,21 +104,21 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 }
 
 // Create implements the custom resource create operation
-func (command S3LambdaEventSourceResource) Create(awsConfig awsv2.Config,
+func (command S3LambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command S3LambdaEventSourceResource) Update(awsConfig awsv2.Config,
+func (command S3LambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command S3LambdaEventSourceResource) Delete(awsConfig awsv2.Config,
+func (command S3LambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(false, awsConfig, event, logger)

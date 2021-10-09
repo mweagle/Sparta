@@ -5,6 +5,7 @@ package sparta
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -59,7 +60,8 @@ func Describe(serviceName string,
 	var cloudFormationTemplate bytes.Buffer
 	multiWriter := io.MultiWriter(templateFile, &cloudFormationTemplate)
 
-	buildErr := Build(true,
+	buildErr := Build(context.Background(),
+		true,
 		serviceName,
 		serviceDescription,
 		lambdaAWSInfos,

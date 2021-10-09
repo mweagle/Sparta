@@ -4,11 +4,13 @@
 package cloudwatch
 
 import (
+	"context"
 	"os"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awsCloudWatch "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CW "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	awsv2CWTypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rs/zerolog"
@@ -23,10 +25,10 @@ import (
 func publishMetrics(customDimensionMap map[string]string) {
 	currentTime := time.Now()
 
-	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+	// https://docs.awsv2.amazon.com/lambda/latest/dg/current-supported-versions.html
 	functionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
 	cpuMetrics, cpuMetricsErr := gopsutilCPU.Percent(0, false)
-	// https://docs.aws.amazon.com/lambda/latest/dg/limits.html
+	// https://docs.awsv2.amazon.com/lambda/latest/dg/limits.html
 	diskMetrics, diskMetricsErr := gopsutilDisk.Usage("/tmp")
 	uptime, uptimeErr := gopsutilHost.Uptime()
 	loadMetrics, loadMetricsErr := gopsutilLoad.Avg()
@@ -50,70 +52,70 @@ func publishMetrics(customDimensionMap map[string]string) {
 			Msg("Metric info")
 	}
 	// Return the array of metricDatum for the item
-	metricDatum := func(name string, value float64, unit MetricUnit) []*awsCloudWatch.MetricDatum {
-		defaultDatum := []*awsCloudWatch.MetricDatum{{
-			MetricName: aws.String(name),
-			Dimensions: []*awsCloudWatch.Dimension{{
-				Name:  aws.String("Name"),
-				Value: aws.String(sparta.StampedServiceName),
+	metricDatum := func(name string, value float64, unit awsv2CWTypes.StandardUnit) []awsv2CWTypes.MetricDatum {
+		defaultDatum := []awsv2CWTypes.MetricDatum{{
+			MetricName: awsv2.String(name),
+			Dimensions: []awsv2CWTypes.Dimension{{
+				Name:  awsv2.String("Name"),
+				Value: awsv2.String(sparta.StampedServiceName),
 			}},
-			Value:     aws.Float64(value),
+			Value:     awsv2.Float64(value),
 			Timestamp: &currentTime,
-			Unit:      aws.String(string(unit)),
+			Unit:      unit,
 		},
 		}
 		if len(customDimensionMap) != 0 {
-			metricDimension := []*awsCloudWatch.Dimension{{
-				Name:  aws.String("Name"),
-				Value: aws.String(sparta.StampedServiceName),
+			metricDimension := []awsv2CWTypes.Dimension{{
+				Name:  awsv2.String("Name"),
+				Value: awsv2.String(sparta.StampedServiceName),
 			}}
 			for eachKey, eachValue := range customDimensionMap {
-				metricDimension = append(metricDimension, &awsCloudWatch.Dimension{
-					Name:  aws.String(eachKey),
-					Value: aws.String(eachValue),
+				metricDimension = append(metricDimension, awsv2CWTypes.Dimension{
+					Name:  awsv2.String(eachKey),
+					Value: awsv2.String(eachValue),
 				})
 			}
-			defaultDatum = append(defaultDatum, &awsCloudWatch.MetricDatum{
-				MetricName: aws.String(name),
+			defaultDatum = append(defaultDatum, awsv2CWTypes.MetricDatum{
+				MetricName: awsv2.String(name),
 				Dimensions: metricDimension,
-				Value:      aws.Float64(value),
+				Value:      awsv2.Float64(value),
 				Timestamp:  &currentTime,
-				Unit:       aws.String(string(unit)),
+				Unit:       unit,
 			})
 		}
 		return defaultDatum
 	}
 	// Publish all the metrics...
-	// https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_MetricDatum.html
-	metricData := []*awsCloudWatch.MetricDatum{}
+	// https://docs.awsv2.amazon.com/AmazonCloudWatch/latest/APIReference/API_MetricDatum.html
+	metricData := []awsv2CWTypes.MetricDatum{}
 	// CPU?
 	if len(cpuMetrics) == 1 {
-		metricData = append(metricData, metricDatum("CPUPercent", cpuMetrics[0], UnitPercent)...)
+		metricData = append(metricData, metricDatum("CPUPercent", cpuMetrics[0], awsv2CWTypes.StandardUnitPercent)...)
 	}
 	if diskMetricsErr == nil {
-		metricData = append(metricData, metricDatum("DiskUsedPercent", diskMetrics.UsedPercent, UnitPercent)...)
+		metricData = append(metricData, metricDatum("DiskUsedPercent", diskMetrics.UsedPercent, awsv2CWTypes.StandardUnitPercent)...)
 	}
 	if uptimeErr == nil {
-		metricData = append(metricData, metricDatum("Uptime", float64(uptime), UnitMilliseconds)...)
+		metricData = append(metricData, metricDatum("Uptime", float64(uptime), awsv2CWTypes.StandardUnitMilliseconds)...)
 	}
 	if loadMetricsErr == nil {
-		metricData = append(metricData, metricDatum("Load1", loadMetrics.Load1, UnitNone)...)
-		metricData = append(metricData, metricDatum("Load5", loadMetrics.Load5, UnitNone)...)
-		metricData = append(metricData, metricDatum("Load15", loadMetrics.Load15, UnitNone)...)
+		metricData = append(metricData, metricDatum("Load1", loadMetrics.Load1, awsv2CWTypes.StandardUnitNone)...)
+		metricData = append(metricData, metricDatum("Load5", loadMetrics.Load5, awsv2CWTypes.StandardUnitNone)...)
+		metricData = append(metricData, metricDatum("Load15", loadMetrics.Load15, awsv2CWTypes.StandardUnitNone)...)
 	}
 	if netMetricsErr == nil && len(netMetrics) == 1 {
-		metricData = append(metricData, metricDatum("NetBytesSent", float64(netMetrics[0].BytesSent), UnitBytes)...)
-		metricData = append(metricData, metricDatum("NetBytesRecv", float64(netMetrics[0].BytesRecv), UnitBytes)...)
-		metricData = append(metricData, metricDatum("NetErrin", float64(netMetrics[0].Errin), UnitCount)...)
-		metricData = append(metricData, metricDatum("NetErrout", float64(netMetrics[0].Errout), UnitCount)...)
+		metricData = append(metricData, metricDatum("NetBytesSent", float64(netMetrics[0].BytesSent), awsv2CWTypes.StandardUnitBytes)...)
+		metricData = append(metricData, metricDatum("NetBytesRecv", float64(netMetrics[0].BytesRecv), awsv2CWTypes.StandardUnitBytes)...)
+		metricData = append(metricData, metricDatum("NetErrin", float64(netMetrics[0].Errin), awsv2CWTypes.StandardUnitCount)...)
+		metricData = append(metricData, metricDatum("NetErrout", float64(netMetrics[0].Errout), awsv2CWTypes.StandardUnitCount)...)
 	}
-	putMetricInput := &awsCloudWatch.PutMetricDataInput{
+	putMetricInput := &awsv2CW.PutMetricDataInput{
 		MetricData: metricData,
-		Namespace:  aws.String(sparta.ProperName),
+		Namespace:  awsv2.String(sparta.ProperName),
 	}
-	session := spartaAWS.NewSession(logger)
-	awsCloudWatchSvc := awsCloudWatch.New(session)
-	putMetricResponse, putMetricResponseErr := awsCloudWatchSvc.PutMetricData(putMetricInput)
+	awsConfig := spartaAWS.NewConfig(logger)
+	awsCloudWatchSvc := awsv2CW.NewFromConfig(awsConfig)
+	putMetricResponse, putMetricResponseErr := awsCloudWatchSvc.PutMetricData(context.Background(), putMetricInput)
 	if putMetricResponseErr != nil {
 		logger.Error().Err(putMetricResponseErr).Msg("Failed to submit CloudWatch Metric data")
 	} else {
@@ -123,7 +125,7 @@ func publishMetrics(customDimensionMap map[string]string) {
 
 // RegisterLambdaUtilizationMetricPublisher installs a periodic task
 // to publish the current system metrics to CloudWatch Metrics. See
-// https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html
+// https://docs.awsv2.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html
 // for more information.
 func RegisterLambdaUtilizationMetricPublisher(customDimensionMap map[string]string) {
 

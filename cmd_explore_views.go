@@ -17,7 +17,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
@@ -188,7 +187,8 @@ func newFunctionSelector(awsConfig awsv2.Config,
 //
 // Select the event to use to invoke the function
 //
-func newEventInputSelector(awsConfig awsv2.Config,
+func newEventInputSelector(ctx context.Context,
+	awsConfig awsv2.Config,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
@@ -287,10 +287,10 @@ func newEventInputSelector(awsConfig awsv2.Config,
 		// Submit it to lambda
 		if activeFunction != "" {
 			lambdaInput := &awsv2Lambda.InvokeInput{
-				FunctionName: aws.String(activeFunction),
+				FunctionName: awsv2.String(activeFunction),
 				Payload:      selectedJSONData,
 			}
-			invokeOutput, invokeOutputErr := lambdaSvc.Invoke(context.Background(), lambdaInput)
+			invokeOutput, invokeOutputErr := lambdaSvc.Invoke(ctx, lambdaInput)
 			if invokeOutputErr != nil {
 				logger.Error().
 					Err(invokeOutputErr).
@@ -332,7 +332,8 @@ func newEventInputSelector(awsConfig awsv2.Config,
 //
 // Tail the cloudwatch logs for the active function
 //
-func newCloudWatchLogTailView(awsConfig awsv2.Config,
+func newCloudWatchLogTailView(ctx context.Context,
+	awsConfig awsv2.Config,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	settings map[string]string,
@@ -418,7 +419,7 @@ func newCloudWatchLogTailView(awsConfig awsv2.Config,
 
 			// Put this as the label in the view...
 			doneChan = make(chan bool)
-			messages := spartaCWLogs.TailWithContext(context.Background(),
+			messages := spartaCWLogs.TailWithContext(ctx,
 				doneChan,
 				awsConfig,
 				logGroupName,

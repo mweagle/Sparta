@@ -15,6 +15,7 @@ import (
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	awsv2S3Downloader "github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 
@@ -142,7 +143,8 @@ func askQuestions(userStackName string, stackNameToIDMap map[string]string) (*us
 	return &responses, nil
 }
 
-func objectKeysForProfileType(profileType string,
+func objectKeysForProfileType(ctx context.Context,
+	profileType string,
 	stackName string,
 	s3BucketName string,
 	maxCount int32,
@@ -163,7 +165,7 @@ func objectKeysForProfileType(profileType string,
 
 	s3Svc := awsv2S3.NewFromConfig(awsConfig)
 	for {
-		listItemResults, listItemResultsErr := s3Svc.ListObjects(context.Background(),
+		listItemResults, listItemResultsErr := s3Svc.ListObjects(ctx,
 			listObjectInput)
 		if listItemResultsErr != nil {
 			return nil, errors.Wrapf(listItemResultsErr, "Attempting to list bucket: %s", s3BucketName)
@@ -306,7 +308,8 @@ func syncStackProfileSnapshots(profileType string,
 	// Ok, let's get some user information
 	s3Svc := awsv2S3.NewFromConfig(awsConfig)
 	downloader := awsv2S3Downloader.NewDownloader(s3Svc)
-	downloadKeys, downloadKeysErr := objectKeysForProfileType(profileType,
+	downloadKeys, downloadKeysErr := objectKeysForProfileType(context.Background(),
+		profileType,
 		stackName,
 		s3BucketName,
 		1024,
@@ -418,7 +421,7 @@ func syncStackProfileSnapshots(profileType string,
 
 // Profile is the interactive command used to pull S3 assets locally into /tmp
 // and run ppro against the cached profiles
-func Profile(serviceName string,
+func Profile(ctx context.Context, serviceName string,
 	serviceDescription string,
 	s3BucketName string,
 	httpPort int,
@@ -428,9 +431,12 @@ func Profile(serviceName string,
 
 	// Get the currently active stacks...
 	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-describing-stacks.html#w2ab2c15c15c17c11
-	stackSummaries, stackSummariesErr := spartaCF.ListStacks(awsConfig, 1024, "CREATE_COMPLETE",
-		"UPDATE_COMPLETE",
-		"UPDATE_ROLLBACK_COMPLETE")
+	stackSummaries, stackSummariesErr := spartaCF.ListStacks(ctx,
+		awsConfig,
+		1024,
+		awsv2CFTypes.StackStatusCreateComplete,
+		awsv2CFTypes.StackStatusUpdateComplete,
+		awsv2CFTypes.StackStatusUpdateRollbackComplete)
 
 	if stackSummariesErr != nil {
 		return stackSummariesErr

@@ -156,21 +156,21 @@ func (command *ZipToS3BucketResource) IAMPrivileges() []string {
 }
 
 // Create implements the custom resource create operation
-func (command ZipToS3BucketResource) Create(awsConfig awsv2.Config,
+func (command ZipToS3BucketResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.unzip(awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command ZipToS3BucketResource) Update(awsConfig awsv2.Config,
+func (command ZipToS3BucketResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	return command.unzip(awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command ZipToS3BucketResource) Delete(awsConfig awsv2.Config,
+func (command ZipToS3BucketResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := ZipToS3BucketResourceRequest{}

@@ -3,7 +3,9 @@
 
 package cloudformation
 
-import "github.com/aws/aws-sdk-go-v2/aws/session"
+import (
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+)
 
 // https://blog.cloudflare.com/setting-go-variables-at-compile-time/
 
@@ -11,6 +13,6 @@ func platformUserName() string {
 	return ""
 }
 
-func platformAccountUserName(awsConfig aws.Config) (string, error) {
+func platformAccountUserName(awsConfig awsv2.Config) (string, error) {
 	return "", nil
 }

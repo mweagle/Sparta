@@ -52,7 +52,8 @@ func cloudWatchEventSourceProperties(event *CloudFormationLambdaEvent) (*CloudWa
 	return &eventProperties, nil
 }
 
-func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTargetActive bool,
+func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(ctx context.Context,
+	isTargetActive bool,
 	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
@@ -123,22 +124,22 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 }
 
 // Create implements the create operation
-func (command CloudWatchLogsLambdaEventSourceResource) Create(awsConfig awsv2.Config,
+func (command CloudWatchLogsLambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsConfig, event, logger)
+	return command.updateRegistration(ctx, true, awsConfig, event, logger)
 }
 
 // Update implements the update operation
-func (command CloudWatchLogsLambdaEventSourceResource) Update(awsConfig awsv2.Config,
+func (command CloudWatchLogsLambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsConfig, event, logger)
+	return command.updateRegistration(ctx, true, awsConfig, event, logger)
 }
 
 // Delete implements the delete operation
-func (command CloudWatchLogsLambdaEventSourceResource) Delete(awsConfig awsv2.Config,
+func (command CloudWatchLogsLambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(false, awsConfig, event, logger)
+	return command.updateRegistration(ctx, false, awsConfig, event, logger)
 }

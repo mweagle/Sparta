@@ -16,10 +16,10 @@ import (
 
 // Delete ensures that the provided serviceName is deleted.
 // Failing to delete a non-existent service is considered a success.
-func Delete(serviceName string, logger *zerolog.Logger) error {
+func Delete(ctx context.Context, serviceName string, logger *zerolog.Logger) error {
 	awsConfig := spartaAWS.NewConfig(logger)
 	awsCloudFormation := awsv2CF.NewFromConfig(awsConfig)
-	ctx := context.Background()
+
 	exists, err := spartaCF.StackExists(ctx, serviceName, awsConfig, logger)
 	if nil != err {
 		return err

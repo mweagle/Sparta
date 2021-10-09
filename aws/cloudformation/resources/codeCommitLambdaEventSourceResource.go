@@ -28,7 +28,8 @@ type CodeCommitLambdaEventSourceResource struct {
 	gof.CustomResource
 }
 
-func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetActive bool,
+func (command CodeCommitLambdaEventSourceResource) updateRegistration(ctx context.Context,
+	isTargetActive bool,
 	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
@@ -48,7 +49,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 	ccInput := &awsv2CodeCommit.GetRepositoryTriggersInput{
 		RepositoryName: awsv2.String(request.RepositoryName),
 	}
-	triggers, triggersErr := codeCommitSvc.GetRepositoryTriggers(context.Background(), ccInput)
+	triggers, triggersErr := codeCommitSvc.GetRepositoryTriggers(ctx, ccInput)
 	if triggersErr != nil {
 		return nil, triggersErr
 	}
@@ -104,7 +105,7 @@ func (command CodeCommitLambdaEventSourceResource) updateRegistration(isTargetAc
 		RepositoryName: awsv2.String(request.RepositoryName),
 		Triggers:       putTriggers,
 	}
-	putTriggersResp, putTriggersRespErr := codeCommitSvc.PutRepositoryTriggers(context.Background(), putTriggersInput)
+	putTriggersResp, putTriggersRespErr := codeCommitSvc.PutRepositoryTriggers(ctx, putTriggersInput)
 	// Just log it...
 	logger.Info().
 		Interface("Response", putTriggersResp).
@@ -121,22 +122,22 @@ func (command *CodeCommitLambdaEventSourceResource) IAMPrivileges() []string {
 }
 
 // Create implements the custom resource create operation
-func (command CodeCommitLambdaEventSourceResource) Create(awsConfig awsv2.Config,
+func (command CodeCommitLambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsConfig, event, logger)
+	return command.updateRegistration(ctx, true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command CodeCommitLambdaEventSourceResource) Update(awsConfig awsv2.Config,
+func (command CodeCommitLambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsConfig, event, logger)
+	return command.updateRegistration(ctx, true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command CodeCommitLambdaEventSourceResource) Delete(awsConfig awsv2.Config,
+func (command CodeCommitLambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(false, awsConfig, event, logger)
+	return command.updateRegistration(ctx, false, awsConfig, event, logger)
 }

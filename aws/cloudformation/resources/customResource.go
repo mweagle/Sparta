@@ -164,15 +164,15 @@ func init() {
 
 // CustomResourceCommand defines operations that a CustomResource must implement.
 type CustomResourceCommand interface {
-	Create(awsConfig awsv2.Config,
+	Create(ctx context.Context, awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 
-	Update(awsConfig awsv2.Config,
+	Update(ctx context.Context, awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 
-	Delete(awsConfig awsv2.Config,
+	Delete(ctx context.Context, awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 }
@@ -340,7 +340,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	return nil
 }
 
-// Returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
+// Returns an AWS Config (https://github.com/aws/aws-sdk-go-v2/blob/main/config/doc.go)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
 func newAWSConfig(logger *zerolog.Logger) awsv2.Config {
@@ -404,11 +404,11 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand,
 		if opErr == nil && executeOperation {
 			switch event.RequestType {
 			case CreateOperation:
-				opResults, opErr = command.Create(customResourceConfig, &event, logger)
+				opResults, opErr = command.Create(ctx, customResourceConfig, &event, logger)
 			case DeleteOperation:
-				opResults, opErr = command.Delete(customResourceConfig, &event, logger)
+				opResults, opErr = command.Delete(ctx, customResourceConfig, &event, logger)
 			case UpdateOperation:
-				opResults, opErr = command.Update(customResourceConfig, &event, logger)
+				opResults, opErr = command.Update(ctx, customResourceConfig, &event, logger)
 			}
 		}
 		// Notify CloudFormation of the result

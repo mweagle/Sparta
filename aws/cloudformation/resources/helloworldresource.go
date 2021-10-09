@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
@@ -27,7 +28,7 @@ func (command *HelloWorldResource) IAMPrivileges() []string {
 }
 
 // Create implements resource create
-func (command HelloWorldResource) Create(awsConfig awsv2.Config,
+func (command HelloWorldResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := HelloWorldResourceRequest{}
@@ -42,7 +43,7 @@ func (command HelloWorldResource) Create(awsConfig awsv2.Config,
 }
 
 // Update implements resource update
-func (command HelloWorldResource) Update(awsConfig awsv2.Config,
+func (command HelloWorldResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := HelloWorldResourceRequest{}
@@ -55,7 +56,7 @@ func (command HelloWorldResource) Update(awsConfig awsv2.Config,
 }
 
 // Delete implements resource delete
-func (command HelloWorldResource) Delete(awsConfig awsv2.Config,
+func (command HelloWorldResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := HelloWorldResourceRequest{}

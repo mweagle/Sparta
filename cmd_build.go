@@ -602,19 +602,20 @@ func (cpo *createPackageOp) buildZIPArchive(sanitizedServiceName string,
 	return nil
 }
 
-func (cpo *createPackageOp) buildDockerImage(sanitizedServiceName string,
+func (cpo *createPackageOp) buildDockerImage(ctx context.Context,
+	sanitizedServiceName string,
 	logger *zerolog.Logger) error {
 	spartaECRLabelName := "io.sparta.ecr-name"
 	imageTag := fmt.Sprintf("sparta/%s:%s",
 		strings.ToLower(cpo.userdata.serviceName),
 		cpo.userdata.buildID)
-	buildCtx := context.Background()
+
 	// Get the current account id...
 	accountID := "123412341234"
 	if !cpo.userdata.noop {
 		stsService := awsv2STS.NewFromConfig(cpo.buildContext.awsConfig)
 
-		callerInfo, callerInfoErr := stsService.GetCallerIdentity(buildCtx,
+		callerInfo, callerInfoErr := stsService.GetCallerIdentity(ctx,
 			&awsv2STS.GetCallerIdentityInput{})
 		if callerInfoErr != nil {
 			return callerInfoErr
@@ -802,9 +803,11 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	// We always need to pass the service name
 	cpo.buildContext.cfTemplate.Metadata[MetadataParamServiceName] = cpo.userdata.serviceName
 
-	logger.Info().
-		Str("Dockerfile", cpo.userdata.dockerFile).
-		Msg("Docker build info")
+	if cpo.userdata.dockerFile != "" {
+		logger.Info().
+			Str("Dockerfile", cpo.userdata.dockerFile).
+			Msg("Docker build info")
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Next up we either need to pass the ZIP archive or the ECR information
@@ -819,7 +822,7 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 		}
 
 		// Dockerbuild
-		dockerErr := cpo.buildDockerImage(sanitizedServiceName, logger)
+		dockerErr := cpo.buildDockerImage(ctx, sanitizedServiceName, logger)
 		if dockerErr != nil {
 			return dockerErr
 		}
@@ -1189,7 +1192,8 @@ func (cto *createTemplateOp) Invoke(ctx context.Context, logger *zerolog.Logger)
 // template (http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
 // which creates or updates the service state.
 //
-func Build(noop bool,
+func Build(ctx context.Context,
+	noop bool,
 	serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
@@ -1319,8 +1323,7 @@ func Build(noop bool,
 	})
 	buildPipeline.Append("createTemplate", stageCreateTemplate)
 
-	pipelineContext := context.Background()
-	buildErr := buildPipeline.Run(pipelineContext, "Build", logger)
+	buildErr := buildPipeline.Run(ctx, "Build", logger)
 	if buildErr != nil {
 		return buildErr
 	}

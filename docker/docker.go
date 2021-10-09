@@ -157,12 +157,12 @@ func BuildDockerImage(serviceName string,
 }
 
 // PushECRTaggedImage pushes previously tagged image to ECR
-func PushECRTaggedImage(localImageTag string,
+func PushECRTaggedImage(ctx context.Context,
+	localImageTag string,
 	awsConfig awsv2.Config,
 	logger *zerolog.Logger) error {
 
 	ecrSvc := awsv2ECR.NewFromConfig(awsConfig)
-	pushContext := context.Background()
 
 	// Push the image - if that fails attempt to reauthorize with the docker
 	// client and try again
@@ -173,7 +173,7 @@ func PushECRTaggedImage(localImageTag string,
 		logger.Info().
 			Err(pushError).
 			Msg("ECR push failed - reauthorizing")
-		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(pushContext,
+		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(ctx,
 			&awsv2ECR.GetAuthorizationTokenInput{},
 		)
 		if ecrAuthTokenResultErr != nil {
@@ -297,6 +297,6 @@ func PushDockerImageToECR(ctx context.Context,
 			pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
 		}
 	*/
-	pushErr := PushECRTaggedImage(ecrTagValue, awsConfig, logger)
+	pushErr := PushECRTaggedImage(ctx, ecrTagValue, awsConfig, logger)
 	return ecrTagValue, pushErr
 }

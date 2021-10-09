@@ -202,7 +202,8 @@ func corsOptionsGatewayMethod(api *API, restAPIID string, resourceID string) *go
 	return corsMethod
 }
 
-func apiStageInfo(apiName string,
+func apiStageInfo(ctx context.Context,
+	apiName string,
 	stageName string,
 	awsConfig awsv2.Config,
 	noop bool,
@@ -217,13 +218,12 @@ func apiStageInfo(apiName string,
 		logger.Info().Msg(noopMessage("API Gateway check"))
 		return nil, nil
 	}
-	ctxStageInfo := context.Background()
 	svc := awsv2APIG.NewFromConfig(awsConfig)
 	restApisInput := &awsv2APIG.GetRestApisInput{
 		Limit: awsv2.Int32(500),
 	}
 
-	restApisOutput, restApisOutputErr := svc.GetRestApis(ctxStageInfo, restApisInput)
+	restApisOutput, restApisOutputErr := svc.GetRestApis(ctx, restApisInput)
 	if nil != restApisOutputErr {
 		return nil, restApisOutputErr
 	}
@@ -244,7 +244,7 @@ func apiStageInfo(apiName string,
 	stagesInput := &awsv2APIG.GetStagesInput{
 		RestApiId: awsv2.String(restAPIID),
 	}
-	stagesOutput, stagesOutputErr := svc.GetStages(ctxStageInfo, stagesInput)
+	stagesOutput, stagesOutputErr := svc.GetStages(ctx, stagesInput)
 	if nil != stagesOutputErr {
 		return nil, stagesOutputErr
 	}
@@ -705,7 +705,8 @@ func (api *API) Marshal(serviceName string,
 	if nil != api.stage {
 		// Is the stack already deployed?
 		stageName := api.stage.name
-		stageInfo, stageInfoErr := apiStageInfo(api.name,
+		stageInfo, stageInfoErr := apiStageInfo(context.Background(),
+			api.name,
 			stageName,
 			awsConfig,
 			noop,

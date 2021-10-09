@@ -26,7 +26,8 @@ func logSectionHeader(text string,
 }
 
 // Status produces a status report for the given stack
-func Status(serviceName string,
+func Status(ctx context.Context,
+	serviceName string,
 	serviceDescription string,
 	redact bool,
 	logger *zerolog.Logger) error {
@@ -37,7 +38,7 @@ func Status(serviceName string,
 	params := &awsv2CF.DescribeStacksInput{
 		StackName: aws.String(serviceName),
 	}
-	describeStacksResponse, describeStacksResponseErr := cfSvc.DescribeStacks(context.Background(), params)
+	describeStacksResponse, describeStacksResponseErr := cfSvc.DescribeStacks(ctx, params)
 
 	if describeStacksResponseErr != nil {
 		if strings.Contains(describeStacksResponseErr.Error(), "does not exist") {
@@ -60,7 +61,7 @@ func Status(serviceName string,
 		input := &awsv2STS.GetCallerIdentityInput{}
 
 		stsSvc := awsv2STS.NewFromConfig(awsConfig)
-		identityResponse, identityResponseErr := stsSvc.GetCallerIdentity(context.Background(), input)
+		identityResponse, identityResponseErr := stsSvc.GetCallerIdentity(ctx, input)
 		if identityResponseErr != nil {
 			return identityResponseErr
 		}

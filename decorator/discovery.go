@@ -128,9 +128,9 @@ func discoveryInfoFromIDs(discoveryContext context.Context,
 
 // DiscoverInstances returns the HttpInstanceSummary items that match
 // the given attribute map
-func DiscoverInstances(attributes map[string]string,
+func DiscoverInstances(ctx context.Context, attributes map[string]string,
 	logger *zerolog.Logger) ([]awsv2ServiceDiscoveryTypes.HttpInstanceSummary, error) {
-	return DiscoverInstancesWithContext(context.Background(), attributes, logger)
+	return DiscoverInstancesWithContext(ctx, attributes, logger)
 }
 
 // DiscoverInstancesWithContext returns the HttpInstanceSummary items that match
@@ -139,12 +139,14 @@ func DiscoverInstances(attributes map[string]string,
 func DiscoverInstancesWithContext(ctx context.Context,
 	attributes map[string]string,
 	logger *zerolog.Logger) ([]awsv2ServiceDiscoveryTypes.HttpInstanceSummary, error) {
-	discoveryContext := context.Background()
 
 	// Get the default discovery info and translate that into name/id pairs...
 	namespaceID := os.Getenv(EnvVarCloudMapNamespaceID)
 	serviceID := os.Getenv(EnvVarCloudMapServiceID)
-	discoveryInfo, discoveryInfoErr := discoveryInfoFromIDs(discoveryContext, namespaceID, serviceID, logger)
+	discoveryInfo, discoveryInfoErr := discoveryInfoFromIDs(ctx,
+		namespaceID,
+		serviceID,
+		logger)
 
 	logger.Debug().
 		Str("namespaceID", namespaceID).

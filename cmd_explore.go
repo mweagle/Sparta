@@ -28,7 +28,8 @@ const (
 
 // ExploreWithInputFilter allows the caller to provide additional filters
 // for the source files that will be used as inputs
-func ExploreWithInputFilter(serviceName string,
+func ExploreWithInputFilter(ctx context.Context,
+	serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api APIGateway,
@@ -38,8 +39,6 @@ func ExploreWithInputFilter(serviceName string,
 	buildTags string,
 	linkerFlags string,
 	logger *zerolog.Logger) error {
-
-	exploreContext := context.Background()
 
 	// We need to setup the log output view so that we have a writer for the
 	// log output
@@ -62,7 +61,7 @@ func ExploreWithInputFilter(serviceName string,
 	input := &awsv2CF.DescribeStackResourcesInput{
 		StackName: awsv2.String(serviceName),
 	}
-	stackResourceOutputs, stackResourceOutputsErr := cfSvc.DescribeStackResources(exploreContext, input)
+	stackResourceOutputs, stackResourceOutputsErr := cfSvc.DescribeStackResources(ctx, input)
 	if stackResourceOutputsErr != nil {
 		return stackResourceOutputsErr
 	}
@@ -85,14 +84,16 @@ func ExploreWithInputFilter(serviceName string,
 		settingsMap,
 		channelMap[broadcasterFunctionSelect],
 		logger)
-	eventDropdown, eventFocusable := newEventInputSelector(awsConfig,
+	eventDropdown, eventFocusable := newEventInputSelector(ctx,
+		awsConfig,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
 		inputExtensions,
 		channelMap[broadcasterFunctionSelect],
 		logger)
-	outputView, outputViewFocusable := newCloudWatchLogTailView(awsConfig,
+	outputView, outputViewFocusable := newCloudWatchLogTailView(ctx,
+		awsConfig,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
@@ -166,7 +167,8 @@ func Explore(serviceName string,
 	linkerFlags string,
 	logger *zerolog.Logger) error {
 
-	return ExploreWithInputFilter(serviceName,
+	return ExploreWithInputFilter(context.Background(),
+		serviceName,
 		serviceDescription,
 		lambdaAWSInfos,
 		api,

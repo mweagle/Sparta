@@ -93,10 +93,10 @@ func tappedHandler(handlerSymbol interface{},
 	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
 
-		awsSession := spartaAWS.NewSession(logger)
+		awsConfig := spartaAWS.NewConfig(logger)
 		ctx = applyInterceptors(ctx, msg, interceptors.Begin)
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
-		ctx = context.WithValue(ctx, ContextKeyAWSSession, awsSession)
+		ctx = context.WithValue(ctx, ContextKeyAWSConfig, awsConfig)
 		ctx = applyInterceptors(ctx, msg, interceptors.BeforeSetup)
 
 		// Create the entry logger that has some context information
