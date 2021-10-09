@@ -22,6 +22,10 @@ var (
 	// for this run
 	SpartaTagBuildIDKey = spartaTagName("buildId")
 
+	// SpartaTagBuildVersion is the Sparta version used to provision
+	// the application
+	SpartaTagSpartaVersionKey = spartaTagName("sparta-version")
+
 	// SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
 	// that stores the optional user-supplied golang build tags
 	SpartaTagBuildTagsKey = spartaTagName("buildTags")
