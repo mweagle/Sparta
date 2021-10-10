@@ -68,7 +68,11 @@ func discoveryInfoFromIDs(discoveryContext context.Context,
 	// Issue the queries concurrently
 	var wg sync.WaitGroup
 	wg.Add(2)
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(discoveryContext, logger)
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
+
 	cloudmapSvc := awsv2ServiceDiscovery.NewFromConfig(awsConfig)
 
 	// Go get the namespace info
@@ -178,7 +182,10 @@ func DiscoverInstancesInServiceWithContext(ctx context.Context,
 		queryParams[eachKey] = eachValue
 	}
 
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
 	cloudmapSvc := awsv2ServiceDiscovery.NewFromConfig(awsConfig)
 	lookupParams := &awsv2ServiceDiscovery.DiscoverInstancesInput{
 		NamespaceName:   awsv2.String(namespaceName),

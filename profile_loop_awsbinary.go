@@ -91,7 +91,8 @@ func uploadFileTask(ctx context.Context,
 	}
 }
 
-func snapshotProfiles(s3BucketArchive interface{},
+func snapshotProfiles(ctx context.Context,
+	s3BucketArchive interface{},
 	snapshotInterval time.Duration,
 	cpuProfileDuration time.Duration,
 	profileTypes ...string) {
@@ -107,7 +108,10 @@ func snapshotProfiles(s3BucketArchive interface{},
 			Msg("Publishing CPU profile")
 
 		uploadSlot := nextUploadSlot()
-		awsConfig := spartaAWS.NewConfig(profileLogger)
+		awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, profileLogger)
+		if awsConfigErr != nil {
+			return
+		}
 		s3Client := awsv2S3.NewFromConfig(awsConfig)
 		uploader := awsv2S3Manager.NewUploader(s3Client)
 		uploadTasks := make([]*workTask, 0)
@@ -145,7 +149,8 @@ func snapshotProfiles(s3BucketArchive interface{},
 		}
 		workerPool := newWorkerPool(uploadTasks, 32)
 		workerPool.Run()
-		ScheduleProfileLoop(s3BucketArchive,
+		ScheduleProfileLoop(ctx,
+			s3BucketArchive,
 			snapshotInterval,
 			cpuProfileDuration,
 			profileTypes...)
@@ -186,12 +191,17 @@ func snapshotProfiles(s3BucketArchive interface{},
 // ScheduleProfileLoop installs a profiling loop that pushes profile information
 // to S3 for local consumption using a `profile` command that wraps
 // pprof
-func ScheduleProfileLoop(s3BucketArchive interface{},
+func ScheduleProfileLoop(ctx context.Context,
+	s3BucketArchive interface{},
 	snapshotInterval time.Duration,
 	cpuProfileDuration time.Duration,
 	profileTypes ...string) {
 
 	time.AfterFunc(snapshotInterval, func() {
-		snapshotProfiles(s3BucketArchive, snapshotInterval, cpuProfileDuration, profileTypes...)
+		snapshotProfiles(ctx,
+			s3BucketArchive,
+			snapshotInterval,
+			cpuProfileDuration,
+			profileTypes...)
 	})
 }

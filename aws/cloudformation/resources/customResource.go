@@ -36,8 +36,6 @@ const (
 	UpdateOperation = "Update"
 )
 
-// TODO - hookup CustomResoureces
-// 20 Sep 21 23:41 PDT |ERROR| Failed to execute command                        error="cloudformationUpdate=>ValidationError: Template format error: Unrecognized resource types: [Custom::Sparta::S3EventSource]\n\tstatus code: 400, request id: c90eabe9-7c41-411e-ad20-60ff1fcd62b1"
 const (
 	// CustomResourceTypePrefix is the known custom resource
 	// type prefix

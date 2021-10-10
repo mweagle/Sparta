@@ -1,6 +1,7 @@
 package cloudformation
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"strings"
@@ -165,7 +166,10 @@ func TestUserScopedStackName(t *testing.T) {
 }
 func TestPlatformScopedName(t *testing.T) {
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
-	awsConfig := spartaAWS.NewConfig(&logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(context.Background(), &logger)
+	if awsConfigErr != nil {
+		t.Fatalf("Failed to create config: %s", awsConfigErr.Error())
+	}
 	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsConfig)
 	if stackNameErr != nil {
 		t.Fatalf("Failed to create AWS account based stack name: %s", stackNameErr)

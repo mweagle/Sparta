@@ -453,7 +453,12 @@ func WaitForStackOperationComplete(ctx context.Context,
 
 	// Startup a spinner...
 	charSetIndex := 39
-	if strings.Contains(os.Getenv("LC_TERMINAL"), "iTerm") {
+	terminalType := os.Getenv("LC_TERMINAL")
+	logger.Info().
+		Str("terminal", terminalType).
+		Msg("Terminal type")
+
+	if strings.Contains(terminalType, "iTerm") {
 		charSetIndex = 39 // WAS 7 to handle iTerm improperly updating
 	}
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex],
@@ -772,7 +777,7 @@ func DeleteChangeSet(ctx context.Context,
 		deleteChangeSetResults, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(ctx, &deleteChangeSetInput)
 		if nil == deleteChangeSetResultErr {
 			return deleteChangeSetResults, nil
-		} else if strings.Contains(deleteChangeSetResultErr.Error(), "CREATE_IN_PROGRESS") {
+		} else if strings.Contains(deleteChangeSetResultErr.Error(), string(awsv2CFTypes.StackStatusCreateInProgress)) {
 			if elapsedTime > cloudformationPollingTimeout {
 				return nil, fmt.Errorf("failed to delete ChangeSet within timeout window: %s", elapsedTime.String())
 			}

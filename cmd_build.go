@@ -1241,9 +1241,15 @@ func Build(ctx context.Context,
 	if absOutputDirectoryErr != nil {
 		return absOutputDirectoryErr
 	}
+
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
+
 	buildContext := &buildContext{
 		cfTemplate:           gof.NewTemplate(),
-		awsConfig:            spartaAWS.NewConfig(logger),
+		awsConfig:            awsConfig,
 		outputDirectory:      absOutputDirectory,
 		workflowHooksContext: nil,
 		templateWriter:       templateWriter,

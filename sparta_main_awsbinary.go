@@ -102,7 +102,9 @@ func MainEx(serviceName string,
 }
 
 // Delete is not available in the AWS Lambda binary
-func Delete(serviceName string, logger *zerolog.Logger) error {
+func Delete(ctx context.Context,
+	serviceName string,
+	logger *zerolog.Logger) error {
 	logger.Error().Msg("Delete() not supported in AWS Lambda binary")
 	return errors.New("Delete not supported for this binary")
 }
@@ -192,7 +194,8 @@ func Profile(serviceName string,
 
 // Status is the command that produces a simple status report for a given
 // stack
-func Status(serviceName string,
+func Status(ctx context.Context,
+	serviceName string,
 	serviceDescription string,
 	redact bool,
 	logger *zerolog.Logger) error {

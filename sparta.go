@@ -304,7 +304,6 @@ type ExtendedOptions struct {
 
 // WorkflowHooks is a structure that allows callers to customize the Sparta provisioning
 // pipeline to add contents the Lambda archive or perform other workflow operations.
-// TODO: remove single-valued fields
 type WorkflowHooks struct {
 	// Initial hook context. May be empty
 	Context context.Context

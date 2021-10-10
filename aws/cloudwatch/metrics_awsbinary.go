@@ -24,6 +24,7 @@ import (
 // publishMetrics is the actual metric publishing logic. T
 func publishMetrics(customDimensionMap map[string]string) {
 	currentTime := time.Now()
+	publishContext := context.Background()
 
 	// https://docs.awsv2.amazon.com/lambda/latest/dg/current-supported-versions.html
 	functionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
@@ -113,9 +114,14 @@ func publishMetrics(customDimensionMap map[string]string) {
 		MetricData: metricData,
 		Namespace:  awsv2.String(sparta.ProperName),
 	}
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(publishContext, logger)
+	if awsConfigErr != nil {
+		return
+	}
+
 	awsCloudWatchSvc := awsv2CW.NewFromConfig(awsConfig)
-	putMetricResponse, putMetricResponseErr := awsCloudWatchSvc.PutMetricData(context.Background(), putMetricInput)
+	putMetricResponse, putMetricResponseErr := awsCloudWatchSvc.PutMetricData(publishContext,
+		putMetricInput)
 	if putMetricResponseErr != nil {
 		logger.Error().Err(putMetricResponseErr).Msg("Failed to submit CloudWatch Metric data")
 	} else {

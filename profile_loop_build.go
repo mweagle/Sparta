@@ -421,13 +421,17 @@ func syncStackProfileSnapshots(profileType string,
 
 // Profile is the interactive command used to pull S3 assets locally into /tmp
 // and run ppro against the cached profiles
-func Profile(ctx context.Context, serviceName string,
+func Profile(ctx context.Context,
+	serviceName string,
 	serviceDescription string,
 	s3BucketName string,
 	httpPort int,
 	logger *zerolog.Logger) error {
 
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
 
 	// Get the currently active stacks...
 	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-describing-stacks.html#w2ab2c15c15c17c11

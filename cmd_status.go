@@ -32,7 +32,10 @@ func Status(ctx context.Context,
 	redact bool,
 	logger *zerolog.Logger) error {
 
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
 	cfSvc := awsv2CF.NewFromConfig(awsConfig)
 
 	params := &awsv2CF.DescribeStacksInput{

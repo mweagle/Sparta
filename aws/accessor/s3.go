@@ -41,7 +41,10 @@ func (svc *S3Accessor) KeysPrivilege(keyPrivileges ...string) sparta.IAMRolePriv
 
 func (svc *S3Accessor) s3Svc(ctx context.Context) *awsv2S3.Client {
 	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return nil
+	}
 	xrayInit(&awsConfig)
 	s3Client := awsv2S3.NewFromConfig(awsConfig)
 	return s3Client

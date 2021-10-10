@@ -54,7 +54,10 @@ func ExploreWithInputFilter(ctx context.Context,
 	logger = &newLogger
 
 	// Great - everybody get's an aws session
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
 	// Go get the stack and put the ARNs in the list of things. For that
 	// we need to get the stack resources...
 	cfSvc := awsv2CF.NewFromConfig(awsConfig)

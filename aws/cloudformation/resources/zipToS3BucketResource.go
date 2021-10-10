@@ -182,7 +182,8 @@ func (command ZipToS3BucketResource) Delete(ctx context.Context, awsConfig awsv2
 	// Remove all objects from the bucket
 	totalItemsDeleted := 0
 	svc := awsv2S3.NewFromConfig(awsConfig)
-	deleteItemsHandler := func(objectOutputs *awsv2S3.ListObjectsOutput, lastPage bool) bool {
+
+	deleteItemsHandler := func(objectOutputs *awsv2S3.ListObjectsOutput) {
 		params := &awsv2S3.DeleteObjectsInput{
 			Bucket: awsv2.String(request.DestBucket),
 			Delete: &awsv2S3Types.Delete{ // Required
@@ -197,8 +198,12 @@ func (command ZipToS3BucketResource) Delete(ctx context.Context, awsConfig awsv2
 					Key: eachObject.Key,
 				})
 		}
-		_, deleteResultErr := svc.DeleteObjects(context.Background(), params)
-		return nil == deleteResultErr
+		_, deleteResultErr := svc.DeleteObjects(ctx, params)
+		if deleteResultErr != nil {
+			logger.Warn().
+				Interface("DeleteObjectsErr", deleteResultErr).
+				Msg("Failed to delete object")
+		}
 	}
 
 	// Walk the bucket and cleanup...
@@ -210,8 +215,10 @@ func (command ZipToS3BucketResource) Delete(ctx context.Context, awsConfig awsv2
 	if nil != listObjectResponsErr {
 		return nil, listObjectResponsErr
 	}
-	// TODO - pages handler
-	deleteItemsHandler(listObjResponse, true)
+
+	// Delete all the items
+	deleteItemsHandler(listObjResponse)
+
 	// Cleanup the Manifest iff defined
 	var deleteErr error
 	if nil != request.Manifest {

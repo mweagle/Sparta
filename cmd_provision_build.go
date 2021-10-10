@@ -875,8 +875,14 @@ func Provision(noop bool,
 		Interface("Tags", stackTags).
 		Msg("Provisioning service")
 
+	pipelineContext := context.Background()
+
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(pipelineContext, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
 	pc := &provisionContext{
-		awsConfig:            spartaAWS.NewConfig(logger),
+		awsConfig:            awsConfig,
 		cfTemplatePath:       templatePath,
 		cfTemplate:           gof.NewTemplate(),
 		codePipelineTrigger:  codePipelineTrigger,
@@ -956,7 +962,6 @@ func Provision(noop bool,
 	provisionPipeline.Append("describe", stageDescribe)
 
 	// Run
-	pipelineContext := context.Background()
 	provisionErr := provisionPipeline.Run(pipelineContext, "Provision", logger)
 	if provisionErr != nil {
 		return provisionErr

@@ -13,6 +13,7 @@ import (
 	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	"github.com/jmespath/go-jmespath"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -90,22 +91,20 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 		params := &awsv2CF.ListStackResourcesInput{
 			StackName: awsv2.String(stackName),
 		}
-		allLambdaFunctionSummaries := []*awsv2CFTypes.StackResourceSummary{}
+		allLambdaFunctionSummaries := []awsv2CFTypes.StackResourceSummary{}
 
-		_, listErr := cloudFormationSvc.ListStackResources(context.Background(), params)
+		listStackResources, listStackResourcesErr := cloudFormationSvc.ListStackResources(context.Background(), params)
 
-		// TODO - LIST THE RESOURCES
-		// func(page *cloudformation.ListStackResourcesOutput, lastPage bool) bool {
-		// 	for _, eachSummary := range page.StackResourceSummaries {
-		// 		if *eachSummary.ResourceType == "AWS::Lambda::Function" {
-		// 			allLambdaFunctionSummaries = append(allLambdaFunctionSummaries, eachSummary)
-		// 		}
-		// 	}
-		// 	return true
-		// })
-		if listErr != nil {
+		if listStackResourcesErr != nil {
 			return nil
 		}
+		lambdaResource := &goflambda.Function{}
+		for _, eachSummary := range listStackResources.StackResourceSummaries {
+			if *eachSummary.ResourceType == lambdaResource.AWSCloudFormationType() {
+				allLambdaFunctionSummaries = append(allLambdaFunctionSummaries, eachSummary)
+			}
+		}
+
 		// Great, now for each one, let's get the function info
 		lambdaSvc := awsv2Lambda.NewFromConfig(t.Config())
 		functionOutput := []*awsv2Lambda.GetFunctionOutput{}

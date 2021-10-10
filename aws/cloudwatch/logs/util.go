@@ -39,21 +39,6 @@ func TailWithContext(reqContext context.Context,
 		Msg("Started polling")
 
 	outputChannel := make(chan *awsv2CWLogsTypes.FilteredLogEvent)
-	// TODO - FIX THIS!
-	// tailHandler := func(res *awsv2CWLogsTypes.FilteredLogEvent, lastPage bool) bool {
-	// 	maxTime := int64(0)
-	// 	for _, eachEvent := range res.Events {
-	// 		if maxTime < *eachEvent.Timestamp {
-	// 			maxTime = *eachEvent.Timestamp
-	// 		}
-	// 		logger.Debug().Str("ID", *eachEvent.EventId).Msg("Event")
-	// 		outputChannel <- eachEvent
-	// 	}
-	// 	if maxTime != 0 {
-	// 		lastSeenTimestamp = maxTime + 1
-	// 	}
-	// 	return !lastPage
-	// }
 
 	cwlogsSvc := awsv2CWLogs.NewFromConfig(awsConfig)
 	tickerChan := time.NewTicker(time.Millisecond * 333).C //AWS cloudwatch logs limit is 5tx/sec
@@ -65,15 +50,27 @@ func TailWithContext(reqContext context.Context,
 				return
 			case <-tickerChan:
 				logParam := tailParams(logGroupName, filter, lastSeenTimestamp)
-				_, error := cwlogsSvc.FilterLogEvents(reqContext, logParam)
-				if error != nil {
+				filterEvents, filterEventsErr := cwlogsSvc.FilterLogEvents(reqContext, logParam)
+				if filterEventsErr != nil {
 					// Just pump the thing back through the channel...
 					errorEvent := &awsv2CWLogsTypes.FilteredLogEvent{
 						EventId:   awsv2.String("N/A"),
-						Message:   awsv2.String(error.Error()),
+						Message:   awsv2.String(filterEventsErr.Error()),
 						Timestamp: awsv2.Int64(time.Now().Unix() * 1000),
 					}
 					outputChannel <- errorEvent
+				} else {
+					maxTime := int64(0)
+					for _, eachEvent := range filterEvents.Events {
+						if maxTime < *eachEvent.Timestamp {
+							maxTime = *eachEvent.Timestamp
+						}
+						logger.Debug().Str("ID", *eachEvent.EventId).Msg("Event")
+						outputChannel <- &eachEvent
+					}
+					if maxTime != 0 {
+						lastSeenTimestamp = maxTime + 1
+					}
 				}
 			}
 		}

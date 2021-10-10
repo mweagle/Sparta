@@ -28,7 +28,10 @@ type DynamoAccessor struct {
 
 func (svc *DynamoAccessor) dynamoSvc(ctx context.Context) *awsv2Dynamo.Client {
 	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
-	awsConfig := spartaAWS.NewConfig(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return nil
+	}
 	xrayInit(&awsConfig)
 	dynamoClient := awsv2Dynamo.NewFromConfig(awsConfig)
 	return dynamoClient
