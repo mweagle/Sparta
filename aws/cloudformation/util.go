@@ -454,7 +454,7 @@ func WaitForStackOperationComplete(ctx context.Context,
 	// Startup a spinner...
 	charSetIndex := 39
 	terminalType := os.Getenv("LC_TERMINAL")
-	logger.Info().
+	logger.Debug().
 		Str("terminal", terminalType).
 		Msg("Terminal type")
 
