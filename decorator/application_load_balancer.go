@@ -154,7 +154,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	defaultTargetGroupRes := &gofelbv2.TargetGroup{
 		TargetType: "lambda",
 		Targets: []gofelbv2.TargetGroup_TargetDescription{
-			gofelbv2.TargetGroup_TargetDescription{
+			{
 				Id: gof.GetAtt(albd.defaultLambdaHandler.LogicalResourceName(), "Arn"),
 			},
 		},
