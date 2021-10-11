@@ -23,7 +23,6 @@ import (
 	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
-
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	"github.com/briandowns/spinner"
@@ -487,7 +486,7 @@ func WaitForStackOperationComplete(ctx context.Context,
 		}
 		spinnerText := fmt.Sprintf(" %s (elapsed: %s)",
 			pollingMessage,
-			deltaTime.String())
+			deltaTime)
 		cliSpinner.Suffix = spinnerText
 
 		// Then sleep and figure out if things are done...
