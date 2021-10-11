@@ -116,7 +116,7 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 		passRolePriv,
 	)
 	iamPolicyList := []gofiam.Role_Policy{
-		gofiam.Role_Policy{
+		{
 			PolicyDocument: sparta.ArbitraryJSONObject{
 				"Version":   "2012-10-17",
 				"Statement": statements,

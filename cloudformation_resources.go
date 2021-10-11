@@ -2,14 +2,13 @@ package sparta
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
 	"text/template"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
-	"github.com/jmespath/go-jmespath"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -17,48 +16,6 @@ import (
 
 var metadataInterface = reflect.TypeOf(map[string]interface{}{})
 var dependsOnInterface = reflect.TypeOf([]string{})
-
-// resourceOutputs is responsible for returning the conditional
-// set of CloudFormation outputs for a given resource type. These are
-// produced from the schema
-func resourceOutputs(resourceName string,
-	resource gof.Resource,
-	logger *zerolog.Logger) ([]string, error) {
-
-	// Get the schema
-	schemaDef, schemaDefErr := embeddedString("resources/cloudformation-schema.json")
-	if schemaDefErr != nil {
-		return nil, schemaDefErr
-	}
-
-	var rawData interface{}
-	unmarshalErr := json.Unmarshal([]byte(schemaDef), &rawData)
-	if unmarshalErr != nil {
-		return nil, unmarshalErr
-	}
-
-	// Issue the JMES query to find this resource in the schema...
-	jmesQuery := fmt.Sprintf("ResourceTypes.\"%s\".Attributes", resource.AWSCloudFormationType())
-	result, resultErr := jmespath.Search(jmesQuery, rawData)
-	if resultErr != nil {
-		return nil, resultErr
-	}
-
-	resultMap, resultMapOk := result.(map[string]interface{})
-	if !resultMapOk {
-		// If this a custom resource, there are no outputs...
-		if resource.AWSCloudFormationType() == "AWS::CloudFormation::CustomResource" {
-			return nil, nil
-		}
-		return nil, errors.Errorf("Failed to extract outputs for resource type: %s", resource.AWSCloudFormationType())
-	}
-
-	vals := []string{}
-	for eachKey := range resultMap {
-		vals = append(vals, eachKey)
-	}
-	return vals, nil
-}
 
 func newCloudFormationResource(resourceType string, logger *zerolog.Logger) (gof.Resource, error) {
 	resProps, _ := cwCustomProvider.NewCloudFormationCustomResource(resourceType, logger)
@@ -97,7 +54,7 @@ func discoveryResourceInfoForDependency(cfTemplate *gof.Template,
 	if !ok {
 		return nil, nil
 	}
-	resourceOutputs, resourceOutputsErr := resourceOutputs(logicalResourceName,
+	resourceOutputs, resourceOutputsErr := spartaCF.ResourceOutputs(logicalResourceName,
 		item,
 		logger)
 	if resourceOutputsErr != nil {

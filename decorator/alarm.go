@@ -58,7 +58,7 @@ func CloudWatchErrorAlarmDecorator(periodWindow int,
 			Threshold:          thresholdGreaterThanOrEqualToValue,
 			ComparisonOperator: "GreaterThanOrEqualToThreshold",
 			Dimensions: []gofcloudwatch.Alarm_Dimension{
-				gofcloudwatch.Alarm_Dimension{
+				{
 					Name:  "FunctionName",
 					Value: lambdaResourceName,
 				},
