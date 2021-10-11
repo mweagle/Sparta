@@ -710,7 +710,6 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 	sanitizedServiceName := sanitizedName(cpo.userdata.serviceName)
 
 	// Output location
-	// TODO - here...
 	buildErr := system.BuildGoBinary(cpo.userdata.serviceName,
 		cpo.buildContext.compiledBinaryOutput,
 		cpo.userdata.useCGO,
