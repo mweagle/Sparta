@@ -5,12 +5,14 @@ package cloudtest
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"regexp"
 	"testing"
 	"time"
+
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 var accountID = ""
@@ -18,8 +20,8 @@ var accountID = ""
 func init() {
 	awsConfig := awsv2Config.LoadDefaultConfig(context.Background())
 	if awsSessionErr == nil {
-		stsService := sts.NewFromConfig(awsConfig)
-		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+		stsService := awsv2STS.NewFromConfig(awsConfig)
+		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&awsv2STS.GetCallerIdentityInput{})
 		if callerInfoErr == nil {
 			accountID = *callerInfo.Account
 		}
