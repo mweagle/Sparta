@@ -17,10 +17,13 @@ const (
 	ProperName = "Sparta"
 )
 const (
-	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "3.0.0.alpha"
 	// LambdaBinaryTag is the build tag name used when building the binary
 	LambdaBinaryTag = "lambdabinary"
+)
+
+var (
+	// SpartaVersion defines the current Sparta release
+	SpartaVersion = fmt.Sprintf("3.0.0.%s", SpartaGitShortHash)
 )
 
 // AWSLambdaRuntimeName is an alias for the runtime name

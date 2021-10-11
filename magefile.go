@@ -308,8 +308,13 @@ func GenerateBuildInfo() error {
 
 // SpartaGitHash is the commit hash of this Sparta library
 const SpartaGitHash = "%s"
+const SpartaGitShortHash = "%s"
+
 `
-	updatedInfo := fmt.Sprintf(buildInfoTemplate, time.Now().UTC(), gitSHA)
+	updatedInfo := fmt.Sprintf(buildInfoTemplate,
+		time.Now().UTC(),
+		gitSHA,
+		gitSHA[0:7])
 	// Write it to the output location...
 	writeErr := ioutil.WriteFile("./buildinfo.go", []byte(updatedInfo), os.ModePerm)
 

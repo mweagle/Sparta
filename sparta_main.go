@@ -53,7 +53,7 @@ func displayPrettyHeader(headerDivider string, disableColors bool, logger *zerol
 	}
 	headerDisplayed = true
 	logger.Info().Msg(colorize(headerDivider, colorRed, disableColors))
-	logger.Info().Msg(fmt.Sprintf(colorize(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐`, colorRed, disableColors)+"   Version - NOW : %s", SpartaVersion))
+	logger.Info().Msg(fmt.Sprintf(colorize(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐`, colorRed, disableColors)+"   Version : %s", SpartaVersion))
 	logger.Info().Msg(fmt.Sprintf(colorize(`╚═╗├─┘├─┤├┬┘ │ ├─┤`, colorRed, disableColors)+"   SHA     : %s", SpartaGitHash[0:7]))
 	logger.Info().Msg(fmt.Sprintf(colorize(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴`, colorRed, disableColors)+"   Go      : %s", runtime.Version()))
 	logger.Info().Msg(colorize(headerDivider, colorRed, disableColors))
