@@ -341,7 +341,7 @@ func FetchCloudFormationSchema() error {
 	defer httpResp.Body.Close()
 
 	// Create the file
-	outputFile, outputFileErr := os.Create("./resources/cloudformation-schema.json")
+	outputFile, outputFileErr := os.Create("./aws/cloudformation/cloudformation-schema.json")
 	if outputFileErr != nil {
 		return outputFileErr
 	}
