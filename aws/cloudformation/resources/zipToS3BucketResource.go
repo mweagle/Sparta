@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"mime"
@@ -43,7 +42,8 @@ type ZipToS3BucketResource struct {
 	gof.CustomResource
 }
 
-func (command ZipToS3BucketResource) unzip(awsConfig awsv2.Config,
+func (command ZipToS3BucketResource) unzip(ctx context.Context,
+	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 	request := ZipToS3BucketResourceRequest{}
@@ -52,9 +52,13 @@ func (command ZipToS3BucketResource) unzip(awsConfig awsv2.Config,
 		return nil, unmarshalErr
 	}
 
+	logger.Info().
+		Interface("CloudFormationEvent", *event).
+		Msg("Incoming unzip event")
+
 	// Fetch the ZIP contents and unpack them to the S3 bucket
 	svc := awsv2S3.NewFromConfig(awsConfig)
-	s3Object, s3ObjectErr := svc.GetObject(context.Background(), &awsv2S3.GetObjectInput{
+	s3Object, s3ObjectErr := svc.GetObject(ctx, &awsv2S3.GetObjectInput{
 		Bucket: awsv2.String(request.SrcBucket),
 		Key:    awsv2.String(request.SrcKeyName),
 	})
@@ -92,7 +96,13 @@ func (command ZipToS3BucketResource) unzip(awsConfig awsv2.Config,
 		if nil != bodySourceErr {
 			return nil, bodySourceErr
 		}
-		normalizedName := strings.TrimLeft(eachFile.Name, "/")
+		normalizedName := strings.TrimPrefix(eachFile.Name, "/")
+
+		logger.Info().
+			Str("Name", eachFile.Name).
+			Int64("CompressedSize", int64(eachFile.CompressedSize64)).
+			Int64("UncompressedSize", int64(eachFile.UncompressedSize64)).
+			Msg("ZipEntry")
 		// Mime type?
 		fileExtension := path.Ext(eachFile.Name)
 		mimeType := mime.TypeByExtension(fileExtension)
@@ -104,13 +114,17 @@ func (command ZipToS3BucketResource) unzip(awsConfig awsv2.Config,
 			s3PutObject := &awsv2S3.PutObjectInput{
 				Body:        bytes.NewReader(bodySource),
 				Bucket:      awsv2.String(request.DestBucket),
-				Key:         awsv2.String(fmt.Sprintf("/%s", eachFile.Name)),
+				Key:         awsv2.String(normalizedName),
 				ContentType: awsv2.String(mimeType),
 			}
-			_, err := svc.PutObject(context.Background(), s3PutObject)
+			_, err := svc.PutObject(ctx, s3PutObject)
 			if err != nil {
 				return nil, err
 			}
+			logger.Info().
+				Str("Bucket", request.DestBucket).
+				Str("Key", *s3PutObject.Key).
+				Msg("Unzipping object")
 		}
 		errClose := stream.Close()
 		if errClose != nil {
@@ -159,14 +173,14 @@ func (command *ZipToS3BucketResource) IAMPrivileges() []string {
 func (command ZipToS3BucketResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.unzip(awsConfig, event, logger)
+	return command.unzip(ctx, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
 func (command ZipToS3BucketResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.unzip(awsConfig, event, logger)
+	return command.unzip(ctx, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
