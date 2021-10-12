@@ -7,4 +7,3 @@ package sparta
 // SpartaGitHash is the commit hash of this Sparta library
 const SpartaGitHash = "7d7b7f3dfbd2f881edef2c80cd28cf020c7ccbe2"
 const SpartaGitShortHash = "7d7b7f3"
-

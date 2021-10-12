@@ -309,7 +309,6 @@ func GenerateBuildInfo() error {
 // SpartaGitHash is the commit hash of this Sparta library
 const SpartaGitHash = "%s"
 const SpartaGitShortHash = "%s"
-
 `
 	updatedInfo := fmt.Sprintf(buildInfoTemplate,
 		time.Now().UTC(),
