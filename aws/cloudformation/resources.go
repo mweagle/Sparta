@@ -1,6 +1,7 @@
 package cloudformation
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
 
