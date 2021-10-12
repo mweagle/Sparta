@@ -777,7 +777,7 @@ func (cpo *createPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 			"String",
 			"Object key that stores the S3 site archive.",
 			filepath.Base(zipOutputFile.Name()),
-			".+",
+			"",
 			3)
 		cpo.buildContext.cfTemplate.Parameters[StackParamS3SiteArchiveVersion] = newStackParameter(
 			"String",
@@ -878,7 +878,7 @@ func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context,
 		paramRefMap[StackParamCodeImageURI] = gof.Ref(StackParamCodeImageURI)
 		cto.buildContext.cfTemplate.Parameters[StackParamCodeImageURI] = newStackParameter(
 			"String",
-			"Code ImageURI",
+			"{CODE_IMAGE_URI}",
 			"",
 			".*",
 			0)
@@ -891,15 +891,15 @@ func (cto *createTemplateOp) insertTemplateParameters(ctx context.Context,
 		cto.buildContext.cfTemplate.Parameters[StackParamS3SiteArchiveKey] = newStackParameter(
 			"String",
 			"S3 key for object storing S3 Site payload (required)",
+			"{S3_SITE_ARCHIVE_KEY}",
 			"",
-			".+",
 			3)
 		paramRefMap[StackParamS3SiteArchiveKey] = gof.Ref(StackParamS3CodeKeyName)
 
 		cto.buildContext.cfTemplate.Parameters[StackParamS3SiteArchiveVersion] = newStackParameter(
 			"String",
 			"S3 object version of S3 Site payload",
-			"",
+			"{S3_SITE_OBJECT_VERSION_KEY}",
 			".*",
 			0)
 		paramRefMap[StackParamS3SiteArchiveVersion] = gof.Ref(StackParamS3SiteArchiveVersion)
