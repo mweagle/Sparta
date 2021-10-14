@@ -151,7 +151,7 @@ func (dw *descriptionWriter) writeEdge(fromNode string,
 
 func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *templateResource {
 	var resource *templateResource
-	resourcePath := fmt.Sprintf("/resources/describe/%s",
+	resourcePath := fmt.Sprintf("resources/describe/%s",
 		strings.TrimLeft(resourceKeyName, "/"))
 
 	keyParts := strings.Split(resourcePath, "/")
