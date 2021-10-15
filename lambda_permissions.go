@@ -3,6 +3,7 @@ package sparta
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	goftags "github.com/awslabs/goformation/v5/cloudformation/tags"
@@ -515,8 +516,8 @@ func (rule *ReceiptRule) toResourceRule(serviceName string,
 
 	resourceRule := &cfCustomResources.SESLambdaEventSourceResourceRule{
 		Name:        rule.Name,
-		ScanEnabled: !rule.ScanDisabled,
-		Enabled:     !rule.Disabled,
+		ScanEnabled: strconv.FormatBool(!rule.ScanDisabled),
+		Enabled:     strconv.FormatBool(!rule.Disabled),
 		Actions:     make([]*cfCustomResources.SESLambdaEventSourceResourceAction, 0),
 		Recipients:  make([]string, 0),
 	}
@@ -687,8 +688,8 @@ func (perm SESPermission) export(serviceName string,
 		sesRules[0] = &cfCustomResources.SESLambdaEventSourceResourceRule{
 			Name:        "Default",
 			Actions:     make([]*cfCustomResources.SESLambdaEventSourceResourceAction, 0),
-			ScanEnabled: false,
-			Enabled:     true,
+			ScanEnabled: strconv.FormatBool(false),
+			Enabled:     strconv.FormatBool(true),
 			Recipients:  []string{},
 			TLSPolicy:   "Optional",
 		}
@@ -704,7 +705,7 @@ func (perm SESPermission) export(serviceName string,
 
 	sesLambdaEventSourceRequest.Rules = sesRules
 	// Name?
-	resourceInvokerName := CloudFormationResourceName("ConfigSNS",
+	resourceInvokerName := CloudFormationResourceName("ConfigSES",
 		lambdaLogicalCFResourceName,
 		perm.BasePermission.SourceAccount)
 

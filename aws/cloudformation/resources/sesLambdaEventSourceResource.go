@@ -3,6 +3,7 @@ package resources
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 	"strings"
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
@@ -58,13 +59,19 @@ func (action *SESLambdaEventSourceResourceAction) toReceiptAction(logger *zerolo
 	return nil
 }
 
+func toBool(s string) bool {
+	tVal, tValErr := strconv.ParseBool(s)
+	return (tVal && tValErr == nil)
+}
+
 // SESLambdaEventSourceResourceRule stores settings necessary to configure an SES
-// inbound rule
+// inbound rule. Boolean types are strings to workaround
+// https://forums.aws.amazon.com/thread.jspa?threadID=302268
 type SESLambdaEventSourceResourceRule struct {
 	Name        string
 	Actions     []*SESLambdaEventSourceResourceAction
-	ScanEnabled bool `json:",omitempty"`
-	Enabled     bool `json:",omitempty"`
+	ScanEnabled string `json:",omitempty"`
+	Enabled     string `json:",omitempty"`
 	Recipients  []string
 	TLSPolicy   string `json:",omitempty"`
 }
@@ -115,6 +122,9 @@ func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
 	request := SESLambdaEventSourceResourceRequest{}
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &request)
 	if unmarshalErr != nil {
+		logger.Warn().
+			Interface("REQUEST", event.ResourceProperties).
+			Msg("SES Request")
 		return nil, unmarshalErr
 	}
 
@@ -129,9 +139,9 @@ func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
 						Name:        awsv2.String(eachRule.Name),
 						Recipients:  make([]string, 0),
 						Actions:     make([]awsv2SESTypes.ReceiptAction, 0),
-						ScanEnabled: eachRule.ScanEnabled,
+						ScanEnabled: toBool(eachRule.ScanEnabled),
 						TlsPolicy:   awsv2SESTypes.TlsPolicy(eachRule.TLSPolicy),
-						Enabled:     eachRule.Enabled,
+						Enabled:     toBool(eachRule.Enabled),
 					},
 				}
 				for _, eachAction := range eachRule.Actions {
