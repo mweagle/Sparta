@@ -308,6 +308,7 @@ func GenerateBuildInfo() error {
 
 // SpartaGitHash is the commit hash of this Sparta library
 const SpartaGitHash = "%s"
+// SpartaGitShortHash is the short version of SpartaGitHash
 const SpartaGitShortHash = "%s"
 `
 	updatedInfo := fmt.Sprintf(buildInfoTemplate,
@@ -328,7 +329,7 @@ const SpartaGitShortHash = "%s"
 
 }
 
-// Ensure we have the latest CloudFormation schema as part of generating
+// FetchCloudFormationSchema  we have the latest CloudFormation schema as part of generating
 // constants. To do this, we'll grab the JSON and put it into a local
 // folder.
 func FetchCloudFormationSchema() error {
