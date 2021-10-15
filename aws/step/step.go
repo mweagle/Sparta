@@ -13,6 +13,7 @@ import (
 	"time"
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gofintrinsics "github.com/awslabs/goformation/v5/intrinsics"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
@@ -120,7 +121,12 @@ func (bis *baseInnerState) marshalStateJSON(stateType string,
 		additionalData["End"] = true
 	}
 	// Output the pretty version
-	return json.Marshal(additionalData)
+
+	rawMarshal, rawMarshalErr := json.Marshal(additionalData)
+	if nil != rawMarshalErr {
+		return nil, rawMarshalErr
+	}
+	return gofintrinsics.ProcessJSON(rawMarshal, nil)
 }
 
 /*******************************************************************************
