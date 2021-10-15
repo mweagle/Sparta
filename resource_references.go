@@ -71,7 +71,7 @@ func resolveResourceRef(expr string) (*resourceRef, error) {
 			}
 			return nil
 		},
-		"Fn:GetAtt": func(name string, input interface{}, template interface{}) interface{} {
+		"Fn::GetAtt": func(name string, input interface{}, template interface{}) interface{} {
 			// The input should be an array...
 			inputArr, inputArrOk := input.([]interface{})
 			if !inputArrOk {
