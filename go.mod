@@ -8,25 +8,25 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/aws/aws-lambda-go v1.27.0
-	github.com/aws/aws-sdk-go-v2 v1.9.1
-	github.com/aws/aws-sdk-go-v2/config v1.8.2
+	github.com/aws/aws-sdk-go-v2 v1.9.2
+	github.com/aws/aws-sdk-go-v2/config v1.8.3
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.2.1
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.5.3
-	github.com/aws/aws-sdk-go-v2/service/apigateway v1.7.1
-	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.10.1
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.5.4
+	github.com/aws/aws-sdk-go-v2/service/apigateway v1.7.2
+	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.10.2
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.8.1
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.7.1
-	github.com/aws/aws-sdk-go-v2/service/codecommit v1.5.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.7.2
+	github.com/aws/aws-sdk-go-v2/service/codecommit v1.5.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.5.1
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.7.0
-	github.com/aws/aws-sdk-go-v2/service/iam v1.10.0
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.9.0
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.16.0
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.7.1
+	github.com/aws/aws-sdk-go-v2/service/iam v1.10.1
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.9.1
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.16.1
 	github.com/aws/aws-sdk-go-v2/service/servicediscovery v1.9.1
-	github.com/aws/aws-sdk-go-v2/service/ses v1.6.1
-	github.com/aws/aws-sdk-go-v2/service/sns v1.8.1
+	github.com/aws/aws-sdk-go-v2/service/ses v1.6.2
+	github.com/aws/aws-sdk-go-v2/service/sns v1.8.2
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.9.1
-	github.com/aws/aws-sdk-go-v2/service/sts v1.7.1
+	github.com/aws/aws-sdk-go-v2/service/sts v1.7.2
 	github.com/aws/aws-xray-sdk-go v1.6.0
 	github.com/aws/smithy-go v1.8.0
 	github.com/awslabs/goformation/v5 v5.2.11
@@ -69,8 +69,8 @@ require (
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
-	golang.org/x/term v0.0.0-20210916214954-140adaaadfaf // indirect
+	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
@@ -82,16 +82,16 @@ require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/aws/aws-sdk-go v1.40.55 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.4.2 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.5.1 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.4.3 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.0.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.3 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.4.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.1.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.3.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.7.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.4.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.3.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.7.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.4.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
