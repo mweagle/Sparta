@@ -242,7 +242,9 @@ func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
 	if jsonBytesErr != nil {
 		jsonBytes = make([]byte, 0)
 	}
-
+	// TODO - it's possible to resolve the type and pick the
+	// proper icon. To do that, we'd need to call resolveRef,
+	// then lookup the item.
 	canonicalRaw := strings.ToLower(string(jsonBytes))
 	iconMappings := map[string]*DescriptionIcon{
 		"dynamodb": {
