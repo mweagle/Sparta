@@ -18,7 +18,6 @@ import (
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofmsk "github.com/awslabs/goformation/v5/cloudformation/msk"
 	gofsqs "github.com/awslabs/goformation/v5/cloudformation/sqs"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 
 	"github.com/pkg/errors"
@@ -173,7 +172,7 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 				spartaIAM.PolicyStatement{
 					Action:   eachStatement.Action,
 					Effect:   "Allow",
-					Resource: spartaCF.DynamicValueToStringExpr(eventSourceMapping.EventSourceArn),
+					Resource: eventSourceMapping.EventSourceArn,
 				})
 		}
 
