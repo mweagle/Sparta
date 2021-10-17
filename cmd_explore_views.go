@@ -350,7 +350,7 @@ func newCloudWatchLogTailView(ctx context.Context,
 	// and a change in input. If we have values for both, then
 	// go ahead and issue the request. We can do this with two
 	// go-routines. The first one is just a go-routine that listens for cloudwatch log events
-	// for the selected function. TODO - filter
+	// for the selected function.
 	ch := make(chan interface{})
 	functionSelectedBroadcaster.Register(ch)
 
