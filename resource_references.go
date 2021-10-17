@@ -1,10 +1,8 @@
-//go:build !lambdabinary
-// +build !lambdabinary
-
 package sparta
 
 import (
 	"encoding/base64"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -25,6 +23,7 @@ const (
 type resourceRef struct {
 	RefType      resourceRefType
 	ResourceName string
+	DisplayName  string
 }
 
 // resolvedResourceVisitor represents the signature of a function that
@@ -68,6 +67,7 @@ func resolveResourceRef(expr string) (*resourceRef, error) {
 			hookedResourceRef = &resourceRef{
 				RefType:      resourceRefFunc,
 				ResourceName: input.(string),
+				DisplayName:  fmt.Sprintf("Ref: %s", input.(string)),
 			}
 			return nil
 		},
@@ -84,6 +84,7 @@ func resolveResourceRef(expr string) (*resourceRef, error) {
 			hookedResourceRef = &resourceRef{
 				RefType:      resourceGetAttrFunc,
 				ResourceName: inputStringElemZero,
+				DisplayName:  fmt.Sprintf("GetAtt: %+v", inputArr),
 			}
 			return nil
 		},
