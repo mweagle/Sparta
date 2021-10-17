@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>S3 :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2242,7 +2242,7 @@ pre {
 <p>Assume we have an S3 bucket that stores images. You&rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
   awsLambdaEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
 	awsLambdaContext <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/lambdacontext&#34;</span>
 )
@@ -2265,7 +2265,7 @@ pre {
 the incoming request into an <a href="https://github.com/aws/aws-lambda-go/blob/master/events/s3.go#L9">S3Event</a>
 defined by the AWS Go Lambda SDK.</p>
 <p>S3 events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">for</span> _, eachRecord := <span style="color:#00f">range</span> event.Records {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">for</span> _, eachRecord := <span style="color:#00f">range</span> event.Records {
   <span style="color:#008000">// What happened?
 </span><span style="color:#008000"></span>  <span style="color:#00f">switch</span> eachRecord.EventName {
   <span style="color:#00f">case</span> <span style="color:#a31515">&#34;ObjectCreated:Put&#34;</span>:
@@ -2295,7 +2295,7 @@ but in production you should use a more durable approach.</p>
 <h2 id="sparta-integration">Sparta Integration</h2>
 <p>With the core of the <code>transformImage</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta. This is performed by the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L200">imagerFunctions</a> source.</p>
 <p>Our lambda function needs to both <em>Get</em> and <em>Put</em> items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Provision an IAM::Role as part of this application
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Provision an IAM::Role as part of this application
 </span><span style="color:#008000"></span><span style="color:#00f">var</span> iamRole = sparta.IAMRoleDefinition{}
 
 <span style="color:#008000">// Setup the ARN that includes all child keys
@@ -2308,7 +2308,7 @@ iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
 })
 </code></pre></div><p>The <code>s3EventBroadcasterBucket</code> param is the ARN of the S3 bucket that will trigger your lambda function (eg: <em>arn:aws:s3:::MyImagingS3Bucket</em>).</p>
 <p>With the IAM Role defined, we can create the Sparta lambda function for <code>transformImage</code>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
 </span><span style="color:#008000">// transform lambda doesn&#39;t fail early.
 </span><span style="color:#008000"></span>transformOptions := &amp;sparta.LambdaFunctionOptions{
   Description: <span style="color:#a31515">&#34;Stamp assets in S3&#34;</span>,
@@ -2325,7 +2325,7 @@ lambda function using the <code>iamRole</code> we defined earlier.</p>
 <p>If we were to deploy this Sparta application, the <code>transformImage</code> function would have the ability to <em>Get</em> and <em>Put</em> back
 to the <code>s3EventBroadcasterBucket</code>, but would not be invoked in response to events triggered by that bucket. To register
 for state change events, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">//////////////////////////////////////////////////////////////////////////////
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">//////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#008000">// S3 configuration
 </span><span style="color:#008000">//
 </span><span style="color:#008000"></span>lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
@@ -3770,19 +3770,19 @@ automatically by CustomResources added to the CloudFormation template.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

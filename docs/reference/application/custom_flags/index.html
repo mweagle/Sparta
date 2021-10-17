@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Custom Flags :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2237,7 +2237,7 @@ pre {
 <h2 id="adding-flags">Adding Flags</h2>
 <p>To add a flag, use one of the <a href="https://github.com/spf13/pflag">pflag</a> functions to register your custom flag with one of the standard <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L17">CommandLineOption</a> values.</p>
 <p>For example:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 <span style="color:#008000">// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
 </span><span style="color:#008000"></span><span style="color:#00f">var</span> SSHKeyName <span style="color:#2b91af">string</span>
 
@@ -2253,7 +2253,7 @@ pre {
 <p>Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input before calling <code>sparta.Main()</code>.</p>
 <p>To validate user input, define a <a href="https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook">CommandLineOptionsHook</a> function and provide it to <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">sparta.ParseOptions</a>.  This function is called after the <em>pflag</em> bindings are invoked so that your application can validate user input.</p>
 <p>The <code>ParseOptions</code> result is the optional error returned from your <em>CommandLineOptionsHook</em> function. If there is an error, your application can then exit with an application specific exit code.  For instance:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Define a validation hook s.t. we can verify the SSHKey is valid
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Define a validation hook s.t. we can verify the SSHKey is valid
 </span><span style="color:#008000"></span>validationHook := <span style="color:#00f">func</span>(command *cobra.Command) <span style="color:#2b91af">error</span> {
   <span style="color:#00f">if</span> command.Name() == <span style="color:#a31515">&#34;provision&#34;</span> &amp;&amp; len(SSHKeyName) &lt;= 0 {
     <span style="color:#00f">return</span> fmt.Errorf(<span style="color:#a31515">&#34;SSHKeyName option is required&#34;</span>)
@@ -3684,19 +3684,19 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

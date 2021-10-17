@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2251,7 +2251,7 @@ application. This section will provide an overview of how to configure a WebSock
 API using Sparta. It is based on the <a href="https://github.com/mweagle/SpartaWebSocket">SpartaWebSocket</a> sample project.</p>
 <h2 id="payload">Payload</h2>
 <p>Similar to the AWS blog post, our WebSocket API will transmit messages of the form</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;message&#34;: <span style="color:#a31515">&#34;sendmessage&#34;</span>,
   &#34;data&#34;: <span style="color:#a31515">&#34;hello world !&#34;</span>
 }
@@ -2265,14 +2265,14 @@ API using Sparta. It is based on the <a href="https://github.com/mweagle/SpartaW
 </ul>
 <p>Our functions will use the <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-create-api-as-simple-proxy">PROXY</a> style integration and therefore accept an instance of the <a href="https://godoc.org/github.com/aws/aws-lambda-gevents#APIGatewayWebsocketProxyRequest">APIGatewayWebsocketProxyRequest</a> type.</p>
 <p>Each function returns a <code>*wsResponse</code> instance that satisfies the <strong>PROXY</strong> response:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> wsResponse <span style="color:#00f">struct</span> {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> wsResponse <span style="color:#00f">struct</span> {
   StatusCode <span style="color:#2b91af">int</span>    <span style="color:#a31515">`json:&#34;statusCode&#34;`</span>
   Body       <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;body&#34;`</span>
 }
 </code></pre></div><h3 id="connectworld">connectWorld</h3>
 <p>The <code>connectWorld</code> AWS Lambda function is responsible for saving the incoming <em>connectionID</em> into a dynamically provisioned DynamoDB database so that subsequent <em>sendMessage</em> requests can broadcast to all subscribed parties.</p>
 <p>The table name is advertised in the Lambda function via a user-defined environment variable. The specifics of how that table is provisioned will be addressed in a section below.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">...
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">...
 <span style="color:#008000">// Operation
 </span><span style="color:#008000"></span>putItemInput := &amp;dynamodb.PutItemInput{
   TableName: aws.String(os.Getenv(envKeyTableName)),
@@ -2286,7 +2286,7 @@ _, putItemErr := dynamoClient.PutItem(putItemInput)
 ...
 </code></pre></div><h3 id="disconnectworld">disconnectWorld</h3>
 <p>The complement to <code>connectWorld</code> is <code>disconnectWorld</code> which is responsible for removing the <em>connectionID</em> from the list of registered connections:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  delItemInput := &amp;dynamodb.DeleteItemInput{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  delItemInput := &amp;dynamodb.DeleteItemInput{
     TableName: aws.String(os.Getenv(envKeyTableName)),
     Key: <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]*dynamodb.AttributeValue{
       ddbAttributeConnectionID: &amp;dynamodb.AttributeValue{
@@ -2300,7 +2300,7 @@ _, putItemErr := dynamoClient.PutItem(putItemInput)
 <p>The <code>sendMessage</code> function can be broken down into a few sections.</p>
 <h4 id="setup-api-gateway-management-instance">Setup API Gateway Management Instance</h4>
 <p>The first requirement is to setup the API Gateway Management service instance using the proper endpoint. The endpoint can be constructed from the incoming <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#APIGatewayWebsocketProxyRequestContext">APIGatewayWebsocketProxyRequestContext</a> member of the request.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  endpointURL := fmt.Sprintf(<span style="color:#a31515">&#34;%s/%s&#34;</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  endpointURL := fmt.Sprintf(<span style="color:#a31515">&#34;%s/%s&#34;</span>,
     request.RequestContext.DomainName,
     request.RequestContext.Stage)
   logger.WithField(<span style="color:#a31515">&#34;Endpoint&#34;</span>, endpointURL).Info(<span style="color:#a31515">&#34;API Gateway Endpoint&#34;</span>)
@@ -2308,7 +2308,7 @@ _, putItemErr := dynamoClient.PutItem(putItemInput)
     apigwMgmtClient := apigwManagement.New(sess, aws.NewConfig().WithEndpoint(endpointURL))
 </code></pre></div><h4 id="validate-input">Validate Input</h4>
 <p>The new step is to unmarshal and validate the incoming JSON request body:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// Get the input request...
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// Get the input request...
 </span><span style="color:#008000"></span>  <span style="color:#00f">var</span> objMap <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]*json.RawMessage
   unmarshalErr := json.Unmarshal([]byte(request.Body), &amp;objMap)
   <span style="color:#00f">if</span> unmarshalErr != <span style="color:#00f">nil</span> || objMap[<span style="color:#a31515">&#34;data&#34;</span>] == <span style="color:#00f">nil</span> {
@@ -2320,7 +2320,7 @@ _, putItemErr := dynamoClient.PutItem(putItemInput)
 </code></pre></div><p>Once we have verified that the input is valid, the final step is to notify all the subscribers.</p>
 <h4 id="scan-and-publish">Scan and Publish</h4>
 <p>Once the incoming <code>data</code> property is validated, the next step is to scan the DynamoDB table for the registered connections and post a message to each one. Note that the scan callback also attempts to cleanup connections that are no longer valid, but which haven&rsquo;t been cleanly removed.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  scanCallback := <span style="color:#00f">func</span>(output *dynamodb.ScanOutput, lastPage <span style="color:#2b91af">bool</span>) <span style="color:#2b91af">bool</span> {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  scanCallback := <span style="color:#00f">func</span>(output *dynamodb.ScanOutput, lastPage <span style="color:#2b91af">bool</span>) <span style="color:#2b91af">bool</span> {
     <span style="color:#008000">// Send the message to all the clients
 </span><span style="color:#008000"></span>    <span style="color:#00f">for</span> _, eachItem := <span style="color:#00f">range</span> output.Items {
       <span style="color:#008000">// Get the connectionID
@@ -2366,7 +2366,7 @@ _, putItemErr := dynamoClient.PutItem(putItemInput)
 <li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html">Routes</a></li>
 </ul>
 <p>There is one Stage and one API per service, but a given service (including this one) may include multiple Routes.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// APIv2 Websockets
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// APIv2 Websockets
 </span><span style="color:#008000"></span>stage, _ := sparta.NewAPIV2Stage(<span style="color:#a31515">&#34;v1&#34;</span>)
 stage.Description = <span style="color:#a31515">&#34;New deploy!&#34;</span>
 
@@ -2382,7 +2382,7 @@ apiGateway, _ := sparta.NewAPIV2(sparta.Websocket,
 <li>The stage</li>
 </ul>
 <p>Once the API is defined, each route is associated with the API as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">apiv2ConnectRoute, _ := apiGateway.NewAPIV2Route(<span style="color:#a31515">&#34;$connect&#34;</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">apiv2ConnectRoute, _ := apiGateway.NewAPIV2Route(<span style="color:#a31515">&#34;$connect&#34;</span>,
     lambdaConnect)
 apiv2ConnectRoute.OperationName = <span style="color:#a31515">&#34;ConnectRoute&#34;</span>
 ...
@@ -2392,14 +2392,14 @@ apiv2SendRoute.OperationName = <span style="color:#a31515">&#34;SendRoute&#34;</
 ...
 </code></pre></div><p>The <code>$connect</code> routeKey is a special <a href="https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/">route key value</a> that is sent when a client first connects to the WebSocket API. See the official <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-route-keys-connect-disconnect.html">documentation</a> for more information.</p>
 <p>In comparison, the <code>sendmessage</code> routeKey value of <code>sendmessage</code> means that a payload of the form:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;message&#34;: <span style="color:#a31515">&#34;sendmessage&#34;</span>,
   &#34;data&#34;: <span style="color:#a31515">&#34;hello world !&#34;</span>
 }
 </code></pre></div><p>will trigger the <code>lambdaSend</code> function given the parent API&rsquo;s route selection expression of <code>$request.body.message</code>.</p>
 <h3 id="additional-privileges">Additional Privileges</h3>
 <p>Because the <code>lambdaSend</code> function also needs to invoke the API Gateway Management APIs to broadcast, an additional IAM Privilege must be enabled:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#00f">var</span> apigwPermissions = []sparta.IAMRolePrivilege{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#00f">var</span> apigwPermissions = []sparta.IAMRolePrivilege{
     {
       Actions: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;execute-api:ManageConnections&#34;</span>},
       Resource: gocf.Join(<span style="color:#a31515">&#34;&#34;</span>,
@@ -2429,7 +2429,7 @@ apiv2SendRoute.OperationName = <span style="color:#a31515">&#34;SendRoute&#34;</
 <li>The write capacity units</li>
 </ul>
 <p>For instance:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName,
       ddbAttributeConnectionID,
       5,
       5)
@@ -2442,7 +2442,7 @@ apiv2SendRoute.OperationName = <span style="color:#a31515">&#34;SendRoute&#34;</
   decorator.AnnotateLambdas(lambdaFunctions)
 </code></pre></div><h2 id="provision">Provision</h2>
 <p>With everything defined, provide the API V2 Decorator as a Workflow hook as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// Set everything up and run it...
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// Set everything up and run it...
 </span><span style="color:#008000"></span>  workflowHooks := &amp;sparta.WorkflowHooks{
     ServiceDecorators: []sparta.ServiceDecoratorHookHandler{decorator},
   }
@@ -2454,7 +2454,7 @@ apiv2SendRoute.OperationName = <span style="color:#a31515">&#34;SendRoute&#34;</
     workflowHooks,
     <span style="color:#00f">false</span>)
 </code></pre></div><p>and then provision the application:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">go run main.go provision --s3Bucket $S3_BUCKET --noop
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">go run main.go provision --s3Bucket $S3_BUCKET --noop
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.9.4
 INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : cfd44e2
@@ -2493,15 +2493,15 @@ INFO[0122] Total elapsed time                            Duration (s)=122
 </code></pre></div><h2 id="test">Test</h2>
 <p>With the API Gateway deployed, the last step is to test it. Download and install the [ws](go get -u github.com/hashrocket/ws
 ) tool:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">go get -u github.com/hashrocket/ws
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">go get -u github.com/hashrocket/ws
 </code></pre></div><p>then connect to your new API and send a message as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">22:31 $ ws wss://gu4vmnia27.execute-api.us-west-2.amazonaws.com/v1
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">22:31 $ ws wss://gu4vmnia27.execute-api.us-west-2.amazonaws.com/v1
 &gt; {<span style="color:#a31515">&#34;message&#34;</span>:<span style="color:#a31515">&#34;sendmessage&#34;</span>, <span style="color:#a31515">&#34;data&#34;</span>:<span style="color:#a31515">&#34;hello world !&#34;</span>}
 &lt; <span style="color:#a31515">&#34;hello world !&#34;</span>
 </code></pre></div><p>You can also send messages with <a href="https://chrome.google.com/webstore/detail/firecamp-a-campsite-for-d/eajaahbjpnhghjcdaclbkeamlkepinbl?hl=en">Firecamp</a>, a Chrome extension, and send messages between your <code>ws</code> session and the web (or vice versa).</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>While a production ready application would likely need to include authentication and authorization, this is the beginnings of a full featured WebSocket service in fewer than 200 lines of application code:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">-------------------------------------------------------------------------------
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">-------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
 Go                               1             21             52            183
@@ -3930,19 +3930,19 @@ TOTAL                            2             21             54            183
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

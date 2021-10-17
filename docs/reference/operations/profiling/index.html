@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Profiling :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2250,7 +2250,7 @@ pre {
 <h2 id="enabling-profiling">Enabling Profiling</h2>
 <p>To enable profiling add a reference to <a href="https://godoc.org/github.com/mweagle/Sparta#ScheduleProfileLoop">ScheduleProfileLoop</a>
 in your <code>main()</code> function as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">sparta.ScheduleProfileLoop(<span style="color:#00f">nil</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">sparta.ScheduleProfileLoop(<span style="color:#00f">nil</span>,
   5*time.Second,
   30*time.Second,
   <span style="color:#a31515">&#34;goroutine&#34;</span>,
@@ -2273,7 +2273,7 @@ in your <code>main()</code> function as in:</p>
 <p>To manage profile sprawl, each lambda instance uses a rolling <code>SNAPSHOT_INDEX</code> to maintain a fixed size window. The new <code>profile</code> command is responsible for aggregating them into a single local, consolidated profile that can be visualized using the existing tools.</p>
 <h2 id="deploying">Deploying</h2>
 <p>With profiling enabled, the next step is to deploy the <em>SpartaPProf</em> service using the <code>provision</code> command:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">$ go run main.go provision --s3Bucket MY-S3-BUCKET
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">$ go run main.go provision --s3Bucket MY-S3-BUCKET
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.4.0
 INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
@@ -2315,9 +2315,9 @@ INFO[0026] Ensuring CloudFormation stack                 Duration (s)=17
 INFO[0026] Total elapsed time                            Duration (s)=27</code></pre></div>
 <h2 id="generating-load">Generating Load</h2>
 <p>While the <strong>SpartaPProf</strong> binary does include functions that are likely to generate profiling data, we still need to issue a sufficient series of events to produce a non-empty profile data set. <strong>SpartaPProf</strong> includes a simple tool (<em>cmd/load.go</em>) that directly calls the provisioned lambda function on a regular interval. It accepts a single command line argument, the <em>ARN</em> of the lambda function listed as a <em>Stack output</em> in the log output:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">INFO[0058] FunctionARN                                   Description=&#34;Lambda function ARN&#34; Value=&#34;arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf_mweagle_Hello_World&#34;</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">INFO[0058] FunctionARN                                   Description=&#34;Lambda function ARN&#34; Value=&#34;arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf_mweagle_Hello_World&#34;</code></pre></div>
 <p>Run the simple load generation script with the ARN value as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">$ cd cmd
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">$ cd cmd
 $ go run load.go arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World
 Lambda response (0 of 60): &#34;Hi there 🌍&#34;
 Lambda response (1 of 60): &#34;Hi there 🌍&#34;
@@ -2333,7 +2333,7 @@ Lambda response (10 of 60): &#34;Hi there 🌍&#34;
 Lambda response (11 of 60): &#34;Hi there 🌍&#34;
 ...</code></pre></div>
 <p>After all the requests have completed for this sample against a stack provisioned in <code>us-west-2</code>, a set of named profiles was published. Since each container&rsquo;s instance id is randomly assigned, the profile names you see will have slightly different names</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
 S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 ---------------------------------------------------------------
 2017-11-26 11:32:28   41 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/block/0-block.λ-3838737145763622974.profile
@@ -2345,7 +2345,7 @@ S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 <h2 id="visualizing-profiles">Visualizing Profiles</h2>
 <p>Sparta delegates to the pprof <a href="https://github.com/google/pprof">webui</a> to visualize profile snapshots. Ensure you have the latest version of this by running <code>go get -u -v go get github.com/google/pprof</code> first.</p>
 <p>The final step is to provide the profile snapshots to <code>pprof</code>. Sparta exposes a <code>profile</code> command that accomplishes this, by fetching and consolidating all published profiles for a single type.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
 INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
@@ -3796,19 +3796,19 @@ INFO[0028] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to ex
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

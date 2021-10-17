@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Core Sparta Concepts">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Concepts :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2232,7 +2232,7 @@ pre {
 <p>At a high level, Sparta transforms a <strong>go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions . Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
 <h2 id="service-name">Service Name</h2>
 <p>Sparta applications are deployed as a single unit, using the <strong>ServiceName</strong> as a stable logical identifier. The <strong>ServiceName</strong> is used as your application&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a></p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">stackName := <span style="color:#a31515">&#34;MyUniqueServiceName&#34;</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">stackName := <span style="color:#a31515">&#34;MyUniqueServiceName&#34;</span>
 sparta.Main(stackName,
   <span style="color:#a31515">&#34;Simple Sparta application&#34;</span>,
   myLambdaFunctions,
@@ -2251,18 +2251,18 @@ sparta.Main(stackName,
 <li><code>func (context.Context, TIn) (TOut, error)</code></li>
 </ul>
 <p>where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types. Supplying an invalid signature will produce a run time error as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">ERRO[0000] Lambda function (Hello World) has invalid returns: handler
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">ERRO[0000] Lambda function (Hello World) has invalid returns: handler
 returns a single value, but it does not implement error exit status 1</code></pre></div>
 <h2 id="privileges">Privileges</h2>
 <p>To support accessing other AWS resources in your <strong>go</strong> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with narrowly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">sparta.IAMRolePrivilege</a> values. This allows you to define the <em>minimal</em> set of privileges under which your <strong>go</strong> function will execute. The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/mweagle/go-cloudformation#StringExpr">StringExpression</a> referencing a dynamically provisioned CloudFormation resource.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
     Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>, <span style="color:#a31515">&#34;s3:HeadObject&#34;</span>},
     Resource: <span style="color:#a31515">&#34;arn:aws:s3:::MyS3Bucket&#34;</span>,
 })
 </code></pre></div><h2 id="permissions">Permissions</h2>
 <p>To configure AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">Event Sources</a>, Sparta provides both <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaPermission">sparta.LambdaPermission</a> and service-specific <em>Permission</em> types like <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission">sparta.CloudWatchEventsPermission</a>. The service-specific <em>Permission</em> types automatically register your lambda function with the remote AWS service, using each service&rsquo;s specific API.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
 cloudWatchEventsPermission.Rules = make(<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]sparta.CloudWatchEventsRule, 0)
 cloudWatchEventsPermission.Rules[<span style="color:#a31515">&#34;Rate5Mins&#34;</span>] = sparta.CloudWatchEventsRule{
   ScheduleExpression: <span style="color:#a31515">&#34;rate(5 minutes)&#34;</span>,
@@ -2351,7 +2351,7 @@ graph TD
 <hr />
 <h2 id="dynamic-resources">Dynamic Resources</h2>
 <p>Sparta applications can specify other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">AWS Resources</a> (eg, <em>SNS Topics</em>) as part of their application. The dynamic resource outputs can be referenced by Sparta lambda functions via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Ref">gocf.Ref</a> and <a href="https://godoc.org/github.com/mweagle/go-cloudformation#GetAtt">gocf.GetAtt</a> functions.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">snsTopicName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SNSDynamicTopic&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">snsTopicName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SNSDynamicTopic&#34;</span>)
 snsTopic := &amp;gocf.SNSTopic{
   DisplayName: gocf.String(<span style="color:#a31515">&#34;Sparta Application SNS topic&#34;</span>),
 })
@@ -2367,7 +2367,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 </code></pre></div><h2 id="discovery">Discovery</h2>
 <p>To support Sparta lambda functions discovering dynamically assigned AWS resource values, Sparta provides <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover</a>. This function returns information about resources that a given
 entity specifies a <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html">DependsOn</a> relationship.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoS3DynamicBucketEvent(ctx context.Context,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoS3DynamicBucketEvent(ctx context.Context,
   s3Event awsLambdaEvents.S3Event) (*awsLambdaEvents.S3Event, <span style="color:#2b91af">error</span>) {
 
   discoveryInfo, discoveryInfoErr := sparta.Discover()
@@ -3877,19 +3877,19 @@ graph TD
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

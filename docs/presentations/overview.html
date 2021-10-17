@@ -14,26 +14,21 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="/presentations/reveal.js-3.9.2/css/reveal.css">
-		<link rel="stylesheet" href="/css/reveal-theme.css" id="theme">
+		<!-- Reveal 4.x includes -->
+		<script src="/presentations/reveal.js/dist/reveal.js"></script>
+    <script src="/presentations/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="/presentations/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="/presentations/reveal.js/plugin/notes/notes.js"></script>
+		<!-- CSS Theme -->
+		<link rel="stylesheet" href="/presentations/reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="/presentations/reveal.js/dist/theme/white.css" id="theme">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="/presentations/reveal.js-3.9.2/lib/css/zenburn.css">
-
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ?
-			'/presentations/reveal.js-3.9.2/css/print/pdf.css' :
-			'/presentations/reveal.js-3.9.2/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+		<link rel="stylesheet" href="/presentations/reveal.js/plugin/highlight/zenburn.css">
 
 		<!-- Mermaid .JS -->
 		<script src="/external/jquery/jquery-2.2.0.min.js"></script>
-		<script src="/mermaid/mermaid.js/mermaid.js"></script>
+		<script src="/mermaid/mermaid.js"></script>
 		<link rel="stylesheet" href="/css/mermaid-overrides.css">
 		<script>mermaid.initialize({startOnLoad:true});</script>
 
@@ -614,31 +609,15 @@
 
 		</div>
 
-		<script src="/presentations/reveal.js-3.9.2/lib/js/head.min.js"></script>
-		<script src="/presentations/reveal.js-3.9.2/js/reveal.js"></script>
-
 		<script>
-
-			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				controls: true,
 				progress: true,
 				history: true,
 				center: true,
 
-				transition: 'slide', // none/fade/slide/convex/concave/zoom
-
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: '/presentations/reveal.js-3.9.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: '/presentations/reveal.js-3.9.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: '/presentations/reveal.js-3.9.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: '/presentations/reveal.js-3.9.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: '/presentations/reveal.js-3.9.2/plugin/zoom-js/zoom.js', async: true },
-					{ src: '/presentations/reveal.js-3.9.2/plugin/notes/notes.js', async: true }
-				]
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
 			});
-
 		</script>
 
 	</body>

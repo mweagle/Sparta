@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Echo :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2250,7 +2250,7 @@ pre {
 <p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway
 Lambda event. The source for this is the <a href="https://github.com/mweagle/SpartaHTML">SpartaHTML</a>.</p>
 <p>For reference, the <code>helloWorld</code> function is below.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
   awsLambdaEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
   spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
 )
@@ -2269,7 +2269,7 @@ Lambda event. The source for this is the <a href="https://github.com/mweagle/Spa
 }
 </code></pre></div><h2 id="api-gateway">API Gateway</h2>
 <p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <a href="https://godoc.org/github.com/mweagle/Sparta#NewAPIGateway">sparta.NewAPIGateway()</a>.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">stage := sparta.NewStage(<span style="color:#a31515">&#34;prod&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">stage := sparta.NewStage(<span style="color:#a31515">&#34;prod&#34;</span>)
 apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;MySpartaAPI&#34;</span>, stage)
 </code></pre></div><p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.
 A non-<code>nil</code> Stage value will cause the registered API to be deployed. If the Stage value is <code>nil</code>, a REST API will be created,
@@ -2277,7 +2277,7 @@ but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/develop
 (and therefore not publicly accessible).</p>
 <h2 id="resource">Resource</h2>
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <strong>go</strong> function:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
   <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
   lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
     helloWorld,
@@ -2302,11 +2302,11 @@ but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/develop
 </code></pre></div><p>Our <code>helloWorld</code> only supports <code>GET</code>. We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
 <h2 id="provision">Provision</h2>
 <p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Register the function with the API Gateway
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Register the function with the API Gateway
 </span><span style="color:#008000"></span>apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
 apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaHTML&#34;</span>, apiStage)
 </code></pre></div><p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">INFO[0096] ────────────────────────────────────────────────
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">INFO[0096] ────────────────────────────────────────────────
 INFO[0096] Stack Outputs
 INFO[0096] ────────────────────────────────────────────────
 INFO[0096] S3SiteURL                                     Description=&#34;S3 Website URL&#34; Value=&#34;http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-1w6rehqu6x04c.s3-website-us-west-2.amazonaws.com&#34;
@@ -2316,7 +2316,7 @@ INFO[0096] ───────────────────────
 <h2 id="verify">Verify</h2>
 <p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time. The
 snippet below is pretty printed by piping the response through <a href="https://stedolan.github.io/jq/">jq</a>.</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">$ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq .
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">$ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq .
 *   Trying 52.84.237.220...
 * TCP_NODELAY set
 * Connected to 3e7ux226ga.execute-api.us-west-2.amazonaws.com (52.84.237.220) port 443 (#0)
@@ -2398,7 +2398,7 @@ snippet below is pretty printed by piping the response through <a href="https://
 <p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> is the complete HTTP request body. This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping. This event data also includes the values of any whitelisted parameters. When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target. For this example, we&rsquo;re not whitelisting any params, so those fields (<code>queryParams</code>, <code>pathParams</code>) are empty. Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
 <p>Sparta uses a pass-through template that passes all valid data, with minor <strong>Body</strong> differences based on the inbound <em>Content-Type</em>:</p>
 <h3 id="_applicationjson_"><em>application/json</em></h3>
-<pre><code class="language-nohighlight" data-lang="nohighlight">#*
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function. The JSON behavior attempts to parse
 the incoming HTTP body as JSON assign it to the `body` field.
@@ -2456,7 +2456,7 @@ See
 
 </code></pre>
 <h3 id="__-default-content-type"><em>*</em> (Default <code>Content-Type</code>)</h3>
-<pre><code class="language-nohighlight" data-lang="nohighlight">#*
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function. The default behavior passes the 'body'
 key as raw string.
@@ -2527,7 +2527,7 @@ using a <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/ap
 <p>If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
 <h2 id="cleanup">Cleanup</h2>
 <p>Before moving on, remember to decommission the service via:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">go run application.go delete
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">go run application.go delete
 </code></pre></div><h2 id="wrapping-up">Wrapping Up</h2>
 <p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
 <h3 id="notes">Notes</h3>
@@ -3945,19 +3945,19 @@ using a <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/ap
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

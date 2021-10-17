@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Application Load Balancer :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2241,14 +2241,14 @@ pre {
 <p>This can be useful to provide HTTP(S) access to one or more Lambda functions without requiring an API-Gateway service.</p>
 <h2 id="lambda-function">Lambda Function</h2>
 <p>Application Load Balancer (ALB) lambda targets must satisfy a prescribed Lambda signature:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
   awsEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
 )
 
 <span style="color:#00f">func</span>(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse
 </code></pre></div><p>See the <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#ALBTargetGroupRequest">ALBTargetGroupRequest</a> and <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#ALBTargetGroupResponse">ALBTargetGroupResponse</a> <em>godoc</em> entries for more information.</p>
 <p>An example ALB-eligible target function might look like:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// ALB eligible lambda function
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// ALB eligible lambda function
 </span><span style="color:#008000"></span><span style="color:#00f">func</span> helloNewWorld(ctx context.Context,
   albEvent awsEvents.ALBTargetGroupRequest) (awsEvents.ALBTargetGroupResponse, <span style="color:#2b91af">error</span>) {
 
@@ -2265,7 +2265,7 @@ pre {
 <p>The <code>ApplicationLoadBalancerDecorator</code> satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a> interface and adds a set of CloudFormation Resources to support properly publishing your Lambda functions.</p>
 <p>Since this access path requires an Application Load Balancer, the first step is to define the SecurityGroup associated with the ALB so that incoming requests can be accepted.</p>
 <p>The following definition will create an Security Group that accepts public traffic on port <code>80</code>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  sgResName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;ALBSecurityGroup&#34;</span>, <span style="color:#a31515">&#34;ALBSecurityGroup&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  sgResName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;ALBSecurityGroup&#34;</span>, <span style="color:#a31515">&#34;ALBSecurityGroup&#34;</span>)
   sgRes := &amp;gocf.EC2SecurityGroup{
     GroupDescription: gocf.String(<span style="color:#a31515">&#34;ALB Security Group&#34;</span>),
     SecurityGroupIngress: &amp;gocf.EC2SecurityGroupIngressPropertyList{
@@ -2278,19 +2278,19 @@ pre {
     },
   }
 </code></pre></div><p>The subnets for our Application Load Balancer are supplied as an environment variable (<strong>TEST_SUBNETS</strong>) of the form <code>id1,id2</code>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  subnetList := strings.Split(os.Getenv(<span style="color:#a31515">&#34;TEST_SUBNETS&#34;</span>), <span style="color:#a31515">&#34;,&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  subnetList := strings.Split(os.Getenv(<span style="color:#a31515">&#34;TEST_SUBNETS&#34;</span>), <span style="color:#a31515">&#34;,&#34;</span>)
   subnetIDs := make([]gocf.Stringable, len(subnetList))
   <span style="color:#00f">for</span> eachIndex, eachSubnet := <span style="color:#00f">range</span> subnetList {
     subnetIDs[eachIndex] = gocf.String(eachSubnet)
   }
 </code></pre></div><p>The next step is to define the ALB and associate it with both the account Subnets and SecurityGroup we just defined:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  alb := &amp;gocf.ElasticLoadBalancingV2LoadBalancer{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  alb := &amp;gocf.ElasticLoadBalancingV2LoadBalancer{
     Subnets:        gocf.StringList(subnetIDs...),
     SecurityGroups: gocf.StringList(gocf.GetAtt(sgResName, <span style="color:#a31515">&#34;GroupId&#34;</span>)),
   }
 </code></pre></div><p>This <code>ElasticLoadBalancingV2LoadBalancer</code> instance is provided to <code>NewApplicationLoadBalancerDecorator</code> to create the decorator that will annotate the CloudFormation
 template with the required resources.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">albDecorator, albDecoratorErr := spartaDecorators.NewApplicationLoadBalancerDecorator(alb,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">albDecorator, albDecoratorErr := spartaDecorators.NewApplicationLoadBalancerDecorator(alb,
     80,
     <span style="color:#a31515">&#34;HTTP&#34;</span>,
     lambdaFn)
@@ -2304,7 +2304,7 @@ template with the required resources.</p>
 <h2 id="conditional-targets">Conditional Targets</h2>
 <p>Services may expose more than one Lambda function on that same port using multiple <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html">ListenerRule</a> entries.</p>
 <p>For instance, to register a second lambda function <code>lambdaFn2</code> with the same Application Load Balancer at the <em>/newhello</em> path, add a <code>ConditionalEntry</code> as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  albDecorator.AddConditionalEntry(gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  albDecorator.AddConditionalEntry(gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition{
     Field: gocf.String(<span style="color:#a31515">&#34;path-pattern&#34;</span>),
     PathPatternConfig: &amp;gocf.ElasticLoadBalancingV2ListenerRulePathPatternConfig{
       Values: gocf.StringList(gocf.String(<span style="color:#a31515">&#34;/newhello*&#34;</span>)),
@@ -2315,12 +2315,12 @@ See the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 for the full set of conditions that can be expressed.</p>
 <h2 id="additional-resources">Additional Resources</h2>
 <p>The next step is to ensure that the Security Group that we associated with our ALB is included in the final template. This is done by including it in the <code>ApplicationLoadBalancerDecorator.Resources</code> map which allows you to provide additional CloudFormation resources that should be included in the final template:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Finally, tell the ALB decorator we have some additional resources that need to be
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Finally, tell the ALB decorator we have some additional resources that need to be
 </span><span style="color:#008000">// included in the CloudFormation template
 </span><span style="color:#008000"></span>albDecorator.Resources[sgResName] = sgRes
 </code></pre></div><h2 id="workflow-hooks">Workflow Hooks</h2>
 <p>With the decorator fully configured, the final step is to provide it as part of the WorkflowHooks struct:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// Supply it to the WorkflowHooks and get going...
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// Supply it to the WorkflowHooks and get going...
 </span><span style="color:#008000"></span>  workflowHooks := &amp;sparta.WorkflowHooks{
     ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
       albDecorator,
@@ -2336,15 +2336,15 @@ for the full set of conditions that can be expressed.</p>
     <span style="color:#00f">false</span>)
 </code></pre></div><h2 id="output">Output</h2>
 <p>As part of the provisioning workflow, the <code>ApplicationLoadBalancerDecorator</code> will include the Application Load Balancer discovery information in the Outputs section as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">INFO[0056] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">INFO[0056] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 INFO[0056]     ApplicationLoadBalancerDNS80              Description=&#34;ALB DNSName (port: 80, protocol: HTTP)&#34; Value=MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com
 INFO[0056]     ApplicationLoadBalancerName80             Description=&#34;ALB Name (port: 80, protocol: HTTP)&#34; Value=MyALB-ELBv2-44R3J0MV1D37
 INFO[0056]     ApplicationLoadBalancerURL80              Description=&#34;ALB URL (port: 80, protocol: HTTP)&#34; Value=&#34;http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com:80&#34;
 </code></pre></div><h2 id="testing">Testing</h2>
 <p>Using <em>curl</em> we can verify the newly provisioned Application Load Balancer behavior. The default lambda function echoes the incoming request and is available at the ALB URL basepath:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">curl http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">curl http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com
 </code></pre></div><p>returns</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;httpMethod&#34;: <span style="color:#a31515">&#34;GET&#34;</span>,
   &#34;path&#34;: <span style="color:#a31515">&#34;/&#34;</span>,
   &#34;headers&#34;: {
@@ -2365,7 +2365,7 @@ INFO[0056]     ApplicationLoadBalancerURL80              Description=&#34;ALB UR
   &#34;body&#34;: <span style="color:#a31515">&#34;&#34;</span>
 }
 </code></pre></div><p>The conditional lambda function behavior is exposed at <em>/newhello</em> as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">curl http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com/newhello
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-plain" data-lang="plain">curl http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com/newhello
 Some other handler
 </code></pre></div>
 
@@ -3781,19 +3781,19 @@ Some other handler
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

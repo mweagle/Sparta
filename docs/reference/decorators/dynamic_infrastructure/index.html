@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.88.1" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Dynamic Infrastructure :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1634274734" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1634274734" rel="stylesheet">
-    <link href="/css/hybrid.css?1634274734" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1634274734" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1634274734" rel="stylesheet">
-    <link href="/css/auto-complete.css?1634274734" rel="stylesheet">
-    <link href="/css/theme.css?1634274734" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1634274734" rel="stylesheet">
+    <link href="/css/nucleus.css?1634438018" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1634438018" rel="stylesheet">
+    <link href="/css/hybrid.css?1634438018" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1634438018" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1634438018" rel="stylesheet">
+    <link href="/css/auto-complete.css?1634438018" rel="stylesheet">
+    <link href="/css/theme.css?1634438018" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1634438018" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1634274734" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1634438018" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
-    <link href="/css/vs.css?1634274734" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
+    <link href="/css/vs.css?1634438018" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1634274734"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1634274734"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1634438018"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1634438018"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1634274734"></script>
+<script type="text/javascript" src="/js/search.js?1634438018"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/fa27c370">fa27c370</a><p/>
-  Date: 2021-10-14T22:12:14-07:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f03eb198">f03eb198</a><p/>
+  Date: 2021-10-16T19:33:38-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2333,7 +2333,7 @@ dev2S3VideoBucket -->dev2VideoLambda
 types.</p>
 <h1 id="template-decorator-handler">Template Decorator Handler</h1>
 <p>A template decorator is a <strong>go</strong> interface:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> TemplateDecoratorHandler <span style="color:#00f">interface</span> {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> TemplateDecoratorHandler <span style="color:#00f">interface</span> {
 	DecorateTemplate(serviceName <span style="color:#2b91af">string</span>,
 		lambdaResourceName <span style="color:#2b91af">string</span>,
 		lambdaResource gocf.LambdaFunction,
@@ -2364,7 +2364,7 @@ as resource key names.</p>
 </ul>
 <h2 id="lambda-function">Lambda Function</h2>
 <p>To start with, we&rsquo;ll need a Sparta lambda function to expose:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
   awsLambdaEvents <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
 )
 <span style="color:#00f">func</span> echoS3DynamicBucketEvent(ctx context.Context,
@@ -2384,10 +2384,10 @@ as resource key names.</p>
 To support that please see the <a href="/reference/discovery">sparta.Discover</a> functionality.</p>
 <h2 id="s3-resource-name">S3 Resource Name</h2>
 <p>The next thing we need is a <em>Logical ID</em> for our bucket:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">s3BucketResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;S3DynamicBucket&#34;</span>, <span style="color:#a31515">&#34;myServiceBucket&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">s3BucketResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;S3DynamicBucket&#34;</span>, <span style="color:#a31515">&#34;myServiceBucket&#34;</span>)
 </code></pre></div><h2 id="sparta-integration">Sparta Integration</h2>
 <p>With these two values we&rsquo;re ready to get started building up the lambda function:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
   sparta.IAMRoleDefinition{})
 </code></pre></div><p>The open issue is how to publish the CloudFormation-defined S3 Arn to the <code>compile</code>-time application. Our lambda function needs to provide both:</p>
@@ -2398,7 +2398,7 @@ To support that please see the <a href="/reference/discovery">sparta.Discover</a
 <p>The missing piece is <a href="https://godoc.org/github.com/crewjam/go-cloudformation#Ref">gocf.Ref()</a>, whose single argument is the <em>Logical ID</em> of the S3 resource we&rsquo;ll be inserting in the decorator call.</p>
 <h3 id="dynamic-iam-role-privilege">Dynamic IAM Role Privilege</h3>
 <p>The <code>IAMRolePrivilege</code> struct references the dynamically assigned S3 Arn as follows:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   BasePermission: sparta.BasePermission{
     SourceArn: gocf.Ref(s3BucketResourceName),
@@ -2408,7 +2408,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 </code></pre></div><h3 id="dynamic-s3-permissions">Dynamic S3 Permissions</h3>
 <p>The <code>S3Permission</code> struct also requires the dynamic Arn, to which it will append <code>&quot;/*&quot;</code> to enable object read access.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
     Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>, <span style="color:#a31515">&#34;s3:HeadObject&#34;</span>},
@@ -2417,7 +2417,7 @@ lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
 </code></pre></div><p>The <code>spartaCF.S3AllKeysArnForBucket</code> call is a convenience wrapper around <a href="https://godoc.org/github.com/crewjam/go-cloudformation#Join">gocf.Join</a> to generate the concatenated, dynamic Arn expression.</p>
 <h2 id="s3-resource-insertion">S3 Resource Insertion</h2>
 <p>All that&rsquo;s left to do is actually insert the S3 resource in our decorator:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">s3Decorator := <span style="color:#00f">func</span>(serviceName <span style="color:#2b91af">string</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">s3Decorator := <span style="color:#00f">func</span>(serviceName <span style="color:#2b91af">string</span>,
   lambdaResourceName <span style="color:#2b91af">string</span>,
   lambdaResource gocf.LambdaFunction,
   resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
@@ -2443,10 +2443,10 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
 }
 </code></pre></div><h3 id="dependencies">Dependencies</h3>
 <p>In reality, we shouldn&rsquo;t even attempt to create the AWS Lambda function if the S3 bucket creation fails. As application developers, we can help CloudFormation sequence infrastructure operations by stating this hard dependency on the S3 bucket via the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html">DependsOn</a> attribute:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 </code></pre></div><h2 id="code-listing">Code Listing</h2>
 <p>Putting everything together, our Sparta lambda function with dynamic infrastructure is listed below.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 s3BucketResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;S3DynamicBucket&#34;</span>)
 lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
@@ -3916,19 +3916,19 @@ closer to being self-contained and more operationally sustainable.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.min.js?1634274734"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1634274734"></script>
-    <script src="/js/jquery.sticky.js?1634274734"></script>
-    <script src="/js/featherlight.min.js?1634274734"></script>
-    <script src="/js/highlight.pack.js?1634274734"></script>
+    <script src="/js/clipboard.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.min.js?1634438018"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1634438018"></script>
+    <script src="/js/jquery.sticky.js?1634438018"></script>
+    <script src="/js/featherlight.min.js?1634438018"></script>
+    <script src="/js/highlight.pack.js?1634438018"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1634274734"></script>
-    <script src="/js/learn.js?1634274734"></script>
-    <script src="/js/hugo-learn.js?1634274734"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1634438018"></script>
+    <script src="/js/learn.js?1634438018"></script>
+    <script src="/js/hugo-learn.js?1634438018"></script>
     
         
-            <script src="/mermaid/mermaid.js?1634274734"></script>
+            <script src="/mermaid/mermaid.js?1634438018"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });
