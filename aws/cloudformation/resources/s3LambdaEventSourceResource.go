@@ -23,12 +23,6 @@ type S3LambdaEventSourceResourceRequest struct {
 	Filter          *awsv2S3Types.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// TODO - update all the custom resources to use this approach so that
-// the properties object is properly serialized. We'll also need to deserialize
-// the request for the custom handler.
-////////////////////////////////////////////////////////////////////////////////
-
 // S3LambdaEventSourceResource manages registering a Lambda function with S3 event
 type S3LambdaEventSourceResource struct {
 	gof.CustomResource
