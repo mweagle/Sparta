@@ -1042,8 +1042,6 @@ func createStateMachine(stateMachineName string,
 	// Map of basename to nodeID to check for duplicates
 	duplicateStateNames := make(map[string]bool)
 
-	// TODO - check duplicate names
-
 	nodeVisited := func(node MachineState) bool {
 		if node == nil {
 			return true
