@@ -313,29 +313,14 @@ func stackCapabilities(template *gof.Template) []awsv2CFTypes.Capability {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
-// DynamicValueToStringExpr is a DRY function to type assert
-// a potentiall dynamic value into a string
-// satisfying type
-func DynamicValueToStringExpr(dynamicValue interface{}) string {
-	var stringExpr string
-
-	switch typedValue := dynamicValue.(type) {
-	case string:
-		stringExpr = typedValue
-	default:
-		panic(fmt.Sprintf("Unsupported dynamic value type: %+v", typedValue))
-	}
-	return stringExpr
-}
-
 // S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) for all bucket keys (`/*`).  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
 func S3AllKeysArnForBucket(bucket interface{}) string {
-	arnParts := []string{
-		"arn:aws:s3:::",
-		DynamicValueToStringExpr(bucket),
+	// User needs to supply the ARN
+	arnParts := []interface{}{
+		bucket,
 		"/*",
 	}
 	return gof.Join("", arnParts)
@@ -346,11 +331,7 @@ func S3AllKeysArnForBucket(bucket interface{}) string {
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
 func S3ArnForBucket(bucket interface{}) string {
-	arnParts := []string{
-		"arn:aws:s3:::",
-		DynamicValueToStringExpr(bucket),
-	}
-	return gof.Join("", arnParts)
+	return gof.Join("", []interface{}{bucket})
 }
 
 // MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant

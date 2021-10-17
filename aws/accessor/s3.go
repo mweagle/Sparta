@@ -9,7 +9,6 @@ import (
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
 
-	gof "github.com/awslabs/goformation/v5/cloudformation"
 	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -19,15 +18,15 @@ import (
 // S3Accessor to make it a bit easier to work with S3
 // as the backing store
 type S3Accessor struct {
-	testingBucketName    string
-	S3BucketResourceName string
+	testingBucketName        string
+	S3BucketResourceOrArnRef string
 }
 
 // BucketPrivilege returns a privilege that targets the Bucket
 func (svc *S3Accessor) BucketPrivilege(bucketPrivs ...string) sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  bucketPrivs,
-		Resource: spartaCF.S3ArnForBucket(svc.S3BucketResourceName),
+		Resource: svc.S3BucketResourceOrArnRef,
 	}
 }
 
@@ -35,7 +34,7 @@ func (svc *S3Accessor) BucketPrivilege(bucketPrivs ...string) sparta.IAMRolePriv
 func (svc *S3Accessor) KeysPrivilege(keyPrivileges ...string) sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  keyPrivileges,
-		Resource: spartaCF.S3AllKeysArnForBucket(gof.Ref(svc.S3BucketResourceName)),
+		Resource: spartaCF.S3AllKeysArnForBucket(svc.S3BucketResourceOrArnRef),
 	}
 }
 
@@ -58,7 +57,7 @@ func (svc *S3Accessor) s3BucketName() string {
 	if discoveryInfoErr != nil {
 		return ""
 	}
-	s3BucketRes, s3BucketResExists := discover.Resources[svc.S3BucketResourceName]
+	s3BucketRes, s3BucketResExists := discover.Resources[svc.S3BucketResourceOrArnRef]
 	if !s3BucketResExists {
 		return ""
 	}
