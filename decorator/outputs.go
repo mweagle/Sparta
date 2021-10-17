@@ -9,6 +9,7 @@ import (
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	sparta "github.com/mweagle/Sparta"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -39,19 +40,23 @@ func PublishAllResourceOutputs(cfResourceName string,
 			Value: gof.Ref(cfResourceName),
 		}
 		// Get the resource attributes
-		// TODO - implement resource outputs...
-		/*
-			for _, eachAttr := range cfResource.CfnResourceAttributes() {
-				// Add the function ARN as a stack output
-				cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", cfResourceName, eachAttr))] = &gof.Output{
-					Description: fmt.Sprintf("%s (%s) Attribute: %s",
-						cfResourceName,
-						cfResource.CfnResourceType(),
-						eachAttr),
-					Value: gof.GetAtt(cfResourceName, eachAttr),
-				}
+		resOutputs, resOutputsErr := spartaCF.ResourceOutputs(cfResourceName,
+			cfResource,
+			logger)
+		if resOutputsErr != nil {
+			return nil, resOutputsErr
+		}
+
+		for _, eachAttr := range resOutputs {
+			// Add the function ARN as a stack output
+			cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", cfResourceName, eachAttr))] = gof.Output{
+				Description: fmt.Sprintf("%s (%s) Attribute: %s",
+					cfResourceName,
+					cfResource.AWSCloudFormationType(),
+					eachAttr),
+				Value: gof.GetAtt(cfResourceName, eachAttr),
 			}
-		*/
+		}
 		return ctx, nil
 	}
 }
