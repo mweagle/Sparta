@@ -468,10 +468,9 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	template *gof.Template,
 	logger *zerolog.Logger) error {
 
-	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := &goflambda.EventSourceMapping{
 		StartingPosition:               mapping.StartingPosition,
-		EventSourceArn:                 dynamicArn,
+		EventSourceArn:                 mapping.EventSourceArn,
 		FunctionName:                   targetLambdaArn,
 		BatchSize:                      mapping.BatchSize,
 		Enabled:                        !mapping.Disabled,
@@ -489,7 +488,7 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	// resource name
 	hashParts := []string{
 		targetLambdaName,
-		dynamicArn,
+		mapping.EventSourceArn,
 		targetLambdaArn,
 		fmt.Sprintf("%d", mapping.BatchSize),
 		mapping.StartingPosition,
@@ -537,6 +536,7 @@ func (resourceInfo *customResourceInfo) logicalName() string {
 	_, writeErr := hash.Write([]byte(source))
 	if writeErr != nil {
 		fmt.Printf("TODO: failed to update hash. Error: %s", writeErr)
+		panic("See previous error")
 	}
 	return CloudFormationResourceName(resourceInfo.userFunctionName,
 		hex.EncodeToString(hash.Sum(nil)))
@@ -879,8 +879,7 @@ func (info *LambdaAWSInfo) Description(targetNodeName string) ([]*DescriptionTri
 
 	// Finally, event sources...
 	for index, eachEventSourceMapping := range info.EventSourceMappings {
-		dynamicArn := spartaCF.DynamicValueToStringExpr(eachEventSourceMapping.EventSourceArn)
-		jsonBytes, jsonBytesErr := json.Marshal(dynamicArn)
+		jsonBytes, jsonBytesErr := json.Marshal(eachEventSourceMapping.EventSourceArn)
 		if jsonBytesErr != nil {
 			jsonBytes = []byte(fmt.Sprintf("%s-EventSourceMapping[%d]",
 				info.lambdaFunctionName(),
@@ -890,7 +889,7 @@ func (info *LambdaAWSInfo) Description(targetNodeName string) ([]*DescriptionTri
 		descriptionNodes = append(descriptionNodes, &DescriptionTriplet{
 			SourceNodeName: nodeName,
 			DisplayInfo: &DescriptionDisplayInfo{
-				SourceIcon: iconForAWSResource(dynamicArn),
+				SourceIcon: iconForAWSResource(eachEventSourceMapping.EventSourceArn),
 			},
 			TargetNodeName: info.lambdaFunctionName(),
 		})

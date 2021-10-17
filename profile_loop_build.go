@@ -483,7 +483,7 @@ func Profile(ctx context.Context,
 // ScheduleProfileLoop installs a profiling loop that pushes profile information
 // to S3 for local consumption using a `profile` command that wraps
 // pprof
-func ScheduleProfileLoop(s3BucketArchive interface{},
+func ScheduleProfileLoop(s3BucketArchive string,
 	snapshotInterval time.Duration,
 	cpuProfileDuration time.Duration,
 	profileNames ...string) {
@@ -502,10 +502,10 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 			Str("Function", info.lambdaFunctionName()).
 			Msg("Instrumenting function for profiling")
 
-		// The bucket is either a literal or a gocf.StringExpr - which one?
+		// The bucket is either a literal or a gof.String - which one?
 		var bucketValue string
-		if s3BucketArchive != nil {
-			bucketValue = spartaCF.DynamicValueToStringExpr(s3BucketArchive)
+		if s3BucketArchive != "" {
+			bucketValue = s3BucketArchive
 		} else {
 			bucketValue = S3Bucket
 		}
