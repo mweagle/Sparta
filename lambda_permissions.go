@@ -34,9 +34,11 @@ func describeInfoValue(dynamicValue string) string {
 	case resourceLiteral:
 		return resolvedRef.ResourceName
 	default:
-		return resolvedRef.DisplayName
+		if resolvedRef.DisplayName != "" {
+			return resolvedRef.DisplayName
+		}
+		return dynamicValue
 	}
-	return "WAT"
 }
 
 type descriptionNode struct {
