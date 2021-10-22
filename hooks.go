@@ -198,7 +198,7 @@ type ServiceDecoratorHook func(ctx context.Context,
 	logger *zerolog.Logger) (context.Context, error)
 
 // ServiceDecoratorHookFunc is the adapter to transform an existing
-// ArchiveHook into a WorkflowHookHandler satisfier
+// ServiceDecoratorHook into a WorkflowHookHandler satisfier
 type ServiceDecoratorHookFunc func(ctx context.Context,
 	serviceName string,
 	template *gof.Template,
