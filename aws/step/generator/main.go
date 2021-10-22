@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"sort"
 	"text/template"
 )
 
@@ -114,7 +115,15 @@ func main() {
 		fmt.Printf("Failed to write: %v\n", writeErr)
 		os.Exit(1)
 	}
-	for eachRuleName, eachRuleDef := range choiceDefs.Choices {
+	// Sort them so that the generated file is stable...
+	mapKeys := make([]string, 0, len(choiceDefs.Choices))
+	for eachKey := range choiceDefs.Choices {
+		mapKeys = append(mapKeys, eachKey)
+	}
+	sort.Strings(mapKeys)
+
+	for _, eachRuleName := range mapKeys {
+		eachRuleDef := choiceDefs.Choices[eachRuleName]
 		templateParams := ChoiceRule{
 			Name:         eachRuleName,
 			VariableType: eachRuleDef.Variable,
