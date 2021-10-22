@@ -1030,7 +1030,7 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 		Comment: sm.comment,
 		StartAt: sm.startAt.Name(),
 		States:  sm.uniqueStates,
-		End:     (len(sm.uniqueStates) == 1) && !sm.disableEndState,
+		//End:     (len(sm.uniqueStates) != 1) && !sm.disableEndState,
 	})
 }
 
