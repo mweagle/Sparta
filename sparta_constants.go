@@ -86,6 +86,8 @@ const (
 	KinesisFirehosePrincipal = "firehose.amazonaws.com"
 	// @enum EventBridgePrincipal
 	EventBridgePrincipal = "events.amazonaws.com"
+	// @enum StepMachinePrincipal
+	StepMachinePrincipal = "states.amazonaws.com"
 )
 
 type contextKey int
