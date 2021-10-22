@@ -1,5 +1,12 @@
 # Change Notes
 
+## 🚨 v3.0.0 - The Upgrade 🚨
+
+This is a _BREAKING RELEASE_ with many breaking changes noted below.
+
+- All CloudFormation moved to [go-formation](goformation: GoFormation is a Go library for wor…)
+- All AWS API access moved to [AWS SDK V2](https://github.com/aws/aws-sdk-go-v2)
+
 ## 🚨 v2.0.0 - The Breaking Edition 🚨
 
 This is a _BREAKING RELEASE_ with many breaking changes noted below.
