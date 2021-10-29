@@ -75,6 +75,7 @@ type resourceProvisionMetrics struct {
 type templateConverter struct {
 	templateReader          io.Reader
 	additionalTemplateProps map[string]interface{}
+
 	// internals
 	doQuote          bool
 	expandedTemplate string
@@ -429,6 +430,13 @@ func WaitForStackOperationComplete(ctx context.Context,
 	awsCloudFormation *awsv2CF.Client,
 	logger *zerolog.Logger) (*WaitForStackOperationCompleteResult, error) {
 
+	stackOperationResources := func(inStack *string) (*awsv2CF.DescribeStackResourcesOutput, error) {
+		describeStackResourcesResourcesInput := &awsv2CF.DescribeStackResourcesInput{
+			StackName: inStack,
+		}
+		return awsCloudFormation.DescribeStackResources(ctx, describeStackResourcesResourcesInput)
+	}
+
 	result := &WaitForStackOperationCompleteResult{}
 
 	// Startup a spinner...
@@ -458,15 +466,40 @@ func WaitForStackOperationComplete(ctx context.Context,
 	startTime := time.Now()
 
 	for waitComplete := false; !waitComplete; {
+
 		// Startup the spinner if needed...
-		deltaTime := time.Since(startTime)
+		deltaTime := time.Since(startTime).Truncate(time.Second)
 		if !cliSpinnerStarted {
 			cliSpinner.Start()
 			defer cliSpinner.Stop()
 			cliSpinnerStarted = true
 		}
-		spinnerText := fmt.Sprintf(" %s (elapsed: %s)",
+		res, resErr := stackOperationResources(describeStacksInput.StackName)
+		resourcesText := ""
+		if resErr == nil {
+			inflight := 0
+			for _, eachRes := range res.StackResources {
+				logger.Debug().
+					Interface("Resources", eachRes).
+					Msg("Checking resource")
+
+				switch eachRes.ResourceStatus {
+				case awsv2CFTypes.ResourceStatusCreateComplete,
+					awsv2CFTypes.ResourceStatusDeleteComplete,
+					awsv2CFTypes.ResourceStatusUpdateComplete,
+					awsv2CFTypes.ResourceStatusImportComplete:
+					inflight += 1
+				}
+			}
+			if len(res.StackResources) != 0 {
+				resourcesText = fmt.Sprintf(" - %d of %d resources ",
+					inflight,
+					len(res.StackResources))
+			}
+		}
+		spinnerText := fmt.Sprintf(" %s%s(elapsed: %s)",
 			pollingMessage,
+			resourcesText,
 			deltaTime)
 		cliSpinner.Suffix = spinnerText
 
@@ -779,7 +812,8 @@ func ListStacks(ctx context.Context,
 		StackStatusFilter: []awsv2CFTypes.StackStatus{},
 	}
 	for _, eachFilter := range stackFilters {
-		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, awsv2CFTypes.StackStatus(eachFilter))
+		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter,
+			awsv2CFTypes.StackStatus(eachFilter))
 	}
 	cloudformationSvc := awsv2CF.NewFromConfig(awsConfig)
 	accumulator := []awsv2CFTypes.StackSummary{}
@@ -819,7 +853,7 @@ func ConvergeStackState(ctx context.Context,
 	}
 	logEntry.Interface("Tags", tags).
 		Str("Name", serviceName).
-		Msg("Stack configuration")
+		Msg("Stack Variables")
 
 	cloudformationSvc := awsv2CF.NewFromConfig(awsConfig)
 	// Update the tags
@@ -875,7 +909,7 @@ func ConvergeStackState(ctx context.Context,
 			createStackInput.Tags = awsTags
 		}
 
-		logger.Info().
+		logger.Debug().
 			Interface("StackInput", createStackInput).
 			Msg("Create stack input")
 
