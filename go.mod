@@ -8,27 +8,27 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/aws/aws-lambda-go v1.27.0
-	github.com/aws/aws-sdk-go-v2 v1.10.0
-	github.com/aws/aws-sdk-go-v2/config v1.9.0
+	github.com/aws/aws-sdk-go-v2 v1.11.0
+	github.com/aws/aws-sdk-go-v2/config v1.10.0
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.2.1
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.6.0
-	github.com/aws/aws-sdk-go-v2/service/apigateway v1.8.0
-	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.11.0
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.7.0
+	github.com/aws/aws-sdk-go-v2/service/apigateway v1.9.0
+	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.12.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.8.1
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.8.0
-	github.com/aws/aws-sdk-go-v2/service/codecommit v1.6.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.9.0
+	github.com/aws/aws-sdk-go-v2/service/codecommit v1.7.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.5.1
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.8.0
-	github.com/aws/aws-sdk-go-v2/service/iam v1.11.0
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.10.0
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.17.0
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.9.0
+	github.com/aws/aws-sdk-go-v2/service/iam v1.12.0
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.11.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.18.0
 	github.com/aws/aws-sdk-go-v2/service/servicediscovery v1.9.1
-	github.com/aws/aws-sdk-go-v2/service/ses v1.7.0
-	github.com/aws/aws-sdk-go-v2/service/sns v1.9.0
+	github.com/aws/aws-sdk-go-v2/service/ses v1.8.0
+	github.com/aws/aws-sdk-go-v2/service/sns v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.9.1
-	github.com/aws/aws-sdk-go-v2/service/sts v1.8.0
+	github.com/aws/aws-sdk-go-v2/service/sts v1.9.0
 	github.com/aws/aws-xray-sdk-go v1.6.0
-	github.com/aws/smithy-go v1.8.1
+	github.com/aws/smithy-go v1.9.0
 	github.com/awslabs/goformation/v5 v5.2.11
 	github.com/briandowns/spinner v1.16.0
 	github.com/deckarep/golang-set v1.7.1 // indirect
@@ -41,7 +41,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-test/deep v1.0.7
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/pprof v0.0.0-20211008130755-947d60d73cc0
+	github.com/google/pprof v0.0.0-20211108044417-e9b028704de0
 	github.com/google/uuid v1.1.5 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519
 	github.com/huandu/xstrings v1.3.2 // indirect
@@ -56,12 +56,12 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/mweagle/go-cloudcondenser v0.0.0-20210927040427-ccf888fc5e58
 	github.com/nwaples/rardecode v1.1.2 // indirect
-	github.com/otiai10/copy v1.6.0
+	github.com/otiai10/copy v1.7.0
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
-	github.com/rivo/tview v0.0.0-20211027140524-e0e4bba1c33f
-	github.com/rs/zerolog v1.25.0
+	github.com/rivo/tview v0.0.0-20211109175620-badfa0f0b301
+	github.com/rs/zerolog v1.26.0
 	github.com/shirou/gopsutil/v3 v3.20.12
 	github.com/spf13/cobra v1.2.1
 	github.com/ulikunitz/xz v0.5.10 // indirect
@@ -69,7 +69,7 @@ require (
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
+	golang.org/x/sys v0.0.0-20211111213525-f221eed1c01e // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
@@ -82,16 +82,18 @@ require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/aws/aws-sdk-go v1.40.55 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.5.0 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.7.0 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.0.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.5 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.0.0 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.6.0 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.8.0 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.0 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.0.0 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.4.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.4.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.5.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.1.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.4.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.8.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.5.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.5.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.9.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -113,7 +115,7 @@ require (
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
-	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
+	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	google.golang.org/genproto v0.0.0-20211001223012-bfb93cce50d9 // indirect
 	google.golang.org/grpc v1.41.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
