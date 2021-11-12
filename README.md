@@ -1,6 +1,10 @@
 <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/SpartaLogoLarge.png" />
 </div>
 
+## Sparta v3
+
+This is v3 of Sparta which is not backward compatible with v1 or v2 versions.
+
 # Sparta <p align="center">
 
 ![Build Status](https://github.com/mweagle/Sparta/.github/workflows/go.yml/badge.svg)
