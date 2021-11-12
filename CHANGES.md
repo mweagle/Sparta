@@ -1,11 +1,14 @@
 # Change Notes
 
-## 🚨 v3.0.0 - The Upgrade 🚨
+## 🚨 v3.0.0 - The Paydown Edition 🚨
 
-This is a _BREAKING RELEASE_ with many breaking changes noted below.
+This is a _BREAKING RELEASE_ with significant breaking changes noted below.
 
-- All CloudFormation moved to [go-formation](goformation: GoFormation is a Go library for wor…)
-- All AWS API access moved to [AWS SDK V2](https://github.com/aws/aws-sdk-go-v2)
+- :warning: **BREAKING**
+  - All CloudFormation moved to [go-formation](https://github.com/awslabs/goformation)
+  - All AWS API access moved to [AWS SDK V2](https://github.com/aws/aws-sdk-go-v2)
+- :checkered_flag: **CHANGES**
+  - Added `NewTaskState` to _aws/step_ namespace to enable the new AWS Step Functions Task integrations. See the [blog post](https://aws.amazon.com/blogs/aws/now-aws-step-functions-supports-200-aws-services-to-enable-easier-workflow-automation/) for more information and _aws/step/task_test.go_ for an example.
 
 ## 🚨 v2.0.0 - The Breaking Edition 🚨
 
