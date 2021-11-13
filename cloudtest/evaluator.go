@@ -11,7 +11,7 @@ import (
 	awsv2CW "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	awsv2CWTypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
-	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatch/logs"
+	spartaCWLogs "github.com/mweagle/Sparta/v3/aws/cloudwatch/logs"
 	"github.com/pkg/errors"
 )
 

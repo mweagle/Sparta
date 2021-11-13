@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	gofintrinsics "github.com/awslabs/goformation/v5/intrinsics"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Set of iamBuilders whose output is required to match the corresponding

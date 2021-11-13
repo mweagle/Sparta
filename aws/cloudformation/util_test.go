@@ -10,7 +10,7 @@ import (
 	gofintrinsics "github.com/awslabs/goformation/v5/intrinsics"
 	"github.com/go-test/deep"
 
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/rs/zerolog"
 )
 

@@ -11,8 +11,8 @@ import (
 	gofcloudwatch "github.com/awslabs/goformation/v5/cloudformation/cloudwatch"
 
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/rs/zerolog"
 )
 

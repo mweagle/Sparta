@@ -16,7 +16,7 @@ There are two ways to create a Firehose Transform reactor that transforms a [Kin
 ```go
 import (
 awsEvents "github.com/aws/aws-lambda-go/events"
-  spartaArchetype "github.com/mweagle/Sparta/archetype"
+  spartaArchetype "github.com/mweagle/Sparta/v3/archetype"
 )
 // KinesisStream reactor function
 func reactorFunc(ctx context.Context,

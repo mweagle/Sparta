@@ -4,8 +4,8 @@ import (
 	"context"
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
-	sparta "github.com/mweagle/Sparta"
-	spartaDocker "github.com/mweagle/Sparta/docker"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaDocker "github.com/mweagle/Sparta/v3/docker"
 	"github.com/rs/zerolog"
 )
 

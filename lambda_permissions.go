@@ -13,7 +13,7 @@ import (
 	gofevents "github.com/awslabs/goformation/v5/cloudformation/events"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofs3 "github.com/awslabs/goformation/v5/cloudformation/s3"
-	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	cfCustomResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

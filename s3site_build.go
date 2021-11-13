@@ -10,8 +10,8 @@ import (
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofs3 "github.com/awslabs/goformation/v5/cloudformation/s3"
-	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	cfCustomResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

@@ -22,7 +22,7 @@ import (
 	"github.com/magefile/mage/mg" // mg contains helpful utility functions, like Deps
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
 	"github.com/mholt/archiver"
-	spartamage "github.com/mweagle/Sparta/magefile"
+	spartamage "github.com/mweagle/Sparta/v3/magefile"
 	"github.com/otiai10/copy"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -467,7 +467,7 @@ func EnsureStaticChecks() error {
 	// https://staticcheck.io/
 	excludeChecks := "-exclude=G204,G505,G401,G404,G601"
 	staticCheckErr := sh.Run("staticcheck",
-		"github.com/mweagle/Sparta/...")
+		"github.com/mweagle/Sparta/v3/...")
 	if staticCheckErr != nil {
 		return staticCheckErr
 	}

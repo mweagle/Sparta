@@ -9,9 +9,9 @@ import (
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
 
-	sparta "github.com/mweagle/Sparta"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/rs/zerolog"
 )
 

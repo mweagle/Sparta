@@ -1,7 +1,7 @@
 package iam
 
 import (
-	iamtypes "github.com/mweagle/Sparta/aws/iam/builder/types"
+	iamtypes "github.com/mweagle/Sparta/v3/aws/iam/builder/types"
 )
 
 // PolicyStatement represents an entry in an IAM policy document

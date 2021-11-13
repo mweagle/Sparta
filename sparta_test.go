@@ -9,7 +9,7 @@ import (
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofs3 "github.com/awslabs/goformation/v5/cloudformation/s3"
-	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	spartaCFResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/rs/zerolog"
 )
 

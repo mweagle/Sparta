@@ -1,4 +1,4 @@
-module github.com/mweagle/Sparta
+module github.com/mweagle/Sparta/v3
 
 go 1.17
 
@@ -121,5 +121,3 @@ require (
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
-
-// replace github.com/mweagle/go-cloudcondenser => /Users/mweagle/go/src/github.com/mweagle/go-cloudcondenser

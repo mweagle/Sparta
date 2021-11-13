@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 )
 
 // ProvisionEvaluator is the function that is called following a

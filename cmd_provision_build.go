@@ -27,11 +27,11 @@ import (
 
 	gofroot "github.com/awslabs/goformation/v5"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaS3 "github.com/mweagle/Sparta/aws/s3"
-	spartaDocker "github.com/mweagle/Sparta/docker"
-	"github.com/mweagle/Sparta/system"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaS3 "github.com/mweagle/Sparta/v3/aws/s3"
+	spartaDocker "github.com/mweagle/Sparta/v3/docker"
+	"github.com/mweagle/Sparta/v3/system"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

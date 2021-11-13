@@ -12,7 +12,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-xray-sdk-go/xray"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/rs/zerolog"
 )
 

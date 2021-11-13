@@ -10,9 +10,9 @@ import (
 	gofkinesis "github.com/awslabs/goformation/v5/cloudformation/kinesis"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	goflogs "github.com/awslabs/goformation/v5/cloudformation/logs"
-	sparta "github.com/mweagle/Sparta"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	spartaIAMBuilder "github.com/mweagle/Sparta/aws/iam/builder"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
+	spartaIAMBuilder "github.com/mweagle/Sparta/v3/aws/iam/builder"
 
 	"github.com/rs/zerolog"
 )

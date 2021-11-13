@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

@@ -6,14 +6,14 @@ import (
 	"reflect"
 	"text/template"
 
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	cfCustomResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

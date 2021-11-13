@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	gofcloudformation "github.com/awslabs/goformation/v5/cloudformation/cloudformation"
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"

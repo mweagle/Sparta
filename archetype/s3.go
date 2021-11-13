@@ -9,8 +9,8 @@ import (
 	awsv2S3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/pkg/errors"
 )
 

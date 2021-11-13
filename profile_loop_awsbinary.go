@@ -15,7 +15,7 @@ import (
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	awsv2S3Manager "github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/rs/zerolog"
 )
 

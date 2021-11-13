@@ -364,7 +364,7 @@ This is a _BREAKING RELEASE_ with many breaking changes noted below.
 
       ```go
         import (
-          "github.com/mweagle/Sparta/validator"
+          "github.com/mweagle/Sparta/v3/validator"
         )
         workflowHooks := &sparta.WorkflowHooks{
           Validators: []sparta.ServiceValidationHookHandler{
@@ -529,7 +529,7 @@ This is a _BREAKING RELEASE_ with many breaking changes noted below.
     - Usage:
 
       ```go
-        import spartaCloudWatch "github.com/mweagle/Sparta/aws/cloudwatch"
+        import spartaCloudWatch "github.com/mweagle/Sparta/v3/aws/cloudwatch"
         func main() {
           ...
           spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{
@@ -554,7 +554,7 @@ This is a _BREAKING RELEASE_ with many breaking changes noted below.
       package main
 
       import (
-        spartaMage "github.com/mweagle/Sparta/magefile"
+        spartaMage "github.com/mweagle/Sparta/v3/magefile"
       )
 
       // Provision the service

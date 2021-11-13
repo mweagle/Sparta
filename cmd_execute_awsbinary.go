@@ -13,9 +13,9 @@ import (
 
 	awsLambdaGo "github.com/aws/aws-lambda-go/lambda"
 	awsLambdaContext "github.com/aws/aws-lambda-go/lambdacontext"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
-	cloudformationResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
+	cloudformationResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/rs/zerolog"
 )
 

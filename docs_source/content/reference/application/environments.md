@@ -31,7 +31,7 @@ import (
   "github.com/rs/zerolog"
   "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Name is the default configuration
@@ -60,7 +60,7 @@ import (
   "github.com/rs/zerolog"
   "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Name is the production configuration
@@ -78,7 +78,7 @@ import (
   "github.com/rs/zerolog"
   "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Name is the production configuration

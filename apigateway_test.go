@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
-	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+	spartaAPIGateway "github.com/mweagle/Sparta/v3/aws/apigateway"
+	spartaAWSEvents "github.com/mweagle/Sparta/v3/aws/events"
 	"github.com/rs/zerolog"
 )
 

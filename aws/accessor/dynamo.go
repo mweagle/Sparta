@@ -10,8 +10,8 @@ import (
 	awsv2DynamoAttributeValue "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	awsv2Dynamo "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	awsv2DynamoTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	sparta "github.com/mweagle/Sparta"
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/rs/zerolog"
 )
 

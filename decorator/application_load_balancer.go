@@ -8,7 +8,7 @@ import (
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofelbv2 "github.com/awslabs/goformation/v5/cloudformation/elasticloadbalancingv2"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"

@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	gofapig "github.com/awslabs/goformation/v5/cloudformation/apigateway"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
-	spartaTesting "github.com/mweagle/Sparta/testing"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaAWSEvents "github.com/mweagle/Sparta/v3/aws/events"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func TestAPIGatewayCustomDomain(t *testing.T) {

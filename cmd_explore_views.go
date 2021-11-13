@@ -23,7 +23,7 @@ import (
 	broadcast "github.com/dustin/go-broadcast"
 	tcell "github.com/gdamore/tcell/v2"
 	prettyjson "github.com/hokaccha/go-prettyjson"
-	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatch/logs"
+	spartaCWLogs "github.com/mweagle/Sparta/v3/aws/cloudwatch/logs"
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog"
 )

@@ -2,9 +2,9 @@ package iambuilder
 
 import (
 	gof "github.com/awslabs/goformation/v5/cloudformation"
-	sparta "github.com/mweagle/Sparta"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	iamtypes "github.com/mweagle/Sparta/aws/iam/builder/types"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
+	iamtypes "github.com/mweagle/Sparta/v3/aws/iam/builder/types"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

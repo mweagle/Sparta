@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	spartaSystem "github.com/mweagle/Sparta/system"
+	spartaSystem "github.com/mweagle/Sparta/v3/system"
 )
 
 func TestS3Site(t *testing.T) {

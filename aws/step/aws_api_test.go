@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 )
 
 func TestAWSAPIStepFunction(t *testing.T) {

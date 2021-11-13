@@ -24,9 +24,9 @@ import (
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	"github.com/mweagle/Sparta/system"
-	spartaZip "github.com/mweagle/Sparta/zip"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	"github.com/mweagle/Sparta/v3/system"
+	spartaZip "github.com/mweagle/Sparta/v3/zip"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"

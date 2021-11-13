@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
 
 	"github.com/rs/zerolog"
 )

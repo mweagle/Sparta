@@ -17,8 +17,8 @@ import (
 	"github.com/Masterminds/sprig"
 	awsEvents "github.com/aws/aws-lambda-go/events"
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
-	sparta "github.com/mweagle/Sparta"
-	"github.com/mweagle/Sparta/archetype/xformer"
+	sparta "github.com/mweagle/Sparta/v3"
+	"github.com/mweagle/Sparta/v3/archetype/xformer"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

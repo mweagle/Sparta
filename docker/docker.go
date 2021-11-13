@@ -14,7 +14,7 @@ import (
 	awsv2ECR "github.com/aws/aws-sdk-go-v2/service/ecr"
 	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
 
-	"github.com/mweagle/Sparta/system"
+	"github.com/mweagle/Sparta/v3/system"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

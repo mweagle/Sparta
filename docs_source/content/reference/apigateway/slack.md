@@ -17,7 +17,7 @@ This lambda handler is a bit more complicated than the other examples, primarily
 
 ```go
 import (
-  spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+  spartaAWSEvents "github.com/mweagle/Sparta/v3/aws/events"
 )
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler

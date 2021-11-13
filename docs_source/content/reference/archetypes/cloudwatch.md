@@ -17,7 +17,7 @@ To create a scheduled function use a constructor as in:
 ```go
 import (
   awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-  spartaArchetype "github.com/mweagle/Sparta/archetype"
+  spartaArchetype "github.com/mweagle/Sparta/v3/archetype"
 )
 // CloudWatch reactor function
 func reactorFunc(ctx context.Context,

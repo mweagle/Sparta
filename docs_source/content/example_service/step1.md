@@ -96,7 +96,7 @@ package main
 import (
   "context"
 
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Standard AWS λ function

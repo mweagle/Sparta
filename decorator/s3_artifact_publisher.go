@@ -7,8 +7,8 @@ import (
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	sparta "github.com/mweagle/Sparta"
-	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	sparta "github.com/mweagle/Sparta/v3"
+	cfCustomResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/rs/zerolog"
 )
 

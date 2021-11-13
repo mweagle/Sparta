@@ -8,8 +8,8 @@ import (
 	"text/template"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

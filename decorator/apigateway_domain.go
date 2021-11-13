@@ -11,8 +11,8 @@ import (
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofroute53 "github.com/awslabs/goformation/v5/cloudformation/route53"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

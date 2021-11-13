@@ -22,8 +22,8 @@ import (
 	survey "github.com/AlecAivazis/survey/v2"
 	"github.com/google/pprof/driver"
 	"github.com/google/pprof/profile"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

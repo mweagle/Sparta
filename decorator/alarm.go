@@ -7,7 +7,7 @@ import (
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	gofcloudwatch "github.com/awslabs/goformation/v5/cloudformation/cloudwatch"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/rs/zerolog"
 )
 

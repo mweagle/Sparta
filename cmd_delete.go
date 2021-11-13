@@ -6,8 +6,8 @@ package sparta
 import (
 	"context"
 
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/rs/zerolog"
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"

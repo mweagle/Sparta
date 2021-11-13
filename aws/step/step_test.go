@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaTesting "github.com/mweagle/Sparta/testing"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func testStepProvisionAssertError(t *testing.T,

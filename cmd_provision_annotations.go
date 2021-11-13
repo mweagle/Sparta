@@ -18,7 +18,7 @@ import (
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofmsk "github.com/awslabs/goformation/v5/cloudformation/msk"
 	gofsqs "github.com/awslabs/goformation/v5/cloudformation/sqs"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"

@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	spartaTesting "github.com/mweagle/Sparta/testing"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func TestReactorName(t *testing.T) {

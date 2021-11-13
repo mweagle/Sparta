@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/rs/zerolog"
 )
 

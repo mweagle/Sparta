@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	sparta "github.com/mweagle/Sparta"
-	"github.com/mweagle/Sparta/system"
+	sparta "github.com/mweagle/Sparta/v3"
+	"github.com/mweagle/Sparta/v3/system"
 	"github.com/rs/zerolog"
 )
 

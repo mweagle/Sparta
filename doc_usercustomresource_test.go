@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	spartaCFResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/rs/zerolog"
 )
 

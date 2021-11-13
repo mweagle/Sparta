@@ -10,7 +10,7 @@ import (
 	awsv2ServiceDiscovery "github.com/aws/aws-sdk-go-v2/service/servicediscovery"
 	awsv2ServiceDiscoveryTypes "github.com/aws/aws-sdk-go-v2/service/servicediscovery/types"
 
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

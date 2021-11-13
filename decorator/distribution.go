@@ -9,7 +9,7 @@ import (
 	gofCloudFront "github.com/awslabs/goformation/v5/cloudformation/cloudfront"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofRoute53 "github.com/awslabs/goformation/v5/cloudformation/route53"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

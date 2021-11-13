@@ -5,7 +5,7 @@ import (
 
 	gofecs "github.com/awslabs/goformation/v5/cloudformation/ecs"
 
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 )
 
 func TestFargateSNSServices(t *testing.T) {

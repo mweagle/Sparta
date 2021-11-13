@@ -54,9 +54,9 @@ choiceState := step.NewChoiceState("checkRoll",
 
 The Sparta state types correspond to their [AWS States Spec](https://states-language.net/spec.html) equivalents:
 
-  - `successState` : [SucceedState](https://states-language.net/spec.html#succeed-state)
-  - `delayState` : a specialized [WaitState](https://states-language.net/spec.html#wait-state)
-  - `choiceState`: [ChoiceState](https://states-language.net/spec.html#choice-state)
+- `successState` : [SucceedState](https://states-language.net/spec.html#succeed-state)
+- `delayState` : a specialized [WaitState](https://states-language.net/spec.html#wait-state)
+- `choiceState`: [ChoiceState](https://states-language.net/spec.html#choice-state)
 
 The `choiceState` is the most interesting state: based on the JSON response of the `lambdaRollDie`, it will either transition
 to a delay or the success end state.
@@ -134,7 +134,7 @@ INFO[0000] Compiling binary                              Name=Sparta.lambda.amd6
 INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaStep_mweagle-code.zip
 INFO[0010] Lambda code archive size                      Size="13 MB"
 INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip Size="13 MB"
-INFO[0020] Calling WorkflowHook                          ServiceDecoratorHook="github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1" WorkflowHookContext="map[]"
+INFO[0020] Calling WorkflowHook                          ServiceDecoratorHook="github.com/mweagle/Sparta/v3/aws/step.(*StateMachine).StateMachineDecorator.func1" WorkflowHookContext="map[]"
 INFO[0020] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json Size="3.7 kB"
 INFO[0021] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaStep-mweagle/6ff65180-0501-11e8-935b-50a68d01a629"
 INFO[0094] CloudFormation provisioning metrics:

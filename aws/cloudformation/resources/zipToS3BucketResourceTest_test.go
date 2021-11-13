@@ -9,7 +9,7 @@ import (
 
 	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
 
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
 
 	"github.com/rs/zerolog"
 )

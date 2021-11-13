@@ -28,7 +28,7 @@ For example:
 
 ```go
 import (
-  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
+  spartaAPIGateway "github.com/mweagle/Sparta/v3/aws/apigateway"
 )
 // TodoItemResource is the /todo/{id} resource
 type TodoItemResource struct {

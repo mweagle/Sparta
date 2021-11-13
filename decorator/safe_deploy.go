@@ -11,7 +11,7 @@ import (
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofpolicies "github.com/awslabs/goformation/v5/cloudformation/policies"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 
 	"github.com/rs/zerolog"
 )

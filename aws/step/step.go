@@ -19,9 +19,9 @@ import (
 	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	gofstep "github.com/awslabs/goformation/v5/cloudformation/stepfunctions"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )

@@ -15,7 +15,7 @@ import (
 	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 
 	smithyLogging "github.com/aws/smithy-go/logging"
-	cwCustomProvider "github.com/mweagle/Sparta/aws/cloudformation/provider"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
 
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 

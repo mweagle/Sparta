@@ -6,7 +6,7 @@ import (
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	gof "github.com/awslabs/goformation/v5/cloudformation"
 	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/rs/zerolog"
 )
 
