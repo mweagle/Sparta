@@ -12,22 +12,22 @@
     <title>Request Context :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1636700439" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1636700439" rel="stylesheet">
-    <link href="/css/hybrid.css?1636700439" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1636700439" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1636700439" rel="stylesheet">
-    <link href="/css/auto-complete.css?1636700439" rel="stylesheet">
-    <link href="/css/theme.css?1636700439" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1636700439" rel="stylesheet">
+    <link href="/css/nucleus.css?1636776082" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1636776082" rel="stylesheet">
+    <link href="/css/hybrid.css?1636776082" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1636776082" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1636776082" rel="stylesheet">
+    <link href="/css/auto-complete.css?1636776082" rel="stylesheet">
+    <link href="/css/theme.css?1636776082" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1636776082" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1636700439" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1636776082" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1636700439"></script>
-    <script src="/js/highlight.pack.js?1636700439"></script>
-    <link href="/css/vs.css?1636700439" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1636776082"></script>
+    <script src="/js/highlight.pack.js?1636776082"></script>
+    <link href="/css/vs.css?1636776082" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1636700439"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1636700439"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1636776082"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1636776082"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1636700439"></script>
+<script type="text/javascript" src="/js/search.js?1636776082"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/0cbaa56d">0cbaa56d</a><p/>
-  Date: 2021-11-11T23:00:39-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/2b89ef2e">2b89ef2e</a><p/>
+  Date: 2021-11-12T20:01:22-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2236,13 +2236,13 @@ pre {
         
 
 
-<p>This example demonstrates how to use the <code>Context</code> struct provided as part of the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest">APIGatewayRequest</a>.  The <a href="https://github.com/mweagle/SpartaGeoIP">SpartaGeoIP</a> service will return Geo information based on the inbound request&rsquo;s IP address.</p>
+<p>This example demonstrates how to use the <code>Context</code> struct provided as part of the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest">APIGatewayRequest</a>. The <a href="https://github.com/mweagle/SpartaGeoIP">SpartaGeoIP</a> service will return Geo information based on the inbound request&rsquo;s IP address.</p>
 <h2 id="lambda-definition">Lambda Definition</h2>
 <p>Our function will examine the inbound request, lookup the user&rsquo;s IP address in the <a href="http://dev.maxmind.com/geoip/geoip2/geolite2/">GeoLite2 Database</a> and return any information to the client.</p>
 <p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
-  spartaAWSEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
-  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
+  spartaAWSEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/events&#34;</span>
+  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/apigateway&#34;</span>
 )
 <span style="color:#00f">func</span> ipGeoLambda(ctx context.Context,
   apiRequest spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, <span style="color:#2b91af">error</span>) {
@@ -2359,79 +2359,79 @@ INFO[0077] Stack provisioned                             CreationTime=&#34;2018-
 
 </code></pre></div><p>Pretty-printing the response body:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
-    &#34;ip&#34;: <span style="color:#a31515">&#34;127.0.0.1&#34;</span>,
-    &#34;record&#34;: {
-        &#34;City&#34;: {
-            &#34;GeoNameID&#34;: 0,
-            &#34;Names&#34;: <span style="color:#00f">null</span>
-        },
-        &#34;Continent&#34;: {
-            &#34;Code&#34;: <span style="color:#a31515">&#34;NA&#34;</span>,
-            &#34;GeoNameID&#34;: 6255149,
-            &#34;Names&#34;: {
-                &#34;de&#34;: <span style="color:#a31515">&#34;Nordamerika&#34;</span>,
-                &#34;en&#34;: <span style="color:#a31515">&#34;North America&#34;</span>,
-                &#34;es&#34;: <span style="color:#a31515">&#34;Norteamérica&#34;</span>,
-                &#34;fr&#34;: <span style="color:#a31515">&#34;Amérique du Nord&#34;</span>,
-                &#34;ja&#34;: <span style="color:#a31515">&#34;北アメリカ&#34;</span>,
-                &#34;pt-BR&#34;: <span style="color:#a31515">&#34;América do Norte&#34;</span>,
-                &#34;ru&#34;: <span style="color:#a31515">&#34;Северная Америка&#34;</span>,
-                &#34;zh-CN&#34;: <span style="color:#a31515">&#34;北美洲&#34;</span>
-            }
-        },
-        &#34;Country&#34;: {
-            &#34;GeoNameID&#34;: 6252001,
-            &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
-            &#34;IsoCode&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
-            &#34;Names&#34;: {
-                &#34;de&#34;: <span style="color:#a31515">&#34;USA&#34;</span>,
-                &#34;en&#34;: <span style="color:#a31515">&#34;United States&#34;</span>,
-                &#34;es&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
-                &#34;fr&#34;: <span style="color:#a31515">&#34;États-Unis&#34;</span>,
-                &#34;ja&#34;: <span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,
-                &#34;pt-BR&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
-                &#34;ru&#34;: <span style="color:#a31515">&#34;США&#34;</span>,
-                &#34;zh-CN&#34;: <span style="color:#a31515">&#34;美国&#34;</span>
-            }
-        },
-        &#34;Location&#34;: {
-            &#34;AccuracyRadius&#34;: 0,
-            &#34;Latitude&#34;: 0,
-            &#34;Longitude&#34;: 0,
-            &#34;MetroCode&#34;: 0,
-            &#34;TimeZone&#34;: <span style="color:#a31515">&#34;&#34;</span>
-        },
-        &#34;Postal&#34;: {
-            &#34;Code&#34;: <span style="color:#a31515">&#34;&#34;</span>
-        },
-        &#34;RegisteredCountry&#34;: {
-            &#34;GeoNameID&#34;: 6252001,
-            &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
-            &#34;IsoCode&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
-            &#34;Names&#34;: {
-                &#34;de&#34;: <span style="color:#a31515">&#34;USA&#34;</span>,
-                &#34;en&#34;: <span style="color:#a31515">&#34;United States&#34;</span>,
-                &#34;es&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
-                &#34;fr&#34;: <span style="color:#a31515">&#34;États-Unis&#34;</span>,
-                &#34;ja&#34;: <span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,
-                &#34;pt-BR&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
-                &#34;ru&#34;: <span style="color:#a31515">&#34;США&#34;</span>,
-                &#34;zh-CN&#34;: <span style="color:#a31515">&#34;美国&#34;</span>
-            }
-        },
-        &#34;RepresentedCountry&#34;: {
-            &#34;GeoNameID&#34;: 0,
-            &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
-            &#34;IsoCode&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-            &#34;Names&#34;: <span style="color:#00f">null</span>,
-            &#34;Type&#34;: <span style="color:#a31515">&#34;&#34;</span>
-        },
-        &#34;Subdivisions&#34;: <span style="color:#00f">null</span>,
-        &#34;Traits&#34;: {
-            &#34;IsAnonymousProxy&#34;: <span style="color:#00f">false</span>,
-            &#34;IsSatelliteProvider&#34;: <span style="color:#00f">false</span>
-        }
+  &#34;ip&#34;: <span style="color:#a31515">&#34;127.0.0.1&#34;</span>,
+  &#34;record&#34;: {
+    &#34;City&#34;: {
+      &#34;GeoNameID&#34;: 0,
+      &#34;Names&#34;: <span style="color:#00f">null</span>
+    },
+    &#34;Continent&#34;: {
+      &#34;Code&#34;: <span style="color:#a31515">&#34;NA&#34;</span>,
+      &#34;GeoNameID&#34;: 6255149,
+      &#34;Names&#34;: {
+        &#34;de&#34;: <span style="color:#a31515">&#34;Nordamerika&#34;</span>,
+        &#34;en&#34;: <span style="color:#a31515">&#34;North America&#34;</span>,
+        &#34;es&#34;: <span style="color:#a31515">&#34;Norteamérica&#34;</span>,
+        &#34;fr&#34;: <span style="color:#a31515">&#34;Amérique du Nord&#34;</span>,
+        &#34;ja&#34;: <span style="color:#a31515">&#34;北アメリカ&#34;</span>,
+        &#34;pt-BR&#34;: <span style="color:#a31515">&#34;América do Norte&#34;</span>,
+        &#34;ru&#34;: <span style="color:#a31515">&#34;Северная Америка&#34;</span>,
+        &#34;zh-CN&#34;: <span style="color:#a31515">&#34;北美洲&#34;</span>
+      }
+    },
+    &#34;Country&#34;: {
+      &#34;GeoNameID&#34;: 6252001,
+      &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
+      &#34;IsoCode&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
+      &#34;Names&#34;: {
+        &#34;de&#34;: <span style="color:#a31515">&#34;USA&#34;</span>,
+        &#34;en&#34;: <span style="color:#a31515">&#34;United States&#34;</span>,
+        &#34;es&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+        &#34;fr&#34;: <span style="color:#a31515">&#34;États-Unis&#34;</span>,
+        &#34;ja&#34;: <span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,
+        &#34;pt-BR&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+        &#34;ru&#34;: <span style="color:#a31515">&#34;США&#34;</span>,
+        &#34;zh-CN&#34;: <span style="color:#a31515">&#34;美国&#34;</span>
+      }
+    },
+    &#34;Location&#34;: {
+      &#34;AccuracyRadius&#34;: 0,
+      &#34;Latitude&#34;: 0,
+      &#34;Longitude&#34;: 0,
+      &#34;MetroCode&#34;: 0,
+      &#34;TimeZone&#34;: <span style="color:#a31515">&#34;&#34;</span>
+    },
+    &#34;Postal&#34;: {
+      &#34;Code&#34;: <span style="color:#a31515">&#34;&#34;</span>
+    },
+    &#34;RegisteredCountry&#34;: {
+      &#34;GeoNameID&#34;: 6252001,
+      &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
+      &#34;IsoCode&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
+      &#34;Names&#34;: {
+        &#34;de&#34;: <span style="color:#a31515">&#34;USA&#34;</span>,
+        &#34;en&#34;: <span style="color:#a31515">&#34;United States&#34;</span>,
+        &#34;es&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+        &#34;fr&#34;: <span style="color:#a31515">&#34;États-Unis&#34;</span>,
+        &#34;ja&#34;: <span style="color:#a31515">&#34;アメリカ合衆国&#34;</span>,
+        &#34;pt-BR&#34;: <span style="color:#a31515">&#34;Estados Unidos&#34;</span>,
+        &#34;ru&#34;: <span style="color:#a31515">&#34;США&#34;</span>,
+        &#34;zh-CN&#34;: <span style="color:#a31515">&#34;美国&#34;</span>
+      }
+    },
+    &#34;RepresentedCountry&#34;: {
+      &#34;GeoNameID&#34;: 0,
+      &#34;IsInEuropeanUnion&#34;: <span style="color:#00f">false</span>,
+      &#34;IsoCode&#34;: <span style="color:#a31515">&#34;&#34;</span>,
+      &#34;Names&#34;: <span style="color:#00f">null</span>,
+      &#34;Type&#34;: <span style="color:#a31515">&#34;&#34;</span>
+    },
+    &#34;Subdivisions&#34;: <span style="color:#00f">null</span>,
+    &#34;Traits&#34;: {
+      &#34;IsAnonymousProxy&#34;: <span style="color:#00f">false</span>,
+      &#34;IsSatelliteProvider&#34;: <span style="color:#00f">false</span>
     }
+  }
 }
 </code></pre></div><h2 id="clean-up">Clean Up</h2>
 <p>Before moving on, remember to decommission the service via <code>go run main.go delete</code> or <code>mage delete</code>.</p>
@@ -3857,19 +3857,19 @@ INFO[0077] Stack provisioned                             CreationTime=&#34;2018-
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1636700439"></script>
-    <script src="/js/perfect-scrollbar.min.js?1636700439"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1636700439"></script>
-    <script src="/js/jquery.sticky.js?1636700439"></script>
-    <script src="/js/featherlight.min.js?1636700439"></script>
-    <script src="/js/highlight.pack.js?1636700439"></script>
+    <script src="/js/clipboard.min.js?1636776082"></script>
+    <script src="/js/perfect-scrollbar.min.js?1636776082"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1636776082"></script>
+    <script src="/js/jquery.sticky.js?1636776082"></script>
+    <script src="/js/featherlight.min.js?1636776082"></script>
+    <script src="/js/highlight.pack.js?1636776082"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1636700439"></script>
-    <script src="/js/learn.js?1636700439"></script>
-    <script src="/js/hugo-learn.js?1636700439"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1636776082"></script>
+    <script src="/js/learn.js?1636776082"></script>
+    <script src="/js/hugo-learn.js?1636776082"></script>
     
         
-            <script src="/mermaid/mermaid.js?1636700439"></script>
+            <script src="/mermaid/mermaid.js?1636776082"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

@@ -27,7 +27,7 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
       <description>The EventBridge lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are two different archetype functions available.
 Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
 To create a scheduled function use a constructor as in:
-import ( spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // EventBridge reactor function func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) { logger, _ := ctx.</description>
+import ( spartaArchetype &amp;#34;github.com/mweagle/Sparta/v3/archetype&amp;#34; ) // EventBridge reactor function func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) { logger, _ := ctx.</description>
     </item>
     
     <item>
@@ -180,7 +180,7 @@ TODO: Document the XRayInterceptor
       <description>The CloudWatch Logs Lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are three different archetype functions available.
 Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
 To create a scheduled function use a constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/v3/archetype&amp;#34; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</description>
     </item>
     
     <item>
@@ -190,7 +190,7 @@ import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; s
       
       <guid>/reference/archetypes/dynamodb/</guid>
       <description>To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, dynamoEvent). Msg(&amp;#34;DynamoDB Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/v3/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, dynamoEvent). Msg(&amp;#34;DynamoDB Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
     </item>
     
     <item>
@@ -200,7 +200,7 @@ import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; s
       
       <guid>/reference/archetypes/kinesis/</guid>
       <description>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, kinesisEvent). Msg(&amp;#34;Kinesis Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/v3/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, kinesisEvent). Msg(&amp;#34;Kinesis Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, &amp;#34;TRIM_HORIZON&amp;#34;, 10, nil) } </description>
     </item>
     
     <item>
@@ -210,7 +210,7 @@ import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; s
       
       <guid>/reference/archetypes/kinesis_firehose/</guid>
       <description>There are two ways to create a Firehose Transform reactor that transforms a KinesisFirehoseEventRecord with a Lambda function:
- NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Record&amp;#34;, record). Msg(&amp;#34;Kinesis Firehose Event&amp;#34;) responseRecord = &amp;amp;awsEvents.</description>
+ NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/v3/archetype&amp;#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Record&amp;#34;, record). Msg(&amp;#34;Kinesis Firehose Event&amp;#34;) responseRecord = &amp;amp;awsEvents.</description>
     </item>
     
     <item>
@@ -243,7 +243,7 @@ To subscribe to object events created by objects with a given prefix, use the Ne
       
       <guid>/reference/archetypes/sns/</guid>
       <description>To create a SNS reactor that subscribes via an subscription configuration, use the NewSNSReactor constructor as in:
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, snsEvent). Msg(&amp;#34;SNS Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, nil) } </description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaArchetype &amp;#34;github.com/mweagle/Sparta/v3/archetype&amp;#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&amp;#34;Event&amp;#34;, snsEvent). Msg(&amp;#34;SNS Event&amp;#34;) return &amp;#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;#34;, nil) } </description>
     </item>
     
     <item>
@@ -427,7 +427,7 @@ Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details 
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/v3/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
     </item>
     
     <item>
@@ -654,7 +654,7 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Lambda Definition We&amp;rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
+import ( spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/v3/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/v3/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
     </item>
     
     <item>

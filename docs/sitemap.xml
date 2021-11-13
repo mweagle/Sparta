@@ -3,19 +3,19 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>/getting_started/</loc>
-    <lastmod>2021-10-07T21:24:43-07:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/operations/magefile/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/event_bridge/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/decorators/application_load_balancer/</loc>
     <lastmod>2019-08-11T13:53:33-07:00</lastmod>
   </url><url>
     <loc>/reference/decorators/cloudmap/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/codecommit/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
@@ -45,31 +45,31 @@
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
   </url><url>
     <loc>/reference/step/lambda/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/interceptors/xray_interceptor/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/cloudwatch/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/dynamodb/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/kinesis/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/kinesis_firehose/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/rest/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/s3/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/archetypes/sns/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/decorators/cloudfront_distribution/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
@@ -93,7 +93,7 @@
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
   </url><url>
     <loc>/example_service/step1/</loc>
-    <lastmod>2021-10-08T22:32:38-07:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/operations/cicd/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
@@ -120,7 +120,7 @@
     <lastmod>2021-10-07T21:24:43-07:00</lastmod>
   </url><url>
     <loc>/reference/apigateway/echo_event/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/example_service/</loc>
     <lastmod>2019-11-27T19:45:05-08:00</lastmod>
@@ -129,25 +129,25 @@
     <lastmod>2021-10-07T21:24:43-07:00</lastmod>
   </url><url>
     <loc>/reference/application/environments/</loc>
-    <lastmod>2021-10-07T21:24:43-07:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/eventsources/s3/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
   </url><url>
     <loc>/reference/eventsources/ses/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/eventsources/sns/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
   </url><url>
     <loc>/reference/eventsources/sqs/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/apigateway/request_params/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/apigateway/context/</loc>
-    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/step/fargate/</loc>
     <lastmod>2018-12-16T19:04:57-08:00</lastmod>
@@ -165,10 +165,10 @@
     <lastmod>2021-01-10T16:20:56-08:00</lastmod>
   </url><url>
     <loc>/reference/apigateway/slack/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/operations/metrics_publisher/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/operations/profiling/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
@@ -207,7 +207,7 @@
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
   </url><url>
     <loc>/reference/application/custom_resources/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/discovery/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
@@ -219,7 +219,7 @@
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
   </url><url>
     <loc>/reference/apigateway/s3site/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
   </url><url>
     <loc>/reference/operations/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>

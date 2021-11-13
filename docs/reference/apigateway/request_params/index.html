@@ -12,22 +12,22 @@
     <title>Request Parameters :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1636700439" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1636700439" rel="stylesheet">
-    <link href="/css/hybrid.css?1636700439" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1636700439" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1636700439" rel="stylesheet">
-    <link href="/css/auto-complete.css?1636700439" rel="stylesheet">
-    <link href="/css/theme.css?1636700439" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1636700439" rel="stylesheet">
+    <link href="/css/nucleus.css?1636776082" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1636776082" rel="stylesheet">
+    <link href="/css/hybrid.css?1636776082" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1636776082" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1636776082" rel="stylesheet">
+    <link href="/css/auto-complete.css?1636776082" rel="stylesheet">
+    <link href="/css/theme.css?1636776082" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1636776082" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1636700439" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1636776082" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1636700439"></script>
-    <script src="/js/highlight.pack.js?1636700439"></script>
-    <link href="/css/vs.css?1636700439" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1636776082"></script>
+    <script src="/js/highlight.pack.js?1636776082"></script>
+    <link href="/css/vs.css?1636776082" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1636700439"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1636700439"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1636776082"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1636776082"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1636700439"></script>
+<script type="text/javascript" src="/js/search.js?1636776082"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/0cbaa56d">0cbaa56d</a><p/>
-  Date: 2021-11-11T23:00:39-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/2b89ef2e">2b89ef2e</a><p/>
+  Date: 2021-11-12T20:01:22-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2252,8 +2252,8 @@ function defined as part of the <a href="https://github.com/mweagle/SpartaApplic
 <p>Those params will be passed as part of the URL query string. The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.</p>
 <p>Because <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> is expected to be invoked by the API Gateway, we&rsquo;ll use the AWS Lambda Go type in the function signature:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
-  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
-  spartaEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/apigateway&#34;</span>
+  spartaEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/events&#34;</span>
 )
 
 <span style="color:#00f">func</span> s3ItemInfo(ctx context.Context,
@@ -4000,19 +4000,19 @@ limit what S3 buckets a lambda function may access, and returns an <em>applicati
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1636700439"></script>
-    <script src="/js/perfect-scrollbar.min.js?1636700439"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1636700439"></script>
-    <script src="/js/jquery.sticky.js?1636700439"></script>
-    <script src="/js/featherlight.min.js?1636700439"></script>
-    <script src="/js/highlight.pack.js?1636700439"></script>
+    <script src="/js/clipboard.min.js?1636776082"></script>
+    <script src="/js/perfect-scrollbar.min.js?1636776082"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1636776082"></script>
+    <script src="/js/jquery.sticky.js?1636776082"></script>
+    <script src="/js/featherlight.min.js?1636776082"></script>
+    <script src="/js/highlight.pack.js?1636776082"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1636700439"></script>
-    <script src="/js/learn.js?1636700439"></script>
-    <script src="/js/hugo-learn.js?1636700439"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1636776082"></script>
+    <script src="/js/learn.js?1636776082"></script>
+    <script src="/js/hugo-learn.js?1636776082"></script>
     
         
-            <script src="/mermaid/mermaid.js?1636700439"></script>
+            <script src="/mermaid/mermaid.js?1636776082"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });
