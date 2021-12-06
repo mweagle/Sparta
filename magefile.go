@@ -288,6 +288,30 @@ func GenerateAutomaticCode() error {
 	return sh.Run("gojsonschema", args...)
 }
 
+// ViewDependencies creates an SVG output visualized with dot for all
+// package dependencies
+func ViewDependencies() error {
+	dotfile := "godepgraph.dot"
+	svgfile := fmt.Sprintf("%s.svg", dotfile)
+	generateCommands := [][]string{
+		{"gomod",
+			"graph",
+			"-o",
+			dotfile,
+		},
+		{"dot",
+			"-v",
+			"-Tsvg",
+			dotfile,
+			"-o",
+			svgfile,
+		},
+		{"open",
+			svgfile},
+	}
+	return spartamage.Script(generateCommands)
+}
+
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
 // stamp the SHA into the binaries we build...
 func GenerateBuildInfo() error {

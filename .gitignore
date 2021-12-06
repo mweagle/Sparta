@@ -9,6 +9,8 @@ Sparta.lambda.amd64
 SampleProvision-code.zip
 mage_output_file.go
 Sparta.code-workspace
+godepgraph.dot*
+godepgraph.dot.*
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
