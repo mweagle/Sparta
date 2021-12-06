@@ -1,6 +1,17 @@
 <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/SpartaLogoLarge.png" />
 </div>
 
+# Moving on
+
+Times have changed since I started this work. I no longer have the resources to adequately maintain this project and there also exist several options including [SAM](https://aws.amazon.com/serverless/sam/) with lively communities. With v3, all CloudFormation API changes have been migrated to [go-formation](https://github.com/awslabs/goformation) and all AWS API SDK calls moved to [AWS v2](https://github.com/aws/aws-sdk-go-v2). This likely marks the end of my active development on Sparta.
+
+If this project has been helpful to you and you're interested in becoming a shepherd, please open an issue. Thanks all for your feedback, support, and recommendations over the years.
+
+Keep on serverlessing!
+
+- Matt
+  December 5th, 2021
+
 ## Sparta v3
 
 This is v3 of Sparta which is not backward compatible with v1 or v2 versions.
