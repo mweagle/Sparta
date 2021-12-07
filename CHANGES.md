@@ -7,6 +7,8 @@ This is a _BREAKING RELEASE_ with significant breaking changes noted below.
 - :warning: **BREAKING**
   - All CloudFormation moved to [go-formation](https://github.com/awslabs/goformation)
   - All AWS API access moved to [AWS SDK V2](https://github.com/aws/aws-sdk-go-v2)
+    - Changed all [AWS Session](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html) references to [AWS V2 Config](https://aws.github.io/aws-sdk-go-v2/docs/configuring-sdk/) references.
+  - Pulled `go` _context_ variable through async operations.
 - :checkered_flag: **CHANGES**
   - Added `NewTaskState` to _aws/step_ namespace to enable the new AWS Step Functions Task integrations. See the [blog post](https://aws.amazon.com/blogs/aws/now-aws-step-functions-supports-200-aws-services-to-enable-easier-workflow-automation/) for more information and _aws/step/task_test.go_ for an example.
 
