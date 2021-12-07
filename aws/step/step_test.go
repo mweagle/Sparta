@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaTesting "github.com/mweagle/Sparta/testing"
-	gocf "github.com/mweagle/go-cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func testStepProvisionAssertError(t *testing.T,
@@ -151,7 +150,7 @@ func TestRollDieChoice(t *testing.T) {
 
 func TestDynamoDB(t *testing.T) {
 	dynamoDbParams := DynamoDBGetItemParameters{
-		TableName:       gocf.String("MY_TABLE"),
+		TableName:       "MY_TABLE",
 		AttributesToGet: []string{"attr1", "attr2"},
 	}
 	dynamoState := NewDynamoDBGetItemState("testState", dynamoDbParams)

@@ -1,448 +1,270 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>/getting_started/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/operations/magefile/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/event_bridge/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/decorators/application_load_balancer/</loc>
     <lastmod>2019-08-11T13:53:33-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/decorators/cloudmap/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/codecommit/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/codecommit/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/dynamodb/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/sagemaker/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/sns/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/sqs/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/batch/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/fargate/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/glue/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/lambda/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/interceptors/xray_interceptor/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/archetypes/cloudwatch/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/dynamodb/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/kinesis/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/kinesis_firehose/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/rest/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/s3/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/archetypes/sns/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/decorators/cloudfront_distribution/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/operations/cloudwatch_alarms/</loc>
     <lastmod>2018-12-22T07:18:22-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/operations/cloudwatch_dashboard/</loc>
     <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/operations/codedeploy_service_update/</loc>
     <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/decorators/lambda_versioning/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/decorators/publish_outputs/</loc>
     <lastmod>2018-12-22T07:18:22-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/decorators/s3_artifact_publisher/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/example_service/step1/</loc>
-    <lastmod>2021-01-10T16:20:56-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/operations/cicd/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/cloudformation/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/cloudwatchevents/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/cloudwatchlogs/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/cognito/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/application/custom_commands/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/application/custom_flags/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/dynamodb/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-10-07T21:24:43-07:00</lastmod>
+  </url><url>
     <loc>/reference/apigateway/echo_event/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/example_service/</loc>
     <lastmod>2019-11-27T19:45:05-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/kinesis/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-10-07T21:24:43-07:00</lastmod>
+  </url><url>
     <loc>/reference/application/environments/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/eventsources/s3/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/ses/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/eventsources/sns/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/eventsources/sqs/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/apigateway/request_params/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/apigateway/context/</loc>
-    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/step/fargate/</loc>
     <lastmod>2018-12-16T19:04:57-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/concepts/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/apigateway/cors/</loc>
     <lastmod>2018-12-10T07:26:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/operations/deployment_strategies/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/example_service/step2/</loc>
     <lastmod>2021-01-10T16:20:56-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/apigateway/slack/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/operations/metrics_publisher/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/operations/profiling/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/apigateway/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/apiv2gateway/</loc>
-    <lastmod>2019-07-26T19:24:01-07:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-10-07T21:24:43-07:00</lastmod>
+  </url><url>
     <loc>/reference/eventsources/</loc>
     <lastmod>2018-12-11T20:52:53-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/archetypes/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/decorators/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/interceptors/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/cli_options/</loc>
     <lastmod>2019-11-27T19:45:05-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/application/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/application/custom_lambda_resources/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/application/custom_resources/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/discovery/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/docker/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/hybrid_topologies/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/apigateway/s3site/</loc>
-    <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-11-12T20:01:15-08:00</lastmod>
+  </url><url>
     <loc>/reference/operations/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/decorators/dynamic_infrastructure/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/oci/</loc>
     <lastmod>2021-01-01T21:22:47-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/testing/</loc>
     <lastmod>2021-01-01T21:22:47-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/presentations/</loc>
     <lastmod>2019-09-11T21:16:10-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/supporting_packages/</loc>
     <lastmod>2018-12-11T20:52:53-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/limitations/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/meta/</loc>
     <lastmod>2019-08-11T20:56:53-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/faq/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/credits/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/reference/step/services/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/</loc>
     <lastmod>2021-01-10T16:13:36-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/_footer/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/_header/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/</loc>
   </url>
-  
 </urlset>

@@ -1,12 +1,16 @@
 package cloudformation
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"strings"
 	"testing"
 
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	gofintrinsics "github.com/awslabs/goformation/v5/intrinsics"
+	"github.com/go-test/deep"
+
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/rs/zerolog"
 )
 
@@ -42,7 +46,7 @@ var userdataPassingTests = []struct {
 		[]interface{}{
 			`A `,
 			map[string]interface{}{
-				"Fn::GetAtt": []string{"ResName", "AttrName"},
+				"Fn::GetAtt": []interface{}{"ResName", "AttrName"},
 			},
 		},
 	},
@@ -51,7 +55,7 @@ var userdataPassingTests = []struct {
 		[]interface{}{
 			`A `,
 			map[string]interface{}{
-				"Fn::GetAtt": []string{"ResName", "AttrName"},
+				"Fn::GetAtt": []interface{}{"ResName", "AttrName"},
 			},
 			` B`,
 		},
@@ -61,7 +65,7 @@ var userdataPassingTests = []struct {
 A`,
 		[]interface{}{
 			map[string]interface{}{
-				"Fn::GetAtt": []string{"ResName", "AttrName"},
+				"Fn::GetAtt": []interface{}{"ResName", "AttrName"},
 			},
 			"\n",
 			"A",
@@ -70,7 +74,7 @@ A`,
 	{
 		`{"Ref": "AWS::Region"}`,
 		[]interface{}{
-			map[string]string{
+			map[string]interface{}{
 				"Ref": "AWS::Region",
 			},
 		},
@@ -79,7 +83,7 @@ A`,
 		`A {"Ref" : "AWS::Region"} B`,
 		[]interface{}{
 			"A ",
-			map[string]string{
+			map[string]interface{}{
 				"Ref": "AWS::Region",
 			},
 			" B",
@@ -91,7 +95,7 @@ A`,
 B`,
 		[]interface{}{
 			"A\n",
-			map[string]string{
+			map[string]interface{}{
 				"Ref": "AWS::Region",
 			},
 			"\n",
@@ -101,11 +105,11 @@ B`,
 	{
 		"{\"Ref\" : \"AWS::Region\"} = {\"Ref\" : \"AWS::AccountId\"}",
 		[]interface{}{
-			map[string]string{
+			map[string]interface{}{
 				"Ref": "AWS::Region",
 			},
 			" = ",
-			map[string]string{
+			map[string]interface{}{
 				"Ref": "AWS::AccountId",
 			},
 		},
@@ -128,20 +132,27 @@ func TestExpand(t *testing.T) {
 					eachTest.output,
 				},
 			}
-			expectedResult, expectedResultErr := json.Marshal(testOutput)
-			if nil != expectedResultErr {
-				t.Error(expectedResultErr)
+			rawMarshal, rawMarshalErr := json.Marshal(expandResult)
+			if nil != rawMarshalErr {
+				t.Fatalf("%s (Input: %s)", rawMarshalErr, eachTest.input)
+			}
+			actualMarshal, actualMarshalErr := gofintrinsics.ProcessJSON(rawMarshal, nil)
+			if actualMarshalErr != nil {
+				t.Fatalf("%s (Input: %s)", actualMarshalErr, rawMarshal)
+			}
+			var expandedActual map[string]interface{}
+			unmarshalErr := json.Unmarshal(actualMarshal, &expandedActual)
+			if unmarshalErr != nil {
+				t.Fatalf("%s (Input: %s)", unmarshalErr, actualMarshal)
+			}
+			diffResult := deep.Equal(testOutput, expandedActual)
+			if diffResult != nil {
+				t.Errorf("Failed to validate\n")
+				t.Errorf("\tEXPECTED: %#v\n", testOutput)
+				t.Errorf("\tACTUAL: %#v\n", expandedActual)
+				t.Errorf("DIFF: %s", diffResult)
 			} else {
-				actualMarshal, actualMarshalErr := json.Marshal(expandResult)
-				if nil != actualMarshalErr {
-					t.Errorf("%s (Input: %s)", actualMarshalErr, eachTest.input)
-				} else if string(expectedResult) != string(actualMarshal) {
-					t.Errorf("Failed to validate\n")
-					t.Errorf("\tEXPECTED: %s\n", string(expectedResult))
-					t.Errorf("\tACTUAL: %s\n", string(actualMarshal))
-				} else {
-					t.Logf("Validated: %s == %s", string(expectedResult), string(actualMarshal))
-				}
+				t.Logf("Validated: %v == %v", testOutput, expandedActual)
 			}
 		}
 	}
@@ -155,8 +166,11 @@ func TestUserScopedStackName(t *testing.T) {
 }
 func TestPlatformScopedName(t *testing.T) {
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
-	awsSession := spartaAWS.NewSession(&logger)
-	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsSession)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(context.Background(), &logger)
+	if awsConfigErr != nil {
+		t.Fatalf("Failed to create config: %s", awsConfigErr.Error())
+	}
+	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsConfig)
 	if stackNameErr != nil {
 		t.Fatalf("Failed to create AWS account based stack name: %s", stackNameErr)
 	}

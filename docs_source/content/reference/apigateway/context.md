@@ -4,7 +4,7 @@ title: Request Context
 weight: 12
 ---
 
-This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest).  The [SpartaGeoIP](https://github.com/mweagle/SpartaGeoIP) service will return Geo information based on the inbound request's IP address.
+This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest). The [SpartaGeoIP](https://github.com/mweagle/SpartaGeoIP) service will return Geo information based on the inbound request's IP address.
 
 ## Lambda Definition
 
@@ -14,8 +14,8 @@ As this function is only expected to be invoked from the API Gateway, we'll unma
 
 ```go
 import (
-  spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
-  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
+  spartaAWSEvents "github.com/mweagle/Sparta/v3/aws/events"
+  spartaAPIGateway "github.com/mweagle/Sparta/v3/aws/apigateway"
 )
 func ipGeoLambda(ctx context.Context,
   apiRequest spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
@@ -51,10 +51,10 @@ Finally, marshal the data or error result and we're done:
 
 The next steps are to:
 
-  1. Create the [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) value
-  1. Create an associated API Gateway
-  1. Create an API Gateway resource that invokes our lambda function
-  1. Add a Method name to the resource.
+1. Create the [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) value
+1. Create an associated API Gateway
+1. Create an API Gateway resource that invokes our lambda function
+1. Add a Method name to the resource.
 
 These four steps are managed in the service's `main()` function:
 
@@ -163,79 +163,79 @@ Pretty-printing the response body:
 
 ```json
 {
-    "ip": "127.0.0.1",
-    "record": {
-        "City": {
-            "GeoNameID": 0,
-            "Names": null
-        },
-        "Continent": {
-            "Code": "NA",
-            "GeoNameID": 6255149,
-            "Names": {
-                "de": "Nordamerika",
-                "en": "North America",
-                "es": "Norteamérica",
-                "fr": "Amérique du Nord",
-                "ja": "北アメリカ",
-                "pt-BR": "América do Norte",
-                "ru": "Северная Америка",
-                "zh-CN": "北美洲"
-            }
-        },
-        "Country": {
-            "GeoNameID": 6252001,
-            "IsInEuropeanUnion": false,
-            "IsoCode": "US",
-            "Names": {
-                "de": "USA",
-                "en": "United States",
-                "es": "Estados Unidos",
-                "fr": "États-Unis",
-                "ja": "アメリカ合衆国",
-                "pt-BR": "Estados Unidos",
-                "ru": "США",
-                "zh-CN": "美国"
-            }
-        },
-        "Location": {
-            "AccuracyRadius": 0,
-            "Latitude": 0,
-            "Longitude": 0,
-            "MetroCode": 0,
-            "TimeZone": ""
-        },
-        "Postal": {
-            "Code": ""
-        },
-        "RegisteredCountry": {
-            "GeoNameID": 6252001,
-            "IsInEuropeanUnion": false,
-            "IsoCode": "US",
-            "Names": {
-                "de": "USA",
-                "en": "United States",
-                "es": "Estados Unidos",
-                "fr": "États-Unis",
-                "ja": "アメリカ合衆国",
-                "pt-BR": "Estados Unidos",
-                "ru": "США",
-                "zh-CN": "美国"
-            }
-        },
-        "RepresentedCountry": {
-            "GeoNameID": 0,
-            "IsInEuropeanUnion": false,
-            "IsoCode": "",
-            "Names": null,
-            "Type": ""
-        },
-        "Subdivisions": null,
-        "Traits": {
-            "IsAnonymousProxy": false,
-            "IsSatelliteProvider": false
-        }
+  "ip": "127.0.0.1",
+  "record": {
+    "City": {
+      "GeoNameID": 0,
+      "Names": null
+    },
+    "Continent": {
+      "Code": "NA",
+      "GeoNameID": 6255149,
+      "Names": {
+        "de": "Nordamerika",
+        "en": "North America",
+        "es": "Norteamérica",
+        "fr": "Amérique du Nord",
+        "ja": "北アメリカ",
+        "pt-BR": "América do Norte",
+        "ru": "Северная Америка",
+        "zh-CN": "北美洲"
+      }
+    },
+    "Country": {
+      "GeoNameID": 6252001,
+      "IsInEuropeanUnion": false,
+      "IsoCode": "US",
+      "Names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "Location": {
+      "AccuracyRadius": 0,
+      "Latitude": 0,
+      "Longitude": 0,
+      "MetroCode": 0,
+      "TimeZone": ""
+    },
+    "Postal": {
+      "Code": ""
+    },
+    "RegisteredCountry": {
+      "GeoNameID": 6252001,
+      "IsInEuropeanUnion": false,
+      "IsoCode": "US",
+      "Names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "RepresentedCountry": {
+      "GeoNameID": 0,
+      "IsInEuropeanUnion": false,
+      "IsoCode": "",
+      "Names": null,
+      "Type": ""
+    },
+    "Subdivisions": null,
+    "Traits": {
+      "IsAnonymousProxy": false,
+      "IsSatelliteProvider": false
     }
+  }
 }
 ```
 
@@ -245,5 +245,5 @@ Before moving on, remember to decommission the service via `go run main.go delet
 
 ## Notes
 
-* The _GeoLite2-Country.mmdb_ content is embedded in the go binary via [esc](https://github.com/mjibson/esc) as part of the [go generate](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27) phase.
-  * This is a port of Tom Maiaroto's [go-lambda-geoip](https://github.com/tmaiaroto/go-lambda-geoip) implementation.
+- The _GeoLite2-Country.mmdb_ content is embedded in the go binary via [esc](https://github.com/mjibson/esc) as part of the [go generate](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27) phase.
+  - This is a port of Tom Maiaroto's [go-lambda-geoip](https://github.com/tmaiaroto/go-lambda-geoip) implementation.

@@ -1,3 +1,4 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
@@ -11,7 +12,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
@@ -20,16 +20,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/lambda"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaS3 "github.com/mweagle/Sparta/aws/s3"
-	spartaDocker "github.com/mweagle/Sparta/docker"
-	"github.com/mweagle/Sparta/system"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
+
+	gofroot "github.com/awslabs/goformation/v5"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaS3 "github.com/mweagle/Sparta/v3/aws/s3"
+	spartaDocker "github.com/mweagle/Sparta/v3/docker"
+	"github.com/mweagle/Sparta/v3/system"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -74,7 +76,7 @@ func newS3UploadURL(s3URL string) *s3UploadURL {
 // TemplateMetadataReader encapsulates a reader of Metadata from the
 // template
 type templateMetadataReader struct {
-	template *gocf.Template
+	template *gof.Template
 }
 
 func (tmr *templateMetadataReader) AsString(keyName string) (string, error) {
@@ -100,11 +102,11 @@ type provisionContext struct {
 	serviceName string
 	// AWS Session to be used for all API calls made in the process of provisioning
 	// this service.
-	awsSession *session.Session
+	awsConfig awsv2.Config
 	// Path to cfTemplate
 	cfTemplatePath string
 	// CloudFormation Template
-	cfTemplate *gocf.Template
+	cfTemplate *gof.Template
 	// Is the S3 bucket version enabled?
 	isVersionAwareBucket bool
 	// Is this a NOOP operation?
@@ -112,7 +114,7 @@ type provisionContext struct {
 	// s3URLS that have been uploaded...
 	s3Uploads map[string]*s3UploadURL
 	// stack that we mutated
-	stack *cloudformation.Stack
+	stack *awsv2CFTypes.Stack
 	// the code pipeline trigger
 	codePipelineTrigger string
 	// stack parameters supplied to the template. These will be upserted
@@ -133,13 +135,13 @@ type provisionContext struct {
 // of resources that it provisions. In general the timeout
 // is short with an exception made for CloudFront
 // distributions
-func maximumStackOperationTimeout(template *gocf.Template, logger *zerolog.Logger) time.Duration {
+func maximumStackOperationTimeout(template *gof.Template, logger *zerolog.Logger) time.Duration {
 	stackOperationTimeout := 20 * time.Minute
 	// If there is a CloudFront distributon in there then
 	// let's give that a bit more time to settle down...In general
 	// the initial CloudFront distribution takes ~30 minutes
 	for _, eachResource := range template.Resources {
-		if eachResource.Properties.CfnResourceType() == "AWS::CloudFront::Distribution" {
+		if eachResource.AWSCloudFormationType() == "AWS::CloudFront::Distribution" {
 			stackOperationTimeout = 60 * time.Minute
 			break
 		}
@@ -185,7 +187,8 @@ func versionAwareS3KeyName(s3DefaultKey string,
 // Upload a local file to S3.  Returns the full S3 URL to the file that was
 // uploaded. If the target bucket does not have versioning enabled,
 // this function will automatically make a new key to ensure uniqueness
-func uploadLocalFileToS3(awsSession *session.Session,
+func uploadLocalFileToS3(ctx context.Context,
+	awsConfig awsv2.Config,
 	localPath string,
 	serviceName string,
 	s3ObjectKey string,
@@ -226,8 +229,9 @@ func uploadLocalFileToS3(awsSession *session.Session,
 			s3ObjectKey)
 	} else {
 		// Then upload it
-		uploadLocation, uploadURLErr := spartaS3.UploadLocalFileToS3(localPath,
-			awsSession,
+		uploadLocation, uploadURLErr := spartaS3.UploadLocalFileToS3(ctx,
+			localPath,
+			awsConfig,
 			s3ObjectBucket,
 			s3ObjectKey,
 			logger)
@@ -276,7 +280,7 @@ func (pwo *provisionWorkflowOp) stackParameters() map[string]string {
 		if !userValExists {
 			noUserVal, noUserValErr := pwo.MetadataString(eachKey)
 			if noUserValErr == nil && len(noUserVal) > 0 {
-				userVal = eachParam.Default
+				userVal = fmt.Sprintf("%v", eachParam.Default)
 			}
 		}
 		stackParameterValues[eachKey] = userVal
@@ -322,14 +326,15 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		logger.Info().
 			Bool("VersioningEnabled", false).
 			Str("Bucket", s3BucketName).
-			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
+			Str("Region", eppo.provisionContext.awsConfig.Region).
 			Msg(noopMessage("S3 preconditions check"))
 	} else if len(s3BucketName) != 0 {
 		// Bucket region should match target
 		/*
 			The name of the Amazon S3 bucket where the .zip file that contains your deployment package is stored. This bucket must reside in the same AWS Region that you're creating the Lambda function in. You can specify a bucket from another AWS account as long as the Lambda function and the bucket are in the same region.
 		*/
-		bucketRegion, bucketRegionErr := spartaS3.BucketRegion(eppo.provisionContext.awsSession,
+		bucketRegion, bucketRegionErr := spartaS3.BucketRegion(ctx,
+			eppo.provisionContext.awsConfig,
 			s3BucketName,
 			logger)
 
@@ -340,16 +345,17 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		logger.Info().
 			Str("Bucket", s3BucketName).
 			Str("Region", bucketRegion).
-			Str("CredentialsRegion", *eppo.provisionContext.awsSession.Config.Region).
+			Str("CredentialsRegion", eppo.provisionContext.awsConfig.Region).
 			Msg("Checking S3 region")
-		if bucketRegion != *eppo.provisionContext.awsSession.Config.Region {
+		if bucketRegion != eppo.provisionContext.awsConfig.Region {
 			return fmt.Errorf("region (%s) does not match bucket region (%s)",
-				*eppo.provisionContext.awsSession.Config.Region,
+				eppo.provisionContext.awsConfig.Region,
 				bucketRegion)
 		}
 		// Check versioning
 		// Get the S3 bucket and see if it has versioning enabled
-		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(eppo.provisionContext.awsSession,
+		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx,
+			eppo.provisionContext.awsConfig,
 			s3BucketName,
 			logger)
 		// If this is an error and suggests missing region, output some helpful error text
@@ -359,7 +365,7 @@ func (eppo *ensureProvisionPreconditionsOp) Invoke(ctx context.Context, logger *
 		logger.Info().
 			Bool("VersioningEnabled", isEnabled).
 			Str("Bucket", s3BucketName).
-			Str("Region", *eppo.provisionContext.awsSession.Config.Region).
+			Str("Region", eppo.provisionContext.awsConfig.Region).
 			Msg("Checking S3 versioning policy")
 		eppo.provisionContext.isVersionAwareBucket = isEnabled
 
@@ -414,7 +420,8 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 			uploadKeyPath := fmt.Sprintf("%s/%s", upo.provisionContext.serviceName,
 				archiveBaseName)
 			// Create the S3 key...
-			zipS3URL, zipS3URLErr := uploadLocalFileToS3(upo.provisionContext.awsSession,
+			zipS3URL, zipS3URLErr := uploadLocalFileToS3(ctx,
+				upo.provisionContext.awsConfig,
 				localPath,
 				upo.provisionContext.serviceName,
 				uploadKeyPath,
@@ -461,8 +468,9 @@ func (upo *uploadPackageOp) Invoke(ctx context.Context, logger *zerolog.Logger) 
 				Str("Tag", ecrImageTag).
 				Msg("Pushing local image to ECR")
 
-			pushErr := spartaDocker.PushECRTaggedImage(ecrImageTag,
-				upo.provisionContext.awsSession,
+			pushErr := spartaDocker.PushECRTaggedImage(ctx,
+				ecrImageTag,
+				upo.provisionContext.awsConfig,
 				logger)
 			return newTaskResult(ecrImageTag, pushErr)
 		}
@@ -508,7 +516,7 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 	if !upo.provisionContext.noop {
 		wg := sync.WaitGroup{}
 		for _, eachUploaded := range upo.provisionContext.s3Uploads {
-			rollbackFunc := spartaS3.CreateS3RollbackFunc(upo.provisionContext.awsSession, eachUploaded.location)
+			rollbackFunc := spartaS3.CreateS3RollbackFunc(upo.provisionContext.awsConfig, eachUploaded.location)
 			wg.Add(1)
 			go func(rollFunc spartaS3.RollbackFunction, logger *zerolog.Logger) {
 				defer wg.Done()
@@ -527,8 +535,10 @@ func (upo *uploadPackageOp) Rollback(ctx context.Context, logger *zerolog.Logger
 				Str("Tag", ecrTag).
 				Msg("Image will not be deleted from repository")
 		}
-
 		wg.Wait()
+	} else {
+		logger.Info().
+			Msg("Nothing to rollback from S3 in NOOP mode")
 	}
 	return nil
 }
@@ -563,7 +573,7 @@ func (cpto *codePipelineTriggerOp) Invoke(ctx context.Context, logger *zerolog.L
 		return errors.Wrapf(bytesWriterErr, "Failed to create Zip writer")
 	}
 	// We need to get the template bytes into a reader...
-	jsonTemplateBytes, jsonTemplateBytesErr := json.Marshal(cpto.provisionContext.cfTemplate)
+	jsonTemplateBytes, jsonTemplateBytesErr := cpto.provisionContext.cfTemplate.JSON()
 	if jsonTemplateBytesErr != nil {
 		return errors.Wrapf(jsonTemplateBytesErr, "Failed to Marshal CloudFormation template")
 	}
@@ -640,10 +650,11 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	}
 
 	// Let's see if there is a change at all
-	awsCloudFormation := cloudformation.New(ipuo.provisionContext.awsSession)
+	awsCloudFormation := awsv2CF.NewFromConfig(ipuo.provisionContext.awsConfig)
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sInPlaceChangeSet",
 		ipuo.provisionContext.serviceName))
-	changes, changesErr := spartaCF.CreateStackChangeSet(changeSetRequestName,
+	changes, changesErr := spartaCF.CreateStackChangeSet(ctx,
+		changeSetRequestName,
 		ipuo.provisionContext.serviceName,
 		ipuo.provisionContext.cfTemplate,
 		ipuo.provisionContext.s3Uploads[s3UploadCloudFormationStackKey].location,
@@ -670,22 +681,22 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 		return errors.Errorf("Failed to find either Code ZIP key or ECR Image tag for inPlace update")
 	}
 
-	updateCodeRequests := []*lambda.UpdateFunctionCodeInput{}
-	invalidInPlaceRequests := []*cloudformation.Change{}
+	updateCodeRequests := []*awsv2Lambda.UpdateFunctionCodeInput{}
+	invalidInPlaceRequests := []awsv2CFTypes.Change{}
 	for _, eachChange := range changes.Changes {
 		resourceChange := eachChange.ResourceChange
-		if *resourceChange.Action == "Modify" &&
+		if resourceChange.Action == awsv2CFTypes.ChangeActionModify &&
 			*resourceChange.ResourceType == "AWS::Lambda::Function" {
-			updateCodeRequest := &lambda.UpdateFunctionCodeInput{
+			updateCodeRequest := &awsv2Lambda.UpdateFunctionCodeInput{
 				FunctionName: resourceChange.PhysicalResourceId,
 			}
 			// Either ZIP or OCI - pick one
 			if codeKeyName != "" {
-				updateCodeRequest.S3Bucket = aws.String(s3BucketName)
-				updateCodeRequest.S3Key = aws.String(codeKeyName)
-				updateCodeRequest.S3ObjectVersion = aws.String(codeKeyVersion)
+				updateCodeRequest.S3Bucket = awsv2.String(s3BucketName)
+				updateCodeRequest.S3Key = awsv2.String(codeKeyName)
+				updateCodeRequest.S3ObjectVersion = awsv2.String(codeKeyVersion)
 			} else if ecrImageURI != "" {
-				updateCodeRequest.ImageUri = aws.String(ecrImageURI)
+				updateCodeRequest.ImageUri = awsv2.String(ecrImageURI)
 			}
 			updateCodeRequests = append(updateCodeRequests, updateCodeRequest)
 		} else {
@@ -696,7 +707,7 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 		for _, eachInvalidChange := range invalidInPlaceRequests {
 			logger.Warn().
 				Str("ID", *eachInvalidChange.ResourceChange.LogicalResourceId).
-				Str("Action", *eachInvalidChange.ResourceChange.Action).
+				Str("Action", string(eachInvalidChange.ResourceChange.Action)).
 				Interface("Details", eachInvalidChange.ResourceChange.Details).
 				Str("ResourceType", *eachInvalidChange.ResourceChange.ResourceType).
 				Msg("Additional change detected for in-place update")
@@ -711,24 +722,27 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 		Interface("Updates", updateCodeRequests).
 		Msg("Update requests")
 
-	updateTaskMaker := func(lambdaSvc *lambda.Lambda, request *lambda.UpdateFunctionCodeInput) taskFunc {
+	updateTaskMaker := func(ctx context.Context,
+		lambdaSvc *awsv2Lambda.Client,
+		request *awsv2Lambda.UpdateFunctionCodeInput) taskFunc {
 		return func() workResult {
-			_, updateResultErr := lambdaSvc.UpdateFunctionCode(request)
+			_, updateResultErr := lambdaSvc.UpdateFunctionCode(ctx, request)
 			return newTaskResult("", updateResultErr)
 		}
 	}
 	inPlaceUpdateTasks := make([]*workTask,
 		len(updateCodeRequests))
-	awsLambda := lambda.New(ipuo.provisionContext.awsSession)
+	awsLambda := awsv2Lambda.NewFromConfig(ipuo.provisionContext.awsConfig)
 	for eachIndex, eachUpdateCodeRequest := range updateCodeRequests {
-		updateTask := updateTaskMaker(awsLambda, eachUpdateCodeRequest)
+		updateTask := updateTaskMaker(ctx, awsLambda, eachUpdateCodeRequest)
 		inPlaceUpdateTasks[eachIndex] = newWorkTask(updateTask)
 	}
 
 	// Add the request to delete the change set...
 	// TODO: add some retry logic in here to handle failures.
 	deleteChangeSetTask := func() workResult {
-		_, deleteChangeSetResultErr := spartaCF.DeleteChangeSet(ipuo.provisionContext.serviceName,
+		_, deleteChangeSetResultErr := spartaCF.DeleteChangeSet(ctx,
+			ipuo.provisionContext.serviceName,
 			changeSetRequestName,
 			awsCloudFormation)
 		return newTaskResult("", deleteChangeSetResultErr)
@@ -741,14 +755,14 @@ func (ipuo *inPlaceUpdatesOp) Invoke(ctx context.Context, logger *zerolog.Logger
 	}
 	// Describe the stack so that we can satisfy the contract with the
 	// normal path using CloudFormation
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(ipuo.provisionContext.serviceName),
+	describeStacksInput := &awsv2CF.DescribeStacksInput{
+		StackName: awsv2.String(ipuo.provisionContext.serviceName),
 	}
-	describeStackOutput, describeStackOutputErr := awsCloudFormation.DescribeStacks(describeStacksInput)
+	describeStackOutput, describeStackOutputErr := awsCloudFormation.DescribeStacks(ctx, describeStacksInput)
 	if nil != describeStackOutputErr {
 		return describeStackOutputErr
 	}
-	ipuo.provisionContext.stack = describeStackOutput.Stacks[0]
+	ipuo.provisionContext.stack = &(describeStackOutput.Stacks[0])
 	return nil
 }
 
@@ -774,14 +788,15 @@ func (cfsu *cloudformationStackUpdateOp) Invoke(ctx context.Context, logger *zer
 	startTime := time.Now()
 
 	// Regular update, go ahead with the CloudFormation changes
-	stack, stackErr := spartaCF.ConvergeStackState(cfsu.provisionContext.serviceName,
+	stack, stackErr := spartaCF.ConvergeStackState(ctx,
+		cfsu.provisionContext.serviceName,
 		cfsu.provisionContext.cfTemplate,
 		cfsu.provisionContext.s3Uploads[s3UploadCloudFormationStackKey].location,
 		cfsu.provisionContext.stackParameterValues,
 		cfsu.provisionContext.stackTags,
 		startTime,
 		operationTimeout,
-		cfsu.provisionContext.awsSession,
+		cfsu.provisionContext.awsConfig,
 		"▬",
 		dividerLength,
 		logger)
@@ -860,10 +875,16 @@ func Provision(noop bool,
 		Interface("Tags", stackTags).
 		Msg("Provisioning service")
 
+	pipelineContext := context.Background()
+
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(pipelineContext, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
 	pc := &provisionContext{
-		awsSession:           spartaAWS.NewSession(logger),
+		awsConfig:            awsConfig,
 		cfTemplatePath:       templatePath,
-		cfTemplate:           gocf.NewTemplate(),
+		cfTemplate:           gof.NewTemplate(),
 		codePipelineTrigger:  codePipelineTrigger,
 		stackParameterValues: stackParamValues,
 		stackTags:            stackTags,
@@ -874,14 +895,11 @@ func Provision(noop bool,
 
 	// Unmarshal the JSON template into the struct
 	/* #nosec G304 */
-	templateBytes, templateBytesErr := ioutil.ReadFile(templatePath)
-	if templateBytesErr != nil {
-		return templateBytesErr
+	targetTemplate, targetTemplateErr := gofroot.Open(templatePath)
+	if targetTemplateErr != nil {
+		return targetTemplateErr
 	}
-	unmarshalErr := json.Unmarshal(templateBytes, &pc.cfTemplate)
-	if unmarshalErr != nil {
-		return unmarshalErr
-	}
+	pc.cfTemplate = targetTemplate
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Workflow
@@ -892,53 +910,58 @@ func Provision(noop bool,
 
 	/* #nosec G104 */
 	stagePreconditions := &pipelineStage{}
-	stagePreconditions.Append("validatePreconditions", &ensureProvisionPreconditionsOp{
-		provisionWorkflowOp: provisionWorkflowOp{
-			provisionContext: pc,
-		}})
+	stagePreconditions.Append("validatePreconditions",
+		&ensureProvisionPreconditionsOp{
+			provisionWorkflowOp: provisionWorkflowOp{
+				provisionContext: pc,
+			}})
 	provisionPipeline.Append("preconditions", stagePreconditions)
 
 	// Build Package
 	stageBuild := &pipelineStage{}
 	if pc.codePipelineTrigger == "" {
-		stageBuild.Append("uploadPackages", &uploadPackageOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageBuild.Append("uploadPackages",
+			&uploadPackageOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 		provisionPipeline.Append("upload", stageBuild)
 	} else {
-		stageBuild.Append("codePipelinePackage", &codePipelineTriggerOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageBuild.Append("codePipelinePackage",
+			&codePipelineTriggerOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 		provisionPipeline.Append("build", stageBuild)
 	}
 
 	// Which mutation to apply?
 	stageApply := &pipelineStage{}
 	if inPlaceUpdates {
-		stageApply.Append("inPlaceUpdates", &inPlaceUpdatesOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageApply.Append("inPlaceUpdates",
+			&inPlaceUpdatesOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 	} else {
-		stageApply.Append("cloudformationUpdate", &cloudformationStackUpdateOp{
-			provisionWorkflowOp: provisionWorkflowOp{
-				provisionContext: pc,
-			}})
+		stageApply.Append("cloudformationUpdate",
+			&cloudformationStackUpdateOp{
+				provisionWorkflowOp: provisionWorkflowOp{
+					provisionContext: pc,
+				}})
 	}
 	provisionPipeline.Append("apply", stageApply)
 
 	// Describe tbe output...
 	stageDescribe := &pipelineStage{}
-	stageDescribe.Append("describeStack", &outputStackInfoOp{
-		provisionWorkflowOp: provisionWorkflowOp{
-			provisionContext: pc,
-		}})
+	stageDescribe.Append("describeStack",
+		&outputStackInfoOp{
+			provisionWorkflowOp: provisionWorkflowOp{
+				provisionContext: pc,
+			}})
 	provisionPipeline.Append("describe", stageDescribe)
 
 	// Run
-	pipelineContext := context.Background()
 	provisionErr := provisionPipeline.Run(pipelineContext, "Provision", logger)
 	if provisionErr != nil {
 		return provisionErr

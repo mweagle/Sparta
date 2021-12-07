@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -34,7 +33,7 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 		Headers: map[string]interface{}{
 			"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
 			"Access-Control-Allow-Methods": "*",
-			"Access-Control-Allow-Origin":  gocf.String("*"),
+			"Access-Control-Allow-Origin":  "*",
 		},
 	}
 	// Create a lambda function

@@ -1,3 +1,4 @@
+//go:build lambdabinary
 // +build lambdabinary
 
 package sparta
@@ -12,9 +13,9 @@ import (
 
 	awsLambdaGo "github.com/aws/aws-lambda-go/lambda"
 	awsLambdaContext "github.com/aws/aws-lambda-go/lambdacontext"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	cloudformationResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
-	gocf "github.com/mweagle/go-cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
+	cloudformationResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/rs/zerolog"
 )
 
@@ -34,17 +35,17 @@ func initDiscoveryInfo() {
 	discoveryInfo = info
 }
 
-func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
+func awsLambdaFunctionName(internalFunctionName string) string {
 	// TODO - move this to use SSM so that it's not human editable?
 	// But discover information is per-function, not per stack.
 	// Could we put the stack discovery info in there?
 	once.Do(initDiscoveryInfo)
 	sanitizedName := awsLambdaInternalName(internalFunctionName)
 
-	return gocf.String(fmt.Sprintf("%s%s%s",
+	return fmt.Sprintf("%s%s%s",
 		discoveryInfo.StackName,
 		functionNameDelimiter,
-		sanitizedName))
+		sanitizedName)
 }
 
 func takesContext(handler reflect.Type) bool {
@@ -92,10 +93,14 @@ func tappedHandler(handlerSymbol interface{},
 	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
 
-		awsSession := spartaAWS.NewSession(logger)
+		awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+		if awsConfigErr != nil {
+			return nil, awsConfigErr
+		}
+
 		ctx = applyInterceptors(ctx, msg, interceptors.Begin)
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
-		ctx = context.WithValue(ctx, ContextKeyAWSSession, awsSession)
+		ctx = context.WithValue(ctx, ContextKeyAWSConfig, awsConfig)
 		ctx = applyInterceptors(ctx, msg, interceptors.BeforeSetup)
 
 		// Create the entry logger that has some context information
@@ -183,7 +188,7 @@ func Execute(serviceName string,
 			- Sparta custom resources
 	*/
 	// Based on the environment variable, setup the proper listener...
-	var lambdaFunctionName gocf.Stringable
+	var lambdaFunctionName string
 	testAWSName := ""
 	var handlerSymbol interface{}
 	knownNames := []string{}
@@ -194,7 +199,7 @@ func Execute(serviceName string,
 	logger.Debug().Msg("Checking user-defined lambda functions")
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		lambdaFunctionName = awsLambdaFunctionName(eachLambdaInfo.lambdaFunctionName())
-		testAWSName = lambdaFunctionName.String().Literal
+		testAWSName = lambdaFunctionName
 
 		knownNames = append(knownNames, testAWSName)
 		if requestedLambdaFunctionName == testAWSName {
@@ -206,7 +211,7 @@ func Execute(serviceName string,
 		// User defined custom resource handler?
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
 			lambdaFunctionName = awsLambdaFunctionName(eachCustomResource.userFunctionName)
-			testAWSName = lambdaFunctionName.String().Literal
+			testAWSName = lambdaFunctionName
 			knownNames = append(knownNames, testAWSName)
 			if requestedLambdaFunctionName == testAWSName {
 				handlerSymbol = eachCustomResource.handlerSymbol
@@ -231,7 +236,11 @@ func Execute(serviceName string,
 				Interface("customResourceTypeName", requestCustomResourceType).
 				Msg("Checking to see if there is a custom resource")
 
-			resource := gocf.NewResourceByType(requestCustomResourceType)
+			resource, resourceErr := cwCustomProvider.NewCloudFormationCustomResource(requestCustomResourceType, logger)
+			if resourceErr != nil {
+				return resourceErr
+			}
+
 			if resource != nil {
 				// Handler?
 				command, commandOk := resource.(cloudformationResources.CustomResourceCommand)

@@ -2,6 +2,7 @@ package cloudformation
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
@@ -17,12 +18,14 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3Manager "github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
 	"github.com/briandowns/spinner"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -72,10 +75,11 @@ type resourceProvisionMetrics struct {
 type templateConverter struct {
 	templateReader          io.Reader
 	additionalTemplateProps map[string]interface{}
+
 	// internals
 	doQuote          bool
 	expandedTemplate string
-	contents         []gocf.Stringable
+	contents         []string
 	conversionError  error
 }
 
@@ -124,7 +128,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				// If there's anything at the head, push it.
 				if matchInfo[0] != 0 {
 					head := curContents[0:matchInfo[0]]
-					converter.contents = append(converter.contents, gocf.String(head))
+					converter.contents = append(converter.contents, head)
 					curContents = curContents[len(head):]
 				}
 
@@ -141,16 +145,17 @@ func (converter *templateConverter) parseData() *templateConverter {
 								return converter
 							}
 							if converter.doQuote {
-								converter.contents = append(converter.contents, gocf.Join("",
-									gocf.String("\""),
-									parsedContents,
-									gocf.String("\"")))
+								converter.contents = append(converter.contents,
+									gof.Join("", []string{
+										"\"",
+										parsedContents,
+										"\""}))
 							} else {
 								converter.contents = append(converter.contents, parsedContents)
 							}
 							curContents = curContents[indexPos+1:]
 							if len(curContents) <= 0 && (eachLineIndex < (splitDataLineCount - 1)) {
-								converter.contents = append(converter.contents, gocf.String("\n"))
+								converter.contents = append(converter.contents, "\n")
 							}
 							break
 						}
@@ -169,7 +174,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				}
 				// Always include a newline at a minimum
 				appendLine := fmt.Sprintf("%s%s", curContents, newlineValue)
-				converter.contents = append(converter.contents, gocf.String(appendLine))
+				converter.contents = append(converter.contents, appendLine)
 				break
 			}
 		}
@@ -177,11 +182,11 @@ func (converter *templateConverter) parseData() *templateConverter {
 	return converter
 }
 
-func (converter *templateConverter) results() (*gocf.StringExpr, error) {
+func (converter *templateConverter) results() (string, error) {
 	if nil != converter.conversionError {
-		return nil, converter.conversionError
+		return "", converter.conversionError
 	}
-	return gocf.Join("", converter.contents...), nil
+	return gof.Join("", converter.contents), nil
 }
 
 // END - templateConverter
@@ -190,17 +195,19 @@ func cloudformationPollingDelay() time.Duration {
 	return time.Duration(3+rand.Int31n(5)) * time.Second
 }
 
-func updateStackViaChangeSet(serviceName string,
-	cfTemplate *gocf.Template,
+func updateStackViaChangeSet(ctx context.Context,
+	serviceName string,
+	cfTemplate *gof.Template,
 	cfTemplateURL string,
 	stackParameters map[string]string,
 	awsTags map[string]string,
-	awsCloudFormation *cloudformation.CloudFormation,
+	awsCloudFormation *awsv2CF.Client,
 	logger *zerolog.Logger) error {
 
 	// Create a change set name...
 	changeSetRequestName := ResourceName(fmt.Sprintf("%sChangeSet", serviceName))
-	_, changesErr := CreateStackChangeSet(changeSetRequestName,
+	_, changesErr := CreateStackChangeSet(ctx,
+		changeSetRequestName,
 		serviceName,
 		cfTemplate,
 		cfTemplateURL,
@@ -214,11 +221,12 @@ func updateStackViaChangeSet(serviceName string,
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Apply the change
-	executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(serviceName),
+	executeChangeSetInput := awsv2CF.ExecuteChangeSetInput{
+		ChangeSetName: awsv2.String(changeSetRequestName),
+		StackName:     awsv2.String(serviceName),
 	}
-	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
+	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(ctx,
+		&executeChangeSetInput)
 
 	logger.Debug().
 		Interface("ExecuteChangeSetOutput", executeChangeSetOutput).
@@ -247,56 +255,56 @@ func toExpressionSlice(input interface{}) ([]string, error) {
 	}
 	return expressions, nil
 }
-func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
+
+func parseFnJoinExpr(data map[string]interface{}) (string, error) {
 	if len(data) <= 0 {
-		return nil, fmt.Errorf("data for FnJoinExpr is empty")
+		return "", fmt.Errorf("data for FnJoinExpr is empty")
 	}
 	for eachKey, eachValue := range data {
 		switch eachKey {
 		case "Ref":
-			return gocf.Ref(eachValue.(string)).String(), nil
+			return gof.Ref(eachValue.(string)), nil
 		case "Fn::GetAtt":
 			attrValues, attrValuesErr := toExpressionSlice(eachValue)
 			if nil != attrValuesErr {
-				return nil, attrValuesErr
+				return "", attrValuesErr
 			}
 			if len(attrValues) != 2 {
-				return nil, fmt.Errorf("invalid params for Fn::GetAtt: %s", eachValue)
+				return "", fmt.Errorf("invalid params for Fn::GetAtt: %s", eachValue)
 			}
-			return gocf.GetAtt(attrValues[0], attrValues[1]).String(), nil
+			return gof.GetAtt(attrValues[0], attrValues[1]), nil
 		case "Fn::FindInMap":
 			attrValues, attrValuesErr := toExpressionSlice(eachValue)
 			if nil != attrValuesErr {
-				return nil, attrValuesErr
+				return "", attrValuesErr
 			}
 			if len(attrValues) != 3 {
-				return nil, fmt.Errorf("invalid params for Fn::FindInMap: %s", eachValue)
+				return "", fmt.Errorf("invalid params for Fn::FindInMap: %s", eachValue)
 			}
-			return gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])), nil
+			return gof.FindInMap(attrValues[0],
+				attrValues[1], attrValues[2]), nil
 		}
 	}
-	return nil, fmt.Errorf("unsupported AWS Function detected: %#v", data)
+	return "", fmt.Errorf("unsupported AWS Function detected: %#v", data)
 }
 
-func stackCapabilities(template *gocf.Template) []*string {
-	capabilitiesMap := make(map[string]bool)
+func stackCapabilities(template *gof.Template) []awsv2CFTypes.Capability {
+	capabilitiesMap := make(map[awsv2CFTypes.Capability]bool)
 
 	// Only require IAM capability if the definition requires it.
 	for _, eachResource := range template.Resources {
-		if eachResource.Properties.CfnResourceType() == "AWS::IAM::Role" {
+		if eachResource.AWSCloudFormationType() == "AWS::IAM::Role" {
 			capabilitiesMap["CAPABILITY_IAM"] = true
-			switch typedResource := eachResource.Properties.(type) {
-			case gocf.IAMRole:
-				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != nil)
-			case *gocf.IAMRole:
-				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != nil)
+			switch typedResource := eachResource.(type) {
+			case *gofiam.Role:
+				capabilitiesMap[awsv2CFTypes.CapabilityCapabilityNamedIam] = (typedResource.RoleName != "")
 			}
 		}
 	}
-	capabilities := make([]*string, len(capabilitiesMap))
+	capabilities := make([]awsv2CFTypes.Capability, len(capabilitiesMap))
 	capabilitiesIndex := 0
 	for eachKey := range capabilitiesMap {
-		capabilities[capabilitiesIndex] = aws.String(eachKey)
+		capabilities[capabilitiesIndex] = eachKey
 		capabilitiesIndex++
 	}
 	return capabilities
@@ -306,47 +314,25 @@ func stackCapabilities(template *gocf.Template) []*string {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
-// DynamicValueToStringExpr is a DRY function to type assert
-// a potentiall dynamic value into a gocf.Stringable
-// satisfying type
-func DynamicValueToStringExpr(dynamicValue interface{}) gocf.Stringable {
-	var stringExpr gocf.Stringable
-	switch typedValue := dynamicValue.(type) {
-	case string:
-		stringExpr = gocf.String(typedValue)
-	case *gocf.StringExpr:
-		stringExpr = typedValue
-	case gocf.Stringable:
-		stringExpr = typedValue.String()
-	default:
-		panic(fmt.Sprintf("Unsupported dynamic value type: %+v", typedValue))
-	}
-	return stringExpr
-}
-
 // S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) for all bucket keys (`/*`).  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
-func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{
-		gocf.String("arn:aws:s3:::"),
-		DynamicValueToStringExpr(bucket),
-		gocf.String("/*"),
+func S3AllKeysArnForBucket(bucket interface{}) string {
+	// User needs to supply the ARN
+	arnParts := []interface{}{
+		bucket,
+		"/*",
 	}
-	return gocf.Join("", arnParts...).String()
+	return gof.Join("", arnParts)
 }
 
 // S3ArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) suitable for template reference.  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
-func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{
-		gocf.String("arn:aws:s3:::"),
-		DynamicValueToStringExpr(bucket),
-	}
-	return gocf.Join("", arnParts...).String()
+func S3ArnForBucket(bucket interface{}) string {
+	return gof.Join("", []interface{}{bucket})
 }
 
 // MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant
@@ -369,7 +355,7 @@ func MapToResourceTags(tagMap map[string]string) []interface{} {
 // The templateData contents may include both golang text/template properties
 // and single-line JSON Fn::Join supported serializations.
 func ConvertToTemplateExpression(templateData io.Reader,
-	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	additionalUserTemplateProperties map[string]interface{}) (string, error) {
 	converter := &templateConverter{
 		templateReader:          templateData,
 		additionalTemplateProps: additionalUserTemplateProperties,
@@ -382,7 +368,7 @@ func ConvertToTemplateExpression(templateData io.Reader,
 // The templateData contents may include both golang text/template properties
 // and single-line JSON Fn::Join supported serializations.
 func ConvertToInlineJSONTemplateExpression(templateData io.Reader,
-	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	additionalUserTemplateProperties map[string]interface{}) (string, error) {
 	converter := &templateConverter{
 		templateReader:          templateData,
 		additionalTemplateProps: additionalUserTemplateProperties,
@@ -391,24 +377,25 @@ func ConvertToInlineJSONTemplateExpression(templateData io.Reader,
 	return converter.expandTemplate().parseData().results()
 }
 
-// StackEvents returns the slice of cloudformation.StackEvents for the given stackID or stackName
-func StackEvents(stackID string,
+// StackEvents returns the slice of awsv2CF.StackEvents for the given stackID or stackName
+func StackEvents(ctx context.Context,
+	stackID string,
 	eventFilterLowerBoundInclusive time.Time,
-	awsSession *session.Session) ([]*cloudformation.StackEvent, error) {
+	awsConfig awsv2.Config) ([]awsv2CFTypes.StackEvent, error) {
 
-	cfService := cloudformation.New(awsSession)
-	var events []*cloudformation.StackEvent
+	cfService := awsv2CF.NewFromConfig(awsConfig)
+	var events []awsv2CFTypes.StackEvent
 
 	nextToken := ""
 	for {
-		params := &cloudformation.DescribeStackEventsInput{
-			StackName: aws.String(stackID),
+		params := &awsv2CF.DescribeStackEventsInput{
+			StackName: awsv2.String(stackID),
 		}
 		if len(nextToken) > 0 {
-			params.NextToken = aws.String(nextToken)
+			params.NextToken = awsv2.String(nextToken)
 		}
 
-		resp, err := cfService.DescribeStackEvents(params)
+		resp, err := cfService.DescribeStackEvents(ctx, params)
 		if nil != err {
 			return nil, err
 		}
@@ -431,22 +418,35 @@ func StackEvents(stackID string,
 // following a WaitForStackOperationComplete call
 type WaitForStackOperationCompleteResult struct {
 	operationSuccessful bool
-	stackInfo           *cloudformation.Stack
+	stackInfo           *awsv2CFTypes.Stack
 }
 
 // WaitForStackOperationComplete is a blocking, polling based call that
 // periodically fetches the stackID set of events and uses the state value
 // to determine if an operation is complete
-func WaitForStackOperationComplete(stackID string,
+func WaitForStackOperationComplete(ctx context.Context,
+	stackID string,
 	pollingMessage string,
-	awsCloudFormation *cloudformation.CloudFormation,
+	awsCloudFormation *awsv2CF.Client,
 	logger *zerolog.Logger) (*WaitForStackOperationCompleteResult, error) {
+
+	stackOperationResources := func(inStack *string) (*awsv2CF.DescribeStackResourcesOutput, error) {
+		describeStackResourcesResourcesInput := &awsv2CF.DescribeStackResourcesInput{
+			StackName: inStack,
+		}
+		return awsCloudFormation.DescribeStackResources(ctx, describeStackResourcesResourcesInput)
+	}
 
 	result := &WaitForStackOperationCompleteResult{}
 
 	// Startup a spinner...
 	charSetIndex := 39
-	if strings.Contains(os.Getenv("LC_TERMINAL"), "iTerm") {
+	terminalType := os.Getenv("LC_TERMINAL")
+	logger.Debug().
+		Str("terminal", terminalType).
+		Msg("Terminal type")
+
+	if strings.Contains(terminalType, "iTerm") {
 		charSetIndex = 39 // WAS 7 to handle iTerm improperly updating
 	}
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex],
@@ -459,30 +459,56 @@ func WaitForStackOperationComplete(stackID string,
 	}
 
 	// Poll for the current stackID state, and
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(stackID),
+	describeStacksInput := &awsv2CF.DescribeStacksInput{
+		StackName: awsv2.String(stackID),
 	}
 	cliSpinnerStarted := false
 	startTime := time.Now()
 
 	for waitComplete := false; !waitComplete; {
+
 		// Startup the spinner if needed...
-		deltaTime := time.Since(startTime)
+		deltaTime := time.Since(startTime).Truncate(time.Second)
 		if !cliSpinnerStarted {
 			cliSpinner.Start()
 			defer cliSpinner.Stop()
 			cliSpinnerStarted = true
 		}
-		spinnerText := fmt.Sprintf(" %s (elapsed: %s)",
+		res, resErr := stackOperationResources(describeStacksInput.StackName)
+		resourcesText := ""
+		if resErr == nil {
+			inflight := 0
+			for _, eachRes := range res.StackResources {
+				logger.Debug().
+					Interface("Resources", eachRes).
+					Msg("Checking resource")
+
+				switch eachRes.ResourceStatus {
+				case awsv2CFTypes.ResourceStatusCreateComplete,
+					awsv2CFTypes.ResourceStatusDeleteComplete,
+					awsv2CFTypes.ResourceStatusUpdateComplete,
+					awsv2CFTypes.ResourceStatusImportComplete:
+					inflight += 1
+				}
+			}
+			if len(res.StackResources) != 0 {
+				resourcesText = fmt.Sprintf(" - %d of %d resources ",
+					inflight,
+					len(res.StackResources))
+			}
+		}
+		spinnerText := fmt.Sprintf(" %s%s(elapsed: %s)",
 			pollingMessage,
-			deltaTime.String())
+			resourcesText,
+			deltaTime)
 		cliSpinner.Suffix = spinnerText
 
 		// Then sleep and figure out if things are done...
 		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
 		time.Sleep(sleepDuration)
 
-		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
+		describeStacksOutput, err := awsCloudFormation.DescribeStacks(ctx, describeStacksInput)
+
 		if nil != err {
 			// TODO - add retry iff we're RateExceeded due to collective access
 			return nil, err
@@ -490,20 +516,21 @@ func WaitForStackOperationComplete(stackID string,
 		if len(describeStacksOutput.Stacks) <= 0 {
 			return nil, fmt.Errorf("failed to enumerate stack info: %v", *describeStacksInput.StackName)
 		}
-		result.stackInfo = describeStacksOutput.Stacks[0]
-		switch *(result.stackInfo).StackStatus {
-		case cloudformation.StackStatusCreateComplete,
-			cloudformation.StackStatusUpdateComplete:
+
+		result.stackInfo = &describeStacksOutput.Stacks[0]
+		switch result.stackInfo.StackStatus {
+		case awsv2CFTypes.StackStatusCreateComplete,
+			awsv2CFTypes.StackStatusUpdateComplete:
 			result.operationSuccessful = true
 			waitComplete = true
 		case
 			// Include DeleteComplete as new provisions will automatically rollback
-			cloudformation.StackStatusDeleteComplete,
-			cloudformation.StackStatusCreateFailed,
-			cloudformation.StackStatusDeleteFailed,
-			cloudformation.StackStatusRollbackFailed,
-			cloudformation.StackStatusRollbackComplete,
-			cloudformation.StackStatusUpdateRollbackComplete:
+			awsv2CFTypes.StackStatusDeleteComplete,
+			awsv2CFTypes.StackStatusCreateFailed,
+			awsv2CFTypes.StackStatusDeleteFailed,
+			awsv2CFTypes.StackStatusRollbackFailed,
+			awsv2CFTypes.StackStatusRollbackComplete,
+			awsv2CFTypes.StackStatusUpdateRollbackComplete:
 			result.operationSuccessful = false
 			waitComplete = true
 		default:
@@ -552,11 +579,12 @@ func ResourceName(prefix string, parts ...string) string {
 
 // UploadTemplate marshals the given cfTemplate and uploads it to the
 // supplied bucket using the given KeyName
-func UploadTemplate(serviceName string,
-	cfTemplate *gocf.Template,
+func UploadTemplate(ctx context.Context,
+	serviceName string,
+	cfTemplate *gof.Template,
 	s3Bucket string,
 	s3KeyName string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	logger *zerolog.Logger) (string, error) {
 
 	logger.Info().
@@ -564,7 +592,8 @@ func UploadTemplate(serviceName string,
 		Str("Bucket", s3Bucket).
 		Msg("Uploading CloudFormation template")
 
-	s3Uploader := s3manager.NewUploader(awsSession)
+	s3Client := awsv2S3.NewFromConfig(awsConfig)
+	s3Uploader := awsv2S3Manager.NewUploader(s3Client)
 
 	// Serialize the template and upload it
 	cfTemplateJSON, err := json.Marshal(cfTemplate)
@@ -576,13 +605,13 @@ func UploadTemplate(serviceName string,
 	// size limit
 	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStack.html
 	contentBody := string(cfTemplateJSON)
-	uploadInput := &s3manager.UploadInput{
+	uploadInput := &awsv2S3.PutObjectInput{
 		Bucket:      &s3Bucket,
 		Key:         &s3KeyName,
-		ContentType: aws.String("application/json"),
+		ContentType: awsv2.String("application/json"),
 		Body:        strings.NewReader(contentBody),
 	}
-	templateUploadResult, templateUploadResultErr := s3Uploader.Upload(uploadInput)
+	templateUploadResult, templateUploadResultErr := s3Uploader.Upload(ctx, uploadInput)
 	if nil != templateUploadResultErr {
 		return "", templateUploadResultErr
 	}
@@ -595,13 +624,16 @@ func UploadTemplate(serviceName string,
 }
 
 // StackExists returns whether the given stackName or stackID currently exists
-func StackExists(stackNameOrID string, awsSession *session.Session, logger *zerolog.Logger) (bool, error) {
-	cf := cloudformation.New(awsSession)
+func StackExists(ctx context.Context,
+	stackNameOrID string,
+	awsConfig awsv2.Config,
+	logger *zerolog.Logger) (bool, error) {
+	cf := awsv2CF.NewFromConfig(awsConfig)
 
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(stackNameOrID),
+	describeStacksInput := &awsv2CF.DescribeStacksInput{
+		StackName: awsv2.String(stackNameOrID),
 	}
-	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
+	describeStacksOutput, err := cf.DescribeStacks(ctx, describeStacksInput)
 
 	logger.Debug().
 		Interface("DescribeStackOutput", describeStacksOutput).
@@ -627,47 +659,48 @@ func StackExists(stackNameOrID string, awsSession *session.Session, logger *zero
 
 // CreateStackChangeSet returns the DescribeChangeSetOutput
 // for a given stack transformation
-func CreateStackChangeSet(changeSetRequestName string,
+func CreateStackChangeSet(ctx context.Context,
+	changeSetRequestName string,
 	serviceName string,
-	cfTemplate *gocf.Template,
+	cfTemplate *gof.Template,
 	templateURL string,
 	stackParameters map[string]string,
 	stackTags map[string]string,
-	awsCloudFormation *cloudformation.CloudFormation,
-	logger *zerolog.Logger) (*cloudformation.DescribeChangeSetOutput, error) {
+	awsCloudFormation *awsv2CF.Client,
+	logger *zerolog.Logger) (*awsv2CF.DescribeChangeSetOutput, error) {
 
-	cloudFormationParameters := make([]*cloudformation.Parameter,
+	cloudFormationParameters := make([]awsv2CFTypes.Parameter,
 		0,
 		len(stackParameters))
 	for eachKey, eachValue := range stackParameters {
-		cloudFormationParameters = append(cloudFormationParameters, &cloudformation.Parameter{
-			ParameterKey:   aws.String(eachKey),
-			ParameterValue: aws.String(eachValue),
+		cloudFormationParameters = append(cloudFormationParameters, awsv2CFTypes.Parameter{
+			ParameterKey:   awsv2.String(eachKey),
+			ParameterValue: awsv2.String(eachValue),
 		})
 	}
 
 	capabilities := stackCapabilities(cfTemplate)
-	changeSetInput := &cloudformation.CreateChangeSetInput{
+	changeSetInput := &awsv2CF.CreateChangeSetInput{
 		Capabilities:  capabilities,
-		ChangeSetName: aws.String(changeSetRequestName),
-		ClientToken:   aws.String(changeSetRequestName),
-		Description:   aws.String(fmt.Sprintf("Change set for service: %s", serviceName)),
-		StackName:     aws.String(serviceName),
-		TemplateURL:   aws.String(templateURL),
+		ChangeSetName: awsv2.String(changeSetRequestName),
+		ClientToken:   awsv2.String(changeSetRequestName),
+		Description:   awsv2.String(fmt.Sprintf("Change set for service: %s", serviceName)),
+		StackName:     awsv2.String(serviceName),
+		TemplateURL:   awsv2.String(templateURL),
 		Parameters:    cloudFormationParameters,
 	}
 	if len(stackTags) != 0 {
-		awsTags := []*cloudformation.Tag{}
+		awsTags := []awsv2CFTypes.Tag{}
 		for eachKey, eachValue := range stackTags {
 			awsTags = append(awsTags,
-				&cloudformation.Tag{
-					Key:   aws.String(eachKey),
-					Value: aws.String(eachValue),
+				awsv2CFTypes.Tag{
+					Key:   awsv2.String(eachKey),
+					Value: awsv2.String(eachValue),
 				})
 		}
 		changeSetInput.Tags = awsTags
 	}
-	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
+	_, changeSetError := awsCloudFormation.CreateChangeSet(ctx, changeSetInput)
 	if nil != changeSetError {
 		return nil, changeSetError
 	}
@@ -676,12 +709,12 @@ func CreateStackChangeSet(changeSetRequestName string,
 		Str("StackName", serviceName).
 		Msg("Issued CreateChangeSet request")
 
-	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(serviceName),
+	describeChangeSetInput := awsv2CF.DescribeChangeSetInput{
+		ChangeSetName: awsv2.String(changeSetRequestName),
+		StackName:     awsv2.String(serviceName),
 	}
 
-	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
+	var describeChangeSetOutput *awsv2CF.DescribeChangeSetOutput
 
 	// Loop, with a total timeout of 3 minutes
 	startTime := time.Now()
@@ -690,7 +723,7 @@ func CreateStackChangeSet(changeSetRequestName string,
 		sleepDuration := cloudformationPollingDelay()
 		time.Sleep(sleepDuration)
 
-		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
+		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(ctx, &describeChangeSetInput)
 
 		if nil != describeChangeSetError {
 			return nil, describeChangeSetError
@@ -699,16 +732,16 @@ func CreateStackChangeSet(changeSetRequestName string,
 		// The current status of the change set, such as CREATE_IN_PROGRESS, CREATE_COMPLETE,
 		// or FAILED.
 		if nil != describeChangeSetOutput {
-			switch *describeChangeSetOutput.Status {
-			case "CREATE_IN_PROGRESS":
+			switch describeChangeSetOutput.Status {
+			case awsv2CFTypes.ChangeSetStatusCreateInProgress:
 				// If this has taken more than 3 minutes, then that's an error
 				elapsedTime := time.Since(startTime)
 				if elapsedTime > cloudformationPollingTimeout {
 					return nil, fmt.Errorf("failed to finalize ChangeSet within window: %s", elapsedTime.String())
 				}
-			case "CREATE_COMPLETE":
+			case awsv2CFTypes.ChangeSetStatusCreateComplete:
 				changeSetStabilized = true
-			case "FAILED":
+			case awsv2CFTypes.ChangeSetStatusFailed:
 				return nil, fmt.Errorf("failed to create ChangeSet: %#v", *describeChangeSetOutput)
 			}
 		}
@@ -727,7 +760,8 @@ func CreateStackChangeSet(changeSetRequestName string,
 			Msg("No changes detected for service")
 
 		// Delete it...
-		_, deleteChangeSetResultErr := DeleteChangeSet(serviceName,
+		_, deleteChangeSetResultErr := DeleteChangeSet(ctx,
+			serviceName,
 			changeSetRequestName,
 			awsCloudFormation)
 		return nil, deleteChangeSetResultErr
@@ -738,24 +772,25 @@ func CreateStackChangeSet(changeSetRequestName string,
 // DeleteChangeSet is a utility function that attempts to delete
 // an existing CloudFormation change set, with a bit of retry
 // logic in case of EC
-func DeleteChangeSet(stackName string,
+func DeleteChangeSet(ctx context.Context,
+	stackName string,
 	changeSetRequestName string,
-	awsCloudFormation *cloudformation.CloudFormation) (*cloudformation.DeleteChangeSetOutput, error) {
+	awsCloudFormation *awsv2CF.Client) (*awsv2CF.DeleteChangeSetOutput, error) {
 
 	// Delete request...
-	deleteChangeSetInput := cloudformation.DeleteChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(stackName),
+	deleteChangeSetInput := awsv2CF.DeleteChangeSetInput{
+		ChangeSetName: awsv2.String(changeSetRequestName),
+		StackName:     awsv2.String(stackName),
 	}
 
 	startTime := time.Now()
 	for {
 		elapsedTime := time.Since(startTime)
 
-		deleteChangeSetResults, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
+		deleteChangeSetResults, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(ctx, &deleteChangeSetInput)
 		if nil == deleteChangeSetResultErr {
 			return deleteChangeSetResults, nil
-		} else if strings.Contains(deleteChangeSetResultErr.Error(), "CREATE_IN_PROGRESS") {
+		} else if strings.Contains(deleteChangeSetResultErr.Error(), string(awsv2CFTypes.StackStatusCreateInProgress)) {
 			if elapsedTime > cloudformationPollingTimeout {
 				return nil, fmt.Errorf("failed to delete ChangeSet within timeout window: %s", elapsedTime.String())
 			}
@@ -768,20 +803,22 @@ func DeleteChangeSet(stackName string,
 }
 
 // ListStacks returns a slice of stacks that meet the given filter.
-func ListStacks(session *session.Session,
+func ListStacks(ctx context.Context,
+	awsConfig awsv2.Config,
 	maxReturned int,
-	stackFilters ...string) ([]*cloudformation.StackSummary, error) {
+	stackFilters ...awsv2CFTypes.StackStatus) ([]awsv2CFTypes.StackSummary, error) {
 
-	listStackInput := &cloudformation.ListStacksInput{
-		StackStatusFilter: []*string{},
+	listStackInput := &awsv2CF.ListStacksInput{
+		StackStatusFilter: []awsv2CFTypes.StackStatus{},
 	}
 	for _, eachFilter := range stackFilters {
-		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, aws.String(eachFilter))
+		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter,
+			awsv2CFTypes.StackStatus(eachFilter))
 	}
-	cloudformationSvc := cloudformation.New(session)
-	accumulator := []*cloudformation.StackSummary{}
+	cloudformationSvc := awsv2CF.NewFromConfig(awsConfig)
+	accumulator := []awsv2CFTypes.StackSummary{}
 	for {
-		listResult, listResultErr := cloudformationSvc.ListStacks(listStackInput)
+		listResult, listResultErr := cloudformationSvc.ListStacks(ctx, listStackInput)
 		if listResultErr != nil {
 			return nil, listResultErr
 		}
@@ -796,39 +833,43 @@ func ListStacks(session *session.Session,
 // ConvergeStackState ensures that the serviceName converges to the template
 // state defined by cfTemplate. This function establishes a polling loop to determine
 // when the stack operation has completed.
-func ConvergeStackState(serviceName string,
-	cfTemplate *gocf.Template,
+func ConvergeStackState(ctx context.Context,
+	serviceName string,
+	cfTemplate *gof.Template,
 	templateURL string,
 	stackParameters map[string]string,
 	tags map[string]string,
 	startTime time.Time,
 	operationTimeout time.Duration,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	outputsDividerChar string,
 	dividerWidth int,
-	logger *zerolog.Logger) (*cloudformation.Stack, error) {
+	logger *zerolog.Logger) (*awsv2CFTypes.Stack, error) {
 
-	logger.Info().
-		Interface("Parameters", stackParameters).
-		Interface("Tags", tags).
-		Str("Name", serviceName).
-		Msg("Stack configuration")
-
-	awsCloudFormation := cloudformation.New(awsSession)
 	// Create the parameter values.
+	logEntry := logger.Info()
+	for eachKey, eachValue := range stackParameters {
+		logEntry = logEntry.Str(fmt.Sprintf("Parameter: %s", eachKey), eachValue)
+	}
+	logEntry.Interface("Tags", tags).
+		Str("Name", serviceName).
+		Msg("Stack Variables")
+
+	cloudformationSvc := awsv2CF.NewFromConfig(awsConfig)
 	// Update the tags
-	exists, existsErr := StackExists(serviceName, awsSession, logger)
+	exists, existsErr := StackExists(ctx, serviceName, awsConfig, logger)
 	if nil != existsErr {
 		return nil, existsErr
 	}
 	stackID := ""
 	if exists {
-		updateErr := updateStackViaChangeSet(serviceName,
+		updateErr := updateStackViaChangeSet(ctx,
+			serviceName,
 			cfTemplate,
 			templateURL,
 			stackParameters,
 			tags,
-			awsCloudFormation,
+			cloudformationSvc,
 			logger)
 
 		if nil != updateErr {
@@ -836,55 +877,58 @@ func ConvergeStackState(serviceName string,
 		}
 		stackID = serviceName
 	} else {
-		var cloudFormationParameters []*cloudformation.Parameter
+		var cloudFormationParameters []awsv2CFTypes.Parameter
 		for eachKey, eachValue := range stackParameters {
-			cloudFormationParameters = append(cloudFormationParameters, &cloudformation.Parameter{
-				ParameterKey:   aws.String(eachKey),
-				ParameterValue: aws.String(eachValue),
+			cloudFormationParameters = append(cloudFormationParameters, awsv2CFTypes.Parameter{
+				ParameterKey:   awsv2.String(eachKey),
+				ParameterValue: awsv2.String(eachValue),
 			})
 		}
-		awsTags := []*cloudformation.Tag{}
+		awsTags := []awsv2CFTypes.Tag{}
 		if nil != tags {
 			for eachKey, eachValue := range tags {
 				awsTags = append(awsTags,
-					&cloudformation.Tag{
-						Key:   aws.String(eachKey),
-						Value: aws.String(eachValue),
+					awsv2CFTypes.Tag{
+						Key:   awsv2.String(eachKey),
+						Value: awsv2.String(eachValue),
 					})
 			}
 		}
+
 		// Create stack
-		createStackInput := &cloudformation.CreateStackInput{
-			StackName:        aws.String(serviceName),
-			TemplateURL:      aws.String(templateURL),
-			TimeoutInMinutes: aws.Int64(int64(operationTimeout.Minutes())),
-			OnFailure:        aws.String(cloudformation.OnFailureDelete),
+		createStackInput := &awsv2CF.CreateStackInput{
+			StackName:        awsv2.String(serviceName),
+			TemplateURL:      awsv2.String(templateURL),
+			TimeoutInMinutes: awsv2.Int32(int32(operationTimeout.Minutes())),
+			OnFailure:        awsv2CFTypes.OnFailureDelete,
 			Capabilities:     stackCapabilities(cfTemplate),
 			Parameters:       cloudFormationParameters,
 		}
+
 		if len(awsTags) != 0 {
 			createStackInput.Tags = awsTags
 		}
-		createStackResponse, createStackResponseErr := awsCloudFormation.CreateStack(createStackInput)
+
+		logger.Debug().
+			Interface("StackInput", createStackInput).
+			Msg("Create stack input")
+
+		createStackResponse, createStackResponseErr := cloudformationSvc.CreateStack(ctx, createStackInput)
 		if nil != createStackResponseErr {
 			return nil, createStackResponseErr
 		}
 		logger.Info().
 			Str("StackID", *createStackResponse.StackId).
 			Msg("Creating stack")
-		for eachKey, eachVal := range stackParameters {
-			logger.Info().
-				Str(eachKey, eachVal).
-				Msg("Stack parameter")
-
-		}
 		stackID = *createStackResponse.StackId
 	}
+
 	// Wait for the operation to succeed
 	pollingMessage := "Waiting for CloudFormation operation to complete"
-	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,
+	convergeResult, convergeErr := WaitForStackOperationComplete(ctx,
+		stackID,
 		pollingMessage,
-		awsCloudFormation,
+		cloudformationSvc,
 		logger)
 	if nil != convergeErr {
 		return nil, convergeErr
@@ -893,27 +937,27 @@ func ConvergeStackState(serviceName string,
 	// or summary information
 	resourceMetrics := make(map[string]*resourceProvisionMetrics)
 	errorMessages := []string{}
-	events, err := StackEvents(stackID, startTime, awsSession)
+	events, err := StackEvents(ctx, stackID, startTime, awsConfig)
 	if nil != err {
 		return nil, fmt.Errorf("failed to retrieve stack events: %s", err.Error())
 	}
 
 	for _, eachEvent := range events {
-		switch *eachEvent.ResourceStatus {
-		case cloudformation.ResourceStatusCreateFailed,
-			cloudformation.ResourceStatusDeleteFailed,
-			cloudformation.ResourceStatusUpdateFailed:
+		switch eachEvent.ResourceStatus {
+		case awsv2CFTypes.ResourceStatusCreateFailed,
+			awsv2CFTypes.ResourceStatusDeleteFailed,
+			awsv2CFTypes.ResourceStatusUpdateFailed:
 			errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
-				aws.StringValue(eachEvent.ResourceType),
-				aws.StringValue(eachEvent.LogicalResourceId),
-				aws.StringValue(eachEvent.ResourceStatusReason))
+				*eachEvent.ResourceType,
+				*eachEvent.LogicalResourceId,
+				*eachEvent.ResourceStatusReason)
 			// Only append if the resource failed because something else failed
 			// and this resource was canceled.
 			if !strings.Contains(errMsg, "cancelled") {
 				errorMessages = append(errorMessages, errMsg)
 			}
-		case cloudformation.ResourceStatusCreateInProgress,
-			cloudformation.ResourceStatusUpdateInProgress:
+		case awsv2CFTypes.ResourceStatusCreateInProgress,
+			awsv2CFTypes.ResourceStatusUpdateInProgress:
 			existingMetric, existingMetricExists := resourceMetrics[*eachEvent.LogicalResourceId]
 			if !existingMetricExists {
 				existingMetric = &resourceProvisionMetrics{}
@@ -922,8 +966,8 @@ func ConvergeStackState(serviceName string,
 			existingMetric.logicalResourceID = *eachEvent.LogicalResourceId
 			existingMetric.startTime = *eachEvent.Timestamp
 			resourceMetrics[*eachEvent.LogicalResourceId] = existingMetric
-		case cloudformation.ResourceStatusCreateComplete,
-			cloudformation.ResourceStatusUpdateComplete:
+		case awsv2CFTypes.ResourceStatusCreateComplete,
+			awsv2CFTypes.ResourceStatusUpdateComplete:
 			existingMetric, existingMetricExists := resourceMetrics[*eachEvent.LogicalResourceId]
 			if !existingMetricExists {
 				existingMetric = &resourceProvisionMetrics{}
@@ -978,9 +1022,9 @@ func ConvergeStackState(serviceName string,
 
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			logger.Info().
-				Str("Value", aws.StringValue(eachOutput.OutputValue)).
-				Str("Description", aws.StringValue(eachOutput.Description)).
-				Msgf("    %s", aws.StringValue(eachOutput.OutputKey))
+				Str("Value", *eachOutput.OutputValue).
+				Str("Description", *eachOutput.Description).
+				Msgf("    %s", *eachOutput.OutputKey)
 		}
 	}
 	return convergeResult.stackInfo, nil
@@ -995,8 +1039,8 @@ A stack name can contain only alphanumeric characters
 \character and cannot be longer than 128 characters.
 */
 func UserAccountScopedStackName(basename string,
-	awsSession *session.Session) (string, error) {
-	awsName, awsNameErr := platformAccountUserName(awsSession)
+	awsConfig awsv2.Config) (string, error) {
+	awsName, awsNameErr := platformAccountUserName(awsConfig)
 	if awsNameErr != nil {
 		return "", awsNameErr
 	}

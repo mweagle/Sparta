@@ -12,11 +12,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gofintrinsics "github.com/awslabs/goformation/v5/intrinsics"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	gofstep "github.com/awslabs/goformation/v5/cloudformation/stepfunctions"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -116,7 +121,12 @@ func (bis *baseInnerState) marshalStateJSON(stateType string,
 		additionalData["End"] = true
 	}
 	// Output the pretty version
-	return json.Marshal(additionalData)
+
+	rawMarshal, rawMarshalErr := json.Marshal(additionalData)
+	if nil != rawMarshalErr {
+		return nil, rawMarshalErr
+	}
+	return gofintrinsics.ProcessJSON(rawMarshal, nil)
 }
 
 /*******************************************************************************
@@ -525,11 +535,11 @@ func NewLambdaTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *Lambd
 	ts.LambdaDecorator = func(ctx context.Context,
 		serviceName string,
 		lambdaResourceName string,
-		lambdaResource gocf.LambdaFunction,
+		lambdaResource *goflambda.Function,
 		resourceMetadata map[string]interface{},
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		cfTemplate *gocf.Template,
+		cfTemplate *gof.Template,
 		logger *zerolog.Logger) (context.Context, error) {
 		passCtx := ctx
 		if ts.preexistingDecorator != nil {
@@ -564,7 +574,7 @@ func NewLambdaTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *Lambd
 // to turn into a stringified Ref:
 func (ts *LambdaTaskState) MarshalJSON() ([]byte, error) {
 	additionalParams := ts.BaseTask.additionalParams()
-	additionalParams["Resource"] = gocf.GetAtt(ts.lambdaLogicalResourceName, "Arn")
+	additionalParams["Resource"] = gof.GetAtt(ts.lambdaLogicalResourceName, "Arn")
 	return ts.marshalStateJSON("Task", additionalParams)
 }
 
@@ -814,10 +824,10 @@ type StateMachine struct {
 	comment              string
 	stateDefinitionError error
 	machineType          string
-	loggingConfiguration *gocf.StepFunctionsStateMachineLoggingConfiguration
+	loggingConfiguration *gofstep.StateMachine_LoggingConfiguration
 	startAt              MachineState
 	uniqueStates         map[string]MachineState
-	roleArn              gocf.Stringable
+	roleArn              string
 	// internal flag to suppress the automatic "End" property
 	// from being serialized for Map states
 	disableEndState bool
@@ -830,7 +840,7 @@ func (sm *StateMachine) Comment(comment string) *StateMachine {
 }
 
 //WithRoleArn sets the state machine roleArn
-func (sm *StateMachine) WithRoleArn(roleArn gocf.Stringable) *StateMachine {
+func (sm *StateMachine) WithRoleArn(roleArn string) *StateMachine {
 	sm.roleArn = roleArn
 	return sm
 }
@@ -866,10 +876,10 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName string) sparta.ServiceDecoratorHookFunc {
 	return func(ctx context.Context,
 		serviceName string,
-		template *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		template *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 
@@ -921,10 +931,12 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 		}
 
 		// Assume policy document
-		regionalPrincipal := gocf.Join(".",
-			gocf.String("states"),
-			gocf.Ref("AWS::Region"),
-			gocf.String("amazonaws.com"))
+		regionalPrincipal := gof.Join(".", []string{
+			"states",
+			gof.Ref("AWS::Region"),
+			"amazonaws.com",
+		})
+
 		var AssumePolicyDocument = sparta.ArbitraryJSONObject{
 			"Version": "2012-10-17",
 			"Statement": []sparta.ArbitraryJSONObject{
@@ -938,8 +950,8 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 			},
 		}
 		var iamRoleResourceName string
-		if len(lambdaFunctionResourceNames) != 0 && sm.roleArn == nil {
-			statesIAMRole := &gocf.IAMRole{
+		if len(lambdaFunctionResourceNames) != 0 && sm.roleArn == "" {
+			statesIAMRole := &gofiam.Role{
 				AssumeRolePolicyDocument: AssumePolicyDocument,
 			}
 			statements := make([]spartaIAM.PolicyStatement, 0)
@@ -950,22 +962,22 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 						Action: []string{
 							"lambda:InvokeFunction",
 						},
-						Resource: gocf.GetAtt(eachLambdaName, "Arn").String(),
+						Resource: gof.GetAtt(eachLambdaName, "Arn"),
 					},
 				)
 			}
-			iamPolicies := gocf.IAMRolePolicyList{}
-			iamPolicies = append(iamPolicies, gocf.IAMRolePolicy{
+			iamPolicies := []gofiam.Role_Policy{}
+			iamPolicies = append(iamPolicies, gofiam.Role_Policy{
 				PolicyDocument: sparta.ArbitraryJSONObject{
 					"Version":   "2012-10-17",
 					"Statement": statements,
 				},
-				PolicyName: gocf.String("StatesExecutionPolicy"),
+				PolicyName: "StatesExecutionPolicy",
 			})
-			statesIAMRole.Policies = &iamPolicies
+			statesIAMRole.Policies = iamPolicies
 			iamRoleResourceName = sparta.CloudFormationResourceName("StatesIAMRole",
 				"StatesIAMRole")
-			template.AddResource(iamRoleResourceName, statesIAMRole)
+			template.Resources[iamRoleResourceName] = statesIAMRole
 		}
 
 		// Sweet - serialize it without indentation so that the
@@ -987,20 +999,20 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 		}
 
 		// Awsome - add an AWS::StepFunction to the template with this info and roll with it...
-		stepFunctionResource := &gocf.StepFunctionsStateMachine{
-			StateMachineName:     gocf.String(sm.name),
+		stepFunctionResource := &gofstep.StateMachine{
+			StateMachineName:     sm.name,
 			DefinitionString:     templateExpr,
 			LoggingConfiguration: sm.loggingConfiguration,
 		}
 		if iamRoleResourceName != "" {
-			stepFunctionResource.RoleArn = gocf.GetAtt(iamRoleResourceName, "Arn").String()
-		} else if sm.roleArn != nil {
-			stepFunctionResource.RoleArn = sm.roleArn.String()
+			stepFunctionResource.RoleArn = gof.GetAtt(iamRoleResourceName, "Arn")
+		} else if sm.roleArn != "" {
+			stepFunctionResource.RoleArn = sm.roleArn
 		}
 		if sm.machineType != "" {
-			stepFunctionResource.StateMachineType = gocf.String(sm.machineType)
+			stepFunctionResource.StateMachineType = sm.machineType
 		}
-		template.AddResource(stepFunctionResourceName, stepFunctionResource)
+		template.Resources[stepFunctionResourceName] = stepFunctionResource
 		return ctx, nil
 	}
 }
@@ -1018,7 +1030,7 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 		Comment: sm.comment,
 		StartAt: sm.startAt.Name(),
 		States:  sm.uniqueStates,
-		End:     (len(sm.uniqueStates) == 1) && !sm.disableEndState,
+		//End:     (len(sm.uniqueStates) != 1) && !sm.disableEndState,
 	})
 }
 
@@ -1029,8 +1041,6 @@ func createStateMachine(stateMachineName string,
 	pendingStates := []MachineState{startState}
 	// Map of basename to nodeID to check for duplicates
 	duplicateStateNames := make(map[string]bool)
-
-	// TODO - check duplicate names
 
 	nodeVisited := func(node MachineState) bool {
 		if node == nil {
@@ -1099,7 +1109,7 @@ func createStateMachine(stateMachineName string,
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-stepfunctions-statemachine.html
 // for more information.
 func NewExpressStateMachine(stateMachineName string,
-	loggingConfiguration *gocf.StepFunctionsStateMachineLoggingConfiguration,
+	loggingConfiguration *gofstep.StateMachine_LoggingConfiguration,
 	startState TransitionState) *StateMachine {
 
 	sm := createStateMachine(stateMachineName,

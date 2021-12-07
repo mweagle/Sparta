@@ -6,8 +6,7 @@ import (
 	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 )
 
@@ -37,7 +36,7 @@ func (reactorFunc SNSReactorFunc) ReactorName() string {
 
 // NewSNSReactor returns an SNS reactor lambda function
 func NewSNSReactor(reactor SNSReactor,
-	snsTopic gocf.Stringable,
+	snsTopic string,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 
 	reactorLambda := func(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) {

@@ -17,10 +17,13 @@ const (
 	ProperName = "Sparta"
 )
 const (
-	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "2.0.0"
 	// LambdaBinaryTag is the build tag name used when building the binary
 	LambdaBinaryTag = "lambdabinary"
+)
+
+var (
+	// SpartaVersion defines the current Sparta release
+	SpartaVersion = fmt.Sprintf("3.0.0.%s", SpartaGitShortHash)
 )
 
 // AWSLambdaRuntimeName is an alias for the runtime name
@@ -83,6 +86,8 @@ const (
 	KinesisFirehosePrincipal = "firehose.amazonaws.com"
 	// @enum EventBridgePrincipal
 	EventBridgePrincipal = "events.amazonaws.com"
+	// @enum StepMachinePrincipal
+	StepMachinePrincipal = "states.amazonaws.com"
 )
 
 type contextKey int
@@ -105,9 +110,9 @@ const (
 	// ContextKeyLambdaResponse is the possible response that
 	// was returned from the lambda function
 	ContextKeyLambdaResponse
-	// ContextKeyAWSSession is the aws Session instance for this
+	// ContextKeyAWSConfig is the aws Session instance for this
 	// request
-	ContextKeyAWSSession
+	ContextKeyAWSConfig
 )
 
 const (

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>CloudFormation Resources :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2240,7 +2240,7 @@ include a service-scoped <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 <p>Including a custom service scoped resource is a multi-step process. The code excerpts below are from the <a href="https://github.com/mweagle/SpartaCustomResource">SpartaCustomResource</a> sample application.</p>
 <h2 id="1-resource-type">1. Resource Type</h2>
 <p>The first step is to define a custom <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html">CloudFormation Resource Type</a></p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 <span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#008000">// 1 - Define the custom type
 </span><span style="color:#008000"></span><span style="color:#00f">const</span> spartaHelloWorldResourceType = <span style="color:#a31515">&#34;Custom::sparta::HelloWorldResource&#34;</span>
@@ -2248,7 +2248,7 @@ include a service-scoped <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 <p>The next step is to define the parameters that are supplied to the custom resource
 invocation. This is done via a <code>struct</code> that will be later embedded into the
 <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand">CustomResourceCommand</a>.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// SpartaCustomResourceRequest is what the UserProperties
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// SpartaCustomResourceRequest is what the UserProperties
 </span><span style="color:#008000">// should be set to in the CustomResource invocation
 </span><span style="color:#008000"></span><span style="color:#00f">type</span> SpartaCustomResourceRequest <span style="color:#00f">struct</span> {
   Message *gocf.StringExpr
@@ -2258,7 +2258,7 @@ invocation. This is done via a <code>struct</code> that will be later embedded i
 <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand">CustomResourceCommand</a>
 that is responsible for performing the external operations based on the specified request
 parameters.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// SpartaHelloWorldResource is a simple POC showing how to create custom resources
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// SpartaHelloWorldResource is a simple POC showing how to create custom resources
 </span><span style="color:#008000"></span><span style="color:#00f">type</span> SpartaHelloWorldResource <span style="color:#00f">struct</span> {
   gocf.CloudFormationCustomResource
   SpartaCustomResourceRequest
@@ -2295,7 +2295,7 @@ parameters.</p>
 </code></pre></div><h2 id="4-register-type-provider">4. Register Type Provider</h2>
 <p>To make the new type available to Sparta&rsquo;s internal CloudFormation template
 marshalling, register the new type via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#RegisterCustomResourceProvider">go-cloudformation.RegisterCustomResourceProvider</a>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> init() {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> init() {
   customResourceFactory := <span style="color:#00f">func</span>(resourceType <span style="color:#2b91af">string</span>) gocf.ResourceProperties {
     <span style="color:#00f">switch</span> resourceType {
     <span style="color:#00f">case</span> spartaHelloWorldResourceType:
@@ -2311,7 +2311,7 @@ binary that defines your service and then create an invocation of that command. 
 annotation is expressed as a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a>
 that performs both operations as part of the general service build
 lifecycle&hellip;</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> customResourceHooks() *sparta.WorkflowHooks {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> customResourceHooks() *sparta.WorkflowHooks {
   <span style="color:#008000">// Add the custom resource decorator
 </span><span style="color:#008000"></span>  customResourceDecorator := <span style="color:#00f">func</span>(context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
     serviceName <span style="color:#2b91af">string</span>,
@@ -3777,19 +3777,19 @@ include this custom resource with your service&rsquo;s provisioning lifecycle.</
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

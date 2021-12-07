@@ -4,11 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	spartaIAMBuilder "github.com/mweagle/Sparta/aws/iam/builder"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofiam "github.com/awslabs/goformation/v5/cloudformation/iam"
+	gofkinesis "github.com/awslabs/goformation/v5/cloudformation/kinesis"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	goflogs "github.com/awslabs/goformation/v5/cloudformation/logs"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
+	spartaIAMBuilder "github.com/mweagle/Sparta/v3/aws/iam/builder"
+
 	"github.com/rs/zerolog"
 )
 
@@ -64,7 +69,7 @@ func logAggregatorResName(baseName string) string {
 type LogAggregatorDecorator struct {
 	kinesisStreamResourceName string
 	iamRoleNameResourceName   string
-	kinesisResource           *gocf.KinesisStream
+	kinesisResource           *gofkinesis.Stream
 	kinesisMapping            *sparta.EventSourceMapping
 	logRelay                  *sparta.LambdaAWSInfo
 }
@@ -82,15 +87,15 @@ func (lad *LogAggregatorDecorator) KinesisLogicalResourceName() string {
 // DecorateService annotates the service with the Kinesis hook
 func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 	serviceName string,
-	template *gocf.Template,
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	template *gof.Template,
+	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) (context.Context, error) {
 
 	// Create the Kinesis Stream
-	template.AddResource(lad.kinesisStreamResourceName, lad.kinesisResource)
+	template.Resources[lad.kinesisStreamResourceName] = lad.kinesisResource
 
 	// Create the IAM role
 	putRecordPriv := spartaIAMBuilder.Allow("kinesis:PutRecord").
@@ -110,23 +115,22 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 		putRecordPriv,
 		passRolePriv,
 	)
-	iamPolicyList := gocf.IAMRolePolicyList{}
-	iamPolicyList = append(iamPolicyList,
-		gocf.IAMRolePolicy{
+	iamPolicyList := []gofiam.Role_Policy{
+		{
 			PolicyDocument: sparta.ArbitraryJSONObject{
 				"Version":   "2012-10-17",
 				"Statement": statements,
 			},
-			PolicyName: gocf.String("LogAggregatorPolicy"),
+			PolicyName: "LogAggregatorPolicy",
 		},
-	)
-	iamLogAggregatorRole := &gocf.IAMRole{
-		RoleName:                 gocf.String(lad.iamRoleNameResourceName),
-		AssumeRolePolicyDocument: LogAggregatorAssumePolicyDocument,
-		Policies:                 &iamPolicyList,
 	}
-	template.AddResource(lad.iamRoleNameResourceName, iamLogAggregatorRole)
 
+	iamLogAggregatorRole := &gofiam.Role{
+		RoleName:                 lad.iamRoleNameResourceName,
+		AssumeRolePolicyDocument: LogAggregatorAssumePolicyDocument,
+		Policies:                 iamPolicyList,
+	}
+	template.Resources[lad.iamRoleNameResourceName] = iamLogAggregatorRole
 	return ctx, nil
 }
 
@@ -134,11 +138,11 @@ func (lad *LogAggregatorDecorator) DecorateService(ctx context.Context,
 func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 	serviceName string,
 	lambdaResourceName string,
-	lambdaResource gocf.LambdaFunction,
+	lambdaResource *goflambda.Function,
 	resourceMetadata map[string]interface{},
-	lambdaFunctionCode *gocf.LambdaFunctionCode,
+	lambdaFunctionCode *goflambda.Function_Code,
 	buildID string,
-	template *gocf.Template,
+	template *gof.Template,
 	logger *zerolog.Logger) (context.Context, error) {
 
 	// The relay function should consume the stream
@@ -148,24 +152,26 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 			"EventSourceMapping",
 			lambdaResourceName)
 
-		template.AddResource(eventSourceMappingResourceName, &gocf.LambdaEventSourceMapping{
-			StartingPosition: gocf.String(lad.kinesisMapping.StartingPosition),
-			BatchSize:        gocf.Integer(lad.kinesisMapping.BatchSize),
-			EventSourceArn:   gocf.GetAtt(lad.kinesisStreamResourceName, "Arn"),
-			FunctionName:     gocf.GetAtt(lambdaResourceName, "Arn"),
-		})
+		template.Resources[eventSourceMappingResourceName] = &goflambda.EventSourceMapping{
+			StartingPosition: lad.kinesisMapping.StartingPosition,
+			BatchSize:        lad.kinesisMapping.BatchSize,
+			EventSourceArn:   gof.GetAtt(lad.kinesisStreamResourceName, "Arn"),
+			FunctionName:     gof.GetAtt(lambdaResourceName, "Arn"),
+		}
+
 	} else {
 		// The other functions should publish their logs to the stream
 		subscriptionName := logAggregatorResName(fmt.Sprintf("Lambda%s", lambdaResourceName))
-		subscriptionFilterRes := &gocf.LogsSubscriptionFilter{
-			DestinationArn: gocf.GetAtt(lad.kinesisStreamResourceName, "Arn"),
-			RoleArn:        gocf.GetAtt(lad.iamRoleNameResourceName, "Arn"),
-			LogGroupName: gocf.Join("",
-				gocf.String("/aws/lambda/"),
-				gocf.Ref(lambdaResourceName)),
-			FilterPattern: gocf.String("{$.level = info || $.level = warning || $.level = error }"),
+		subscriptionFilterRes := &goflogs.SubscriptionFilter{
+			DestinationArn: gof.GetAtt(lad.kinesisStreamResourceName, "Arn"),
+			RoleArn:        gof.GetAtt(lad.iamRoleNameResourceName, "Arn"),
+			LogGroupName: gof.Join("", []string{
+				"/aws/lambda/",
+				gof.Ref(lambdaResourceName),
+			}),
+			FilterPattern: "{$.level = info || $.level = warning || $.level = error }",
 		}
-		template.AddResource(subscriptionName, subscriptionFilterRes)
+		template.Resources[subscriptionName] = subscriptionFilterRes
 	}
 	return ctx, nil
 }
@@ -173,7 +179,7 @@ func (lad *LogAggregatorDecorator) DecorateTemplate(ctx context.Context,
 // NewLogAggregatorDecorator returns a ServiceDecoratorHook that registers a Kinesis
 // stream lambda log aggregator
 func NewLogAggregatorDecorator(
-	kinesisResource *gocf.KinesisStream,
+	kinesisResource *gofkinesis.Stream,
 	kinesisMapping *sparta.EventSourceMapping,
 	relay *sparta.LambdaAWSInfo) *LogAggregatorDecorator {
 

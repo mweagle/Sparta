@@ -151,13 +151,13 @@ func (dw *descriptionWriter) writeEdge(fromNode string,
 
 func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *templateResource {
 	var resource *templateResource
-	resourcePath := fmt.Sprintf("/resources/describe/%s",
+	resourcePath := fmt.Sprintf("resources/describe/%s",
 		strings.TrimLeft(resourceKeyName, "/"))
 
 	keyParts := strings.Split(resourcePath, "/")
 	keyName := keyParts[len(keyParts)-1]
 
-	data, dataErr := _escFSString(false, resourcePath)
+	data, dataErr := embeddedString(resourcePath)
 	if dataErr == nil {
 		resource = &templateResource{
 			KeyName: keyName,
@@ -173,7 +173,7 @@ func templateResourceForKey(resourceKeyName string, logger *zerolog.Logger) *tem
 			Str("Path", resourcePath).
 			Msg("Failed to find resource. Using default image.")
 
-		data, dataErr = _escFSString(false, defaultImagePath)
+		data, dataErr = embeddedString(defaultImagePath)
 		if dataErr == nil {
 			resource = &templateResource{
 				KeyName: keyName,
@@ -242,7 +242,9 @@ func iconForAWSResource(rawEmitter interface{}) *DescriptionIcon {
 	if jsonBytesErr != nil {
 		jsonBytes = make([]byte, 0)
 	}
-
+	// TODO - it's possible to resolve the type and pick the
+	// proper icon. To do that, we'd need to call resolveRef,
+	// then lookup the item.
 	canonicalRaw := strings.ToLower(string(jsonBytes))
 	iconMappings := map[string]*DescriptionIcon{
 		"dynamodb": {

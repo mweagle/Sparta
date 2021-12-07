@@ -4,28 +4,31 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofelbv2 "github.com/awslabs/goformation/v5/cloudformation/elasticloadbalancingv2"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	sparta "github.com/mweagle/Sparta/v3"
+
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
 
 type targetGroupEntry struct {
-	conditions *gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList
+	conditions []gofelbv2.ListenerRule_RuleCondition
 	lambdaFn   *sparta.LambdaAWSInfo
-	priority   int64
+	priority   int
 }
 
 // ApplicationLoadBalancerDecorator is an instance of a service decorator that
 // handles registering Lambda functions with an Application Load Balancer.
 type ApplicationLoadBalancerDecorator struct {
-	alb                  *gocf.ElasticLoadBalancingV2LoadBalancer
-	port                 int64
+	alb                  *gofelbv2.LoadBalancer
+	port                 int
 	protocol             string
 	defaultLambdaHandler *sparta.LambdaAWSInfo
 	targets              []*targetGroupEntry
-	Resources            map[string]gocf.ResourceProperties
+	Resources            map[string]gof.Resource
 }
 
 // LogicalResourceName returns the CloudFormation resource name of the primary
@@ -36,7 +39,7 @@ func (albd *ApplicationLoadBalancerDecorator) LogicalResourceName() string {
 
 // AddConditionalEntry adds a new lambda target that is conditionally routed
 // to depending on the condition value.
-func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntry(condition gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition,
+func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntry(condition gofelbv2.ListenerRule_RuleCondition,
 	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
 
 	return albd.AddConditionalEntryWithPriority(condition, 0, lambdaFn)
@@ -44,18 +47,18 @@ func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntry(condition gocf
 
 // AddConditionalEntryWithPriority adds a new lambda target that is conditionally routed
 // to depending on the condition value using the user supplied priority value
-func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntryWithPriority(condition gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition,
-	priority int64,
+func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntryWithPriority(condition gofelbv2.ListenerRule_RuleCondition,
+	priority int,
 	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
 
-	return albd.AddMultiConditionalEntryWithPriority(&gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList{condition},
+	return albd.AddMultiConditionalEntryWithPriority([]gofelbv2.ListenerRule_RuleCondition{condition},
 		priority,
 		lambdaFn)
 }
 
 // AddMultiConditionalEntry adds a new lambda target that is conditionally routed
 // to depending on the multi condition value.
-func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntry(conditions *gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList,
+func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntry(conditions []gofelbv2.ListenerRule_RuleCondition,
 	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
 
 	return albd.AddMultiConditionalEntryWithPriority(conditions, 0, lambdaFn)
@@ -63,8 +66,8 @@ func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntry(condition
 
 // AddMultiConditionalEntryWithPriority adds a new lambda target that is conditionally routed
 // to depending on the multi condition value with the given priority index
-func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntryWithPriority(conditions *gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList,
-	priority int64,
+func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntryWithPriority(conditions []gofelbv2.ListenerRule_RuleCondition,
+	priority int,
 	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
 
 	// Add a version resource to the lambda so that we target that resource...
@@ -79,11 +82,11 @@ func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntryWithPriori
 // DecorateService satisfies the ServiceDecoratorHookHandler interface
 func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string]interface{},
 	serviceName string,
-	template *gocf.Template,
+	template *gof.Template,
 	S3Bucket string,
 	S3Key string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) error {
 
@@ -97,41 +100,43 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	// for each lambda target group
 	//
 	visitedLambdaFuncs := make(map[string]bool)
-	ensureLambdaPreconditions := func(lambdaFn *sparta.LambdaAWSInfo, dependentResource *gocf.Resource) error {
+	ensureLambdaPreconditions := func(lambdaFn *sparta.LambdaAWSInfo, dependentResource gof.Resource) error {
 		_, exists := visitedLambdaFuncs[lambdaFn.LogicalResourceName()]
 		if exists {
 			return nil
 		}
 		// Add the lambda permission
 		albPermissionResourceName := portScopedResourceName("ALBPermission", lambdaFn.LogicalResourceName())
-		lambdaInvokePermission := &gocf.LambdaPermission{
-			Action:       gocf.String("lambda:InvokeFunction"),
-			FunctionName: gocf.GetAtt(lambdaFn.LogicalResourceName(), "Arn"),
-			Principal:    gocf.String(sparta.ElasticLoadBalancingPrincipal),
+		lambdaInvokePermission := &goflambda.Permission{
+			Action:       "lambda:InvokeFunction",
+			FunctionName: gof.GetAtt(lambdaFn.LogicalResourceName(), "Arn"),
+			Principal:    sparta.ElasticLoadBalancingPrincipal,
 		}
-		template.AddResource(albPermissionResourceName, lambdaInvokePermission)
+		template.Resources[albPermissionResourceName] = lambdaInvokePermission
+
 		// The stable alias resource and unstable, retained version resource
 		aliasResourceName := portScopedResourceName("ALBAlias", lambdaFn.LogicalResourceName())
 		versionResourceName := portScopedResourceName("ALBVersion", lambdaFn.LogicalResourceName(), buildID)
 
-		versionResource := &gocf.LambdaVersion{
-			FunctionName: gocf.GetAtt(lambdaFn.LogicalResourceName(), "Arn").String(),
+		versionResource := &goflambda.Version{
+			FunctionName: gof.GetAtt(lambdaFn.LogicalResourceName(), "Arn"),
 		}
-		lambdaVersionRes := template.AddResource(versionResourceName, versionResource)
-		lambdaVersionRes.DeletionPolicy = "Retain"
+		versionResource.AWSCloudFormationDeletionPolicy = "Retain"
+		template.Resources[versionResourceName] = versionResource
 
 		// Add the alias that binds the lambda to the version...
-		aliasResource := &gocf.LambdaAlias{
-			FunctionVersion: gocf.GetAtt(versionResourceName, "Version").String(),
-			FunctionName:    gocf.Ref(lambdaFn.LogicalResourceName()).String(),
-			Name:            gocf.String("live"),
+		aliasResource := &goflambda.Alias{
+			FunctionVersion: gof.GetAtt(versionResourceName, "Version"),
+			FunctionName:    gof.Ref(lambdaFn.LogicalResourceName()),
+			Name:            "live",
 		}
-		template.AddResource(aliasResourceName, aliasResource)
 		// One time only
-		dependentResource.DependsOn = append(dependentResource.DependsOn,
+		aliasResource.AWSCloudFormationDependsOn = append(aliasResource.AWSCloudFormationDependsOn,
 			albPermissionResourceName,
 			versionResourceName,
 			aliasResourceName)
+		template.Resources[aliasResourceName] = aliasResource
+
 		visitedLambdaFuncs[lambdaFn.LogicalResourceName()] = true
 		return nil
 	}
@@ -140,40 +145,41 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	// START
 	//
 	// Add the alb. We'll link each target group inside the loop...
-	albRes := template.AddResource(albd.LogicalResourceName(), albd.alb)
+	template.Resources[albd.LogicalResourceName()] = albd.alb
+	//	albRes := template.AddResource(albd.LogicalResourceName(), albd.alb)
 	defaultListenerResName := portScopedResourceName("ALBListener", "DefaultListener")
 	defaultTargetGroupResName := portScopedResourceName("ALBDefaultTarget", albd.defaultLambdaHandler.LogicalResourceName())
 
 	// Create the default lambda target group...
-	defaultTargetGroupRes := &gocf.ElasticLoadBalancingV2TargetGroup{
-		TargetType: gocf.String("lambda"),
-		Targets: &gocf.ElasticLoadBalancingV2TargetGroupTargetDescriptionList{
-			gocf.ElasticLoadBalancingV2TargetGroupTargetDescription{
-				ID: gocf.GetAtt(albd.defaultLambdaHandler.LogicalResourceName(), "Arn").String(),
+	defaultTargetGroupRes := &gofelbv2.TargetGroup{
+		TargetType: "lambda",
+		Targets: []gofelbv2.TargetGroup_TargetDescription{
+			{
+				Id: gof.GetAtt(albd.defaultLambdaHandler.LogicalResourceName(), "Arn"),
 			},
 		},
 	}
 	// Add it...
-	targetGroupRes := template.AddResource(defaultTargetGroupResName, defaultTargetGroupRes)
+	template.Resources[defaultTargetGroupResName] = defaultTargetGroupRes
 
 	// Then create the ELB listener with the default entry. We'll add the conditional
 	// lambda targets after this...
-	listenerRes := &gocf.ElasticLoadBalancingV2Listener{
-		LoadBalancerArn: gocf.Ref(albd.LogicalResourceName()).String(),
-		Port:            gocf.Integer(albd.port),
-		Protocol:        gocf.String(albd.protocol),
-		DefaultActions: &gocf.ElasticLoadBalancingV2ListenerActionList{
-			gocf.ElasticLoadBalancingV2ListenerAction{
-				TargetGroupArn: gocf.Ref(defaultTargetGroupResName).String(),
-				Type:           gocf.String("forward"),
+	listenerRes := &gofelbv2.Listener{
+		LoadBalancerArn: gof.Ref(albd.LogicalResourceName()),
+		Port:            albd.port,
+		Protocol:        albd.protocol,
+		DefaultActions: []gofelbv2.Listener_Action{
+			{
+				TargetGroupArn: gof.Ref(defaultTargetGroupResName),
+				Type:           "forward",
 			},
 		},
 	}
-	defaultListenerRes := template.AddResource(defaultListenerResName, listenerRes)
-	defaultListenerRes.DependsOn = append(defaultListenerRes.DependsOn, defaultTargetGroupResName)
+	listenerRes.AWSCloudFormationDependsOn = []string{defaultTargetGroupResName}
+	template.Resources[defaultListenerResName] = listenerRes
 
 	// Make sure this is all hooked up
-	ensureErr := ensureLambdaPreconditions(albd.defaultLambdaHandler, targetGroupRes)
+	ensureErr := ensureLambdaPreconditions(albd.defaultLambdaHandler, listenerRes)
 	if ensureErr != nil {
 		return errors.Wrapf(ensureErr, "Failed to create precondition resources for Lambda TargetGroup")
 	}
@@ -183,18 +189,18 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 		// Create a new TargetGroup for this lambda function
 		conditionalLambdaTargetGroupResName := portScopedResourceName("ALBTargetCond",
 			eachTarget.lambdaFn.LogicalResourceName())
-		conditionalLambdaTargetGroup := &gocf.ElasticLoadBalancingV2TargetGroup{
-			TargetType: gocf.String("lambda"),
-			Targets: &gocf.ElasticLoadBalancingV2TargetGroupTargetDescriptionList{
-				gocf.ElasticLoadBalancingV2TargetGroupTargetDescription{
-					ID: gocf.GetAtt(eachTarget.lambdaFn.LogicalResourceName(), "Arn").String(),
+		conditionalLambdaTargetGroup := &gofelbv2.TargetGroup{
+			TargetType: "lambda",
+			Targets: []gofelbv2.TargetGroup_TargetDescription{
+				{
+					Id: gof.GetAtt(eachTarget.lambdaFn.LogicalResourceName(), "Arn"),
 				},
 			},
 		}
 		// Add it...
-		targetGroupRes := template.AddResource(conditionalLambdaTargetGroupResName, conditionalLambdaTargetGroup)
+		template.Resources[conditionalLambdaTargetGroupResName] = conditionalLambdaTargetGroup
 		// Create the stable alias resource resource....
-		preconditionErr := ensureLambdaPreconditions(eachTarget.lambdaFn, targetGroupRes)
+		preconditionErr := ensureLambdaPreconditions(eachTarget.lambdaFn, conditionalLambdaTargetGroup)
 		if preconditionErr != nil {
 			return errors.Wrapf(preconditionErr, "Failed to create precondition resources for Lambda TargetGroup")
 		}
@@ -202,20 +208,20 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 		// Priority is either user defined or the current slice index
 		rulePriority := eachTarget.priority
 		if rulePriority <= 0 {
-			rulePriority = int64(1 + eachIndex)
+			rulePriority = int(1 + eachIndex)
 		}
 
 		// Now create the rule that conditionally routes to this Lambda, in priority order...
-		listenerRule := &gocf.ElasticLoadBalancingV2ListenerRule{
-			Actions: &gocf.ElasticLoadBalancingV2ListenerRuleActionList{
-				gocf.ElasticLoadBalancingV2ListenerRuleAction{
-					TargetGroupArn: gocf.Ref(conditionalLambdaTargetGroupResName).String(),
-					Type:           gocf.String("forward"),
+		listenerRule := &gofelbv2.ListenerRule{
+			Actions: []gofelbv2.ListenerRule_Action{
+				{
+					TargetGroupArn: gof.Ref(conditionalLambdaTargetGroupResName),
+					Type:           "forward",
 				},
 			},
 			Conditions:  eachTarget.conditions,
-			ListenerArn: gocf.Ref(defaultListenerResName).String(),
-			Priority:    gocf.Integer(rulePriority),
+			ListenerArn: gof.Ref(defaultListenerResName),
+			Priority:    rulePriority,
 		}
 		// Add the rule...
 		listenerRuleResName := portScopedResourceName("ALBRule",
@@ -223,20 +229,21 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 			fmt.Sprintf("%d", eachIndex))
 
 		// Add the resource
-		listenerRes := template.AddResource(listenerRuleResName, listenerRule)
-		listenerRes.DependsOn = append(listenerRes.DependsOn, conditionalLambdaTargetGroupResName)
+		listenerRule.AWSCloudFormationDependsOn = []string{conditionalLambdaTargetGroupResName}
+		template.Resources[listenerRuleResName] = listenerRule
 	}
 	// Add any other CloudFormation resources, in any order
 	for eachKey, eachResource := range albd.Resources {
-		template.AddResource(eachKey, eachResource)
 		// All the secondary resources are dependencies for the ALB
-		albRes.DependsOn = append(albRes.DependsOn, eachKey)
+		albd.alb.AWSCloudFormationDependsOn = append(albd.alb.AWSCloudFormationDependsOn,
+			eachKey)
+		template.Resources[eachKey] = eachResource
 	}
 	portOutputName := func(prefix string) string {
 		return fmt.Sprintf("%s%d", prefix, albd.port)
 	}
-	albOutput := func(label string, value interface{}) *gocf.Output {
-		return &gocf.Output{
+	albOutput := func(label string, value interface{}) gof.Output {
+		return gof.Output{
 			Description: fmt.Sprintf("%s (port: %d, protocol: %s)", label, albd.port, albd.protocol),
 			Value:       value,
 		}
@@ -244,19 +251,20 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	// Add the output to the template
 	template.Outputs[portOutputName("ApplicationLoadBalancerDNS")] = albOutput(
 		"ALB DNSName",
-		gocf.GetAtt(albd.LogicalResourceName(), "DNSName"))
+		gof.GetAtt(albd.LogicalResourceName(), "DNSName"))
 
 	template.Outputs[portOutputName("ApplicationLoadBalancerName")] = albOutput(
 		"ALB Name",
-		gocf.GetAtt(albd.LogicalResourceName(), "LoadBalancerName"))
+		gof.GetAtt(albd.LogicalResourceName(), "LoadBalancerName"))
 
 	template.Outputs[portOutputName("ApplicationLoadBalancerURL")] = albOutput(
 		"ALB URL",
-		gocf.Join("",
-			gocf.String(strings.ToLower(albd.protocol)),
-			gocf.String("://"),
-			gocf.GetAtt(albd.LogicalResourceName(), "DNSName"),
-			gocf.String(fmt.Sprintf(":%d", albd.port))))
+		gof.Join("", []string{
+			strings.ToLower(albd.protocol),
+			"://",
+			gof.GetAtt(albd.LogicalResourceName(), "DNSName"),
+			fmt.Sprintf(":%d", albd.port),
+		}))
 
 	return nil
 }
@@ -264,8 +272,8 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 // NewApplicationLoadBalancerDecorator returns an application load balancer
 // decorator that allows one or more lambda functions to be marked
 // as ALB targets
-func NewApplicationLoadBalancerDecorator(alb *gocf.ElasticLoadBalancingV2LoadBalancer,
-	port int64,
+func NewApplicationLoadBalancerDecorator(alb *gofelbv2.LoadBalancer,
+	port int,
 	protocol string,
 	defaultLambdaHandler *sparta.LambdaAWSInfo) (*ApplicationLoadBalancerDecorator, error) {
 	return &ApplicationLoadBalancerDecorator{
@@ -274,6 +282,6 @@ func NewApplicationLoadBalancerDecorator(alb *gocf.ElasticLoadBalancingV2LoadBal
 		protocol:             protocol,
 		defaultLambdaHandler: defaultLambdaHandler,
 		targets:              make([]*targetGroupEntry, 0),
-		Resources:            make(map[string]gocf.ResourceProperties),
+		Resources:            make(map[string]gof.Resource),
 	}, nil
 }

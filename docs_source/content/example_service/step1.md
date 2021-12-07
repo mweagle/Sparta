@@ -12,7 +12,7 @@ Please be aware that running Lambda functions may incur [costs](https://aws.amaz
 
 ## Preconditions
 
-Sparta uses the [AWS SDK for Go](http://aws.amazon.com/sdk-for-go/) to interact with AWS APIs. Before you get started, ensure that you've properly configured the [SDK credentials](https://github.com/aws/aws-sdk-go/wiki/configuring-sdk).
+Sparta uses the [AWS SDK for Go](http://aws.amazon.com/sdk-for-go/) to interact with AWS APIs. Before you get started, ensure that you've properly configured the [SDK credentials](https://github.com/aws/aws-sdk-go-v2/blob/main/config/doc).
 
 Note that you must use an AWS region that supports Lambda. Consult the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the most up to date release information.
 
@@ -96,7 +96,7 @@ package main
 import (
   "context"
 
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Standard AWS λ function

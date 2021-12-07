@@ -106,7 +106,6 @@ func BuildGoBinary(serviceName string,
 	if nil != goGenerateErr {
 		return goGenerateErr
 	}
-	// TODO: Smaller binaries via linker flags
 	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
 	noopTag := ""
 	if noop {

@@ -23,8 +23,8 @@ Because [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/applica
 
 ```go
 import (
-  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
-  spartaEvents "github.com/mweagle/Sparta/aws/events"
+  spartaAPIGateway "github.com/mweagle/Sparta/v3/aws/apigateway"
+  spartaEvents "github.com/mweagle/Sparta/v3/aws/events"
 )
 
 func s3ItemInfo(ctx context.Context,

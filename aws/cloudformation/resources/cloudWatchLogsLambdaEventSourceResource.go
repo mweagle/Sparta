@@ -1,37 +1,38 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2CWLogs "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // CloudWatchLogsLambdaEventSourceFilter represents a filter for a cloudwatchlogs
 // stream
 type CloudWatchLogsLambdaEventSourceFilter struct {
-	Name         *gocf.StringExpr
-	Pattern      *gocf.StringExpr
-	LogGroupName *gocf.StringExpr
+	Name         string
+	Pattern      string
+	LogGroupName string
 }
 
 // CloudWatchEventSourceResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type CloudWatchEventSourceResourceRequest struct {
-	LambdaTargetArn *gocf.StringExpr
+	CustomResourceRequest
+	LambdaTargetArn string
 	Filters         []*CloudWatchLogsLambdaEventSourceFilter
-	RoleARN         *gocf.StringExpr `json:",omitempty"`
+	RoleARN         string `json:",omitempty"`
 }
 
 // CloudWatchLogsLambdaEventSourceResource is a simple POC showing how to create custom resources
 type CloudWatchLogsLambdaEventSourceResource struct {
-	gocf.CloudFormationCustomResource
-	CloudWatchEventSourceResourceRequest
+	gof.CustomResource
 }
 
 // IAMPrivileges returns the IAM privs for this custom action
@@ -50,8 +51,9 @@ func cloudWatchEventSourceProperties(event *CloudFormationLambdaEvent) (*CloudWa
 	return &eventProperties, nil
 }
 
-func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTargetActive bool,
-	session *session.Session,
+func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(ctx context.Context,
+	isTargetActive bool,
+	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
@@ -61,15 +63,15 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 	}
 
 	var opErr error
-	cwLogsSvc := cloudwatchlogs.New(session)
+	cwLogsSvc := awsv2CWLogs.NewFromConfig(awsConfig)
 	for _, eachFilter := range requestProps.Filters {
 
 		// Always delete the filter by name if we can find it...
-		deleteSubscriptionInput := &cloudwatchlogs.DeleteSubscriptionFilterInput{
-			FilterName:   aws.String(eachFilter.Name.Literal),
-			LogGroupName: aws.String(eachFilter.LogGroupName.Literal),
+		deleteSubscriptionInput := &awsv2CWLogs.DeleteSubscriptionFilterInput{
+			FilterName:   awsv2.String(eachFilter.Name),
+			LogGroupName: awsv2.String(eachFilter.LogGroupName),
 		}
-		deleteResult, deleteErr := cwLogsSvc.DeleteSubscriptionFilter(deleteSubscriptionInput)
+		deleteResult, deleteErr := cwLogsSvc.DeleteSubscriptionFilter(context.Background(), deleteSubscriptionInput)
 		logger.Debug().
 			Interface("DeleteInput", deleteSubscriptionInput).
 			Interface("Result", deleteResult).
@@ -84,26 +86,26 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 		// Conditionally create
 		if isTargetActive && nil == opErr {
 			// Put the subscription filter
-			putSubscriptionInput := &cloudwatchlogs.PutSubscriptionFilterInput{
-				DestinationArn: aws.String(requestProps.LambdaTargetArn.Literal),
-				FilterName:     aws.String(eachFilter.Name.Literal),
-				FilterPattern:  aws.String(eachFilter.Pattern.Literal),
-				LogGroupName:   aws.String(eachFilter.LogGroupName.Literal),
+			putSubscriptionInput := &awsv2CWLogs.PutSubscriptionFilterInput{
+				DestinationArn: awsv2.String(requestProps.LambdaTargetArn),
+				FilterName:     awsv2.String(eachFilter.Name),
+				FilterPattern:  awsv2.String(eachFilter.Pattern),
+				LogGroupName:   awsv2.String(eachFilter.LogGroupName),
 			}
-			if nil != requestProps.RoleARN {
-				putSubscriptionInput.RoleArn = aws.String(requestProps.RoleARN.Literal)
+			if requestProps.RoleARN != "" {
+				putSubscriptionInput.RoleArn = awsv2.String(requestProps.RoleARN)
 			}
-			_, opErr = cwLogsSvc.PutSubscriptionFilter(putSubscriptionInput)
+			_, opErr = cwLogsSvc.PutSubscriptionFilter(context.Background(), putSubscriptionInput)
 			// If there was an error, see if there's a differently named filter for the given
 			// CloudWatchLogs stream.
 			if nil != opErr {
-				describeSubscriptionFilters := &cloudwatchlogs.DescribeSubscriptionFiltersInput{
-					LogGroupName: aws.String(eachFilter.LogGroupName.Literal),
+				describeSubscriptionFilters := &awsv2CWLogs.DescribeSubscriptionFiltersInput{
+					LogGroupName: awsv2.String(eachFilter.LogGroupName),
 				}
-				describeResult, describeResultErr := cwLogsSvc.DescribeSubscriptionFilters(describeSubscriptionFilters)
+				describeResult, describeResultErr := cwLogsSvc.DescribeSubscriptionFilters(context.Background(), describeSubscriptionFilters)
 				if nil == describeResultErr {
 					opErr = fmt.Errorf("conflict with differently named subscription on prexisting LogGroupName: %s",
-						eachFilter.LogGroupName.Literal)
+						eachFilter.LogGroupName)
 
 					logger.Error().
 						Interface("DescribeSubscriptionResult", describeResult).
@@ -121,22 +123,22 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 }
 
 // Create implements the create operation
-func (command CloudWatchLogsLambdaEventSourceResource) Create(awsSession *session.Session,
+func (command CloudWatchLogsLambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsSession, event, logger)
+	return command.updateRegistration(ctx, true, awsConfig, event, logger)
 }
 
 // Update implements the update operation
-func (command CloudWatchLogsLambdaEventSourceResource) Update(awsSession *session.Session,
+func (command CloudWatchLogsLambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsSession, event, logger)
+	return command.updateRegistration(ctx, true, awsConfig, event, logger)
 }
 
 // Delete implements the delete operation
-func (command CloudWatchLogsLambdaEventSourceResource) Delete(awsSession *session.Session,
+func (command CloudWatchLogsLambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(false, awsSession, event, logger)
+	return command.updateRegistration(ctx, false, awsConfig, event, logger)
 }

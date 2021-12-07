@@ -16,7 +16,7 @@ To create a scheduled function use a constructor as in:
 
 ```go
 import (
-  spartaArchetype "github.com/mweagle/Sparta/archetype"
+  spartaArchetype "github.com/mweagle/Sparta/v3/archetype"
 )
 
 // EventBridge reactor function

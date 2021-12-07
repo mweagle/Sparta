@@ -29,9 +29,9 @@ To build a Sparta application, follow these steps:
        "fmt"
        "os"
 
-       "github.com/aws/aws-sdk-go/aws/session"
-       sparta "github.com/mweagle/Sparta"
-       spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+       "github.com/aws/aws-sdk-go-v2/aws/session"
+       sparta "github.com/mweagle/Sparta/v3"
+       spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
        "github.com/rs/zerolog"
    )
 

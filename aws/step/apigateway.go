@@ -2,8 +2,6 @@ package step
 
 import (
 	"math/rand"
-
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 /*
@@ -30,13 +28,13 @@ import (
 // APIGatewayTaskParameters represents params for the SNS notification
 // Ref: https://docs.aws.amazon.com/sns/latest/api/API_Publish.html#API_Publish_RequestParameters
 type APIGatewayTaskParameters struct {
-	APIEndpoint     gocf.Stringable        `json:"ApiEndpoint,omitempty"`
+	APIEndpoint     string                 `json:"ApiEndpoint,omitempty"`
 	Method          string                 `json:",omitempty"`
 	Headers         map[string]interface{} `json:",omitempty"`
 	Stage           string                 `json:",omitempty"`
-	Path            gocf.Stringable        `json:",omitempty"`
+	Path            string                 `json:",omitempty"`
 	QueryParameters map[string]interface{} `json:",omitempty"`
-	RequestBody     interface{}            `json:",omitempty"`
+	RequestBody     string                 `json:",omitempty"`
 	AuthType        string                 `json:",omitempty"`
 }
 

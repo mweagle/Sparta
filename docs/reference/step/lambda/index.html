@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Lambda :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2242,7 +2242,7 @@ pre {
 <p>AWS <a href="https://aws.amazon.com/step-functions/">Step Functions</a> are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &ldquo;Roll Die&rdquo; state machine using a single Lambda function. See <a href="https://github.com/mweagle/SpartaStep">SpartaStep</a> for the full source.</p>
 <h2 id="lambda-functions">Lambda Functions</h2>
 <p>The first step is to define the core Lambda function <a href="http://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html">Task</a> that will be our Step function&rsquo;s core logic. In this example, we&rsquo;ll define a <em>rollDie</em> function:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> lambdaRollResponse <span style="color:#00f">struct</span> {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> lambdaRollResponse <span style="color:#00f">struct</span> {
   Roll <span style="color:#2b91af">int</span> <span style="color:#a31515">`json:&#34;roll&#34;`</span>
 }
 
@@ -2256,7 +2256,7 @@ pre {
 <p>Our state machine is simple: we want to keep rolling the die until we get a &ldquo;good&rdquo; result, with a delay in between rolls:</p>
 <p><img src="/images/step_functions/roll_die.jpg" alt="State Machine"></p>
 <p>To do this, we use the new <code>github.com/mweagle/Sparta/aws/step</code> functions to define the other states.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Make all the Step states
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Make all the Step states
 </span><span style="color:#008000"></span>lambdaTaskState := step.NewTaskState(<span style="color:#a31515">&#34;lambdaRollDie&#34;</span>, lambdaFn)
 successState := step.NewSuccessState(<span style="color:#a31515">&#34;success&#34;</span>)
 delayState := step.NewWaitDelayState(<span style="color:#a31515">&#34;tryAgainShortly&#34;</span>, 3*time.Second)
@@ -2282,7 +2282,7 @@ choiceState := step.NewChoiceState(<span style="color:#a31515">&#34;checkRoll&#3
 to a delay or the success end state.</p>
 <p>See <a href="https://godoc.org/github.com/mweagle/Sparta/aws/step">godoc</a> for the complete set of types.</p>
 <p>The <code>lambdaTaskState</code> uses a normal Sparta function as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;StepRollDie&#34;</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;StepRollDie&#34;</span>,
   lambdaRollDie,
   sparta.IAMRoleDefinition{})
 
@@ -2291,7 +2291,7 @@ lambdaFn.Options.Tags = <span style="color:#00f">map</span>[<span style="color:#
   <span style="color:#a31515">&#34;myAccounting&#34;</span>: <span style="color:#a31515">&#34;tag&#34;</span>,
 }
 </code></pre></div><p>The final step is to hook up the state transitions for states that don&rsquo;t implicitly include them, and create the State Machine:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Hook up the transitions
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Hook up the transitions
 </span><span style="color:#008000"></span>lambdaTaskState.Next(choiceState)
 delayState.Next(lambdaTaskState)
 
@@ -2304,7 +2304,7 @@ The final step is to attach this machine to the normal service definition.</p>
 <p>The return type from <code>step.NewStateMachine(...)</code> is a <code>*step.StateMachine</code> instance that exposes a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecoratorHook</a>.
 Adding the hook to your service&rsquo;s Workflow Hooks (similar to provisioning a service-scoped <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">CloudWatch Dashboard</a>)
 will include it in the CloudFormation template serialization:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Setup the hook to annotate
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Setup the hook to annotate
 </span><span style="color:#008000"></span>workflowHooks := &amp;sparta.WorkflowHooks{
   ServiceDecorator: startMachine.StateMachineDecorator(),
 }
@@ -2317,7 +2317,7 @@ err := sparta.MainEx(userStackName,
   workflowHooks,
   <span style="color:#00f">false</span>)
 </code></pre></div><p>With the decorator attached, the next service <code>provision</code> request will include the state machine as above.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">
 $ go run main.go provision --s3Bucket weagle
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
@@ -2336,7 +2336,7 @@ INFO[0000] Compiling binary                              Name=Sparta.lambda.amd6
 INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaStep_mweagle-code.zip
 INFO[0010] Lambda code archive size                      Size=&#34;13 MB&#34;
 INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip Size=&#34;13 MB&#34;
-INFO[0020] Calling WorkflowHook                          ServiceDecoratorHook=&#34;github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1&#34; WorkflowHookContext=&#34;map[]&#34;
+INFO[0020] Calling WorkflowHook                          ServiceDecoratorHook=&#34;github.com/mweagle/Sparta/v3/aws/step.(*StateMachine).StateMachineDecorator.func1&#34; WorkflowHookContext=&#34;map[]&#34;
 INFO[0020] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json Size=&#34;3.7 kB&#34;
 INFO[0021] Creating stack                                StackID=&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaStep-mweagle/6ff65180-0501-11e8-935b-50a68d01a629&#34;
 INFO[0094] CloudFormation provisioning metrics:
@@ -3787,19 +3787,19 @@ on shared data.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

@@ -1,9 +1,10 @@
 package iambuilder
 
 import (
-	sparta "github.com/mweagle/Sparta"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam"
+	iamtypes "github.com/mweagle/Sparta/v3/aws/iam/builder/types"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,112 +19,95 @@ import (
 // IAMResourceBuilder encapsulates the IAM builder for a resource
 type IAMResourceBuilder struct {
 	builder       *IAMBuilder
-	resourceParts []gocf.Stringable
+	resourceParts []string
 }
 
 // Ref inserts a go-cloudformation Ref entry
 func (iamRes *IAMResourceBuilder) Ref(resName string, delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref(resName))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref(resName))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
+
 	return iamRes
 }
 
 // Attr inserts a go-cloudformation GetAtt entry
 func (iamRes *IAMResourceBuilder) Attr(resName string, propName string, delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.GetAtt(resName, propName))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.GetAtt(resName, propName))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // Region inserts the AWS::Region pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) Region(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::Region"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::Region"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // AccountID inserts the AWS::AccountId pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) AccountID(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::AccountId"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::AccountId"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // NotificationARNS inserts the AWS::NotificationARNs pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) NotificationARNS(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::NotificationARNs"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::NotificationARNs"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // Partition inserts the AWS::Partition pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) Partition(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::Partition"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::Partition"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // StackID inserts the AWS::StackID pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) StackID(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::StackId"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::StackId"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // StackName inserts the AWS::StackName pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) StackName(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::StackName"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::StackName"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // URLSuffix inserts the AWS::URLSuffix pseudo param into the privilege
 func (iamRes *IAMResourceBuilder) URLSuffix(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.Ref("AWS::URLSuffix"))
-	for _, eachDelimiter := range delimiter {
-		iamRes.resourceParts = append(iamRes.resourceParts,
-			gocf.String(eachDelimiter))
-	}
+		gof.Ref("AWS::URLSuffix"))
+	iamRes.resourceParts = append(iamRes.resourceParts,
+		delimiter...)
 	return iamRes
 }
 
 // Literal inserts a string literal into the ARN being constructed
 func (iamRes *IAMResourceBuilder) Literal(arnPart string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
-		gocf.String(arnPart))
+		arnPart)
 	return iamRes
 }
 
@@ -132,7 +116,7 @@ func (iamRes *IAMResourceBuilder) ToPolicyStatement() spartaIAM.PolicyStatement 
 	return spartaIAM.PolicyStatement{
 		Action:   iamRes.builder.apiCalls,
 		Effect:   iamRes.builder.effect,
-		Resource: gocf.Join("", iamRes.resourceParts...),
+		Resource: gof.Join("", iamRes.resourceParts),
 	}
 }
 
@@ -141,7 +125,7 @@ func (iamRes *IAMResourceBuilder) ToPolicyStatement() spartaIAM.PolicyStatement 
 func (iamRes *IAMResourceBuilder) ToPrivilege() sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  iamRes.builder.apiCalls,
-		Resource: gocf.Join("", iamRes.resourceParts...),
+		Resource: gof.Join("", iamRes.resourceParts),
 	}
 }
 
@@ -158,7 +142,7 @@ type IAMBuilder struct {
 func (iamRes *IAMBuilder) ForResource() *IAMResourceBuilder {
 	return &IAMResourceBuilder{
 		builder:       iamRes,
-		resourceParts: make([]gocf.Stringable, 0),
+		resourceParts: []string{},
 	}
 }
 
@@ -181,21 +165,19 @@ func (iamRes *IAMBuilder) WithCondition(conditionExpression interface{}) *IAMBui
 // IAMPrincipalBuilder is the builder for a Principal allowance
 type IAMPrincipalBuilder struct {
 	builder   *IAMBuilder
-	principal *gocf.IAMPrincipal
+	principal *iamtypes.IAMPrincipal
 }
 
 // ForPrincipals returns the IAMPrincipalBuilder instance
 // which can be finalized into an IAMRolePrivilege
 func (iamRes *IAMBuilder) ForPrincipals(principals ...string) *IAMPrincipalBuilder {
-	stringablePrincipals := make([]gocf.Stringable, len(principals))
-	for index, eachPrincipal := range principals {
-		stringablePrincipals[index] = gocf.String(eachPrincipal)
-	}
+	stringablePrincipals := make([]string, len(principals))
+	copy(stringablePrincipals, principals)
 
 	return &IAMPrincipalBuilder{
 		builder: iamRes,
-		principal: &gocf.IAMPrincipal{
-			Service: gocf.StringList(stringablePrincipals...),
+		principal: &iamtypes.IAMPrincipal{
+			Service: stringablePrincipals,
 		},
 	}
 }
@@ -203,15 +185,13 @@ func (iamRes *IAMBuilder) ForPrincipals(principals ...string) *IAMPrincipalBuild
 // ForFederatedPrincipals returns the IAMPrincipalBuilder instance
 // which can be finalized into an IAMRolePrivilege
 func (iamRes *IAMBuilder) ForFederatedPrincipals(principals ...string) *IAMPrincipalBuilder {
-	stringablePrincipals := make([]gocf.Stringable, len(principals))
-	for index, eachPrincipal := range principals {
-		stringablePrincipals[index] = gocf.String(eachPrincipal)
-	}
+	stringablePrincipals := make([]string, len(principals))
+	copy(stringablePrincipals, principals)
 
 	return &IAMPrincipalBuilder{
 		builder: iamRes,
-		principal: &gocf.IAMPrincipal{
-			Federated: gocf.StringList(stringablePrincipals...),
+		principal: &iamtypes.IAMPrincipal{
+			Federated: stringablePrincipals,
 		},
 	}
 }

@@ -1,7 +1,7 @@
 package cloudtest
 
 import (
-	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/pkg/errors"
 )
 

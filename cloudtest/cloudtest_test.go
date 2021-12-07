@@ -1,25 +1,27 @@
+//go:build integration
 // +build integration
 
 package cloudtest
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"regexp"
 	"testing"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/sts"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 var accountID = ""
 
 func init() {
-	awsSession, awsSessionErr := session.NewSession()
+	awsConfig := awsv2Config.LoadDefaultConfig(context.Background())
 	if awsSessionErr == nil {
-		stsService := sts.New(awsSession)
-		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+		stsService := awsv2STS.NewFromConfig(awsConfig)
+		callerInfo, callerInfoErr := stsService.GetCallerIdentity(&awsv2STS.GetCallerIdentityInput{})
 		if callerInfoErr == nil {
 			accountID = *callerInfo.Account
 		}

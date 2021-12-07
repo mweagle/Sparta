@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>FAQ :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2265,7 +2265,7 @@ pre {
 <p>Linking AWS resources together often requires creating dynamic ARN
 references. This can be achieved by using <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Join">cloudformation.Join</a> expressions.</p>
 <p>For instance:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
     gocf <span style="color:#a31515">&#34;github.com/mweagle/go-cloudformation&#34;</span>
 )
 
@@ -2273,7 +2273,7 @@ s3SiteBucketAllKeysResourceValue := gocf.Join(<span style="color:#a31515">&#34;&
     gocf.String(<span style="color:#a31515">&#34;arn:aws:s3:::&#34;</span>),
     gocf.Ref(s3BucketResourceName),
     gocf.String(<span style="color:#a31515">&#34;/*&#34;</span>))
-</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+</code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
 	gocf <span style="color:#a31515">&#34;github.com/mweagle/go-cloudformation&#34;</span>
 )
 
@@ -2285,7 +2285,7 @@ s3SiteBucketAllKeysResourceValue := gocf.Join(<span style="color:#a31515">&#34;&
                         gocf.String(<span style="color:#a31515">&#34;/invocations&#34;</span>)),
 </code></pre></div><p>See the CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a> docs for the set of attributes created by each
 resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">pseudo-parameters</a> can be included in dynamic expresssions via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Ref">gocf.Ref</a> expressions. For instance:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">gocf.Ref(<span style="color:#a31515">&#34;AWS::Region&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">gocf.Ref(<span style="color:#a31515">&#34;AWS::Region&#34;</span>)
 gocf.Ref(<span style="color:#a31515">&#34;AWS::AccountId&#34;</span>)
 gocf.Ref(<span style="color:#a31515">&#34;AWS::StackId&#34;</span>)
 gocf.Ref(<span style="color:#a31515">&#34;AWS::StackName&#34;</span>)
@@ -2300,7 +2300,7 @@ gocf.Ref(<span style="color:#a31515">&#34;AWS::StackName&#34;</span>)
 </ul>
 <h3 id="what-are-the-_minimum_-iam-privileges-for-sparta-developers">What are the <em>Minimum</em> IAM Privileges for Sparta developers?</h3>
 <p>The absolute minimum set of privileges an account needs is the following <a href="https://awspolicygen.s3.amazonaws.com/policygen.html">IAM Policy</a>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;Version&#34;: <span style="color:#a31515">&#34;2012-10-17&#34;</span>,
   &#34;Statement&#34;: [
     {
@@ -2333,7 +2333,7 @@ gocf.Ref(<span style="color:#a31515">&#34;AWS::StackName&#34;</span>)
 <p>You can view the exact set of AWS API calls by enabling <code>--level debug</code> log verbosity. This log level includes all AWS API calls starting with release <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0200">0.20.0</a>.</p>
 <h3 id="what-are-the-minimum-iam-privileges-to-provision-a-sparta-app-and-api-gateway">What are the minimum IAM privileges to provision a Sparta app and API Gateway</h3>
 <p>Your AWS user must have the following privileges. Ensure to update the <code>YOUR_S3_BUCKETNAME_HERE</code> value with your own S3 bucket name.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
     &#34;Version&#34;: <span style="color:#a31515">&#34;2012-10-17&#34;</span>,
     &#34;Statement&#34;: [
         {
@@ -2392,9 +2392,9 @@ gocf.Ref(<span style="color:#a31515">&#34;AWS::StackName&#34;</span>)
 </ul>
 <h3 id="what-working-directory-should-i-use">What working directory should I use?</h3>
 <p>Your working directory should be the root of your Sparta application. Eg, use</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET
 </code></pre></div><p>rather than</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run ./some/child/path/main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run ./some/child/path/main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET
 </code></pre></div><p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
 <h3 id="how-can-i-make-provision-faster">How can I make <code>provision</code> faster?</h3>
 <p>Starting with Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0112">v0.11.2</a>, you can supply an optional
@@ -2418,7 +2418,7 @@ requested update operation.</p>
 <p>Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">v0.13.0</a> adds support for the provisioning of a
 CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s topology. The dashboard
 is attached to the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Setup the DashboardDecorator lambda hook
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Setup the DashboardDecorator lambda hook
 </span><span style="color:#008000"></span>workflowHooks := &amp;sparta.WorkflowHooks{
 	ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
 }
@@ -2428,7 +2428,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <p>If you plan on using your Lambdas in production, you&rsquo;ll probably want to be made aware of any excessive errors.</p>
 <p>You can easily do this by adding a CloudWatch alarm to your Lambda, in the decorator method.</p>
 <p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> lambdaDecorator(serviceName <span style="color:#2b91af">string</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> lambdaDecorator(serviceName <span style="color:#2b91af">string</span>,
 	lambdaResourceName <span style="color:#2b91af">string</span>,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
@@ -2481,12 +2481,12 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <h3 id="does-sparta-support-versioning--aliasing">Does Sparta support Versioning &amp; Aliasing?</h3>
 <p>Yes.</p>
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
   lambdaResourceName,
   cfTemplate,
   logger)
 </code></pre></div><p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
 </span><span style="color:#008000"></span>aliasResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;Alias&#34;</span>, lambdaResourceName)
 aliasResource := &amp;gocf.LambdaAlias{
     Name:            gocf.String(<span style="color:#a31515">&#34;MostRecentVersion&#34;</span>),
@@ -3914,19 +3914,19 @@ cfTemplate.AddResource(aliasResourceName, aliasResource)
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
-	gocf "github.com/mweagle/go-cloudformation"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	spartaCFResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 	"github.com/rs/zerolog"
 )
 
@@ -53,15 +54,15 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 	lambdaFn.Decorator = func(ctx context.Context,
 		serviceName string,
 		lambdaResourceName string,
-		lambdaResource gocf.LambdaFunction,
+		lambdaResource *goflambda.Function,
 		resourceMetadata map[string]interface{},
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		cfTemplate *gocf.Template,
+		template *gof.Template,
 		logger *zerolog.Logger) (context.Context, error) {
 
 		// Pass CustomResource outputs to the λ function
-		resourceMetadata["CustomResource"] = gocf.GetAtt(cfResName, "CustomResourceResult")
+		resourceMetadata["CustomResource"] = gof.GetAtt(cfResName, "CustomResourceResult")
 		return ctx, nil
 	}
 

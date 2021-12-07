@@ -1,16 +1,19 @@
 package sparta
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/apigateway"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2APIG "github.com/aws/aws-sdk-go-v2/service/apigateway"
+	awsv2APIGTypes "github.com/aws/aws-sdk-go-v2/service/apigateway/types"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofapig "github.com/awslabs/goformation/v5/cloudformation/apigateway"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	"github.com/rs/zerolog"
 )
 
@@ -18,10 +21,10 @@ import (
 type APIGateway interface {
 	LogicalResourceName() string
 	Marshal(serviceName string,
-		session *session.Session,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
-		roleNameMap map[string]*gocf.StringExpr,
-		template *gocf.Template,
+		awsConfig awsv2.Config,
+		lambdaFunctionCode *goflambda.Function_Code,
+		roleNameMap map[string]string,
+		template *gof.Template,
 		noop bool,
 		logger *zerolog.Logger) error
 	Describe(targetNodeName string) (*DescriptionInfo, error)
@@ -58,7 +61,7 @@ func corsMethodResponseParams(api *API) map[string]bool {
 	return responseParams
 }
 
-func corsIntegrationResponseParams(api *API) map[string]interface{} {
+func corsIntegrationResponseParams(api *API) map[string]string {
 
 	var userDefinedHeaders map[string]interface{}
 	if api != nil &&
@@ -68,15 +71,16 @@ func corsIntegrationResponseParams(api *API) map[string]interface{} {
 	if len(userDefinedHeaders) <= 0 {
 		userDefinedHeaders = defaultCORSHeaders
 	}
-	responseParams := make(map[string]interface{})
+	responseParams := make(map[string]string)
 	for eachHeader, eachHeaderValue := range userDefinedHeaders {
 		keyName := fmt.Sprintf("method.response.header.%s", eachHeader)
 		switch headerVal := eachHeaderValue.(type) {
-		case *gocf.StringExpr:
-			responseParams[keyName] = gocf.Join("",
-				gocf.String("'"),
-				headerVal.String(),
-				gocf.String("'"))
+		case string:
+			responseParams[keyName] = gof.Join("", []string{
+				"'",
+				headerVal,
+				"'",
+			})
 		default:
 			responseParams[keyName] = fmt.Sprintf("'%s'", eachHeaderValue)
 		}
@@ -87,9 +91,9 @@ func corsIntegrationResponseParams(api *API) map[string]interface{} {
 // DefaultMethodResponses returns the default set of Method HTTPStatus->Response
 // pass through responses.  The successfulHTTPStatusCode param is the single
 // 2XX response code to use for the method.
-func methodResponses(api *API, userResponses map[int]*Response, corsEnabled bool) *gocf.APIGatewayMethodMethodResponseList {
+func methodResponses(api *API, userResponses map[int]*Response, corsEnabled bool) []gofapig.Method_MethodResponse {
 
-	var responses gocf.APIGatewayMethodMethodResponseList
+	var responses []gofapig.Method_MethodResponse
 	for eachHTTPStatusCode, eachResponse := range userResponses {
 		methodResponseParams := eachResponse.Parameters
 		if corsEnabled {
@@ -98,24 +102,20 @@ func methodResponses(api *API, userResponses map[int]*Response, corsEnabled bool
 			}
 		}
 		// Then transform them all to strings because internet
-		methodResponseStringParams := make(map[string]string, len(methodResponseParams))
-		for eachKey, eachBool := range methodResponseParams {
-			methodResponseStringParams[eachKey] = fmt.Sprintf("%t", eachBool)
+		methodResponse := gofapig.Method_MethodResponse{
+			StatusCode: strconv.Itoa(eachHTTPStatusCode),
 		}
-		methodResponse := gocf.APIGatewayMethodMethodResponse{
-			StatusCode: gocf.String(strconv.Itoa(eachHTTPStatusCode)),
-		}
-		if len(methodResponseStringParams) != 0 {
-			methodResponse.ResponseParameters = methodResponseStringParams
+		if len(methodResponseParams) != 0 {
+			methodResponse.ResponseParameters = methodResponseParams
 		}
 		responses = append(responses, methodResponse)
 	}
-	return &responses
+	return responses
 }
 
-func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
+func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, corsEnabled bool) []gofapig.Method_IntegrationResponse {
 
-	var integrationResponses gocf.APIGatewayMethodIntegrationResponseList
+	var integrationResponses []gofapig.Method_IntegrationResponse
 
 	// We've already populated this entire map in the NewMethod call
 	for eachHTTPStatusCode, eachMethodIntegrationResponse := range userResponses {
@@ -126,10 +126,10 @@ func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, 
 			}
 		}
 
-		integrationResponse := gocf.APIGatewayMethodIntegrationResponse{
+		integrationResponse := gofapig.Method_IntegrationResponse{
 			ResponseTemplates: eachMethodIntegrationResponse.Templates,
-			SelectionPattern:  gocf.String(eachMethodIntegrationResponse.SelectionPattern),
-			StatusCode:        gocf.String(strconv.Itoa(eachHTTPStatusCode)),
+			SelectionPattern:  eachMethodIntegrationResponse.SelectionPattern,
+			StatusCode:        strconv.Itoa(eachHTTPStatusCode),
 		}
 		if len(responseParameters) != 0 {
 			integrationResponse.ResponseParameters = responseParameters
@@ -137,15 +137,15 @@ func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, 
 		integrationResponses = append(integrationResponses, integrationResponse)
 	}
 
-	return &integrationResponses
+	return integrationResponses
 }
 
 func methodRequestTemplates(method *Method) (map[string]string, error) {
 	supportedTemplates := map[string]string{
-		"application/json":                  _escFSMustString(false, "/resources/provision/apigateway/inputmapping_json.vtl"),
-		"text/plain":                        _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
-		"application/x-www-form-urlencoded": _escFSMustString(false, "/resources/provision/apigateway/inputmapping_formencoded.vtl"),
-		"multipart/form-data":               _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
+		"application/json":                  embeddedMustString("resources/provision/apigateway/inputmapping_json.vtl"),
+		"text/plain":                        embeddedMustString("resources/provision/apigateway/inputmapping_default.vtl"),
+		"application/x-www-form-urlencoded": embeddedMustString("resources/provision/apigateway/inputmapping_formencoded.vtl"),
+		"multipart/form-data":               embeddedMustString("resources/provision/apigateway/inputmapping_default.vtl"),
 	}
 	if len(method.SupportedRequestContentTypes) <= 0 {
 		return supportedTemplates, nil
@@ -163,50 +163,51 @@ func methodRequestTemplates(method *Method) (map[string]string, error) {
 	return userDefinedTemplates, nil
 }
 
-func corsOptionsGatewayMethod(api *API, restAPIID gocf.Stringable, resourceID gocf.Stringable) *gocf.APIGatewayMethod {
-	methodResponse := gocf.APIGatewayMethodMethodResponse{
-		StatusCode:         gocf.String("200"),
+func corsOptionsGatewayMethod(api *API, restAPIID string, resourceID string) *gofapig.Method {
+	methodResponse := gofapig.Method_MethodResponse{
+		StatusCode:         "200",
 		ResponseParameters: corsMethodResponseParams(api),
 	}
 
-	integrationResponse := gocf.APIGatewayMethodIntegrationResponse{
+	integrationResponse := gofapig.Method_IntegrationResponse{
 		ResponseTemplates: map[string]string{
 			"application/*": "",
 			"text/*":        "",
 		},
-		StatusCode:         gocf.String("200"),
+		StatusCode:         "200",
 		ResponseParameters: corsIntegrationResponseParams(api),
 	}
 
-	methodIntegrationIntegrationResponseList := gocf.APIGatewayMethodIntegrationResponseList{}
+	methodIntegrationIntegrationResponseList := []gofapig.Method_IntegrationResponse{}
 	methodIntegrationIntegrationResponseList = append(methodIntegrationIntegrationResponseList,
 		integrationResponse)
-	methodResponseList := gocf.APIGatewayMethodMethodResponseList{}
+	methodResponseList := []gofapig.Method_MethodResponse{}
 	methodResponseList = append(methodResponseList, methodResponse)
 
-	corsMethod := &gocf.APIGatewayMethod{
-		HTTPMethod:        gocf.String("OPTIONS"),
-		AuthorizationType: gocf.String("NONE"),
-		RestAPIID:         restAPIID.String(),
-		ResourceID:        resourceID.String(),
-		Integration: &gocf.APIGatewayMethodIntegration{
-			Type: gocf.String("MOCK"),
+	corsMethod := &gofapig.Method{
+		HttpMethod:        "OPTIONS",
+		AuthorizationType: "NONE",
+		RestApiId:         restAPIID,
+		ResourceId:        resourceID,
+		Integration: &gofapig.Method_Integration{
+			Type: "MOCK",
 			RequestTemplates: map[string]string{
 				"application/json": "{\"statusCode\": 200}",
 				"text/plain":       "statusCode: 200",
 			},
-			IntegrationResponses: &methodIntegrationIntegrationResponseList,
+			IntegrationResponses: methodIntegrationIntegrationResponseList,
 		},
-		MethodResponses: &methodResponseList,
+		MethodResponses: methodResponseList,
 	}
 	return corsMethod
 }
 
-func apiStageInfo(apiName string,
+func apiStageInfo(ctx context.Context,
+	apiName string,
 	stageName string,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
-	logger *zerolog.Logger) (*apigateway.Stage, error) {
+	logger *zerolog.Logger) (*awsv2APIGTypes.Stage, error) {
 
 	logger.Info().
 		Str("APIName", apiName).
@@ -217,13 +218,12 @@ func apiStageInfo(apiName string,
 		logger.Info().Msg(noopMessage("API Gateway check"))
 		return nil, nil
 	}
-
-	svc := apigateway.New(session)
-	restApisInput := &apigateway.GetRestApisInput{
-		Limit: aws.Int64(500),
+	svc := awsv2APIG.NewFromConfig(awsConfig)
+	restApisInput := &awsv2APIG.GetRestApisInput{
+		Limit: awsv2.Int32(500),
 	}
 
-	restApisOutput, restApisOutputErr := svc.GetRestApis(restApisInput)
+	restApisOutput, restApisOutputErr := svc.GetRestApis(ctx, restApisInput)
 	if nil != restApisOutputErr {
 		return nil, restApisOutputErr
 	}
@@ -241,22 +241,22 @@ func apiStageInfo(apiName string,
 		return nil, nil
 	}
 	// API exists...does the stage name exist?
-	stagesInput := &apigateway.GetStagesInput{
-		RestApiId: aws.String(restAPIID),
+	stagesInput := &awsv2APIG.GetStagesInput{
+		RestApiId: awsv2.String(restAPIID),
 	}
-	stagesOutput, stagesOutputErr := svc.GetStages(stagesInput)
+	stagesOutput, stagesOutputErr := svc.GetStages(ctx, stagesInput)
 	if nil != stagesOutputErr {
 		return nil, stagesOutputErr
 	}
 
 	// Find this stage name...
-	var matchingStageOutput *apigateway.Stage
+	var matchingStageOutput *awsv2APIGTypes.Stage
 	for _, eachStage := range stagesOutput.Item {
 		if *eachStage.StageName == stageName {
 			if nil != matchingStageOutput {
 				return nil, fmt.Errorf("multiple stage matches for name: %s", stageName)
 			}
-			matchingStageOutput = eachStage
+			matchingStageOutput = &eachStage
 		}
 	}
 	if nil != matchingStageOutput {
@@ -373,9 +373,9 @@ type Response struct {
 // IntegrationResponse proxies the AWS SDK's IntegrationResponse data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway/#IntegrationResponse
 type IntegrationResponse struct {
-	Parameters       map[string]interface{} `json:",omitempty"`
-	SelectionPattern string                 `json:",omitempty"`
-	Templates        map[string]string      `json:",omitempty"`
+	Parameters       map[string]string `json:",omitempty"`
+	SelectionPattern string            `json:",omitempty"`
+	Templates        map[string]string `json:",omitempty"`
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -402,7 +402,7 @@ type Integration struct {
 // Method proxies the AWS SDK's Method data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Method
 type Method struct {
-	authorizationID         gocf.Stringable
+	authorizationID         string
 	httpMethod              string
 	defaultHTTPResponseCode int
 
@@ -483,7 +483,7 @@ type API struct {
 	// CORS options - if non-nil, supersedes CORSEnabled
 	CORSOptions *CORSOptions
 	// Endpoint configuration information
-	EndpointConfiguration *gocf.APIGatewayRestAPIEndpointConfiguration
+	EndpointConfiguration *gofapig.RestApi_EndpointConfiguration
 }
 
 // LogicalResourceName returns the CloudFormation logical
@@ -494,13 +494,14 @@ func (api *API) LogicalResourceName() string {
 
 // RestAPIURL returns the dynamically assigned
 // Rest API URL including the scheme
-func (api *API) RestAPIURL() *gocf.StringExpr {
-	return gocf.Join("",
-		gocf.String("https://"),
-		gocf.Ref(api.LogicalResourceName()),
-		gocf.String(".execute-api."),
-		gocf.Ref("AWS::Region"),
-		gocf.String(".amazonaws.com"))
+func (api *API) RestAPIURL() string {
+	return gof.Join("", []string{
+		"https://",
+		gof.Ref(api.LogicalResourceName()),
+		".execute-api.",
+		gof.Ref("AWS::Region"),
+		".amazonaws.com",
+	})
 }
 
 func (api *API) corsEnabled() bool {
@@ -553,10 +554,10 @@ func (api *API) Describe(targetNodeName string) (*DescriptionInfo, error) {
 
 // Marshal marshals the API data to a CloudFormation compatible representation
 func (api *API) Marshal(serviceName string,
-	session *session.Session,
-	s3CodeResource *gocf.LambdaFunctionCode,
-	roleNameMap map[string]*gocf.StringExpr,
-	template *gocf.Template,
+	awsConfig awsv2.Config,
+	lambdaFunctionCode *goflambda.Function_Code,
+	roleNameMap map[string]string,
+	template *gof.Template,
 	noop bool,
 	logger *zerolog.Logger) error {
 
@@ -566,26 +567,26 @@ func (api *API) Marshal(serviceName string,
 	}
 
 	// Create an API gateway entry
-	apiGatewayRes := &gocf.APIGatewayRestAPI{
-		Description:    gocf.String(api.Description),
-		FailOnWarnings: gocf.Bool(false),
-		Name:           gocf.String(api.name),
+	apiGatewayRes := &gofapig.RestApi{
+		Description:    api.Description,
+		FailOnWarnings: false,
+		Name:           api.name,
 	}
 	if api.CloneFrom != "" {
-		apiGatewayRes.CloneFrom = gocf.String(api.CloneFrom)
+		apiGatewayRes.CloneFrom = api.CloneFrom
 	}
 	if api.Description == "" {
-		apiGatewayRes.Description = gocf.String(fmt.Sprintf("%s RestApi", serviceName))
+		apiGatewayRes.Description = fmt.Sprintf("%s RestApi", serviceName)
 	} else {
-		apiGatewayRes.Description = gocf.String(api.Description)
+		apiGatewayRes.Description = api.Description
 	}
 	apiGatewayResName := api.LogicalResourceName()
 	// Is there an endpoint type?
 	if api.EndpointConfiguration != nil {
 		apiGatewayRes.EndpointConfiguration = api.EndpointConfiguration
 	}
-	template.AddResource(apiGatewayResName, apiGatewayRes)
-	apiGatewayRestAPIID := gocf.Ref(apiGatewayResName)
+	template.Resources[apiGatewayResName] = apiGatewayRes
+	apiGatewayRestAPIID := gof.Ref(apiGatewayResName)
 
 	// List of all the method resources we're creating s.t. the
 	// deployment can DependOn them
@@ -594,36 +595,36 @@ func (api *API) Marshal(serviceName string,
 	for eachResourceMethodKey, eachResourceDef := range api.resources {
 		// First walk all the user resources and create intermediate paths
 		// to repreesent all the resources
-		var parentResource *gocf.StringExpr
+		var parentResource string
 		pathParts := strings.Split(strings.TrimLeft(eachResourceDef.pathPart, "/"), "/")
 		pathAccumulator := []string{"/"}
 		for index, eachPathPart := range pathParts {
 			pathAccumulator = append(pathAccumulator, eachPathPart)
 			resourcePathName := apiGatewayResourceNameForPath(strings.Join(pathAccumulator, "/"))
 			if _, exists := template.Resources[resourcePathName]; !exists {
-				cfResource := &gocf.APIGatewayResource{
-					RestAPIID: apiGatewayRestAPIID.String(),
-					PathPart:  gocf.String(eachPathPart),
+				cfResource := &gofapig.Resource{
+					RestApiId: apiGatewayRestAPIID,
+					PathPart:  eachPathPart,
 				}
 				if index <= 0 {
-					cfResource.ParentID = gocf.GetAtt(apiGatewayResName, "RootResourceId")
+					cfResource.ParentId = gof.GetAtt(apiGatewayResName, "RootResourceId")
 				} else {
-					cfResource.ParentID = parentResource
+					cfResource.ParentId = parentResource
 				}
-				template.AddResource(resourcePathName, cfResource)
+				template.Resources[resourcePathName] = cfResource
 			}
-			parentResource = gocf.Ref(resourcePathName).String()
+			parentResource = gof.Ref(resourcePathName)
 		}
 
 		// Add the lambda permission
 		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm",
 			eachResourceMethodKey)
-		lambdaInvokePermission := &gocf.LambdaPermission{
-			Action:       gocf.String("lambda:InvokeFunction"),
-			FunctionName: gocf.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
-			Principal:    gocf.String(APIGatewayPrincipal),
+		lambdaInvokePermission := &goflambda.Permission{
+			Action:       "lambda:InvokeFunction",
+			FunctionName: gof.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
+			Principal:    APIGatewayPrincipal,
 		}
-		template.AddResource(apiGatewayPermissionResourceName, lambdaInvokePermission)
+		template.Resources[apiGatewayPermissionResourceName] = lambdaInvokePermission
 
 		// BEGIN CORS - OPTIONS verb
 		// CORS is API global, but it's possible that there are multiple different lambda functions
@@ -634,9 +635,9 @@ func (api *API) Marshal(serviceName string,
 				eachResourceDef.pathPart), eachResourceDef.pathPart)
 			_, resourceExists := optionsMethodPathMap[methodResourceName]
 			if !resourceExists {
-				template.AddResource(methodResourceName, corsOptionsGatewayMethod(api,
+				template.Resources[methodResourceName] = corsOptionsGatewayMethod(api,
 					apiGatewayRestAPIID,
-					parentResource))
+					parentResource)
 				apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
 				optionsMethodPathMap[methodResourceName] = true
 			}
@@ -650,36 +651,33 @@ func (api *API) Marshal(serviceName string,
 			if methodRequestTemplatesErr != nil {
 				return methodRequestTemplatesErr
 			}
-			apiGatewayMethod := &gocf.APIGatewayMethod{
-				HTTPMethod: gocf.String(eachMethodName),
-				ResourceID: parentResource.String(),
-				RestAPIID:  apiGatewayRestAPIID.String(),
-				Integration: &gocf.APIGatewayMethodIntegration{
-					IntegrationHTTPMethod: gocf.String("POST"),
-					Type:                  gocf.String("AWS"),
+			apiGatewayMethod := &gofapig.Method{
+				HttpMethod: eachMethodName,
+				ResourceId: parentResource,
+				RestApiId:  apiGatewayRestAPIID,
+				Integration: &gofapig.Method_Integration{
+					IntegrationHttpMethod: "POST",
+					Type:                  "AWS",
 					RequestTemplates:      methodRequestTemplates,
-					URI: gocf.Join("",
-						gocf.String("arn:aws:apigateway:"),
-						gocf.Ref("AWS::Region"),
-						gocf.String(":lambda:path/2015-03-31/functions/"),
-						gocf.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
-						gocf.String("/invocations")),
+					Uri: gof.Join("", []string{
+						"arn:aws:apigateway:",
+						gof.Ref("AWS::Region"),
+						":lambda:path/2015-03-31/functions/",
+						gof.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
+						"/invocations",
+					}),
 				},
 			}
 			// Handle authorization
-			if eachMethodDef.authorizationID != nil {
+			if eachMethodDef.authorizationID != "" {
 				// See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-method.html#cfn-apigateway-method-authorizationtype
-				apiGatewayMethod.AuthorizationType = gocf.String("CUSTOM")
-				apiGatewayMethod.AuthorizerID = eachMethodDef.authorizationID.String()
+				apiGatewayMethod.AuthorizationType = "CUSTOM"
+				apiGatewayMethod.AuthorizerId = eachMethodDef.authorizationID
 			} else {
-				apiGatewayMethod.AuthorizationType = gocf.String("NONE")
+				apiGatewayMethod.AuthorizationType = "NONE"
 			}
 			if len(eachMethodDef.Parameters) != 0 {
-				requestParams := make(map[string]string)
-				for eachKey, eachBool := range eachMethodDef.Parameters {
-					requestParams[eachKey] = fmt.Sprintf("%t", eachBool)
-				}
-				apiGatewayMethod.RequestParameters = requestParams
+				apiGatewayMethod.RequestParameters = eachMethodDef.Parameters
 			}
 
 			// Add the integration response RegExps
@@ -694,8 +692,11 @@ func (api *API) Marshal(serviceName string,
 
 			prefix := fmt.Sprintf("%s%s", eachMethodDef.httpMethod, eachResourceMethodKey)
 			methodResourceName := CloudFormationResourceName(prefix, eachResourceMethodKey, serviceName)
-			res := template.AddResource(methodResourceName, apiGatewayMethod)
-			res.DependsOn = append(res.DependsOn, apiGatewayPermissionResourceName)
+			apiGatewayMethod.AWSCloudFormationDependsOn = []string{
+				apiGatewayPermissionResourceName,
+			}
+			template.Resources[methodResourceName] = apiGatewayMethod
+
 			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources,
 				methodResourceName)
 		}
@@ -704,9 +705,10 @@ func (api *API) Marshal(serviceName string,
 	if nil != api.stage {
 		// Is the stack already deployed?
 		stageName := api.stage.name
-		stageInfo, stageInfoErr := apiStageInfo(api.name,
+		stageInfo, stageInfoErr := apiStageInfo(context.Background(),
+			api.name,
 			stageName,
-			session,
+			awsConfig,
 			noop,
 			logger)
 		if nil != stageInfoErr {
@@ -716,51 +718,57 @@ func (api *API) Marshal(serviceName string,
 			// Use a stable identifier so that we can update the existing deployment
 			apiDeploymentResName := CloudFormationResourceName("APIGatewayDeployment",
 				serviceName)
-			apiDeployment := &gocf.APIGatewayDeployment{
-				Description: gocf.String(api.stage.Description),
-				RestAPIID:   apiGatewayRestAPIID.String(),
-				StageName:   gocf.String(stageName),
-				StageDescription: &gocf.APIGatewayDeploymentStageDescription{
-					Description: gocf.String(api.stage.Description),
+			apiDeployment := &gofapig.Deployment{
+				Description: api.stage.Description,
+				RestApiId:   apiGatewayRestAPIID,
+				StageName:   stageName,
+				StageDescription: &gofapig.Deployment_StageDescription{
+					Description: api.stage.Description,
 					Variables:   api.stage.Variables,
 				},
 			}
 			if api.stage.CacheClusterEnabled {
 				apiDeployment.StageDescription.CacheClusterEnabled =
-					gocf.Bool(api.stage.CacheClusterEnabled)
+					api.stage.CacheClusterEnabled
 			}
 			if api.stage.CacheClusterSize != "" {
 				apiDeployment.StageDescription.CacheClusterSize =
-					gocf.String(api.stage.CacheClusterSize)
+					api.stage.CacheClusterSize
 			}
-			deployment := template.AddResource(apiDeploymentResName, apiDeployment)
-			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
-			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
+			apiDeployment.AWSCloudFormationDependsOn = apiMethodCloudFormationResources
+			apiDeployment.AWSCloudFormationDependsOn = append(apiDeployment.AWSCloudFormationDependsOn,
+				apiGatewayResName)
+
+			template.Resources[apiDeploymentResName] = apiDeployment
+
 		} else {
-			newDeployment := &gocf.APIGatewayDeployment{
-				Description: gocf.String("Deployment"),
-				RestAPIID:   apiGatewayRestAPIID.String(),
+			newDeployment := &gofapig.Deployment{
+				Description: "Deployment",
+				RestApiId:   apiGatewayRestAPIID,
 			}
 			if stageInfo.StageName != nil {
-				newDeployment.StageName = gocf.String(*stageInfo.StageName)
+				newDeployment.StageName = *stageInfo.StageName
 			}
 			// Use an unstable ID s.t. we can actually create a new deployment event.  Not sure how this
 			// is going to work with deletes...
 			deploymentResName := CloudFormationResourceName("APIGatewayDeployment")
-			deployment := template.AddResource(deploymentResName, newDeployment)
-			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
-			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
+
+			newDeployment.AWSCloudFormationDependsOn = apiMethodCloudFormationResources
+			newDeployment.AWSCloudFormationDependsOn = append(newDeployment.AWSCloudFormationDependsOn,
+				apiGatewayResName)
+			template.Resources[deploymentResName] = newDeployment
 		}
 		// Outputs...
-		template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
+		template.Outputs[OutputAPIGatewayURL] = gof.Output{
 			Description: "API Gateway URL",
-			Value: gocf.Join("",
-				gocf.String("https://"),
+			Value: gof.Join("", []string{
+				"https://",
 				apiGatewayRestAPIID,
-				gocf.String(".execute-api."),
-				gocf.Ref("AWS::Region"),
-				gocf.String(".amazonaws.com/"),
-				gocf.String(stageName)),
+				".execute-api.",
+				gof.Ref("AWS::Region"),
+				".amazonaws.com/",
+				stageName,
+			}),
 		}
 	}
 	return nil
@@ -869,14 +877,15 @@ func (resource *Resource) NewMethod(httpMethod string,
 
 	// So we need to return everything here, but that means we'll need some other
 	// place to mutate the response body...where?
-	templateString, templateStringErr := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
+	templateString, templateStringErr := embeddedString("resources/provision/apigateway/outputmapping_json.vtl")
+
 	// Ignore any error when running in AWS, since that version of the binary won't
 	// have the embedded asset. This ideally would be done only when we're exporting
 	// the Method, but that would involve changing caller behavior since
 	// callers currently expect the method.Integration.Responses to be populated
 	// when this constructor returns.
 	if templateStringErr != nil {
-		templateString = _escFSMustString(false, "/resources/awsbinary/README.md")
+		templateString = embeddedMustString("resources/awsbinary/README.md")
 	}
 
 	// TODO - tell the caller that we don't need the list of all HTTP status
@@ -897,7 +906,7 @@ func (resource *Resource) NewMethod(httpMethod string,
 			// mappings for all of the user response codes. It will just work.
 			// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 			method.Integration.Responses[i] = &IntegrationResponse{
-				Parameters: make(map[string]interface{}),
+				Parameters: make(map[string]string),
 				Templates: map[string]string{
 					"application/json": templateString,
 					"text/*":           "",
@@ -920,10 +929,10 @@ func (resource *Resource) NewMethod(httpMethod string,
 // the given Resource. The authorizerID param is a cloudformation.Strinable
 // satisfying value
 func (resource *Resource) NewAuthorizedMethod(httpMethod string,
-	authorizerID gocf.Stringable,
+	authorizerID string,
 	defaultHTTPStatusCode int,
 	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
-	if authorizerID == nil {
+	if authorizerID == "" {
 		return nil, fmt.Errorf("authorizerID must not be `nil` for Authorized Method")
 	}
 	method, methodErr := resource.NewMethod(httpMethod,

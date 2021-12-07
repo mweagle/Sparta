@@ -6,8 +6,7 @@ import (
 	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 )
 
@@ -38,9 +37,9 @@ func (reactorFunc DynamoDBReactorFunc) ReactorName() string {
 
 // NewDynamoDBReactor returns an Kinesis reactor lambda function
 func NewDynamoDBReactor(reactor DynamoDBReactor,
-	dynamoDBARN gocf.Stringable,
+	dynamoDBARN string,
 	startingPosition string,
-	batchSize int64,
+	batchSize int,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 
 	reactorLambda := func(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) {

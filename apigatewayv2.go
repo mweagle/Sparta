@@ -3,8 +3,12 @@ package sparta
 import (
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofapigv2 "github.com/awslabs/goformation/v5/cloudformation/apigatewayv2"
+	gofddb "github.com/awslabs/goformation/v5/cloudformation/dynamodb"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -56,38 +60,38 @@ func (apigd *APIV2GatewayDecorator) logicalResourceName() string {
 // DecorateService handles inserting the DDB Table
 func (apigd *APIV2GatewayDecorator) DecorateService(context map[string]interface{},
 	serviceName string,
-	template *gocf.Template,
+	template *gof.Template,
 	S3Bucket string,
 	S3Key string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) error {
 
 	// Create the table...
 	dynamoDBResourceName := apigd.logicalResourceName()
-	dynamoDBResource := &gocf.DynamoDBTable{
-		AttributeDefinitions: &gocf.DynamoDBTableAttributeDefinitionList{
-			gocf.DynamoDBTableAttributeDefinition{
-				AttributeName: gocf.String(apigd.propertyName),
-				AttributeType: gocf.String("S"),
+	dynamoDBResource := &gofddb.Table{
+		AttributeDefinitions: []gofddb.Table_AttributeDefinition{
+			{
+				AttributeName: apigd.propertyName,
+				AttributeType: "S",
 			},
 		},
-		KeySchema: &gocf.DynamoDBTableKeySchemaList{
-			gocf.DynamoDBTableKeySchema{
-				AttributeName: gocf.String(apigd.propertyName),
-				KeyType:       gocf.String("HASH"),
+		KeySchema: []gofddb.Table_KeySchema{
+			{
+				AttributeName: apigd.propertyName,
+				KeyType:       "HASH",
 			},
 		},
-		SSESpecification: &gocf.DynamoDBTableSSESpecification{
-			SSEEnabled: gocf.Bool(true),
+		SSESpecification: &gofddb.Table_SSESpecification{
+			SSEEnabled: true,
 		},
-		ProvisionedThroughput: &gocf.DynamoDBTableProvisionedThroughput{
-			ReadCapacityUnits:  gocf.Integer(apigd.readCapacity),
-			WriteCapacityUnits: gocf.Integer(apigd.writeCapacity),
+		ProvisionedThroughput: &gofddb.Table_ProvisionedThroughput{
+			ReadCapacityUnits:  apigd.readCapacity,
+			WriteCapacityUnits: apigd.writeCapacity,
 		},
 	}
-	template.AddResource(dynamoDBResourceName, dynamoDBResource)
+	template.Resources[dynamoDBResourceName] = dynamoDBResource
 	return nil
 }
 
@@ -104,15 +108,15 @@ func (apigd *APIV2GatewayDecorator) AnnotateLambdas(lambdaFns []*LambdaAWSInfo) 
 				"dynamodb:UpdateItem",
 				"dynamodb:BatchWriteItem",
 				"dynamodb:BatchGetItem"},
-			Resource: gocf.Join("",
-				gocf.String("arn:"),
-				gocf.Ref("AWS::Partition"),
-				gocf.String(":dynamodb:"),
-				gocf.Ref("AWS::Region"),
-				gocf.String(":"),
-				gocf.Ref("AWS::AccountId"),
-				gocf.String(":table/"),
-				gocf.Ref(apigd.logicalResourceName())),
+			Resource: gof.Join("", []string{
+				"arn:",
+				gof.Ref("AWS::Partition"),
+				":dynamodb:",
+				gof.Ref("AWS::Region"),
+				":",
+				gof.Ref("AWS::AccountId"),
+				":table/",
+				gof.Ref(apigd.logicalResourceName())}),
 		},
 		{
 			Actions: []string{"dynamodb:GetItem",
@@ -123,16 +127,17 @@ func (apigd *APIV2GatewayDecorator) AnnotateLambdas(lambdaFns []*LambdaAWSInfo) 
 				"dynamodb:UpdateItem",
 				"dynamodb:BatchWriteItem",
 				"dynamodb:BatchGetItem"},
-			Resource: gocf.Join("",
-				gocf.String("arn:"),
-				gocf.Ref("AWS::Partition"),
-				gocf.String(":dynamodb:"),
-				gocf.Ref("AWS::Region"),
-				gocf.String(":"),
-				gocf.Ref("AWS::AccountId"),
-				gocf.String(":table/"),
-				gocf.Ref(apigd.logicalResourceName()),
-				gocf.String("/index/*")),
+			Resource: gof.Join("", []string{
+				"arn:",
+				gof.Ref("AWS::Partition"),
+				":dynamodb:",
+				gof.Ref("AWS::Region"),
+				":",
+				gof.Ref("AWS::AccountId"),
+				":table/",
+				gof.Ref(apigd.logicalResourceName()),
+				"/index/*",
+			}),
 		},
 	}
 
@@ -144,9 +149,9 @@ func (apigd *APIV2GatewayDecorator) AnnotateLambdas(lambdaFns []*LambdaAWSInfo) 
 		// Add the env
 		env := eachLambda.Options.Environment
 		if env == nil {
-			env = make(map[string]*gocf.StringExpr)
+			env = make(map[string]string)
 		}
-		env[apigd.envTableKeyName] = gocf.Ref(apigd.logicalResourceName()).String()
+		env[apigd.envTableKeyName] = gof.Ref(apigd.logicalResourceName())
 		eachLambda.Options.Environment = env
 	}
 	return nil
@@ -240,27 +245,27 @@ func (apiv2 *APIV2) Describe(targetNodeName string) (*DescriptionInfo, error) {
 	return descInfo, nil
 }
 
-// Marshal marshals the API V2 Gateway instance to the given template instance
+// Marshal the API V2 Gateway instance to the given template instane
 func (apiv2 *APIV2) Marshal(serviceName string,
-	session *session.Session,
-	s3CodeResource *gocf.LambdaFunctionCode,
-	roleNameMap map[string]*gocf.StringExpr,
-	template *gocf.Template,
+	awsConfig awsv2.Config,
+	lambdaFunctionCode *goflambda.Function_Code,
+	roleNameMap map[string]string,
+	template *gof.Template,
 	noop bool,
 	logger *zerolog.Logger) error {
 
-	apiV2Entry := &gocf.APIGatewayV2API{
-		APIKeySelectionExpression: marshalString(apiv2.APIKeySelectionExpression),
-		Description:               marshalString(apiv2.Description),
-		DisableSchemaValidation:   marshalBool(apiv2.DisableSchemaValidation),
-		Name:                      marshalString(apiv2.name),
-		ProtocolType:              marshalString(string(Websocket)),
-		RouteSelectionExpression:  marshalString(apiv2.routeSelectionExpression),
-		Version:                   marshalString(apiv2.Version),
+	apiV2Entry := &gofapigv2.Api{
+		ApiKeySelectionExpression: apiv2.APIKeySelectionExpression,
+		Description:               apiv2.Description,
+		DisableSchemaValidation:   apiv2.DisableSchemaValidation,
+		Name:                      apiv2.name,
+		ProtocolType:              string(Websocket),
+		RouteSelectionExpression:  apiv2.routeSelectionExpression,
+		Version:                   apiv2.Version,
 	}
 	// Add it
-	apiV2Resource := template.AddResource(apiv2.LogicalResourceName(), apiV2Entry)
-	apiV2Resource.DependsOn = []string{}
+	template.Resources[apiv2.LogicalResourceName()] = apiV2Entry
+
 	allRouteResources := []string{}
 
 	// Alright, setup the route
@@ -269,60 +274,61 @@ func (apiv2 *APIV2) Marshal(serviceName string,
 		allRouteResources = append(allRouteResources, routeResourceName)
 
 		routeIntegrationResourceName := CloudFormationResourceName("RouteIntg", string(eachExpression))
-		routeEntry := &gocf.APIGatewayV2Route{
-			APIID:                            gocf.Ref(apiv2.LogicalResourceName()).String(),
-			APIKeyRequired:                   marshalBool(eachRoute.APIKeyRequired),
-			AuthorizerID:                     marshalStringExpr(eachRoute.AuthorizerID),
-			AuthorizationScopes:              marshalStringList(eachRoute.AuthorizationScopes),
-			AuthorizationType:                marshalString(eachRoute.AuthorizationType),
-			ModelSelectionExpression:         marshalString(eachRoute.ModelSelectionExpression),
-			OperationName:                    marshalString(eachRoute.OperationName),
-			RequestModels:                    marshalInterface(eachRoute.RequestModels),
-			RequestParameters:                marshalInterface(eachRoute.RequestParameters),
-			RouteKey:                         marshalString(string(eachRoute.routeKey)),
-			RouteResponseSelectionExpression: marshalString(eachRoute.RouteResponseSelectionExpression),
-			Target: gocf.Join("/",
-				gocf.String("integrations"),
-				gocf.Ref(routeIntegrationResourceName)),
+		routeEntry := &gofapigv2.Route{
+			ApiId:                            gof.Ref(apiv2.LogicalResourceName()),
+			ApiKeyRequired:                   eachRoute.APIKeyRequired,
+			AuthorizerId:                     eachRoute.AuthorizerID,
+			AuthorizationScopes:              eachRoute.AuthorizationScopes,
+			AuthorizationType:                eachRoute.AuthorizationType,
+			ModelSelectionExpression:         eachRoute.ModelSelectionExpression,
+			OperationName:                    eachRoute.OperationName,
+			RequestModels:                    eachRoute.RequestModels,
+			RequestParameters:                eachRoute.RequestParameters,
+			RouteKey:                         string(eachRoute.routeKey),
+			RouteResponseSelectionExpression: eachRoute.RouteResponseSelectionExpression,
+			Target: gof.Join("/", []string{
+				"integrations",
+				gof.Ref(routeIntegrationResourceName),
+			}),
 		}
 
 		// Add the route resource
-		template.AddResource(routeResourceName, routeEntry)
-		//apiV2Resource.DependsOn = append(apiV2Resource.DependsOn, routeResourceName)
+		template.Resources[routeResourceName] = routeEntry
 
 		// Add the integration
-		routeIntegration := &gocf.APIGatewayV2Integration{
-			APIID:                   gocf.Ref(apiv2.LogicalResourceName()).String(),
-			ConnectionType:          marshalString(eachRoute.Integration.ConnectionType),
-			ContentHandlingStrategy: marshalString(eachRoute.Integration.ContentHandlingStrategy),
-			CredentialsArn:          marshalStringExpr(eachRoute.Integration.CredentialsArn),
-			Description:             marshalString(eachRoute.Integration.Description),
-			IntegrationMethod:       marshalString(eachRoute.Integration.IntegrationMethod),
-			IntegrationType:         marshalString(eachRoute.Integration.IntegrationType),
-			IntegrationURI: gocf.Join("",
-				gocf.String("arn:aws:apigateway:"),
-				gocf.Ref("AWS::Region"),
-				gocf.String(":lambda:path/2015-03-31/functions/"),
-				gocf.GetAtt(eachRoute.lambdaFn.LogicalResourceName(), "Arn"),
-				gocf.String("/invocations")),
-			PassthroughBehavior: marshalString(eachRoute.Integration.PassthroughBehavior),
+		routeIntegration := &gofapigv2.Integration{
+			ApiId:                   gof.Ref(apiv2.LogicalResourceName()),
+			ConnectionType:          eachRoute.Integration.ConnectionType,
+			ContentHandlingStrategy: eachRoute.Integration.ContentHandlingStrategy,
+			CredentialsArn:          eachRoute.Integration.CredentialsArn,
+			Description:             eachRoute.Integration.Description,
+			IntegrationMethod:       eachRoute.Integration.IntegrationMethod,
+			IntegrationType:         eachRoute.Integration.IntegrationType,
+			IntegrationUri: gof.Join("", []string{
+				"arn:aws:apigateway:",
+				gof.Ref("AWS::Region"),
+				":lambda:path/2015-03-31/functions/",
+				gof.GetAtt(eachRoute.lambdaFn.LogicalResourceName(), "Arn"),
+				"/invocations",
+			}),
+			PassthroughBehavior: eachRoute.Integration.PassthroughBehavior,
 			// TODO - auto create this...
-			RequestParameters:           marshalInterface(eachRoute.Integration.RequestParameters),
-			RequestTemplates:            marshalInterface(eachRoute.Integration.RequestTemplates),
-			TemplateSelectionExpression: marshalString(eachRoute.Integration.TemplateSelectionExpression),
-			TimeoutInMillis:             marshalInt(eachRoute.Integration.TimeoutInMillis),
+			RequestParameters:           eachRoute.Integration.RequestParameters,
+			RequestTemplates:            eachRoute.Integration.RequestTemplates,
+			TemplateSelectionExpression: eachRoute.Integration.TemplateSelectionExpression,
+			TimeoutInMillis:             eachRoute.Integration.TimeoutInMillis,
 		}
-		template.AddResource(routeIntegrationResourceName, routeIntegration)
+		template.Resources[routeIntegrationResourceName] = routeIntegration
 
 		// Add the lambda permission
 		apiGatewayPermissionResourceName := CloudFormationResourceName("APIV2GatewayLambdaPerm",
 			string(eachExpression))
-		lambdaInvokePermission := &gocf.LambdaPermission{
-			Action:       gocf.String("lambda:InvokeFunction"),
-			FunctionName: gocf.GetAtt(eachRoute.lambdaFn.LogicalResourceName(), "Arn"),
-			Principal:    gocf.String(APIGatewayPrincipal),
+		lambdaInvokePermission := &goflambda.Permission{
+			Action:       "lambda:InvokeFunction",
+			FunctionName: gof.GetAtt(eachRoute.lambdaFn.LogicalResourceName(), "Arn"),
+			Principal:    APIGatewayPrincipal,
 		}
-		template.AddResource(apiGatewayPermissionResourceName, lambdaInvokePermission)
+		template.Resources[apiGatewayPermissionResourceName] = lambdaInvokePermission
 	}
 
 	// Add the Stage and Deploy...
@@ -331,41 +337,43 @@ func (apiv2 *APIV2) Marshal(serviceName string,
 	deploymentResName := CloudFormationResourceName("APIV2GatewayDeployment")
 
 	// Unstable name to trigger a deployment
-	newDeployment := &gocf.APIGatewayV2Deployment{
-		APIID:       gocf.Ref(apiv2.LogicalResourceName()).String(),
-		Description: marshalString(apiv2.stage.Description),
+	newDeployment := &gofapigv2.Deployment{
+		ApiId:       gof.Ref(apiv2.LogicalResourceName()),
+		Description: apiv2.stage.Description,
 	}
 	// Use an unstable ID s.t. we can actually create a new deployment event.  Not sure how this
 	// is going to work with deletes...
-	deployment := template.AddResource(deploymentResName, newDeployment)
-	deployment.DeletionPolicy = "Retain"
-	deployment.DependsOn = append(deployment.DependsOn, allRouteResources...)
+	newDeployment.AWSCloudFormationDeletionPolicy = "Retain"
+	newDeployment.AWSCloudFormationDependsOn = allRouteResources
+
+	template.Resources[deploymentResName] = newDeployment
 
 	// Add the stage...
-	stageResource := &gocf.APIGatewayV2Stage{
-		APIID:                gocf.Ref(apiv2.LogicalResourceName()).String(),
-		DeploymentID:         gocf.Ref(deploymentResName).String(),
-		StageName:            marshalString(apiv2.stage.name),
+	stageResource := &gofapigv2.Stage{
+		ApiId:                gof.Ref(apiv2.LogicalResourceName()),
+		DeploymentId:         gof.Ref(deploymentResName),
+		StageName:            apiv2.stage.name,
 		AccessLogSettings:    apiv2.stage.AccessLogSettings,
-		ClientCertificateID:  marshalStringExpr(apiv2.stage.ClientCertificateID),
+		ClientCertificateId:  apiv2.stage.ClientCertificateID,
 		DefaultRouteSettings: apiv2.stage.DefaultRouteSettings,
-		Description:          marshalString(apiv2.stage.Description),
-		RouteSettings:        marshalInterface(apiv2.stage.RouteSettings),
-		StageVariables:       marshalInterface(apiv2.stage.StageVariables),
-		//Tags:                 marshalInterface(apiv2.stage.Tags),
+		Description:          apiv2.stage.Description,
+		RouteSettings:        apiv2.stage.RouteSettings,
+		StageVariables:       apiv2.stage.StageVariables,
+		//Tags:                 apiv2.stage.Tags,
 	}
-	template.AddResource(stageResourceName, stageResource)
+	template.Resources[stageResourceName] = stageResource
 
 	// Outputs...
-	template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
+	template.Outputs[OutputAPIGatewayURL] = gof.Output{
 		Description: "API Gateway Websocket URL",
-		Value: gocf.Join("",
-			gocf.String("wss://"),
-			gocf.Ref(apiv2.LogicalResourceName()),
-			gocf.String(".execute-api."),
-			gocf.Ref("AWS::Region"),
-			gocf.String(".amazonaws.com/"),
-			gocf.String(apiv2.stage.name)),
+		Value: gof.Join("", []string{
+			"wss://",
+			gof.Ref(apiv2.LogicalResourceName()),
+			".execute-api.",
+			gof.Ref("AWS::Region"),
+			".amazonaws.com/",
+			apiv2.stage.name,
+		}),
 	}
 	return nil
 }
@@ -391,7 +399,7 @@ type APIV2Route struct {
 	APIKeyRequired                   bool
 	AuthorizationScopes              []string
 	AuthorizationType                string
-	AuthorizerID                     gocf.Stringable
+	AuthorizerID                     string
 	ModelSelectionExpression         string
 	OperationName                    string
 	RequestModels                    interface{}
@@ -403,9 +411,9 @@ type APIV2Route struct {
 
 // APIV2Stage represents the deployment stage
 type APIV2Stage struct {
-	AccessLogSettings    *gocf.APIGatewayV2StageAccessLogSettings
-	ClientCertificateID  gocf.Stringable
-	DefaultRouteSettings *gocf.APIGatewayV2StageRouteSettings
+	AccessLogSettings    *gofapigv2.Stage_AccessLogSettings
+	ClientCertificateID  string
+	DefaultRouteSettings *gofapigv2.Stage_RouteSettings
 	Description          string
 	RouteSettings        interface{}
 	name                 string
@@ -426,7 +434,7 @@ type APIV2Integration struct {
 	//ApiID                       string
 	ConnectionType          string
 	ContentHandlingStrategy string
-	CredentialsArn          gocf.Stringable
+	CredentialsArn          string
 	Description             string
 	IntegrationMethod       string
 	IntegrationType         string
@@ -435,5 +443,5 @@ type APIV2Integration struct {
 	RequestParameters           interface{}
 	RequestTemplates            interface{}
 	TemplateSelectionExpression string
-	TimeoutInMillis             int64
+	TimeoutInMillis             int
 }

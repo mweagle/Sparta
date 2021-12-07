@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	sparta "github.com/mweagle/Sparta"
-	spartaTesting "github.com/mweagle/Sparta/testing"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func testLambdaData(t *testing.T) []*sparta.LambdaAWSInfo {

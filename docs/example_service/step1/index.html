@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Overview :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2240,11 +2240,11 @@ pre {
 </div>
 
 <h2 id="preconditions">Preconditions</h2>
-<p>Sparta uses the <a href="http://aws.amazon.com/sdk-for-go/">AWS SDK for Go</a> to interact with AWS APIs. Before you get started, ensure that you&rsquo;ve properly configured the <a href="https://github.com/aws/aws-sdk-go/wiki/configuring-sdk">SDK credentials</a>.</p>
+<p>Sparta uses the <a href="http://aws.amazon.com/sdk-for-go/">AWS SDK for Go</a> to interact with AWS APIs. Before you get started, ensure that you&rsquo;ve properly configured the <a href="https://github.com/aws/aws-sdk-go-v2/blob/main/config/doc">SDK credentials</a>.</p>
 <p>Note that you must use an AWS region that supports Lambda. Consult the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">Global Infrastructure</a> page for the most up to date release information.</p>
 <h2 id="lambda-definition">Lambda Definition</h2>
 <p>The first place to start is with the lambda function definition.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Standard AWS λ function
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Standard AWS λ function
 </span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(ctx context.Context) (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
   <span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World!&#34;</span>, <span style="color:#00f">nil</span>
 }
@@ -2256,7 +2256,7 @@ pre {
 </ul>
 <h2 id="creation">Creation</h2>
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
   <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
   helloWorldFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>, helloWorld, sparta.IAMRoleDefinition{})
   ...
@@ -2274,7 +2274,7 @@ pre {
 </ul>
 <h2 id="delegation">Delegation</h2>
 <p>The final step is to define a Sparta service under your application&rsquo;s <code>main</code> package and provide the non-empty slice of lambda functions:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 <span style="color:#00f">func</span> main() {
   <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
   helloWorldFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>, helloWorld, sparta.IAMRoleDefinition{})
@@ -2309,13 +2309,13 @@ pre {
 <p>Delegating <code>main()</code> to <code>Sparta.Main()</code> transforms the set of lambda functions into a standalone executable with several command line options. Run <code>go run main.go --help</code> to see the available options.</p>
 <h2 id="putting-it-together">Putting It Together</h2>
 <p>Putting everything together, and including the necessary imports, we have:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// File: main.go
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// File: main.go
 </span><span style="color:#008000"></span><span style="color:#00f">package</span> main
 
 <span style="color:#00f">import</span> (
   <span style="color:#a31515">&#34;context&#34;</span>
 
-  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
+  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3&#34;</span>
 )
 
 <span style="color:#008000">// Standard AWS λ function
@@ -2341,7 +2341,7 @@ pre {
 <li><code>go get ./...</code></li>
 </ul>
 <p>in the directory that you saved <em>main.go</em>. Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command (replacing <code>$S3_BUCKET</code> with an S3 bucket you own):</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.13.0
 INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 03cdb90
@@ -2370,7 +2370,7 @@ INFO[0001] Ensuring CloudFormation stack                 Duration (s)=0
 INFO[0001] Total elapsed time                            Duration (s)=1
 </code></pre><p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 <p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function. Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">INFO[0000] ════════════════════════════════════════════════
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.13.0
 INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 03cdb90
 INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.13.3
@@ -2414,7 +2414,7 @@ INFO[0033] Total elapsed time                            Duration (s)=33
 <p><img src="/images/overview/AWS_Lambda_Execution.png" alt="AWS Lambda Execution"></p>
 <h2 id="cleaning-up">Cleaning Up</h2>
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go delete
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go delete
 
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
@@ -3840,19 +3840,19 @@ deeper into what&rsquo;s going on under the hood as well as how to integrate you
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

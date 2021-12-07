@@ -10,7 +10,7 @@ use the [NewKinesisReactor](http://localhost:6060/pkg/github.com/mweagle/Sparta/
 ```go
 import (
   awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-  spartaArchetype "github.com/mweagle/Sparta/archetype"
+  spartaArchetype "github.com/mweagle/Sparta/v3/archetype"
 )
 // KinesisStream reactor function
 func reactorFunc(ctx context.Context,

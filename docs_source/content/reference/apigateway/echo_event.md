@@ -12,7 +12,7 @@ For reference, the `helloWorld` function is below.
 ```go
 import (
   awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
+  spartaAPIGateway "github.com/mweagle/Sparta/v3/aws/apigateway"
 )
 
 func helloWorld(ctx context.Context,

@@ -1,12 +1,14 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
 	"time"
 
-	gocf "github.com/mweagle/go-cloudformation"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
+
 	"github.com/rs/zerolog"
 )
 
@@ -30,31 +32,40 @@ func mockHelloWorldResourceEvent(t *testing.T) *CloudFormationLambdaEvent {
 }
 
 func TestCreateHelloWorld(t *testing.T) {
-	resHello := gocf.NewResourceByType(HelloWorld)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	resHello, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
 	customResource := resHello.(*HelloWorldResource)
-	customResource.Message = gocf.String("Hello world")
+	customResource.Properties = ToCustomResourceProperties(&HelloWorldResourceRequest{
+		Message: "Hello world",
+	})
 }
 
 func TestCreateHelloWorldNewInstances(t *testing.T) {
-	resHello1 := gocf.NewResourceByType(HelloWorld)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+
+	resHello1, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
 	customResource1 := resHello1.(*HelloWorldResource)
 
-	resHello2 := gocf.NewResourceByType(HelloWorld)
+	resHello2, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
 	customResource2 := resHello2.(*HelloWorldResource)
 
 	if &customResource1 == &customResource2 {
-		t.Errorf("gocf.NewResourceByType failed to make new instances")
+		t.Errorf("CustomResourceForType failed to make new instances")
 	}
 }
 
 func TestExecuteCreateHelloWorld(t *testing.T) {
-	resHello1 := gocf.NewResourceByType(HelloWorld)
-	customResource1 := resHello1.(*HelloWorldResource)
-	customResource1.Message = gocf.String("Create resource here")
-
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
-	awsSession := awsSession(&logger)
-	createOutputs, createError := customResource1.Create(awsSession,
+
+	resHello1, _ := cwCustomProvider.NewCloudFormationCustomResource(HelloWorld, &logger)
+	customResource1 := resHello1.(*HelloWorldResource)
+	customResource1.Properties = ToCustomResourceProperties(&HelloWorldResourceRequest{
+		Message: "Hello world",
+	})
+
+	awsConfig := newAWSConfig(&logger)
+	createOutputs, createError := customResource1.Create(context.Background(),
+		awsConfig,
 		mockHelloWorldResourceEvent(t),
 		&logger)
 	if nil != createError {

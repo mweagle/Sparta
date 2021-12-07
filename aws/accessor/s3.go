@@ -6,27 +6,27 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	sparta "github.com/mweagle/Sparta"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
+
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // S3Accessor to make it a bit easier to work with S3
 // as the backing store
 type S3Accessor struct {
-	testingBucketName    string
-	S3BucketResourceName string
+	testingBucketName        string
+	S3BucketResourceOrArnRef string
 }
 
 // BucketPrivilege returns a privilege that targets the Bucket
 func (svc *S3Accessor) BucketPrivilege(bucketPrivs ...string) sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  bucketPrivs,
-		Resource: spartaCF.S3ArnForBucket(gocf.Ref(svc.S3BucketResourceName)),
+		Resource: svc.S3BucketResourceOrArnRef,
 	}
 }
 
@@ -34,15 +34,18 @@ func (svc *S3Accessor) BucketPrivilege(bucketPrivs ...string) sparta.IAMRolePriv
 func (svc *S3Accessor) KeysPrivilege(keyPrivileges ...string) sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  keyPrivileges,
-		Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(svc.S3BucketResourceName)),
+		Resource: spartaCF.S3AllKeysArnForBucket(svc.S3BucketResourceOrArnRef),
 	}
 }
 
-func (svc *S3Accessor) s3Svc(ctx context.Context) *s3.S3 {
+func (svc *S3Accessor) s3Svc(ctx context.Context) *awsv2S3.Client {
 	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
-	sess := spartaAWS.NewSession(logger)
-	s3Client := s3.New(sess)
-	xrayInit(s3Client.Client)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return nil
+	}
+	xrayInit(&awsConfig)
+	s3Client := awsv2S3.NewFromConfig(awsConfig)
 	return s3Client
 }
 
@@ -54,7 +57,7 @@ func (svc *S3Accessor) s3BucketName() string {
 	if discoveryInfoErr != nil {
 		return ""
 	}
-	s3BucketRes, s3BucketResExists := discover.Resources[svc.S3BucketResourceName]
+	s3BucketRes, s3BucketResExists := discover.Resources[svc.S3BucketResourceOrArnRef]
 	if !s3BucketResExists {
 		return ""
 	}
@@ -63,13 +66,13 @@ func (svc *S3Accessor) s3BucketName() string {
 
 // Delete handles deleting the resource
 func (svc *S3Accessor) Delete(ctx context.Context, keyPath string) error {
-	deleteObjectInput := &s3.DeleteObjectInput{
-		Bucket: aws.String(svc.s3BucketName()),
-		Key:    aws.String(keyPath),
+	deleteObjectInput := &awsv2S3.DeleteObjectInput{
+		Bucket: awsv2.String(svc.s3BucketName()),
+		Key:    awsv2.String(keyPath),
 	}
 	_, deleteResultErr := svc.
 		s3Svc(ctx).
-		DeleteObjectWithContext(ctx, deleteObjectInput)
+		DeleteObject(ctx, deleteObjectInput)
 
 	return deleteResultErr
 }
@@ -78,13 +81,13 @@ func (svc *S3Accessor) Delete(ctx context.Context, keyPath string) error {
 func (svc *S3Accessor) DeleteAll(ctx context.Context) error {
 	// List each one, delete it
 
-	listObjectInput := &s3.ListObjectsInput{
-		Bucket: aws.String(svc.s3BucketName()),
+	listObjectInput := &awsv2S3.ListObjectsInput{
+		Bucket: awsv2.String(svc.s3BucketName()),
 	}
 
 	listObjectResult, listObjectResultErr := svc.
 		s3Svc(ctx).
-		ListObjectsWithContext(ctx, listObjectInput)
+		ListObjects(ctx, listObjectInput)
 
 	if listObjectResultErr != nil {
 		return nil
@@ -112,14 +115,14 @@ func (svc *S3Accessor) Put(ctx context.Context, keyPath string, object interface
 		Msg("Saving S3 object")
 
 	bytesReader := bytes.NewReader(jsonBytes)
-	putObjectInput := &s3.PutObjectInput{
-		Bucket: aws.String(svc.s3BucketName()),
-		Key:    aws.String(keyPath),
+	putObjectInput := &awsv2S3.PutObjectInput{
+		Bucket: awsv2.String(svc.s3BucketName()),
+		Key:    awsv2.String(keyPath),
 		Body:   bytesReader,
 	}
 	putObjectResponse, putObjectRespErr := svc.
 		s3Svc(ctx).
-		PutObjectWithContext(ctx, putObjectInput)
+		PutObject(ctx, putObjectInput)
 
 	logger.Debug().
 		Err(putObjectRespErr).
@@ -134,13 +137,13 @@ func (svc *S3Accessor) Get(ctx context.Context,
 	keyPath string,
 	destObject interface{}) error {
 
-	getObjectInput := &s3.GetObjectInput{
-		Bucket: aws.String(svc.s3BucketName()),
-		Key:    aws.String(keyPath),
+	getObjectInput := &awsv2S3.GetObjectInput{
+		Bucket: awsv2.String(svc.s3BucketName()),
+		Key:    awsv2.String(keyPath),
 	}
 	getObjectResult, getObjectResultErr := svc.
 		s3Svc(ctx).
-		GetObjectWithContext(ctx, getObjectInput)
+		GetObject(ctx, getObjectInput)
 	if getObjectResultErr != nil {
 		return getObjectResultErr
 	}
@@ -155,13 +158,13 @@ func (svc *S3Accessor) Get(ctx context.Context,
 func (svc *S3Accessor) GetAll(ctx context.Context,
 	ctor NewObjectConstructor) ([]interface{}, error) {
 
-	listObjectInput := &s3.ListObjectsInput{
-		Bucket: aws.String(svc.s3BucketName()),
+	listObjectInput := &awsv2S3.ListObjectsInput{
+		Bucket: awsv2.String(svc.s3BucketName()),
 	}
 
 	listObjectResult, listObjectResultErr := svc.
 		s3Svc(ctx).
-		ListObjectsWithContext(ctx, listObjectInput)
+		ListObjects(ctx, listObjectInput)
 
 	if listObjectResultErr != nil {
 		return nil, listObjectResultErr

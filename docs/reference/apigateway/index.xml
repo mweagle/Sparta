@@ -15,7 +15,7 @@
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/v3/aws/apigateway&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&amp;#34;Hello world structured log message&amp;#34;) } // Return a message, together with the incoming input.</description>
     </item>
     
     <item>
@@ -71,7 +71,7 @@ Define the Lambda Function This lambda handler is a bit more complicated than th
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Lambda Definition We&amp;rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
+import ( spartaAPIGateway &amp;#34;github.com/mweagle/Sparta/v3/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/v3/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
     </item>
     
   </channel>

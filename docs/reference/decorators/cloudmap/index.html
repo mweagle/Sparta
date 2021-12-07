@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>CloudMap Service Discovery :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2245,8 +2245,8 @@ pre {
 <p>The <code>CloudMapServiceDecorator</code> leverages the <a href="https://aws.amazon.com/cloud-map/">CloudMap</a> service to support intra- and inter-service resource discovery.</p>
 <h2 id="definition">Definition</h2>
 <p>The first step is to create an instance of the <code>CloudMapServiceDecorator</code> type that can be used to register additional resources.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
-  spartaDecorators <span style="color:#a31515">&#34;github.com/mweagle/Sparta/decorator&#34;</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  spartaDecorators <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/decorator&#34;</span>
 )
 
 <span style="color:#00f">func</span> main() {
@@ -2258,7 +2258,7 @@ pre {
 }
 </code></pre></div><p>The first argument is the <a href="https://docs.aws.amazon.com/cloud-map/latest/dg/working-with-namespaces.html">Cloud Map Namespace ID</a> value to which the service (<em>MyService</em>) will publish.</p>
 <p>The decorator satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a>. The instance should be provided as a <code>WorkflowHooks.ServiceDecorators</code> element to <code>MainEx</code> as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
   <span style="color:#008000">// ...
 </span><span style="color:#008000"></span>  cloudMapDecorator, cloudMapDecoratorErr := spartaDecorators.NewCloudMapServiceDecorator(gocf.String(<span style="color:#a31515">&#34;SpartaServices&#34;</span>),
     gocf.String(<span style="color:#a31515">&#34;SpartaSampleCloudMapService&#34;</span>))
@@ -2282,12 +2282,12 @@ pre {
 <p>The returned <code>CloudMapServiceDecorator</code> instance satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a> interface. When invoked, it updates the content of you CloudFormation template with the resources and permissions as described below. <code>CloudMapServiceDecorator</code> implicitly creates a new <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicediscovery-service.html">AWS::ServiceDiscovery::Service</a> resource to which your resources will be published.</p>
 <h3 id="lambda-functions">Lambda Functions</h3>
 <p>The <code>CloudMapServiceDecorator.PublishLambda</code> function publishes Lambda function information to the <em>(NamespaceID, ServiceID)</em> pair.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
     helloWorld,
     sparta.IAMRoleDefinition{})
 cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscoveryName&#34;</span>, lambdaFn, <span style="color:#00f">nil</span>)
 </code></pre></div><p>The default properties published include the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html">Lambda Outputs</a> and Type information:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;Id&#34;: <span style="color:#a31515">&#34;CloudMapResbe2b7c536074312c-VuIPjfjuFaoc&#34;</span>,
   &#34;Attributes&#34;: {
     &#34;Arn&#34;: <span style="color:#a31515">&#34;arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-123412341234_Hello_World&#34;</span>,
@@ -2299,7 +2299,7 @@ cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscovery
 </code></pre></div><h3 id="other-resources">Other Resources</h3>
 <p>The <code>CloudMapServiceDecorator.PublishResource</code> function publishes arbitrary CloudFormation resource outputs information to the <em>(NamespaceID, ServiceID)</em> pair.</p>
 <p>For instance, to publish SQS information in the context of a standard <code>ServiceDecorator</code></p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> createSQSResourceDecorator(cloudMapDecorator *spartaDecorators.CloudMapServiceDecorator) sparta.ServiceDecoratorHookHandler {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> createSQSResourceDecorator(cloudMapDecorator *spartaDecorators.CloudMapServiceDecorator) sparta.ServiceDecoratorHookHandler {
   <span style="color:#00f">return</span> sparta.ServiceDecoratorHookFunc(<span style="color:#00f">func</span>(context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
     serviceName <span style="color:#2b91af">string</span>,
     template *gocf.Template,
@@ -2319,7 +2319,7 @@ cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscovery
   })
 }
 </code></pre></div><p>The default properties published include the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS Outputs</a> and Type information:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;Id&#34;: <span style="color:#a31515">&#34;CloudMapRes21cf275e8bbbe136-CqWZ27gdLHf8&#34;</span>,
   &#34;Attributes&#34;: {
     &#34;Arn&#34;: <span style="color:#a31515">&#34;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&#34;</span>,
@@ -2338,7 +2338,7 @@ cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscovery
 <li><em>servicediscovery:GetService</em></li>
 </ul>
 <p>For instance:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> main() {
   <span style="color:#008000">// ...
 </span><span style="color:#008000"></span>
   lambdaFn, _ := sparta.NewAWSLambda(<span style="color:#a31515">&#34;Hello World&#34;</span>,
@@ -2354,7 +2354,7 @@ cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscovery
 
 </code></pre></div><h2 id="invoking">Invoking</h2>
 <p>With the resources published and the lambda role properly updated, the last step is to dynamically discover the provisioned resources via CloudMap. Call <code>DiscoverInstancesWithContext</code> with the the set of key-value pairs to use for discovery as below:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 <span style="color:#00f">func</span> helloWorld(ctx context.Context) (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
     <span style="color:#008000">// ...
 </span><span style="color:#008000"></span>
@@ -2373,7 +2373,7 @@ cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscovery
     <span style="color:#008000">// ...
 </span><span style="color:#008000"></span>}
 </code></pre></div><p>Given the previous example of a single lambda function and an SQS-queue provisioning decorator, the <code>DiscoverInstancesWithContext</code> would return the matching instance with data similar to:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;Instances&#34;: [
     {
       &#34;Attributes&#34;: {
@@ -3807,19 +3807,19 @@ cloudMapDecorator.PublishLambda(<span style="color:#a31515">&#34;lambdaDiscovery
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:50-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2246,7 +2246,7 @@ more details:</p>
 <p>The EventBridge lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are two different archetype functions available.
 Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
 To create a scheduled function use a constructor as in:
-import ( spartaArchetype &#34;github.com/mweagle/Sparta/archetype&#34; ) // EventBridge reactor function func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) { logger, _ := ctx.</p>
+import ( spartaArchetype &#34;github.com/mweagle/Sparta/v3/archetype&#34; ) // EventBridge reactor function func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) { logger, _ := ctx.</p>
 					
 				
 			
@@ -2286,7 +2286,7 @@ To create an event subscriber use a constructor as in:
 <p>The CloudWatch Logs Lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are three different archetype functions available.
 Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
 To create a scheduled function use a constructor as in:
-import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/archetype&#34; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</p>
+import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/v3/archetype&#34; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</p>
 					
 				
 			
@@ -2304,7 +2304,7 @@ import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArc
 				
 					
 <p>To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:
-import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/archetype&#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Event&#34;, dynamoEvent). Msg(&#34;DynamoDB Event&#34;) return &#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;, &#34;TRIM_HORIZON&#34;, 10, nil) } </p>
+import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/v3/archetype&#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Event&#34;, dynamoEvent). Msg(&#34;DynamoDB Event&#34;) return &#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;, nil } func main() { // ...  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &#34;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;, &#34;TRIM_HORIZON&#34;, 10, nil) } </p>
 					
 				
 			
@@ -2322,7 +2322,7 @@ import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArc
 				
 					
 <p>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
-import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/archetype&#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Event&#34;, kinesisEvent). Msg(&#34;Kinesis Event&#34;) return &#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;, &#34;TRIM_HORIZON&#34;, 10, nil) } </p>
+import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/v3/archetype&#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Event&#34;, kinesisEvent). Msg(&#34;Kinesis Event&#34;) return &#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;, nil } func main() { // ...  handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &#34;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;, &#34;TRIM_HORIZON&#34;, 10, nil) } </p>
 					
 				
 			
@@ -2340,7 +2340,7 @@ import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArc
 				
 					
 <p>There are two ways to create a Firehose Transform reactor that transforms a KinesisFirehoseEventRecord with a Lambda function:
- NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/archetype&#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Record&#34;, record). Msg(&#34;Kinesis Firehose Event&#34;) responseRecord = &amp;awsEvents.</p>
+ NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function   NewKinesisFirehoseTransformer  Transform using a go text/template declaration    NewKinesisFirehoseLambdaTransformer import ( awsEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/v3/archetype&#34; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Record&#34;, record). Msg(&#34;Kinesis Firehose Event&#34;) responseRecord = &amp;awsEvents.</p>
 					
 				
 			
@@ -2397,7 +2397,7 @@ To subscribe to object events created by objects with a given prefix, use the Ne
 				
 					
 <p>To create a SNS reactor that subscribes via an subscription configuration, use the NewSNSReactor constructor as in:
-import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/archetype&#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Event&#34;, snsEvent). Msg(&#34;SNS Event&#34;) return &#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;, nil) } </p>
+import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArchetype &#34;github.com/mweagle/Sparta/v3/archetype&#34; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger) logger.Info(). Interface(&#34;Event&#34;, snsEvent). Msg(&#34;SNS Event&#34;) return &#34;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&#34;, nil } func main() { // ...  handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &#34;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&#34;, nil) } </p>
 					
 				
 			
@@ -3829,19 +3829,19 @@ import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaArc
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926010"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926010"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926010"></script>
-    <script src="/js/jquery.sticky.js?1610926010"></script>
-    <script src="/js/featherlight.min.js?1610926010"></script>
-    <script src="/js/highlight.pack.js?1610926010"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926010"></script>
-    <script src="/js/learn.js?1610926010"></script>
-    <script src="/js/hugo-learn.js?1610926010"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926010"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

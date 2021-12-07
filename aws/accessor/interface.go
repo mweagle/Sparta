@@ -4,15 +4,15 @@ import (
 	"context"
 	"os"
 
-	"github.com/aws/aws-sdk-go/aws/client"
-	"github.com/aws/aws-xray-sdk-go/xray"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	xrayv2 "github.com/aws/aws-xray-sdk-go/instrumentation/awsv2"
 )
 
 // Conditionally attach XRay if it seems like the right thing to do
-func xrayInit(awsClient *client.Client) {
+func xrayInit(awsConfig *awsv2.Config) {
 	if os.Getenv("AWS_XRAY_DAEMON_ADDRESS") != "" &&
 		os.Getenv("AWS_EXECUTION_ENV") != "" {
-		xray.AWS(awsClient)
+		xrayv2.AWSV2Instrumentor(&awsConfig.APIOptions)
 	}
 }
 

@@ -6,9 +6,11 @@ import (
 	"os"
 	"sync"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/servicediscovery"
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2ServiceDiscovery "github.com/aws/aws-sdk-go-v2/service/servicediscovery"
+	awsv2ServiceDiscoveryTypes "github.com/aws/aws-sdk-go-v2/service/servicediscovery/types"
+
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -25,7 +27,8 @@ func init() {
 	cachedInfo = make(map[string][]*discoveryInfo)
 }
 
-func discoveryInfoFromIDs(namespaceID string,
+func discoveryInfoFromIDs(discoveryContext context.Context,
+	namespaceID string,
 	serviceID string,
 	logger *zerolog.Logger) (*discoveryInfo, error) {
 
@@ -65,17 +68,21 @@ func discoveryInfoFromIDs(namespaceID string,
 	// Issue the queries concurrently
 	var wg sync.WaitGroup
 	wg.Add(2)
-	session := spartaAWS.NewSession(logger)
-	cloudmapSvc := servicediscovery.New(session)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(discoveryContext, logger)
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
+
+	cloudmapSvc := awsv2ServiceDiscovery.NewFromConfig(awsConfig)
 
 	// Go get the namespace info
-	go func(svc *servicediscovery.ServiceDiscovery) {
+	go func(svc *awsv2ServiceDiscovery.Client) {
 		defer wg.Done()
 
-		params := &servicediscovery.GetNamespaceInput{
-			Id: aws.String(namespaceID),
+		params := &awsv2ServiceDiscovery.GetNamespaceInput{
+			Id: awsv2.String(namespaceID),
 		}
-		result, resultErr := cloudmapSvc.GetNamespace(params)
+		result, resultErr := cloudmapSvc.GetNamespace(discoveryContext, params)
 		logger.Debug().
 			Interface("result", result).
 			Str("resultErr", fmt.Sprintf("%v", resultErr)).
@@ -91,13 +98,13 @@ func discoveryInfoFromIDs(namespaceID string,
 	}(cloudmapSvc)
 
 	// Go get the service info
-	go func(svc *servicediscovery.ServiceDiscovery) {
+	go func(svc *awsv2ServiceDiscovery.Client) {
 		defer wg.Done()
 
-		params := &servicediscovery.GetServiceInput{
-			Id: aws.String(serviceID),
+		params := &awsv2ServiceDiscovery.GetServiceInput{
+			Id: awsv2.String(serviceID),
 		}
-		result, resultErr := cloudmapSvc.GetService(params)
+		result, resultErr := cloudmapSvc.GetService(discoveryContext, params)
 
 		logger.Debug().
 			Interface("result", result).
@@ -125,9 +132,9 @@ func discoveryInfoFromIDs(namespaceID string,
 
 // DiscoverInstances returns the HttpInstanceSummary items that match
 // the given attribute map
-func DiscoverInstances(attributes map[string]string,
-	logger *zerolog.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
-	return DiscoverInstancesWithContext(context.Background(), attributes, logger)
+func DiscoverInstances(ctx context.Context, attributes map[string]string,
+	logger *zerolog.Logger) ([]awsv2ServiceDiscoveryTypes.HttpInstanceSummary, error) {
+	return DiscoverInstancesWithContext(ctx, attributes, logger)
 }
 
 // DiscoverInstancesWithContext returns the HttpInstanceSummary items that match
@@ -135,12 +142,15 @@ func DiscoverInstances(attributes map[string]string,
 // application
 func DiscoverInstancesWithContext(ctx context.Context,
 	attributes map[string]string,
-	logger *zerolog.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
+	logger *zerolog.Logger) ([]awsv2ServiceDiscoveryTypes.HttpInstanceSummary, error) {
 
 	// Get the default discovery info and translate that into name/id pairs...
 	namespaceID := os.Getenv(EnvVarCloudMapNamespaceID)
 	serviceID := os.Getenv(EnvVarCloudMapServiceID)
-	discoveryInfo, discoveryInfoErr := discoveryInfoFromIDs(namespaceID, serviceID, logger)
+	discoveryInfo, discoveryInfoErr := discoveryInfoFromIDs(ctx,
+		namespaceID,
+		serviceID,
+		logger)
 
 	logger.Debug().
 		Str("namespaceID", namespaceID).
@@ -164,24 +174,28 @@ func DiscoverInstancesInServiceWithContext(ctx context.Context,
 	namespaceName string,
 	serviceName string,
 	attributes map[string]string,
-	logger *zerolog.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
+	logger *zerolog.Logger) ([]awsv2ServiceDiscoveryTypes.HttpInstanceSummary, error) {
 
 	// Great, lookup the instances...
-	queryParams := make(map[string]*string)
+	queryParams := make(map[string]string)
 	for eachKey, eachValue := range attributes {
-		queryParams[eachKey] = aws.String(eachValue)
+		queryParams[eachKey] = eachValue
 	}
 
-	session := spartaAWS.NewSession(logger)
-	cloudmapSvc := servicediscovery.New(session)
-	lookupParams := &servicediscovery.DiscoverInstancesInput{
-		NamespaceName:   aws.String(namespaceName),
-		ServiceName:     aws.String(serviceName),
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
+	cloudmapSvc := awsv2ServiceDiscovery.NewFromConfig(awsConfig)
+	lookupParams := &awsv2ServiceDiscovery.DiscoverInstancesInput{
+		NamespaceName:   awsv2.String(namespaceName),
+		ServiceName:     awsv2.String(serviceName),
 		QueryParameters: queryParams,
 	}
-	results, resultsErr := cloudmapSvc.DiscoverInstances(lookupParams)
+	results, resultsErr := cloudmapSvc.DiscoverInstances(ctx, lookupParams)
 	if resultsErr != nil {
 		return nil, resultsErr
 	}
+
 	return results.Instances, nil
 }

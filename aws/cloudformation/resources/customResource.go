@@ -9,12 +9,17 @@ import (
 	"os"
 	"strings"
 
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+
+	smithyLogging "github.com/aws/smithy-go/logging"
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+
 	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -30,68 +35,142 @@ const (
 	// @enum CloudFormationOperation
 	UpdateOperation = "Update"
 )
+
 const (
 	// CustomResourceTypePrefix is the known custom resource
 	// type prefix
-	CustomResourceTypePrefix = "Custom::goAWS"
+	CustomResourceTypePrefix = "Custom::Sparta"
 )
 
 var (
 	// HelloWorld is the typename for HelloWorldResource
-	HelloWorld = cloudFormationResourceType("HelloWorldResource")
+	HelloWorld = cloudFormationCustomResourceType("HelloWorldResource")
 	// S3LambdaEventSource is the typename for S3LambdaEventSourceResource
-	S3LambdaEventSource = cloudFormationResourceType("S3EventSource")
+	S3LambdaEventSource = cloudFormationCustomResourceType("S3EventSource")
 	// SNSLambdaEventSource is the typename for SNSLambdaEventSourceResource
-	SNSLambdaEventSource = cloudFormationResourceType("SNSEventSource")
+	SNSLambdaEventSource = cloudFormationCustomResourceType("SNSEventSource")
 	// CodeCommitLambdaEventSource is the type name for CodeCommitEventSourceResource
-	CodeCommitLambdaEventSource = cloudFormationResourceType("CodeCommitEventSource")
+	CodeCommitLambdaEventSource = cloudFormationCustomResourceType("CodeCommitEventSource")
 	// SESLambdaEventSource is the typename for SESLambdaEventSourceResource
-	SESLambdaEventSource = cloudFormationResourceType("SESEventSource")
+	SESLambdaEventSource = cloudFormationCustomResourceType("SESEventSource")
 	// CloudWatchLogsLambdaEventSource is the typename for SESLambdaEventSourceResource
-	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsEventSource")
+	CloudWatchLogsLambdaEventSource = cloudFormationCustomResourceType("CloudWatchLogsEventSource")
 	// ZipToS3Bucket is the typename for ZipToS3Bucket
-	ZipToS3Bucket = cloudFormationResourceType("ZipToS3Bucket")
+	ZipToS3Bucket = cloudFormationCustomResourceType("ZipToS3Bucket")
 	// S3ArtifactPublisher is the typename for publishing an S3Artifact
-	S3ArtifactPublisher = cloudFormationResourceType("S3ArtifactPublisher")
+	S3ArtifactPublisher = cloudFormationCustomResourceType("S3ArtifactPublisher")
 )
 
-func customTypeProvider(resourceType string) gocf.ResourceProperties {
+// CustomResourceRequest is the default type for all
+// requests that support ServiceToken
+type CustomResourceRequest struct {
+	ServiceToken string
+}
+
+func ToCustomResourceProperties(crr interface{}) map[string]interface{} {
+	var props map[string]interface{}
+	jsonData, jsonDataErr := json.Marshal(crr)
+	if jsonDataErr == nil {
+		_ = json.Unmarshal(jsonData, &props)
+	}
+	return props
+}
+
+//  customTypeProvider returns a gof.Resource instance if one has been defined
+func customTypeProvider(resourceType string) gof.Resource {
+	var entry gof.Resource
 	switch resourceType {
 	case HelloWorld:
-		return &HelloWorldResource{}
+		return &HelloWorldResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case S3LambdaEventSource:
-		return &S3LambdaEventSourceResource{}
+		return &S3LambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case CloudWatchLogsLambdaEventSource:
-		return &CloudWatchLogsLambdaEventSourceResource{}
+		return &CloudWatchLogsLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case CodeCommitLambdaEventSource:
-		return &CodeCommitLambdaEventSourceResource{}
+		return &CodeCommitLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case SNSLambdaEventSource:
-		return &SNSLambdaEventSourceResource{}
+		return &SNSLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case SESLambdaEventSource:
-		return &SESLambdaEventSourceResource{}
+		return &SESLambdaEventSourceResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case ZipToS3Bucket:
-		return &ZipToS3BucketResource{}
+		return &ZipToS3BucketResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	case S3ArtifactPublisher:
-		return &S3ArtifactPublisherResource{}
+		return &S3ArtifactPublisherResource{
+			CustomResource: gof.CustomResource{
+				Type: resourceType,
+				Properties: map[string]interface{}{
+					"io.sparta.restype": resourceType,
+				},
+			},
+		}
 	}
-	return nil
+	return entry
 }
 
 func init() {
-	gocf.RegisterCustomResourceProvider(customTypeProvider)
+	cwCustomProvider.RegisterCustomResourceProvider(customTypeProvider)
 }
 
 // CustomResourceCommand defines operations that a CustomResource must implement.
 type CustomResourceCommand interface {
-	Create(session *session.Session,
+	Create(ctx context.Context, awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 
-	Update(session *session.Session,
+	Update(ctx context.Context, awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 
-	Delete(session *session.Session,
+	Delete(ctx context.Context, awsConfig awsv2.Config,
 		event *CloudFormationLambdaEvent,
 		logger *zerolog.Logger) (map[string]interface{}, error)
 }
@@ -103,18 +182,23 @@ type CustomResourcePrivilegedCommand interface {
 	IAMPrivileges() []string
 }
 
-// cloudFormationResourceType a string for the resource name that represents a
+// cloudFormationCustomResourceType a string for the resource name that represents a
 // custom CloudFormation resource typename
-func cloudFormationResourceType(resType string) string {
-	return fmt.Sprintf("%s::%s", CustomResourceTypePrefix, resType)
+func cloudFormationCustomResourceType(resType string) string {
+	// Ref: https://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
+	// Use the AWS::CloudFormation::CustomResource or Custom::MyCustomResourceTypeName
+	return fmt.Sprintf("%s%s", CustomResourceTypePrefix, resType)
 }
 
 type zerologProxy struct {
 	logger *zerolog.Logger
 }
 
-func (proxy *zerologProxy) Log(args ...interface{}) {
-	proxy.logger.Info().Msgf("%v", args)
+// Log is a utility function to comply with the AWS signature
+func (proxy *zerologProxy) Logf(classification smithyLogging.Classification,
+	format string,
+	args ...interface{}) {
+	proxy.logger.Debug().Msg(fmt.Sprintf(format, args...))
 }
 
 // CloudFormationLambdaEvent is the event to a resource
@@ -143,7 +227,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 		status = "SUCCESS"
 	}
 	// Env vars:
-	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+	// https://docs.awsv2.amazon.com/lambda/latest/dg/current-supported-versions.html
 	logGroupName := os.Getenv("AWS_LAMBDA_LOG_GROUP_NAME")
 	logStreamName := os.Getenv("AWS_LAMBDA_LOG_STREAM_NAME")
 	reasonText := ""
@@ -161,7 +245,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	// This value should be an identifier unique to the custom resource vendor,
 	// and can be up to 1 Kb in size. The value must be a non-empty string and
 	// must be identical for all responses for the same resource.
-	// Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes-create.html
+	// Ref: https://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes-create.html
 	physicalResourceID := fmt.Sprintf("LogStreamName: %s", logStreamName)
 	responseData := map[string]interface{}{
 		"Status":             status,
@@ -226,7 +310,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	// Although it seems reasonable to set the Content-Type to "application/json" - don't.
 	// The Content-Type must be an empty string in order for the
 	// AWS Signature checker to pass.
-	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
+	// Ref: http://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
 	req.Header.Set("content-type", "")
 
 	client := &http.Client{}
@@ -254,70 +338,59 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	return nil
 }
 
-// Returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
+// Returns an AWS Config (https://github.com/aws/aws-sdk-go-v2/blob/main/config/doc.go)
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
-func awsSession(logger *zerolog.Logger) *session.Session {
-	awsConfig := &aws.Config{
-		CredentialsChainVerboseErrors: aws.Bool(true),
-	}
+func newAWSConfig(logger *zerolog.Logger) awsv2.Config {
 
+	logger.Debug().
+		Str("Name", awsv2.SDKName).
+		Str("Version", awsv2.SDKVersion).
+		Msg("AWS SDK Info.")
+
+	awsConfig, awsConfigErr := awsv2Config.LoadDefaultConfig(context.Background())
+	if awsConfigErr != nil {
+		panic("WAT")
+	}
 	// Log AWS calls if needed
 	switch logger.GetLevel() {
 	case zerolog.DebugLevel:
-		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
+		awsConfig.ClientLogMode = awsv2.LogRequest | awsv2.LogResponse | awsv2.LogRetries
 	}
 	awsConfig.Logger = &zerologProxy{logger}
-	sess, sessionErr := session.NewSession(awsConfig)
-	if sessionErr != nil {
-		logger.Warn().
-			Err(sessionErr).
-			Msg("Failed to attach AWS Session logger")
-	} else {
-		sess.Handlers.Send.PushFront(func(r *request.Request) {
-			logger.Debug().
-				Str("Service", r.ClientInfo.ServiceName).
-				Str("Operation", r.Operation.Name).
-				Str("Method", r.Operation.HTTPMethod).
-				Str("Path", r.Operation.HTTPPath).
-				Interface("Payload", r.Params).
-				Msg("AWS Request")
-		})
-	}
-	return sess
+	return awsConfig
 }
 
 // CloudFormationLambdaCustomResourceHandler is an adapter
 // function that transforms an implementing CustomResourceCommand
 // into something that that can respond to the lambda custom
 // resource lifecycle
-func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, logger *zerolog.Logger) interface{} {
+func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand,
+	logger *zerolog.Logger) interface{} {
 	return func(ctx context.Context,
 		event CloudFormationLambdaEvent) error {
 		lambdaCtx, lambdaCtxOk := awsLambdaCtx.FromContext(ctx)
 		if !lambdaCtxOk {
 			return errors.Errorf("Failed to access AWS Lambda Context from ctx argument")
 		}
-		customResourceSession := awsSession(logger)
+		customResourceConfig := newAWSConfig(logger)
 		var opResults map[string]interface{}
 		var opErr error
 		executeOperation := false
 		// If we're in cleanup mode, then skip it...
 		// Don't forward to the CustomAction handler iff we're in CLEANUP mode
-		describeStacksInput := &cloudformation.DescribeStacksInput{
-			StackName: aws.String(event.StackID),
+		describeStacksInput := &awsv2CF.DescribeStacksInput{
+			StackName: awsv2.String(event.StackID),
 		}
-		cfSvc := cloudformation.New(customResourceSession)
-		describeStacksOutput, describeStacksOutputErr := cfSvc.DescribeStacks(describeStacksInput)
+		cfSvc := awsv2CF.NewFromConfig(customResourceConfig)
+		describeStacksOutput, describeStacksOutputErr := cfSvc.DescribeStacks(context.Background(), describeStacksInput)
 		if nil != describeStacksOutputErr {
 			opErr = describeStacksOutputErr
+		} else if len(describeStacksOutput.Stacks) <= 0 {
+			opErr = errors.Errorf("DescribeStack failed: %s", event.StackID)
 		} else {
 			stackDesc := describeStacksOutput.Stacks[0]
-			if stackDesc == nil {
-				opErr = errors.Errorf("DescribeStack failed: %s", event.StackID)
-			} else {
-				executeOperation = (*stackDesc.StackStatus != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
-			}
+			executeOperation = (stackDesc.StackStatus != awsv2CFTypes.StackStatusUpdateCompleteCleanupInProgress)
 		}
 
 		logger.Debug().
@@ -329,11 +402,11 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 		if opErr == nil && executeOperation {
 			switch event.RequestType {
 			case CreateOperation:
-				opResults, opErr = command.Create(customResourceSession, &event, logger)
+				opResults, opErr = command.Create(ctx, customResourceConfig, &event, logger)
 			case DeleteOperation:
-				opResults, opErr = command.Delete(customResourceSession, &event, logger)
+				opResults, opErr = command.Delete(ctx, customResourceConfig, &event, logger)
 			case UpdateOperation:
-				opResults, opErr = command.Update(customResourceSession, &event, logger)
+				opResults, opErr = command.Update(ctx, customResourceConfig, &event, logger)
 			}
 		}
 		// Notify CloudFormation of the result
@@ -360,12 +433,13 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 
 // NewCustomResourceLambdaHandler returns a handler for the given
 // type
-func NewCustomResourceLambdaHandler(resourceType string, logger *zerolog.Logger) interface{} {
+func NewCustomResourceLambdaHandler(resourceType string,
+	logger *zerolog.Logger) interface{} {
 
 	// TODO - eliminate this factory stuff and just register
 	// the custom resources as normal lambda handlers...
 	var lambdaCmd CustomResourceCommand
-	cfResource := customTypeProvider(resourceType)
+	cfResource, _ := cwCustomProvider.NewCloudFormationCustomResource(resourceType, logger)
 	if cfResource != nil {
 		cmd, cmdOK := cfResource.(CustomResourceCommand)
 		if cmdOK {

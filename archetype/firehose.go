@@ -16,10 +16,9 @@ import (
 
 	"github.com/Masterminds/sprig"
 	awsEvents "github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	"github.com/mweagle/Sparta/archetype/xformer"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	sparta "github.com/mweagle/Sparta/v3"
+	"github.com/mweagle/Sparta/v3/archetype/xformer"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -120,15 +119,15 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 	}
 
 	// Borrow the resource name creator to get a name for the archive
-	lambdaFn.Options.Environment[envVarKinesisFirehoseTransformName] = gocf.String(archiveEntryName)
-	lambdaFn.Options.Timeout = (timeout.Milliseconds() / 1000)
+	lambdaFn.Options.Environment[envVarKinesisFirehoseTransformName] = archiveEntryName
+	lambdaFn.Options.Timeout = (int)(timeout.Milliseconds() / 1000)
 
 	// Create the decorator that adds the file to the ZIP archive using
 	// the transform name...
 	archiveDecorator := func(ctx context.Context,
 		serviceName string,
 		zipWriter *zip.Writer,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 		fileInfo, fileInfoErr := os.Stat(xformFilePath)
@@ -141,6 +140,7 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		if fileReaderErr != nil {
 			return ctx, errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
 		}
+		/* #nosec */
 		defer func() {
 			closeErr := fileReader.Close()
 

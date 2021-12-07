@@ -7,8 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -22,6 +21,10 @@ var (
 	// that stores the user-supplied or automatically generated BuildID
 	// for this run
 	SpartaTagBuildIDKey = spartaTagName("buildId")
+
+	// SpartaTagBuildVersion is the Sparta version used to provision
+	// the application
+	SpartaTagSpartaVersionKey = spartaTagName("sparta-version")
 
 	// SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
 	// that stores the optional user-supplied golang build tags
@@ -77,14 +80,12 @@ func showOptionalAWSUsageInfo(err error, logger *zerolog.Logger) {
 	if err == nil {
 		return
 	}
-	userAWSErr, userAWSErrOk := err.(awserr.Error)
-	if userAWSErrOk {
-		if strings.Contains(userAWSErr.Error(), "could not find region configuration") {
-			logger.Error().Msg("")
-			logger.Error().Msg("Consider setting env.AWS_REGION, env.AWS_DEFAULT_REGION, or env.AWS_SDK_LOAD_CONFIG to resolve this issue.")
-			logger.Error().Msg("See the documentation at https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html for more information.")
-			logger.Error().Msg("")
-		}
+	var missingRegionErr *awsv2.MissingRegionError
+	if errors.As(err, &missingRegionErr) {
+		logger.Error().Msg("")
+		logger.Error().Msg("Consider setting env.AWS_REGION, env.AWS_DEFAULT_REGION, or env.AWS_SDK_LOAD_CONFIG to resolve this issue.")
+		logger.Error().Msg("See the documentation at https://pkg.go.dev/github.com/aws/aws-sdk-go-v2 for more information.")
+		logger.Error().Msg("")
 	}
 }
 
@@ -233,7 +234,7 @@ func (p *pipeline) Run(ctx context.Context,
 
 type userFunctionRollbackOp struct {
 	serviceName   string
-	awsSession    *session.Session
+	awsConfig     awsv2.Config
 	noop          bool
 	rollbackFuncs []RollbackHookHandler
 }
@@ -246,14 +247,14 @@ func (ufro *userFunctionRollbackOp) Rollback(ctx context.Context, logger *zerolo
 		go func(ctx context.Context,
 			handler RollbackHookHandler,
 			serviceName string,
-			awsSession *session.Session,
+			config awsv2.Config,
 			noop bool,
 			logger *zerolog.Logger) {
 			// Decrement the counter when the goroutine completes.
 			defer wg.Done()
 			_, rollbackErr := handler.Rollback(ctx,
 				serviceName,
-				awsSession,
+				config,
 				noop,
 				logger)
 			if rollbackErr != nil {
@@ -265,7 +266,7 @@ func (ufro *userFunctionRollbackOp) Rollback(ctx context.Context, logger *zerolo
 		}(ctx,
 			eachRollbackHook,
 			ufro.serviceName,
-			ufro.awsSession,
+			ufro.awsConfig,
 			ufro.noop,
 			logger)
 	}
@@ -278,7 +279,7 @@ func (ufro *userFunctionRollbackOp) Invoke(ctx context.Context, logger *zerolog.
 }
 
 func newUserRollbackEnabledPipeline(serviceName string,
-	awsSession *session.Session,
+	config awsv2.Config,
 	rollbackFuncs []RollbackHookHandler,
 	noop bool) *pipeline {
 
@@ -288,7 +289,7 @@ func newUserRollbackEnabledPipeline(serviceName string,
 	rollbackStateUserFunctions := &pipelineStage{}
 	rollbackStateUserFunctions.Append("userRollbackFunctions", &userFunctionRollbackOp{
 		serviceName:   serviceName,
-		awsSession:    awsSession,
+		awsConfig:     config,
 		noop:          noop,
 		rollbackFuncs: rollbackFuncs,
 	})

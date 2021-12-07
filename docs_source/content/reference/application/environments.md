@@ -29,9 +29,9 @@ package environments
 import (
   "fmt"
   "github.com/rs/zerolog"
-  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Name is the default configuration
@@ -58,9 +58,9 @@ package environments
 
 import (
   "github.com/rs/zerolog"
-  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Name is the production configuration
@@ -76,9 +76,9 @@ package environments
 
 import (
   "github.com/rs/zerolog"
-  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go-v2/aws/session"
   gocf "github.com/crewjam/go-cloudformation"
-  sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta/v3"
 )
 
 // Name is the production configuration

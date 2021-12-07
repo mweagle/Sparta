@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"runtime"
 
-	sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 )
 

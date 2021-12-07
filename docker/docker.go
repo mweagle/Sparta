@@ -2,6 +2,7 @@ package docker
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"fmt"
 	"os"
@@ -9,10 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ecr"
-	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/mweagle/Sparta/system"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2ECR "github.com/aws/aws-sdk-go-v2/service/ecr"
+	awsv2STS "github.com/aws/aws-sdk-go-v2/service/sts"
+
+	"github.com/mweagle/Sparta/v3/system"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -155,11 +157,12 @@ func BuildDockerImage(serviceName string,
 }
 
 // PushECRTaggedImage pushes previously tagged image to ECR
-func PushECRTaggedImage(localImageTag string,
-	awsSession *session.Session,
+func PushECRTaggedImage(ctx context.Context,
+	localImageTag string,
+	awsConfig awsv2.Config,
 	logger *zerolog.Logger) error {
 
-	ecrSvc := ecr.New(awsSession)
+	ecrSvc := awsv2ECR.NewFromConfig(awsConfig)
 
 	// Push the image - if that fails attempt to reauthorize with the docker
 	// client and try again
@@ -170,8 +173,8 @@ func PushECRTaggedImage(localImageTag string,
 		logger.Info().
 			Err(pushError).
 			Msg("ECR push failed - reauthorizing")
-		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(
-			&ecr.GetAuthorizationTokenInput{},
+		ecrAuthTokenResult, ecrAuthTokenResultErr := ecrSvc.GetAuthorizationToken(ctx,
+			&awsv2ECR.GetAuthorizationTokenInput{},
 		)
 		if ecrAuthTokenResultErr != nil {
 			pushError = ecrAuthTokenResultErr
@@ -215,16 +218,17 @@ func PushECRTaggedImage(localImageTag string,
 }
 
 // PushDockerImageToECR pushes a local Docker image to an ECR repository
-func PushDockerImageToECR(localImageTag string,
+func PushDockerImageToECR(ctx context.Context,
+	localImageTag string,
 	ecrRepoName string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	logger *zerolog.Logger) (string, error) {
 
-	stsSvc := sts.New(awsSession)
+	stsSvc := awsv2STS.NewFromConfig(awsConfig)
 
 	// 1. Get the caller identity s.t. we can get the ECR URL which includes the
 	// account name
-	stsIdentityOutput, stsIdentityErr := stsSvc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	stsIdentityOutput, stsIdentityErr := stsSvc.GetCallerIdentity(ctx, &awsv2STS.GetCallerIdentityInput{})
 	if stsIdentityErr != nil {
 		return "", errors.Wrapf(stsIdentityErr, "Attempting to get AWS caller identity")
 	}
@@ -233,7 +237,7 @@ func PushDockerImageToECR(localImageTag string,
 	localImageTagParts := strings.Split(localImageTag, ":")
 	ecrTagValue := fmt.Sprintf("%s.dkr.ecr.%s.amazonaws.com/%s:%s",
 		*stsIdentityOutput.Account,
-		*awsSession.Config.Region,
+		awsConfig.Region,
 		ecrRepoName,
 		localImageTagParts[len(localImageTagParts)-1])
 
@@ -293,6 +297,6 @@ func PushDockerImageToECR(localImageTag string,
 			pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
 		}
 	*/
-	pushErr := PushECRTaggedImage(ecrTagValue, awsSession, logger)
+	pushErr := PushECRTaggedImage(ctx, ecrTagValue, awsConfig, logger)
 	return ecrTagValue, pushErr
 }

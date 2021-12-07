@@ -1,80 +1,82 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/sns"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2SNS "github.com/aws/aws-sdk-go-v2/service/sns"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // SNSLambdaEventSourceResourceRequest defines the request properties to configure
 // SNS
 type SNSLambdaEventSourceResourceRequest struct {
-	LambdaTargetArn *gocf.StringExpr
-	SNSTopicArn     *gocf.StringExpr
+	CustomResourceRequest
+	LambdaTargetArn string
+	SNSTopicArn     string
 }
 
 // SNSLambdaEventSourceResource is a simple POC showing how to create custom resources
 type SNSLambdaEventSourceResource struct {
-	gocf.CloudFormationCustomResource
-	SNSLambdaEventSourceResourceRequest
+	gof.CustomResource
 }
 
 func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bool,
-	session *session.Session,
+	awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	request := SNSLambdaEventSourceResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &request)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
 
 	// Get the current subscriptions...
-	snsSvc := sns.New(session)
-	snsInput := &sns.ListSubscriptionsByTopicInput{
-		TopicArn: aws.String(command.SNSTopicArn.Literal),
+	snsSvc := awsv2SNS.NewFromConfig(awsConfig)
+	snsInput := &awsv2SNS.ListSubscriptionsByTopicInput{
+		TopicArn: awsv2.String(request.SNSTopicArn),
 	}
-	listSubscriptions, listSubscriptionsErr := snsSvc.ListSubscriptionsByTopic(snsInput)
+	listSubscriptions, listSubscriptionsErr := snsSvc.ListSubscriptionsByTopic(context.Background(), snsInput)
 	if listSubscriptionsErr != nil {
 		return nil, listSubscriptionsErr
 	}
 	var lambdaSubscriptionArn string
 	for _, eachSubscription := range listSubscriptions.Subscriptions {
 		if *eachSubscription.Protocol == "lambda" &&
-			*eachSubscription.Endpoint == command.LambdaTargetArn.Literal {
+			*eachSubscription.Endpoint == request.LambdaTargetArn {
 			if lambdaSubscriptionArn != "" {
 				return nil, fmt.Errorf("multiple SNS %s registrations found for lambda: %s",
 					*snsInput.TopicArn,
-					command.LambdaTargetArn.Literal)
+					request.LambdaTargetArn)
 			}
 			lambdaSubscriptionArn = *eachSubscription.SubscriptionArn
 		}
 	}
 	// Just log it...
 	logger.Info().
-		Interface("SNSTopicArn", command.SNSTopicArn).
-		Interface("LambdaArn", command.LambdaTargetArn).
+		Interface("SNSTopicArn", request.SNSTopicArn).
+		Interface("LambdaArn", request.LambdaTargetArn).
 		Interface("ExistingSubscriptionArn", lambdaSubscriptionArn).
 		Msg("Current SNS subscription status")
 
 	var opErr error
 	if isTargetActive && lambdaSubscriptionArn == "" {
-		subscribeInput := &sns.SubscribeInput{
-			Protocol: aws.String("lambda"),
-			TopicArn: aws.String(command.SNSTopicArn.Literal),
-			Endpoint: aws.String(command.LambdaTargetArn.Literal),
+		subscribeInput := &awsv2SNS.SubscribeInput{
+			Protocol: awsv2.String("lambda"),
+			TopicArn: awsv2.String(request.SNSTopicArn),
+			Endpoint: awsv2.String(request.LambdaTargetArn),
 		}
-		_, opErr = snsSvc.Subscribe(subscribeInput)
+		_, opErr = snsSvc.Subscribe(context.Background(), subscribeInput)
 	} else if !isTargetActive && lambdaSubscriptionArn != "" {
-		unsubscribeInput := &sns.UnsubscribeInput{
-			SubscriptionArn: aws.String(lambdaSubscriptionArn),
+		unsubscribeInput := &awsv2SNS.UnsubscribeInput{
+			SubscriptionArn: awsv2.String(lambdaSubscriptionArn),
 		}
-		_, opErr = snsSvc.Unsubscribe(unsubscribeInput)
+		_, opErr = snsSvc.Unsubscribe(context.Background(), unsubscribeInput)
 	} else {
 		// Just log it...
 		logger.Info().
@@ -95,22 +97,22 @@ func (command *SNSLambdaEventSourceResource) IAMPrivileges() []string {
 }
 
 // Create implements the custom resource create operation
-func (command SNSLambdaEventSourceResource) Create(awsSession *session.Session,
+func (command SNSLambdaEventSourceResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsSession, event, logger)
+	return command.updateRegistration(true, awsConfig, event, logger)
 }
 
 // Update implements the custom resource update operation
-func (command SNSLambdaEventSourceResource) Update(awsSession *session.Session,
+func (command SNSLambdaEventSourceResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(true, awsSession, event, logger)
+	return command.updateRegistration(true, awsConfig, event, logger)
 }
 
 // Delete implements the custom resource delete operation
-func (command SNSLambdaEventSourceResource) Delete(awsSession *session.Session,
+func (command SNSLambdaEventSourceResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.updateRegistration(false, awsSession, event, logger)
+	return command.updateRegistration(false, awsConfig, event, logger)
 }

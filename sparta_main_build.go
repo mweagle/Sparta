@@ -1,8 +1,10 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -156,7 +158,8 @@ func MainEx(serviceName string,
 			if templateFileErr != nil {
 				return templateFileErr
 			}
-			buildErr := Build(OptionsGlobal.Noop,
+			buildErr := Build(context.Background(),
+				OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
@@ -212,8 +215,8 @@ func MainEx(serviceName string,
 				return templateFileErr
 			}
 
-			// TODO: Build, then Provision
-			buildErr := Build(OptionsGlobal.Noop,
+			buildErr := Build(context.Background(),
+				OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
@@ -229,6 +232,7 @@ func MainEx(serviceName string,
 				workflowHooks,
 				OptionsGlobal.Logger)
 
+			/* #nosec */
 			defer func() {
 				closeErr := templateFile.Close()
 				if closeErr != nil {
@@ -267,7 +271,7 @@ func MainEx(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// Delete
 	CommandLineOptions.Delete.RunE = func(cmd *cobra.Command, args []string) error {
-		return Delete(serviceName, OptionsGlobal.Logger)
+		return Delete(context.Background(), serviceName, OptionsGlobal.Logger)
 	}
 
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Delete)
@@ -298,6 +302,7 @@ func MainEx(serviceName string,
 			if fileWriterErr != nil {
 				return fileWriterErr
 			}
+			/* #nosec */
 			defer func() {
 				closeErr := fileWriter.Close()
 				if closeErr != nil {
@@ -336,7 +341,8 @@ func MainEx(serviceName string,
 				return validateErr
 			}
 
-			return ExploreWithInputFilter(serviceName,
+			return ExploreWithInputFilter(context.Background(),
+				serviceName,
 				serviceDescription,
 				lambdaAWSInfos,
 				api,
@@ -358,7 +364,8 @@ func MainEx(serviceName string,
 			if nil != validateErr {
 				return validateErr
 			}
-			return Profile(serviceName,
+			return Profile(context.Background(),
+				serviceName,
 				serviceDescription,
 				optionsProfile.S3Bucket,
 				optionsProfile.Port,
@@ -375,7 +382,8 @@ func MainEx(serviceName string,
 			if nil != validateErr {
 				return validateErr
 			}
-			return Status(serviceName,
+			return Status(context.Background(),
+				serviceName,
 				serviceDescription,
 				optionsStatus.Redact,
 				OptionsGlobal.Logger)

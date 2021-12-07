@@ -8,10 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/lambda"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
 	"github.com/jmespath/go-jmespath"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -24,33 +26,33 @@ var cache *functionCache
 func init() {
 	// Init the function cache
 	cache = &functionCache{
-		perStackFunctions: make(map[string][]*lambda.GetFunctionOutput),
-		freeFunctions:     make(map[string]*lambda.GetFunctionOutput),
+		perStackFunctions: make(map[string][]*awsv2Lambda.GetFunctionOutput),
+		freeFunctions:     make(map[string]*awsv2Lambda.GetFunctionOutput),
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type functionCache struct {
-	perStackFunctions map[string][]*lambda.GetFunctionOutput
-	freeFunctions     map[string]*lambda.GetFunctionOutput
+	perStackFunctions map[string][]*awsv2Lambda.GetFunctionOutput
+	freeFunctions     map[string]*awsv2Lambda.GetFunctionOutput
 	mu                sync.RWMutex
 }
 
-func (fc *functionCache) getFunction(t CloudTest, functionName string) *lambda.GetFunctionOutput {
+func (fc *functionCache) getFunction(t CloudTest, functionName string) *awsv2Lambda.GetFunctionOutput {
 	fc.mu.Lock()
 	defer fc.mu.Unlock()
 	output, outputExists := fc.freeFunctions[functionName]
 	if !outputExists {
 		// Look it up...
 		t.Logf("Looking up function: %s", functionName)
-		lambdaSvc := lambda.New(t.Session())
-		getFunctionInput := &lambda.GetFunctionInput{
-			FunctionName: aws.String(functionName),
+		lambdaSvc := awsv2Lambda.NewFromConfig(t.Config())
+		getFunctionInput := &awsv2Lambda.GetFunctionInput{
+			FunctionName: awsv2.String(functionName),
 		}
-		lookupResult, lookupResultErr := lambdaSvc.GetFunction(getFunctionInput)
+		lookupResult, lookupResultErr := lambdaSvc.GetFunction(context.Background(), getFunctionInput)
 		if lookupResultErr != nil {
-			lookupResult = &lambda.GetFunctionOutput{}
+			lookupResult = &awsv2Lambda.GetFunctionOutput{}
 		}
 		fc.freeFunctions[functionName] = lookupResult
 		output = lookupResult
@@ -68,7 +70,7 @@ func (fc *functionCache) getFunction(t CloudTest, functionName string) *lambda.G
 
 func (fc *functionCache) getStackFunction(t CloudTest,
 	stackName string,
-	jmesSelector string) *lambda.GetFunctionOutput {
+	jmesSelector string) *awsv2Lambda.GetFunctionOutput {
 
 	fc.mu.Lock()
 	defer fc.mu.Unlock()
@@ -79,37 +81,38 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 		t.Logf("Looking up functions for Stack: %s", stackName)
 
 		// Store an empty map..., we'll overwrite this later if things go well...
-		fc.perStackFunctions[stackName] = []*lambda.GetFunctionOutput{}
+		fc.perStackFunctions[stackName] = []*awsv2Lambda.GetFunctionOutput{}
 
 		// Load them all
 		// Get all the stack resources, then for each LambdaFunction
 		// get the GetFunctionOutput information. For each one, apply the
 		// jmesSelector and if it returns an ARN, we're done.
-		cloudFormationSvc := cloudformation.New(t.Session())
-		params := &cloudformation.ListStackResourcesInput{
-			StackName: aws.String(stackName),
+		cloudFormationSvc := awsv2CF.NewFromConfig(t.Config())
+		params := &awsv2CF.ListStackResourcesInput{
+			StackName: awsv2.String(stackName),
 		}
-		allLambdaFunctionSummaries := []*cloudformation.StackResourceSummary{}
-		listErr := cloudFormationSvc.ListStackResourcesPages(params,
-			func(page *cloudformation.ListStackResourcesOutput, lastPage bool) bool {
-				for _, eachSummary := range page.StackResourceSummaries {
-					if *eachSummary.ResourceType == "AWS::Lambda::Function" {
-						allLambdaFunctionSummaries = append(allLambdaFunctionSummaries, eachSummary)
-					}
-				}
-				return true
-			})
-		if listErr != nil {
+		allLambdaFunctionSummaries := []awsv2CFTypes.StackResourceSummary{}
+
+		listStackResources, listStackResourcesErr := cloudFormationSvc.ListStackResources(context.Background(), params)
+
+		if listStackResourcesErr != nil {
 			return nil
 		}
+		lambdaResource := &goflambda.Function{}
+		for _, eachSummary := range listStackResources.StackResourceSummaries {
+			if *eachSummary.ResourceType == lambdaResource.AWSCloudFormationType() {
+				allLambdaFunctionSummaries = append(allLambdaFunctionSummaries, eachSummary)
+			}
+		}
+
 		// Great, now for each one, let's get the function info
-		lambdaSvc := lambda.New(t.Session())
-		functionOutput := []*lambda.GetFunctionOutput{}
+		lambdaSvc := awsv2Lambda.NewFromConfig(t.Config())
+		functionOutput := []*awsv2Lambda.GetFunctionOutput{}
 		for _, eachSummary := range allLambdaFunctionSummaries {
-			getFunctionInput := &lambda.GetFunctionInput{
+			getFunctionInput := &awsv2Lambda.GetFunctionInput{
 				FunctionName: eachSummary.PhysicalResourceId,
 			}
-			getFunctionOutput, getFunctionOutputErr := lambdaSvc.GetFunction(getFunctionInput)
+			getFunctionOutput, getFunctionOutputErr := lambdaSvc.GetFunction(context.Background(), getFunctionInput)
 			if getFunctionOutputErr != nil {
 				t.Errorf("Failed to get Function info for: %s", *eachSummary.PhysicalResourceId)
 				return nil
@@ -140,7 +143,7 @@ func (fc *functionCache) getStackFunction(t CloudTest,
 // IsJMESMatch is a function that accepts a GetFunctionOutput and a
 // JMES selector expression. The return value is (isMatch, error). It's exposed
 // as a package public to allow for callers to write their own providers
-func IsJMESMatch(jmesSelector string, output *lambda.GetFunctionOutput) (bool, error) {
+func IsJMESMatch(jmesSelector string, output *awsv2Lambda.GetFunctionOutput) (bool, error) {
 	jsonData, jsonDataErr := json.MarshalIndent(output, "", "  ")
 	if jsonDataErr != nil {
 		return false, nil
@@ -166,20 +169,20 @@ func IsJMESMatch(jmesSelector string, output *lambda.GetFunctionOutput) (bool, e
 // CloudTest is the interface passed to testing instances
 type CloudTest interface {
 	testing.TB
-	Session() *session.Session
+	Config() awsv2.Config
 	ZeroLog() *zerolog.Logger
 	Context() context.Context
 }
 
 type cloudTest struct {
 	*testing.T
-	awsSession *session.Session
-	logger     *zerolog.Logger
-	ctx        context.Context
+	awsConfig awsv2.Config
+	logger    *zerolog.Logger
+	ctx       context.Context
 }
 
-func (ct *cloudTest) Session() *session.Session {
-	return ct.awsSession
+func (ct *cloudTest) Config() awsv2.Config {
+	return ct.awsConfig
 }
 
 func (ct *cloudTest) ZeroLog() *zerolog.Logger {
@@ -192,20 +195,20 @@ func (ct *cloudTest) Context() context.Context {
 // Trigger is the interface that represents a struct that can trigger
 // an event
 type Trigger interface {
-	Send(CloudTest, *lambda.GetFunctionOutput) (interface{}, error)
-	Cleanup(CloudTest, *lambda.GetFunctionOutput)
+	Send(CloudTest, *awsv2Lambda.GetFunctionOutput) (interface{}, error)
+	Cleanup(CloudTest, *awsv2Lambda.GetFunctionOutput)
 }
 
-// LambdaSelector is the interface that provides the lambda.GetFunctionOutput
+// LambdaSelector is the interface that provides the awsv2Lambda.GetFunctionOutput
 // that will be used for the test
 type LambdaSelector interface {
-	Select(CloudTest) (*lambda.GetFunctionOutput, error)
+	Select(CloudTest) (*awsv2Lambda.GetFunctionOutput, error)
 }
 
 // CloudEvaluator is the interface used to represent a predicate applied
 // to a function output
 type CloudEvaluator interface {
-	Evaluate(CloudTest, *lambda.GetFunctionOutput) error
+	Evaluate(CloudTest, *awsv2Lambda.GetFunctionOutput) error
 }
 
 // Test is the initial type used to build up a Lambda integration test
@@ -279,9 +282,9 @@ func (cts *TestScenario) Run(t *testing.T) {
 	errContext, cancelFunc := context.WithDeadline(context.Background(), deadline)
 	defer cancelFunc()
 
-	awsSession, awsSessionErr := session.NewSession()
-	if awsSessionErr != nil {
-		t.Fatalf("Failed to create new AWS Session. Error: %s", awsSessionErr.Error())
+	awsConfig, awsConfigErr := awsv2Config.LoadDefaultConfig(context.Background())
+	if awsConfigErr != nil {
+		t.Fatalf("Failed to create new AWS Session. Error: %s", awsConfigErr.Error())
 	}
 	zerologger := zerolog.New(os.Stdout).
 		With().
@@ -290,7 +293,7 @@ func (cts *TestScenario) Run(t *testing.T) {
 		Level(zerolog.ErrorLevel)
 	ct := &cloudTest{
 		t,
-		awsSession,
+		awsConfig,
 		&zerologger,
 		errContext,
 	}
@@ -308,9 +311,11 @@ func (cts *TestScenario) Run(t *testing.T) {
 	errGroup, _ := errgroup.WithContext(errContext)
 
 	for _, eachEvaluator := range cts.evaluators {
-		errGroup.Go(func() error {
-			return eachEvaluator.Evaluate(ct, functionOutput)
-		})
+		curEvaluator := eachEvaluator
+		errGroup.Go(
+			func() error {
+				return curEvaluator.Evaluate(ct, functionOutput)
+			})
 	}
 
 	// Finally, call the trigger, so that we can trigger everything...

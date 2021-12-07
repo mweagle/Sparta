@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	gofCloudFront "github.com/awslabs/goformation/v5/cloudformation/cloudfront"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	gofRoute53 "github.com/awslabs/goformation/v5/cloudformation/route53"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -19,13 +22,13 @@ import (
 func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 	subdomain string,
 	domainName string,
-	acmCertificateARN gocf.Stringable) sparta.ServiceDecoratorHookHandler {
+	acmCertificateARN string) sparta.ServiceDecoratorHookHandler {
 
-	var cert *gocf.CloudFrontDistributionViewerCertificate
-	if acmCertificateARN != nil {
-		cert = &gocf.CloudFrontDistributionViewerCertificate{
-			AcmCertificateArn: acmCertificateARN.String(),
-			SslSupportMethod:  gocf.String("vip"),
+	var cert *gofCloudFront.Distribution_ViewerCertificate
+	if acmCertificateARN != "" {
+		cert = &gofCloudFront.Distribution_ViewerCertificate{
+			AcmCertificateArn: acmCertificateARN,
+			SslSupportMethod:  "vip",
 		}
 	}
 	return CloudFrontSiteDistributionDecoratorWithCert(s3Site,
@@ -43,15 +46,15 @@ func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 	subdomain string,
 	domainName string,
-	cert *gocf.CloudFrontDistributionViewerCertificate) sparta.ServiceDecoratorHookHandler {
+	cert *gofCloudFront.Distribution_ViewerCertificate) sparta.ServiceDecoratorHookHandler {
 
 	// Setup the CF distro
 	distroDecorator := func(ctx context.Context,
 		serviceName string,
-		template *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		template *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 
@@ -62,12 +65,12 @@ func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 		}
 
 		// If there isn't a domain name, then it's an issue...
-		if s3Site.BucketName == nil {
+		if s3Site.BucketName == "" {
 			return ctx, errors.Errorf("CloudFrontDistribution requires an s3Site.BucketName value in the form of a DNS entry")
 		}
-		if s3Site.BucketName.Literal != "" && s3Site.BucketName.Literal != bucketName {
+		if s3Site.BucketName != "" && s3Site.BucketName != bucketName {
 			return ctx, errors.Errorf("Mismatch between S3Site.BucketName Literal (%s) and CloudFront DNS entry (%s)",
-				s3Site.BucketName.Literal,
+				s3Site.BucketName,
 				bucketName)
 		}
 
@@ -78,55 +81,55 @@ func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
 
 		// Use the HostedZoneName to create the record
 		hostedZoneName := fmt.Sprintf("%s.", domainName)
-		dnsRecordResource := &gocf.Route53RecordSet{
+		dnsRecordResource := &gofRoute53.RecordSet{
 			// // Zone for the mweagle.io
-			HostedZoneName: gocf.String(hostedZoneName),
-			Name:           gocf.String(bucketName),
-			Type:           gocf.String("A"),
-			AliasTarget: &gocf.Route53RecordSetAliasTarget{
+			HostedZoneName: hostedZoneName,
+			Name:           bucketName,
+			Type:           "A",
+			AliasTarget: &gofRoute53.RecordSet_AliasTarget{
 				// This HostedZoneID value is required...
-				HostedZoneID: gocf.String("Z2FDTNDATAQYW2"),
-				DNSName:      gocf.GetAtt(cloudFrontDistroResourceName, "DomainName"),
+				HostedZoneId: "Z2FDTNDATAQYW2",
+				DNSName:      gof.GetAtt(cloudFrontDistroResourceName, "DomainName"),
 			},
 		}
-		template.AddResource(dnsRecordResourceName, dnsRecordResource)
+		template.Resources[dnsRecordResourceName] = dnsRecordResource
 		// IndexDocument
-		indexDocument := gocf.String("index.html")
+		indexDocument := "index.html"
 		if s3Site.WebsiteConfiguration != nil &&
 			s3Site.WebsiteConfiguration.IndexDocument != nil &&
 			s3Site.WebsiteConfiguration.IndexDocument.Suffix != nil {
-			indexDocument = gocf.String(*s3Site.WebsiteConfiguration.IndexDocument.Suffix)
+			indexDocument = *s3Site.WebsiteConfiguration.IndexDocument.Suffix
 		}
 		// Add the distro...
-		distroConfig := &gocf.CloudFrontDistributionDistributionConfig{
-			Aliases:           gocf.StringList(s3Site.BucketName),
+		distroConfig := &gofCloudFront.Distribution_DistributionConfig{
+			Aliases:           []string{s3Site.BucketName},
 			DefaultRootObject: indexDocument,
-			Origins: &gocf.CloudFrontDistributionOriginList{
-				gocf.CloudFrontDistributionOrigin{
-					DomainName:     gocf.GetAtt(s3Site.CloudFormationS3ResourceName(), "DomainName"),
-					ID:             gocf.String("S3Origin"),
-					S3OriginConfig: &gocf.CloudFrontDistributionS3OriginConfig{},
+			Origins: []gofCloudFront.Distribution_Origin{
+				{
+					DomainName:     gof.GetAtt(s3Site.CloudFormationS3ResourceName(), "DomainName"),
+					Id:             "S3Origin",
+					S3OriginConfig: &gofCloudFront.Distribution_S3OriginConfig{},
 				},
 			},
-			Enabled: gocf.Bool(true),
-			DefaultCacheBehavior: &gocf.CloudFrontDistributionDefaultCacheBehavior{
-				ForwardedValues: &gocf.CloudFrontDistributionForwardedValues{
-					QueryString: gocf.Bool(false),
+			Enabled: true,
+			DefaultCacheBehavior: &gofCloudFront.Distribution_DefaultCacheBehavior{
+				ForwardedValues: &gofCloudFront.Distribution_ForwardedValues{
+					QueryString: false,
 				},
-				TargetOriginID:       gocf.String("S3Origin"),
-				ViewerProtocolPolicy: gocf.String("allow-all"),
+				TargetOriginId:       "S3Origin",
+				ViewerProtocolPolicy: "allow-all",
 			},
 		}
 		// Update the cert...
 		distroConfig.ViewerCertificate = cert
 
-		cloudfrontDistro := &gocf.CloudFrontDistribution{
+		cloudfrontDistro := &gofCloudFront.Distribution{
 			DistributionConfig: distroConfig,
 		}
-		template.AddResource(cloudFrontDistroResourceName, cloudfrontDistro)
+		template.Resources[cloudFrontDistroResourceName] = cloudfrontDistro
 
 		// Log the created record
-		template.Outputs["CloudFrontDistribution"] = &gocf.Output{
+		template.Outputs["CloudFrontDistribution"] = gof.Output{
 			Description: "CloudFront Distribution Route53 entry",
 			Value:       s3Site.BucketName,
 		}

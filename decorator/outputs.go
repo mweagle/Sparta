@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	"github.com/rs/zerolog"
 )
 
@@ -20,32 +22,39 @@ func sanitizedKeyName(userValue string) string {
 // PublishAllResourceOutputs is a utility function to include all Ref and Att
 // outputs associated with the given (cfResourceName, cfResource) pair.
 func PublishAllResourceOutputs(cfResourceName string,
-	cfResource gocf.ResourceProperties) sparta.ServiceDecoratorHookFunc {
+	cfResource gof.Resource) sparta.ServiceDecoratorHookFunc {
 	return func(ctx context.Context,
 		serviceName string,
-		cfTemplate *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		cfTemplate *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 
 		// Add the Ref
-		cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Ref", cfResourceName))] = &gocf.Output{
+		cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Ref", cfResourceName))] = gof.Output{
 			Description: fmt.Sprintf("%s (%s) Ref",
 				cfResourceName,
-				cfResource.CfnResourceType()),
-			Value: gocf.Ref(cfResourceName),
+				cfResource.AWSCloudFormationType()),
+			Value: gof.Ref(cfResourceName),
 		}
 		// Get the resource attributes
-		for _, eachAttr := range cfResource.CfnResourceAttributes() {
+		resOutputs, resOutputsErr := spartaCF.ResourceOutputs(cfResourceName,
+			cfResource,
+			logger)
+		if resOutputsErr != nil {
+			return nil, resOutputsErr
+		}
+
+		for _, eachAttr := range resOutputs {
 			// Add the function ARN as a stack output
-			cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", cfResourceName, eachAttr))] = &gocf.Output{
+			cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", cfResourceName, eachAttr))] = gof.Output{
 				Description: fmt.Sprintf("%s (%s) Attribute: %s",
 					cfResourceName,
-					cfResource.CfnResourceType(),
+					cfResource.AWSCloudFormationType(),
 					eachAttr),
-				Value: gocf.GetAtt(cfResourceName, eachAttr),
+				Value: gof.GetAtt(cfResourceName, eachAttr),
 			}
 		}
 		return ctx, nil
@@ -58,17 +67,17 @@ func PublishAttOutputDecorator(keyName string, description string, fieldName str
 	attrDecorator := func(ctx context.Context,
 		serviceName string,
 		lambdaResourceName string,
-		lambdaResource gocf.LambdaFunction,
+		lambdaResource *goflambda.Function,
 		resourceMetadata map[string]interface{},
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		template *gocf.Template,
+		template *gof.Template,
 		logger *zerolog.Logger) (context.Context, error) {
 
 		// Add the function ARN as a stack output
-		template.Outputs[sanitizedKeyName(keyName)] = &gocf.Output{
+		template.Outputs[sanitizedKeyName(keyName)] = gof.Output{
 			Description: description,
-			Value:       gocf.GetAtt(lambdaResourceName, fieldName),
+			Value:       gof.GetAtt(lambdaResourceName, fieldName),
 		}
 		return ctx, nil
 	}
@@ -81,17 +90,17 @@ func PublishRefOutputDecorator(keyName string, description string) sparta.Templa
 	attrDecorator := func(ctx context.Context,
 		serviceName string,
 		lambdaResourceName string,
-		lambdaResource gocf.LambdaFunction,
+		lambdaResource *goflambda.Function,
 		resourceMetadata map[string]interface{},
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		template *gocf.Template,
+		template *gof.Template,
 		logger *zerolog.Logger) (context.Context, error) {
 
 		// Add the function ARN as a stack output
-		template.Outputs[sanitizedKeyName(keyName)] = &gocf.Output{
+		template.Outputs[sanitizedKeyName(keyName)] = gof.Output{
 			Description: description,
-			Value:       gocf.Ref(lambdaResourceName),
+			Value:       gof.Ref(lambdaResourceName),
 		}
 		return ctx, nil
 	}

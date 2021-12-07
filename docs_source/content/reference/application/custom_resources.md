@@ -16,8 +16,7 @@ Defining a custom resource is a two stage process, depending on whether your app
 
 1. The user-defined AWS Lambda Function
 
-
-    - This function defines your resource's logic.  The multiple return value is `map[string]interface{}, error` which signify resource results and operation error, respectively.
+   - This function defines your resource's logic. The multiple return value is `map[string]interface{}, error` which signify resource results and operation error, respectively.
 
 1. The `LambdaAWSInfo` struct which declares a dependency on your custom resource via the [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) member function.
 1. _Optional_ - A call to _github.com/mweagle/Sparta/aws/cloudformation/resources.SendCloudFormationResponse_ to signal CloudFormation creation status.
@@ -37,7 +36,7 @@ As an example, we'll use the following custom resource function:
 ```go
 import (
 	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
-	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	spartaCFResources "github.com/mweagle/Sparta/v3/aws/cloudformation/resources"
 )
 
 // User defined λ-backed CloudFormation CustomResource

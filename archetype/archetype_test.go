@@ -6,9 +6,8 @@ import (
 	"testing"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	spartaTesting "github.com/mweagle/Sparta/testing"
-	gocf "github.com/mweagle/go-cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func TestReactorName(t *testing.T) {
@@ -71,7 +70,7 @@ func TestS3Archetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewS3Reactor(testStruct,
-		gocf.String("s3Bucket"),
+		"s3Bucket",
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate S3Reactor: %s", lambdaFnErr.Error())
@@ -79,7 +78,7 @@ func TestS3Archetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewS3Reactor(S3ReactorFunc(testStruct.OnS3Event),
-		gocf.String("s3Bucket"),
+		"s3Bucket",
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate S3Reactor: %s", lambdaFnErr.Error())
@@ -91,7 +90,7 @@ func TestS3ScopedArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewS3ScopedReactor(testStruct,
-		gocf.String("s3Bucket"),
+		"s3Bucket",
 		"/input",
 		nil)
 	if lambdaFnErr != nil {
@@ -100,7 +99,7 @@ func TestS3ScopedArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewS3ScopedReactor(S3ReactorFunc(testStruct.OnS3Event),
-		gocf.String("s3Bucket"),
+		"s3Bucket",
 		"/input",
 		nil)
 	if lambdaFnErr != nil {
@@ -122,7 +121,7 @@ func TestSNSArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewSNSReactor(testStruct,
-		gocf.String("snsTopic"),
+		"snsTopic",
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate SNSReactor: %s", lambdaFnErr.Error())
@@ -130,7 +129,7 @@ func TestSNSArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewSNSReactor(SNSReactorFunc(testStruct.OnSNSEvent),
-		gocf.String("s3Bucket"),
+		"s3Bucket",
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate SNSReactor: %s", lambdaFnErr.Error())
@@ -153,7 +152,7 @@ func TestDynamoDBArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewDynamoDBReactor(testStruct,
-		gocf.String("arn:dynamo"),
+		"arn:aws:dynamo",
 		"TRIM_HORIZON",
 		10,
 		nil)
@@ -163,7 +162,7 @@ func TestDynamoDBArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewDynamoDBReactor(DynamoDBReactorFunc(testStruct.OnDynamoEvent),
-		gocf.String("arn:dynamo"),
+		"arn:aws:dynamo",
 		"TRIM_HORIZON",
 		10,
 		nil)
@@ -185,7 +184,7 @@ func TestKinesisArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
 	lambdaFn, lambdaFnErr := NewKinesisReactor(testStruct,
-		gocf.String("arn:kinesis"),
+		"arn:aws:kinesis",
 		"TRIM_HORIZON",
 		10,
 		nil)
@@ -195,7 +194,7 @@ func TestKinesisArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 	lambdaFn, lambdaFnErr = NewKinesisReactor(KinesisReactorFunc(testStruct.OnKinesisMessage),
-		gocf.String("arn:kinesis"),
+		"arn:aws:kinesis",
 		"TRIM_HORIZON",
 		10,
 		nil)

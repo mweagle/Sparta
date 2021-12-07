@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"testing"
 
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
-	spartaTesting "github.com/mweagle/Sparta/testing"
-	gocf "github.com/mweagle/go-cloudformation"
+	gofapig "github.com/awslabs/goformation/v5/cloudformation/apigateway"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaAWSEvents "github.com/mweagle/Sparta/v3/aws/events"
+	spartaTesting "github.com/mweagle/Sparta/v3/testing"
 )
 
 func TestAPIGatewayCustomDomain(t *testing.T) {
@@ -41,7 +41,7 @@ func TestAPIGatewayCustomDomain(t *testing.T) {
 		hooks := &sparta.WorkflowHooks{}
 
 		serviceDecorator := APIGatewayDomainDecorator(apiGateway,
-			gocf.String("arn:aws:acm:us-west-2:123412341234:certificate/6486C3FF-A3B7-46B6-83A0-9AE329FEC4E3"),
+			"arn:aws:acm:us-west-2:123412341234:certificate/6486C3FF-A3B7-46B6-83A0-9AE329FEC4E3",
 			"", // Optional base path value
 			"noice.spartademo.net")
 		hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
@@ -54,10 +54,10 @@ func TestAPIGatewayCustomDomain(t *testing.T) {
 	apiStage := sparta.NewStage("v1")
 
 	apiGateway := sparta.NewAPIGateway("SpartaHTMLDomain", apiStage)
-	apiGateway.EndpointConfiguration = &gocf.APIGatewayRestAPIEndpointConfiguration{
-		Types: gocf.StringList(
-			gocf.String("REGIONAL"),
-		),
+	apiGateway.EndpointConfiguration = &gofapig.RestApi_EndpointConfiguration{
+		Types: []string{
+			"REGIONAL",
+		},
 	}
 	hooks := apigatewayHooks(apiGateway)
 	// Deploy it
@@ -99,7 +99,7 @@ func ExampleAPIGatewayDomainDecorator() {
 		hooks := &sparta.WorkflowHooks{}
 
 		serviceDecorator := APIGatewayDomainDecorator(apiGateway,
-			gocf.String("arn:aws:acm:us-west-2:123412341234:certificate/6486C3FF-A3B7-46B6-83A0-9AE329FEC4E3"),
+			"arn:aws:acm:us-west-2:123412341234:certificate/6486C3FF-A3B7-46B6-83A0-9AE329FEC4E3",
 			"", // Optional base path value
 			"noice.spartademo.net")
 		hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
@@ -112,10 +112,8 @@ func ExampleAPIGatewayDomainDecorator() {
 	apiStage := sparta.NewStage("v1")
 
 	apiGateway := sparta.NewAPIGateway("SpartaHTMLDomain", apiStage)
-	apiGateway.EndpointConfiguration = &gocf.APIGatewayRestAPIEndpointConfiguration{
-		Types: gocf.StringList(
-			gocf.String("REGIONAL"),
-		),
+	apiGateway.EndpointConfiguration = &gofapig.RestApi_EndpointConfiguration{
+		Types: []string{"REGIONAL"},
 	}
 	hooks := apigatewayHooks(apiGateway)
 	// Deploy it

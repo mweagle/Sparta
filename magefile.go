@@ -1,3 +1,4 @@
+//go:build mage
 // +build mage
 
 // lint:file-ignore U1000 Ignore all  code, it's only for development
@@ -21,17 +22,18 @@ import (
 	"github.com/magefile/mage/mg" // mg contains helpful utility functions, like Deps
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
 	"github.com/mholt/archiver"
-	spartamage "github.com/mweagle/Sparta/magefile"
+	spartamage "github.com/mweagle/Sparta/v3/magefile"
 	"github.com/otiai10/copy"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 )
 
 const (
-	localWorkDir      = "./.sparta"
-	hugoVersion       = "0.79.0"
-	archIconsRootPath = "resources/describe/AWS-Architecture-Icons_PNG"
-	archIconsTreePath = "resources/describe/AWS-Architecture-Icons.tree.txt"
+	localWorkDir            = "./.sparta"
+	hugoVersion             = "0.89.2"
+	archIconsRootPath       = "resources/describe/AWS-Architecture-Icons_PNG"
+	archIconsTreePath       = "resources/describe/AWS-Architecture-Icons.tree.txt"
+	urlCloudFormationSchema = "https://d201a2mn26r7lk.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -286,6 +288,30 @@ func GenerateAutomaticCode() error {
 	return sh.Run("gojsonschema", args...)
 }
 
+// ViewDependencies creates an SVG output visualized with dot for all
+// package dependencies
+func ViewDependencies() error {
+	dotfile := "godepgraph.dot"
+	svgfile := fmt.Sprintf("%s.svg", dotfile)
+	generateCommands := [][]string{
+		{"gomod",
+			"graph",
+			"-o",
+			dotfile,
+		},
+		{"dot",
+			"-v",
+			"-Tsvg",
+			dotfile,
+			"-o",
+			svgfile,
+		},
+		{"open",
+			svgfile},
+	}
+	return spartamage.Script(generateCommands)
+}
+
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
 // stamp the SHA into the binaries we build...
 func GenerateBuildInfo() error {
@@ -306,8 +332,14 @@ func GenerateBuildInfo() error {
 
 // SpartaGitHash is the commit hash of this Sparta library
 const SpartaGitHash = "%s"
+
+// SpartaGitShortHash is the short version of SpartaGitHash
+const SpartaGitShortHash = "%s"
 `
-	updatedInfo := fmt.Sprintf(buildInfoTemplate, time.Now().UTC(), gitSHA)
+	updatedInfo := fmt.Sprintf(buildInfoTemplate,
+		time.Now().UTC(),
+		gitSHA,
+		gitSHA[0:7])
 	// Write it to the output location...
 	writeErr := ioutil.WriteFile("./buildinfo.go", []byte(updatedInfo), os.ModePerm)
 
@@ -322,43 +354,40 @@ const SpartaGitHash = "%s"
 
 }
 
+// FetchCloudFormationSchema  we have the latest CloudFormation schema as part of generating
+// constants. To do this, we'll grab the JSON and put it into a local
+// folder.
+func FetchCloudFormationSchema() error {
+	// Get the data
+	httpResp, httpErr := http.Get(urlCloudFormationSchema)
+	if httpErr != nil {
+		return httpErr
+	}
+	defer httpResp.Body.Close()
+
+	// Create the file
+	outputFile, outputFileErr := os.Create("./aws/cloudformation/cloudformation-schema.json")
+	if outputFileErr != nil {
+		return outputFileErr
+	}
+	defer outputFile.Close()
+
+	// Write the body to file
+	_, copyErr := io.Copy(outputFile, httpResp.Body)
+	return copyErr
+}
+
 // GenerateConstants runs the set of commands that update the embedded CONSTANTS
 // for both local and AWS Lambda execution
 func GenerateConstants() error {
+	mg.SerialDeps(FetchCloudFormationSchema)
+
 	generateCommands := [][]string{
 		// Remove the tree output
 		{"rm",
 			"-fv",
 			xplatPath(archIconsTreePath),
 		},
-		//Create the embedded version
-		{"esc",
-			"-o",
-			"./CONSTANTS.go",
-			"-private",
-			"-pkg",
-			"sparta",
-			"./resources"},
-		//Create a secondary CONSTANTS_AWSBINARY.go file with empty content.
-		{"esc",
-			"-o",
-			"./CONSTANTS_AWSBINARY.go",
-			"-private",
-			"-pkg",
-			"sparta",
-			"./resources/awsbinary/README.md"},
-		//The next step will insert the
-		// build tags at the head of each file so that they are mutually exclusive
-		{"go",
-			"run",
-			"./cmd/insertTags/main.go",
-			"./CONSTANTS",
-			"!lambdabinary"},
-		{"go",
-			"run",
-			"./cmd/insertTags/main.go",
-			"./CONSTANTS_AWSBINARY",
-			"lambdabinary"},
 		// Create the tree output
 		{"tree",
 			"-Q",
@@ -462,7 +491,7 @@ func EnsureStaticChecks() error {
 	// https://staticcheck.io/
 	excludeChecks := "-exclude=G204,G505,G401,G404,G601"
 	staticCheckErr := sh.Run("staticcheck",
-		"github.com/mweagle/Sparta/...")
+		"github.com/mweagle/Sparta/v3/...")
 	if staticCheckErr != nil {
 		return staticCheckErr
 	}

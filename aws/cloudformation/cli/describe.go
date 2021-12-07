@@ -1,15 +1,17 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -33,6 +35,7 @@ var RootCmd = &cobra.Command{
 	Short: "Link is a tool to discover and serialize a prexisting CloudFormation stack",
 	Long:  "",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+
 		validateErr := validate.Struct(optionsLink)
 		if nil != validateErr {
 			return validateErr
@@ -48,18 +51,18 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		runContext := context.Background()
+
 		// Get the output and stuff it to a file
-		sess, err := session.NewSession()
-		if err != nil {
-			return errors.Wrap(err, "Attempting to create session")
+		awsConfig, awsConfigErr := awsv2Config.LoadDefaultConfig(runContext)
+		if awsConfigErr != nil {
+			return awsConfigErr
 		}
-
-		svc := cloudformation.New(sess)
-
-		params := &cloudformation.DescribeStacksInput{
-			StackName: aws.String(optionsLink.StackName),
+		svc := awsv2CF.NewFromConfig(awsConfig)
+		params := &awsv2CF.DescribeStacksInput{
+			StackName: awsv2.String(optionsLink.StackName),
 		}
-		describeStacksResponse, describeStacksResponseErr := svc.DescribeStacks(params)
+		describeStacksResponse, describeStacksResponseErr := svc.DescribeStacks(runContext, params)
 
 		if describeStacksResponseErr != nil {
 			return describeStacksResponseErr
@@ -70,7 +73,7 @@ var RootCmd = &cobra.Command{
 			return errors.Wrapf(stackInfoErr, "Failed to describe stacks")
 		}
 		outputFilepath := filepath.Join(optionsLink.OutputDirectory, fmt.Sprintf("%s.json", optionsLink.StackName))
-		err = ioutil.WriteFile(outputFilepath, stackInfo, 0600)
+		err := ioutil.WriteFile(outputFilepath, stackInfo, 0600)
 		if nil != err {
 			return errors.Wrap(err, "Attempting to write output file")
 		}

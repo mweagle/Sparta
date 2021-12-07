@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>SQS :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2243,12 +2243,12 @@ pre {
 <p>The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
 	<span style="color:#a31515">&#34;context&#34;</span>
 
 	awsLambdaGo <span style="color:#a31515">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
-	sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
-	spartaCF <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/cloudformation&#34;</span>
+	sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3&#34;</span>
+	spartaCF <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/cloudformation&#34;</span>
 	gocf <span style="color:#a31515">&#34;github.com/mweagle/go-cloudformation&#34;</span>
 	<span style="color:#a31515">&#34;github.com/rs/zerolog&#34;</span>
 )
@@ -2262,14 +2262,14 @@ pre {
 <p>Typically the lambda function would process each record in the event, but for this example we&rsquo;ll just log the entire batch and then return.</p>
 <h2 id="sparta-integration">Sparta Integration</h2>
 <p>The next step is to integrate the lambda function with Sparta:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// 1. Create the Sparta Lambda function
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// 1. Create the Sparta Lambda function
 </span><span style="color:#008000"></span>lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(sqsHandler),
   sqsHandler,
   sparta.IAMRoleDefinition{})
 </code></pre></div><p>Once the lambda function is integrated with Sparta, we can use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecoratorHandler">TemplateDecoratorHandler</a> to include the SQS provisioning request as part of the overall service creation.</p>
 <h2 id="sqs-topic-definition">SQS Topic Definition</h2>
 <p>Decorators enable a Sparta service to provision other types of infrastructure together with the core lambda functions. In this example, our <code>sqsHandler</code> function should also provision an SQS queue from which it will receive events. This is done as in the following:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">sqsResourceName := <span style="color:#a31515">&#34;LambdaSQSFTW&#34;</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">sqsResourceName := <span style="color:#a31515">&#34;LambdaSQSFTW&#34;</span>
 sqsDecorator := <span style="color:#00f">func</span>(serviceName <span style="color:#2b91af">string</span>,
   lambdaResourceName <span style="color:#2b91af">string</span>,
   lambdaResource gocf.LambdaFunction,
@@ -2290,7 +2290,7 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
 </code></pre></div><p>This function-level decorator includes an AWS CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS::Queue</a> definition that will be included with the stack definition.</p>
 <h2 id="connecting-sqs-to-aws-lambda">Connecting SQS to AWS Lambda</h2>
 <p>The final step is to make the <code>sqsHandler</code> the Lambda&rsquo;s <a href="https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping">EventSourceMapping</a> target for the dynamically provisioned Queue&rsquo;s <em>ARN</em>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
   &amp;sparta.EventSourceMapping{
     EventSourceArn: gocf.GetAtt(sqsResourceName, <span style="color:#a31515">&#34;Arn&#34;</span>),
     BatchSize:      2,
@@ -3718,19 +3718,19 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

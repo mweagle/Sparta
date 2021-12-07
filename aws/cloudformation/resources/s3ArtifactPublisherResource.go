@@ -2,27 +2,28 @@ package resources
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2S3 "github.com/aws/aws-sdk-go-v2/service/s3"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
 	"github.com/rs/zerolog"
 )
 
 // S3ArtifactPublisherResourceRequest is what the UserProperties
 // should be set to in the CustomResource invocation
 type S3ArtifactPublisherResourceRequest struct {
-	Bucket *gocf.StringExpr
-	Key    *gocf.StringExpr
+	CustomResourceRequest
+	Bucket string
+	Key    string
 	Body   map[string]interface{}
 }
 
 // S3ArtifactPublisherResource is a simple POC showing how to create custom resources
 type S3ArtifactPublisherResource struct {
-	gocf.CloudFormationCustomResource
-	S3ArtifactPublisherResourceRequest
+	gof.CustomResource
 }
 
 // IAMPrivileges returns the IAM privs for this custom action
@@ -32,26 +33,27 @@ func (command *S3ArtifactPublisherResource) IAMPrivileges() []string {
 }
 
 // Create implements the S3 create operation
-func (command S3ArtifactPublisherResource) Create(awsSession *session.Session,
+func (command S3ArtifactPublisherResource) Create(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	s3ArtifactPublisherRequest := S3ArtifactPublisherResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &s3ArtifactPublisherRequest)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
-	mapData, mapDataErr := json.Marshal(command.Body)
+	mapData, mapDataErr := json.Marshal(s3ArtifactPublisherRequest.Body)
 	if mapDataErr != nil {
 		return nil, mapDataErr
 	}
 	itemInput := bytes.NewReader(mapData)
-	s3PutObjectParams := &s3.PutObjectInput{
+	s3PutObjectParams := &awsv2S3.PutObjectInput{
 		Body:   itemInput,
-		Bucket: aws.String(command.Bucket.Literal),
-		Key:    aws.String(command.Key.Literal),
+		Bucket: awsv2.String(s3ArtifactPublisherRequest.Bucket),
+		Key:    awsv2.String(s3ArtifactPublisherRequest.Key),
 	}
-	s3Svc := s3.New(awsSession)
-	s3Response, s3ResponseErr := s3Svc.PutObject(s3PutObjectParams)
+	s3Svc := awsv2S3.NewFromConfig(awsConfig)
+	s3Response, s3ResponseErr := s3Svc.PutObject(context.Background(), s3PutObjectParams)
 	if s3ResponseErr != nil {
 		return nil, s3ResponseErr
 	}
@@ -61,33 +63,34 @@ func (command S3ArtifactPublisherResource) Create(awsSession *session.Session,
 }
 
 // Update implements the S3 update operation
-func (command S3ArtifactPublisherResource) Update(awsSession *session.Session,
+func (command S3ArtifactPublisherResource) Update(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
-	return command.Create(awsSession, event, logger)
+	return command.Create(ctx, awsConfig, event, logger)
 }
 
 // Delete implements the S3 delete operation
-func (command S3ArtifactPublisherResource) Delete(awsSession *session.Session,
+func (command S3ArtifactPublisherResource) Delete(ctx context.Context, awsConfig awsv2.Config,
 	event *CloudFormationLambdaEvent,
 	logger *zerolog.Logger) (map[string]interface{}, error) {
 
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &command)
+	s3ArtifactPublisherRequest := S3ArtifactPublisherResourceRequest{}
+	unmarshalErr := json.Unmarshal(event.ResourceProperties, &s3ArtifactPublisherRequest)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
-	s3DeleteObjectParams := &s3.DeleteObjectInput{
-		Bucket: aws.String(command.Bucket.Literal),
-		Key:    aws.String(command.Key.Literal),
+	s3DeleteObjectParams := &awsv2S3.DeleteObjectInput{
+		Bucket: awsv2.String(s3ArtifactPublisherRequest.Bucket),
+		Key:    awsv2.String(s3ArtifactPublisherRequest.Key),
 	}
-	s3Svc := s3.New(awsSession)
-	_, s3ResponseErr := s3Svc.DeleteObject(s3DeleteObjectParams)
+	s3Svc := awsv2S3.NewFromConfig(awsConfig)
+	_, s3ResponseErr := s3Svc.DeleteObject(ctx, s3DeleteObjectParams)
 	if s3ResponseErr != nil {
 		return nil, s3ResponseErr
 	}
 	logger.Info().
-		Str("Bucket", command.Bucket.Literal).
-		Str("Key", command.Key.Literal).
+		Str("Bucket", s3ArtifactPublisherRequest.Bucket).
+		Str("Key", s3ArtifactPublisherRequest.Key).
 		Msg("Object deleted")
 	return nil, nil
 }

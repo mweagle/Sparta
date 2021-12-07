@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Request Parameters :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2251,9 +2251,9 @@ function defined as part of the <a href="https://github.com/mweagle/SpartaApplic
 </ul>
 <p>Those params will be passed as part of the URL query string. The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.</p>
 <p>Because <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> is expected to be invoked by the API Gateway, we&rsquo;ll use the AWS Lambda Go type in the function signature:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
-  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
-  spartaEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">import</span> (
+  spartaAPIGateway <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/apigateway&#34;</span>
+  spartaEvents <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3/aws/events&#34;</span>
 )
 
 <span style="color:#00f">func</span> s3ItemInfo(ctx context.Context,
@@ -2291,14 +2291,14 @@ function defined as part of the <a href="https://github.com/mweagle/SpartaApplic
 correspond to the Integration Response Mapping template discussed in the <a href="/reference/apigateway/echo_event">previous example</a>
 (see the full mapping template <a href="/reference/apigateway">here</a>.</p>
 <p>Once the event is unmarshaled, we can use it to fetch the S3 item info:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">getObjectInput := &amp;s3.GetObjectInput{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">getObjectInput := &amp;s3.GetObjectInput{
   Bucket: aws.String(lambdaEvent.QueryParams[<span style="color:#a31515">&#34;bucketName&#34;</span>]),
   Key:    aws.String(lambdaEvent.QueryParams[<span style="color:#a31515">&#34;keyName&#34;</span>]),
 }
 </code></pre></div><p>Assuming there are no errors (including the case where the item does not exist), the
 remainder of the function fetches the data, generates a presigned URL, and returns a JSON response whose
 shape matches the Sparta default <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html">mapping templates</a>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">awsSession := spartaAWS.NewSession(logger)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">awsSession := spartaAWS.NewSession(logger)
 svc := s3.New(awsSession)
 result, err := svc.GetObject(getObjectInput)
 <span style="color:#00f">if</span> <span style="color:#00f">nil</span> != err {
@@ -2316,11 +2316,11 @@ url, err := presignedReq.Presign(5 * time.Minute)
   }), <span style="color:#00f">nil</span>
 </code></pre></div><h2 id="api-gateway">API Gateway</h2>
 <p>The next step is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
 apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaImagerAPI&#34;</span>, apiStage)
 </code></pre></div><h2 id="lambda-binding">Lambda Binding</h2>
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">var</span> iamDynamicRole = sparta.IAMRoleDefinition{}
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">var</span> iamDynamicRole = sparta.IAMRoleDefinition{}
 iamDynamicRole.Privileges = append(iamDynamicRole.Privileges,
   sparta.IAMRolePrivilege{
     Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>},
@@ -2346,14 +2346,14 @@ s3ItemInfoOptions.Options = &amp;sparta.LambdaFunctionOptions{
 </ul>
 <h2 id="resources">Resources</h2>
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function. This will be the relative path component used to reference our lambda function via the API Gateway.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/info&#34;</span>, s3ItemInfoLambdaFn)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/info&#34;</span>, s3ItemInfoLambdaFn)
 method, err := apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)
 <span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
   <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, err
 }
 </code></pre></div><h2 id="whitelist-input">Whitelist Input</h2>
 <p>The final step is to add the whitelisted parameters to the Method definition.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Whitelist query string params
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Whitelist query string params
 </span><span style="color:#008000"></span>method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.keyName&#34;</span>] = <span style="color:#00f">true</span>
 method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.bucketName&#34;</span>] = <span style="color:#00f">true</span>
 </code></pre></div><p>Note that the keynames in the <code>method.Parameters</code> map must be of the form: <strong>method.request.{location}.{name}</strong> where location is one of:</p>
@@ -2365,16 +2365,16 @@ method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.bu
 <p>See the <a href="http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters">REST documentation</a> for more information.</p>
 <h2 id="provision">Provision</h2>
 <p>With everything configured, let&rsquo;s provision the stack:</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET
 </code></pre><p>and check the results.</p>
 <h2 id="verify">Verify</h2>
 <p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">INFO[0243] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">INFO[0243] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 INFO[0243]     APIGatewayURL                             Description=&#34;API Gateway URL&#34; Value=&#34;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1&#34;
 INFO[0243] Stack provisioned                             CreationTime=&#34;2018-12-11 14:56:41.051 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaImager-mweagle/f7b7d3e0-fd54-11e8-9064-0aa3372404a6&#34; StackName=SpartaImager-mweagle
 INFO[0243] ════════════════════════════════════════════════
 </code></pre></div><p>Let&rsquo;s fetch an item we know exists:</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">$ curl -vs &quot;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1/info?keyName=twitterAvatar.jpg&amp;bucketName=weagle-public&quot;
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">$ curl -vs &quot;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1/info?keyName=twitterAvatar.jpg&amp;bucketName=weagle-public&quot;
 
 *   Trying 13.32.254.241...
 * TCP_NODELAY set
@@ -2430,7 +2430,7 @@ INFO[0243] ═══════════════════════
 &lt;
 {&quot;S3&quot;:{&quot;AcceptRanges&quot;:&quot;bytes&quot;,&quot;Body&quot;:{},&quot;CacheControl&quot;:null,&quot;ContentDisposition&quot;:null,&quot;ContentEncoding&quot;:null,&quot;ContentLanguage&quot;:null,&quot;ContentLength&quot;:613560,&quot;ContentRange&quot;:null,&quot;ContentType&quot;:&quot;image/jpeg&quot;,&quot;DeleteMarker&quot;:null,&quot;ETag&quot;:&quot;\&quot;7250a1802a5e2f94532b9ee38429a3fd\&quot;&quot;,&quot;Expiration&quot;:null,&quot;Expires&quot;:null,&quot;LastModified&quot;:&quot;2018-03-14T14:55:19Z&quot;,&quot;Metadata&quot;:{},&quot;MissingMeta&quot;:null,&quot;ObjectLockLegalHoldStatus&quot;:null,&quot;ObjectLockMode&quot;:null,&quot;ObjectLockRetainUntilDate&quot;:null,&quot;PartsCount&quot;:null,&quot;ReplicationStatus&quot;:null,&quot;RequestCharged&quot;:null,&quot;Restore&quot;:null,&quot;SSECustomerAlgorithm&quot;:null,&quot;SSECustomerKeyMD5&quot;:null,&quot;SSEKMSKeyId&quot;:null,&quot;ServerSideEncryption&quot;:null,&quot;StorageClass&quot;:null,&quot;TagCount&quot;:null,&quot;VersionId&quot;:null,&quot;WebsiteRedirectLocation&quot;:null},&quot;URL&quot;:&quot;https://weagle-public.s3.us-west-2.amazonaws.com/twitterAvatar.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAQMUWTUUFF65WLRLE%2F20181211%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20181211T150856Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=FQoGZXIvYXdzEIH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDMMVITmbkwrrxznAHCL9AaUQwfC%2F%2F6go%2FKBZigDuI4BLLwJzqiwhquTZ9TR1oxVKOAA0h6WzWUEfjjOjZK56SFk3cIJ%2FjKIBmImKpTIGyN7fn48s6N51RFFxra2Mamrp1pDqEcP4VswnJH8C5Q7ZfmltJDiFqLbd4FCQdgoGT228Ls49Uo24EyT%2B%2BTL%2Fl0sKTVYtI1MbGSK%2B%2BKZ6rpPEsyR%2FTuIdeDvA1P%2BRlMEyvr0NhO7Wpf7ZZMs3taNcUMQDRmARyIgAp87ziwIavUTaPqbgpGNqJ6XAO%2Byf3y0g9JurYj44HrwpLWmuF5g%2B%2FtLv8VikzqD8GuWARJuo%2BPlH54KmcMrbXBpLq9sZl2Io3KO%2F4AU%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=88976d33d4cdefff02265e1f40e4d18005231672f1a6e41ad12733f0ce97e91b&quot;}
 </code></pre><p>Pretty printing the response body:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;S3&#34;: {
     &#34;AcceptRanges&#34;: <span style="color:#a31515">&#34;bytes&#34;</span>,
     &#34;Body&#34;: {},
@@ -2467,7 +2467,7 @@ INFO[0243] ═══════════════════════
   &#34;URL&#34;: <span style="color:#a31515">&#34;https://weagle-public.s3.us-west-2.amazonaws.com/twitterAvatar.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAQMUWTUUFF65WLRLE%2F20181211%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20181211T150856Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=FQoGZXIvYXdzEIH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDMMVITmbkwrrxznAHCL9AaUQwfC%2F%2F6go%2FKBZigDuI4BLLwJzqiwhquTZ9TR1oxVKOAA0h6WzWUEfjjOjZK56SFk3cIJ%2FjKIBmImKpTIGyN7fn48s6N51RFFxra2Mamrp1pDqEcP4VswnJH8C5Q7ZfmltJDiFqLbd4FCQdgoGT228Ls49Uo24EyT%2B%2BTL%2Fl0sKTVYtI1MbGSK%2B%2BKZ6rpPEsyR%2FTuIdeDvA1P%2BRlMEyvr0NhO7Wpf7ZZMs3taNcUMQDRmARyIgAp87ziwIavUTaPqbgpGNqJ6XAO%2Byf3y0g9JurYj44HrwpLWmuF5g%2B%2FtLv8VikzqD8GuWARJuo%2BPlH54KmcMrbXBpLq9sZl2Io3KO%2F4AU%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=88976d33d4cdefff02265e1f40e4d18005231672f1a6e41ad12733f0ce97e91b&#34;</span>
 }
 </code></pre></div><p>What about an item that we know doesn&rsquo;t exist, but is in the bucket our lambda function has privileges to access:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">$ curl -vs &#34;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1/info?keyName=NOT_HERE.jpg&amp;bucketName=weagle-public&#34;
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">$ curl -vs &#34;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1/info?keyName=NOT_HERE.jpg&amp;bucketName=weagle-public&#34;
 
 *   Trying 13.32.254.241...
 * TCP_NODELAY set
@@ -2524,7 +2524,7 @@ INFO[0243] ═══════════════════════
 {&#34;error&#34;:&#34;AccessDenied: Access Denied\n\tstatus code: 403, request id: A10C69E17E4C9D00, host id: pAnhP+tg9rDh0yP5FJyC8bSnj1GJJjJvAFXwiluW4yHnVvt5EvkvkpKA4UzjJmCoFyI8hGST6YE=&#34;}
 * Connection #0 to host xccmsl98p1.execute-api.us-west-2.amazonaws.com left intact
 </code></pre></div><p>And finally, what if we try to access a bucket that our lambda function isn&rsquo;t authorized to access:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">$ curl -vs &#34;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1/info?keyName=NOT_HERE.jpg&amp;bucketName=VERY_PRIVATE_BUCKET&#34;
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-text" data-lang="text">$ curl -vs &#34;https://xccmsl98p1.execute-api.us-west-2.amazonaws.com/v1/info?keyName=NOT_HERE.jpg&amp;bucketName=VERY_PRIVATE_BUCKET&#34;
 
 *   Trying 13.32.254.241...
 * TCP_NODELAY set
@@ -2582,7 +2582,7 @@ INFO[0243] ═══════════════════════
 * Connection #0 to host xccmsl98p1.execute-api.us-west-2.amazonaws.com left intact
 </code></pre></div><h2 id="cleanup">Cleanup</h2>
 <p>Before moving on, remember to decommission the service via:</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">go run application.go delete
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">go run application.go delete
 </code></pre><h2 id="conclusion">Conclusion</h2>
 <p>With this example we&rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to
 limit what S3 buckets a lambda function may access, and returns an <em>application/json</em> response to the caller.</p>
@@ -4000,19 +4000,19 @@ limit what S3 buckets a lambda function may access, and returns an <em>applicati
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

@@ -6,11 +6,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	sparta "github.com/mweagle/Sparta"
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2DynamoAttributeValue "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	awsv2Dynamo "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	awsv2DynamoTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/rs/zerolog"
 )
 
@@ -25,11 +26,14 @@ type DynamoAccessor struct {
 	DynamoTableResourceName string
 }
 
-func (svc *DynamoAccessor) dynamoSvc(ctx context.Context) *dynamodb.DynamoDB {
+func (svc *DynamoAccessor) dynamoSvc(ctx context.Context) *awsv2Dynamo.Client {
 	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
-	sess := spartaAWS.NewSession(logger)
-	dynamoClient := dynamodb.New(sess)
-	xrayInit(dynamoClient.Client)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return nil
+	}
+	xrayInit(&awsConfig)
+	dynamoClient := awsv2Dynamo.NewFromConfig(awsConfig)
 	return dynamoClient
 }
 
@@ -48,59 +52,63 @@ func (svc *DynamoAccessor) dynamoTableName() string {
 	return dynamoTableRes.ResourceRef
 }
 
-func dynamoKeyValueAttrMap(keyPath string) map[string]*dynamodb.AttributeValue {
-	return map[string]*dynamodb.AttributeValue{
-		attrID: {
-			S: aws.String(keyPath),
-		}}
+func dynamoKeyValueAttrMap(keyPath string) map[string]awsv2DynamoTypes.AttributeValue {
+	return map[string]awsv2DynamoTypes.AttributeValue{
+		attrID: &awsv2DynamoTypes.AttributeValueMemberS{
+			Value: keyPath,
+		},
+	}
 }
 
 // Delete handles deleting the resource
 func (svc *DynamoAccessor) Delete(ctx context.Context, keyPath string) error {
-	deleteItemInput := &dynamodb.DeleteItemInput{
-		TableName: aws.String(svc.dynamoTableName()),
+	deleteItemInput := &awsv2Dynamo.DeleteItemInput{
+		TableName: awsv2.String(svc.dynamoTableName()),
 		Key:       dynamoKeyValueAttrMap(keyPath),
 	}
 	_, deleteResultErr := svc.
-		dynamoSvc(ctx).
-		DeleteItemWithContext(ctx, deleteItemInput)
+		dynamoSvc(ctx).DeleteItem(ctx, deleteItemInput)
 	return deleteResultErr
 }
 
 // DeleteAll handles deleting all the items
 func (svc *DynamoAccessor) DeleteAll(ctx context.Context) error {
 	var deleteErr error
-	input := &dynamodb.ScanInput{
-		TableName: aws.String(svc.dynamoTableName()),
+	input := &awsv2Dynamo.ScanInput{
+		TableName: awsv2.String(svc.dynamoTableName()),
 	}
 
-	scanHandler := func(output *dynamodb.ScanOutput, lastPage bool) bool {
-		writeDeleteRequests := make([]*dynamodb.WriteRequest, len(output.Items))
+	scanHandler := func(output *awsv2Dynamo.ScanOutput, lastPage bool) bool {
+		writeDeleteRequests := make([]awsv2DynamoTypes.WriteRequest, len(output.Items))
 		for index, eachItem := range output.Items {
 			keyID := ""
 			stringVal, stringValOk := eachItem[attrID]
-			if stringValOk && stringVal.S != nil {
-				keyID = *(stringVal.S)
+			if stringValOk {
+				switch typedVal := stringVal.(type) {
+				case *awsv2DynamoTypes.AttributeValueMemberS:
+					keyID = typedVal.Value
+				}
 			}
-			writeDeleteRequests[index] = &dynamodb.WriteRequest{
-				DeleteRequest: &dynamodb.DeleteRequest{
+			writeDeleteRequests[index] = awsv2DynamoTypes.WriteRequest{
+				DeleteRequest: &awsv2DynamoTypes.DeleteRequest{
 					Key: dynamoKeyValueAttrMap(keyID),
 				},
 			}
 		}
-		input := &dynamodb.BatchWriteItemInput{
-			RequestItems: map[string][]*dynamodb.WriteRequest{
+		input := &awsv2Dynamo.BatchWriteItemInput{
+			RequestItems: map[string][]awsv2DynamoTypes.WriteRequest{
 				svc.dynamoTableName(): writeDeleteRequests,
 			},
 		}
-		_, deleteErr = svc.dynamoSvc(ctx).BatchWriteItem(input)
+		_, deleteErr = svc.dynamoSvc(ctx).BatchWriteItem(ctx, input)
 		return deleteErr == nil
 	}
 
-	scanErr := svc.dynamoSvc(ctx).ScanPagesWithContext(ctx, input, scanHandler)
+	scanResponse, scanErr := svc.dynamoSvc(ctx).Scan(ctx, input)
 	if scanErr != nil {
 		return scanErr
 	}
+	scanHandler(scanResponse, true)
 	return deleteErr
 }
 
@@ -112,22 +120,23 @@ func (svc *DynamoAccessor) Put(ctx context.Context, keyPath string, object inter
 		return errors.New("DynamoAccessor Put object must not be nil")
 	}
 	// Map it...
-	marshal, marshalErr := dynamodbattribute.MarshalMap(object)
+	marshal, marshalErr := awsv2DynamoAttributeValue.MarshalMap(object)
 	if marshalErr != nil {
 		return marshalErr
 	}
-	// TODO - consider using tags for this...
+	// // TODO - consider using tags for this...
+
 	_, idExists := marshal[attrID]
 	if !idExists {
-		marshal[attrID] = &dynamodb.AttributeValue{
-			S: aws.String(keyPath),
+		marshal[attrID] = &awsv2DynamoTypes.AttributeValueMemberS{
+			Value: keyPath,
 		}
 	}
-	putItemInput := &dynamodb.PutItemInput{
-		TableName: aws.String(svc.dynamoTableName()),
+	putItemInput := &awsv2Dynamo.PutItemInput{
+		TableName: awsv2.String(svc.dynamoTableName()),
 		Item:      marshal,
 	}
-	_, putItemErr := svc.dynamoSvc(ctx).PutItemWithContext(ctx, putItemInput)
+	_, putItemErr := svc.dynamoSvc(ctx).PutItem(ctx, putItemInput)
 	return putItemErr
 }
 
@@ -135,16 +144,16 @@ func (svc *DynamoAccessor) Put(ctx context.Context, keyPath string, object inter
 func (svc *DynamoAccessor) Get(ctx context.Context,
 	keyPath string,
 	destObject interface{}) error {
-	getItemInput := &dynamodb.GetItemInput{
-		TableName: aws.String(svc.dynamoTableName()),
+	getItemInput := &awsv2Dynamo.GetItemInput{
+		TableName: awsv2.String(svc.dynamoTableName()),
 		Key:       dynamoKeyValueAttrMap(keyPath),
 	}
 
-	getItemResult, getItemResultErr := svc.dynamoSvc(ctx).GetItemWithContext(ctx, getItemInput)
+	getItemResult, getItemResultErr := svc.dynamoSvc(ctx).GetItem(ctx, getItemInput)
 	if getItemResultErr != nil {
 		return getItemResultErr
 	}
-	return dynamodbattribute.UnmarshalMap(getItemResult.Item, destObject)
+	return awsv2DynamoAttributeValue.UnmarshalMap(getItemResult.Item, destObject)
 }
 
 // GetAll handles returning all of the items
@@ -153,13 +162,13 @@ func (svc *DynamoAccessor) GetAll(ctx context.Context,
 	var getAllErr error
 
 	results := make([]interface{}, 0)
-	input := &dynamodb.ScanInput{
-		TableName: aws.String(svc.dynamoTableName()),
+	input := &awsv2Dynamo.ScanInput{
+		TableName: awsv2.String(svc.dynamoTableName()),
 	}
-	scanHandler := func(output *dynamodb.ScanOutput, lastPage bool) bool {
+	scanHandler := func(output *awsv2Dynamo.ScanOutput, lastPage bool) bool {
 		for _, eachItem := range output.Items {
 			unmarshalTarget := ctor()
-			unmarshalErr := dynamodbattribute.UnmarshalMap(eachItem, unmarshalTarget)
+			unmarshalErr := awsv2DynamoAttributeValue.UnmarshalMap(eachItem, unmarshalTarget)
 			if unmarshalErr != nil {
 				getAllErr = unmarshalErr
 				return false
@@ -168,10 +177,11 @@ func (svc *DynamoAccessor) GetAll(ctx context.Context,
 		}
 		return true
 	}
-	scanErr := svc.dynamoSvc(ctx).ScanPagesWithContext(ctx, input, scanHandler)
+	scanResult, scanErr := svc.dynamoSvc(ctx).Scan(ctx, input)
 	if scanErr != nil {
 		return nil, scanErr
 	}
+	scanHandler(scanResult, false)
 	if getAllErr != nil {
 		return nil, getAllErr
 	}

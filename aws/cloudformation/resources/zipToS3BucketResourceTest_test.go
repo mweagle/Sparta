@@ -1,12 +1,16 @@
 package resources
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
 	"time"
 
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2Config "github.com/aws/aws-sdk-go-v2/config"
+
+	cwCustomProvider "github.com/mweagle/Sparta/v3/aws/cloudformation/provider"
+
 	"github.com/rs/zerolog"
 )
 
@@ -15,9 +19,9 @@ func testEnabled() bool {
 }
 func mockZipResourceEvent(t *testing.T) *CloudFormationLambdaEvent {
 	props := map[string]interface{}{
-		"DestBucket": gocf.String(os.Getenv("TEST_DEST_S3_BUCKET")),
-		"SrcBucket":  gocf.String(os.Getenv("TEST_SRC_S3_BUCKET")),
-		"SrcKeyName": gocf.String(os.Getenv("TEST_SRC_S3_KEY")),
+		"DestBucket": os.Getenv("TEST_DEST_S3_BUCKET"),
+		"SrcBucket":  os.Getenv("TEST_SRC_S3_BUCKET"),
+		"SrcKeyName": os.Getenv("TEST_SRC_S3_KEY"),
 		"Manifest": map[string]interface{}{
 			"Some": "Data",
 		},
@@ -40,14 +44,16 @@ func TestUnzip(t *testing.T) {
 	if !testEnabled() {
 		return
 	}
-	resUnzip := gocf.NewResourceByType(ZipToS3Bucket)
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	resUnzip, _ := cwCustomProvider.NewCloudFormationCustomResource(ZipToS3Bucket, &logger)
 	zipResource := resUnzip.(*ZipToS3BucketResource)
 	event := mockZipResourceEvent(t)
 
 	// Put it
-	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
-	awsSession := awsSession(&logger)
-	createOutputs, createError := zipResource.Create(awsSession,
+	testContext := context.Background()
+	awsConfig, _ := awsv2Config.LoadDefaultConfig(context.Background())
+	createOutputs, createError := zipResource.Create(testContext,
+		awsConfig,
 		event,
 		&logger)
 	if nil != createError {
@@ -55,7 +61,8 @@ func TestUnzip(t *testing.T) {
 	}
 	t.Logf("TestUnzip outputs: %#v", createOutputs)
 
-	deleteOutputs, deleteError := zipResource.Delete(awsSession,
+	deleteOutputs, deleteError := zipResource.Delete(testContext,
+		awsConfig,
 		event,
 		&logger)
 	if nil != deleteError {

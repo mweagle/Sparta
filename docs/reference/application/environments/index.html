@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Managing Environments :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2247,7 +2247,7 @@ pre {
 <p>This example will work through the <a href="https://github.com/mweagle/SpartaConfig">SpartaConfig</a> sample. The requirement is that each environment declare it&rsquo;s <code>Name</code> and also add that value as a Stack <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html">Output</a>.</p>
 <h2 id="default-configuration">Default Configuration</h2>
 <p>To start with, create the <em>default</em> configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build !staging,!production
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build !staging,!production
 </span><span style="color:#008000">// file: environments/default.go
 </span><span style="color:#008000"></span>
 <span style="color:#00f">package</span> environments
@@ -2255,43 +2255,43 @@ pre {
 <span style="color:#00f">import</span> (
   <span style="color:#a31515">&#34;fmt&#34;</span>
   <span style="color:#a31515">&#34;github.com/rs/zerolog&#34;</span>
-  <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+  <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go-v2/aws/session&#34;</span>
   gocf <span style="color:#a31515">&#34;github.com/crewjam/go-cloudformation&#34;</span>
-  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
+  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3&#34;</span>
 )
 
 <span style="color:#008000">// Name is the default configuration
 </span><span style="color:#008000"></span><span style="color:#00f">const</span> Name = <span style="color:#a31515">&#34;&#34;</span>
 </code></pre></div><p>The important part is the set of excluded tags at the top of the file:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build !staging,!production
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build !staging,!production
 </span></code></pre></div><p>This ensures that the configuration is only eligible for compilation when Sparta goes to <code>provision</code> the service.</p>
 <h2 id="environment-configuration">Environment Configuration</h2>
 <p>The next steps are to define the environment-specific configuration files:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build staging
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build staging
 </span><span style="color:#008000">// file: environments/staging.go
 </span><span style="color:#008000"></span>
 <span style="color:#00f">package</span> environments
 
 <span style="color:#00f">import</span> (
   <span style="color:#a31515">&#34;github.com/rs/zerolog&#34;</span>
-  <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+  <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go-v2/aws/session&#34;</span>
   gocf <span style="color:#a31515">&#34;github.com/crewjam/go-cloudformation&#34;</span>
-  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
+  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3&#34;</span>
 )
 
 <span style="color:#008000">// Name is the production configuration
 </span><span style="color:#008000"></span><span style="color:#00f">const</span> Name = <span style="color:#a31515">&#34;staging&#34;</span>
 
-</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build production
+</code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build production
 </span><span style="color:#008000">// file: environments/production.go
 </span><span style="color:#008000"></span>
 <span style="color:#00f">package</span> environments
 
 <span style="color:#00f">import</span> (
   <span style="color:#a31515">&#34;github.com/rs/zerolog&#34;</span>
-  <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+  <span style="color:#a31515">&#34;github.com/aws/aws-sdk-go-v2/aws/session&#34;</span>
   gocf <span style="color:#a31515">&#34;github.com/crewjam/go-cloudformation&#34;</span>
-  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
+  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta/v3&#34;</span>
 )
 
 <span style="color:#008000">// Name is the production configuration
@@ -2301,18 +2301,18 @@ pre {
 <h2 id="segregating-services">Segregating Services</h2>
 <p>The <code>serviceName</code> argument supplied to <a href="https://godoc.org/github.com/mweagle/Sparta#Main">sparta.Main</a> defines the AWS CloudFormation stack that supports your application. While the previous files represent different environments, they will collide at <code>provision</code> time since they share the same service name.</p>
 <p>The <code>serviceName</code> can be specialized by using the <code>buildTags</code> in the service name definition as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">fmt.Sprintf(<span style="color:#a31515">&#34;SpartaHelloWorld-%s&#34;</span>, sparta.OptionsGlobal.BuildTags),
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">fmt.Sprintf(<span style="color:#a31515">&#34;SpartaHelloWorld-%s&#34;</span>, sparta.OptionsGlobal.BuildTags),
 </code></pre></div><p>Each time you run <code>provision</code> with a unique <code>--tags</code> value, a new CloudFormation stack will be created.</p>
 <p><em>NOTE</em>: This isn&rsquo;t something suitable for production use as there could be multiple <code>BuildTags</code> values.</p>
 <h2 id="enforcing-environments">Enforcing Environments</h2>
 <p>The final requirement is to add the environment name as a Stack Output. To annotate the stack with the output value, we&rsquo;ll register a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecorator</a> and use the same conditional compilation support to compile the environment-specific version.</p>
 <p>The <em>main.go</em> source file registers the workflow hook via:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">hooks := &amp;sparta.WorkflowHooks{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">hooks := &amp;sparta.WorkflowHooks{
   Context:          <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{},
   ServiceDecorator: environments.ServiceDecoratorHook(sparta.OptionsGlobal.BuildTags),
 }
 </code></pre></div><p>Both <em>environments/staging.go</em> and <em>environments/production.go</em> define the same hook function:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> ServiceDecoratorHook(buildTags <span style="color:#2b91af">string</span>) sparta.ServiceDecoratorHook {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> ServiceDecoratorHook(buildTags <span style="color:#2b91af">string</span>) sparta.ServiceDecoratorHook {
   <span style="color:#00f">return</span> <span style="color:#00f">func</span>(context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
     serviceName <span style="color:#2b91af">string</span>,
     template *gocf.Template,
@@ -2331,7 +2331,7 @@ pre {
 }
 </code></pre></div><p>The <em>environments/default.go</em> definition is slightly different. The &ldquo;default&rdquo; environment isn&rsquo;t one that our service should actually deploy to. It simply exists to make the initial Sparta build (the one that cross compiles the AWS Lambda binary) compile. Build tags are applied to the <em>AWS Lambda</em> compiled binary that Sparta generates.</p>
 <p>To prevent users from accidentally deploying to the &ldquo;default&rdquo; environment, the <code>BuildTags</code> are validated in the hook definition:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> ServiceDecoratorHook(buildTags <span style="color:#2b91af">string</span>) sparta.ServiceDecoratorHook {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> ServiceDecoratorHook(buildTags <span style="color:#2b91af">string</span>) sparta.ServiceDecoratorHook {
   <span style="color:#00f">return</span> <span style="color:#00f">func</span>(context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
     serviceName <span style="color:#2b91af">string</span>,
     template *gocf.Template,
@@ -2356,7 +2356,7 @@ pre {
 <pre><code>go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
 </code></pre>
 <p>Attempting to deploy to &ldquo;default&rdquo; generates an error:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
 INFO[0000] Provisioning service                          BuildID=550c9e360426f48201c885c0abeb078dfc000a0a NOOP=true Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified                            Count=1
@@ -3809,19 +3809,19 @@ exit status 1
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

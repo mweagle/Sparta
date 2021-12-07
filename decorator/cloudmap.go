@@ -1,23 +1,27 @@
 package decorator
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam/builder"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	gofservicediscovery "github.com/awslabs/goformation/v5/cloudformation/servicediscovery"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/v3/aws/iam/builder"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
 
 // NewCloudMapServiceDecorator returns an instance of CloudMapServiceDecorator
 // which can be used to publish information into CloudMap
-func NewCloudMapServiceDecorator(namespaceID gocf.Stringable,
-	serviceName gocf.Stringable) (*CloudMapServiceDecorator, error) {
-	if namespaceID == nil ||
-		serviceName == nil {
+func NewCloudMapServiceDecorator(namespaceID string,
+	serviceName string) (*CloudMapServiceDecorator, error) {
+	if namespaceID == "" ||
+		serviceName == "" {
 		return nil,
 			errors.Errorf("Both namespaceID and serviceName must not be nil for CloudMapServiceDecorator")
 	}
@@ -34,9 +38,9 @@ func NewCloudMapServiceDecorator(namespaceID gocf.Stringable,
 // CloudMapServiceDecorator is an instance of a service decorator that
 // publishes CloudMap info
 type CloudMapServiceDecorator struct {
-	namespaceID gocf.Stringable
-	serviceName gocf.Stringable
-	Description gocf.Stringable
+	namespaceID string
+	serviceName string
+	Description string
 	nonce       string
 	// This is a list of decorators that handle the publishing of
 	// individual lambda and resources. That means we can't apply this until all the
@@ -48,7 +52,7 @@ type CloudMapServiceDecorator struct {
 // name that can be used to get information about the generated
 // CloudFormation resource
 func (cmsd *CloudMapServiceDecorator) LogicalResourceName() string {
-	jsonData, jsonDataErr := cmsd.serviceName.String().MarshalJSON()
+	jsonData, jsonDataErr := json.Marshal(cmsd.serviceName)
 	if jsonDataErr != nil {
 		jsonData = []byte(fmt.Sprintf("%#v", cmsd.serviceName))
 	}
@@ -58,45 +62,46 @@ func (cmsd *CloudMapServiceDecorator) LogicalResourceName() string {
 // DecorateService satisfies the ServiceDecoratorHookHandler interface
 func (cmsd *CloudMapServiceDecorator) DecorateService(context map[string]interface{},
 	serviceName string,
-	template *gocf.Template,
+	template *gof.Template,
 	S3Bucket string,
 	S3Key string,
 	buildID string,
-	awsSession *session.Session,
+	awsConfig awsv2.Config,
 	noop bool,
 	logger *zerolog.Logger) error {
 
 	// Create the service entry
 	serviceDiscoveryResourceName := cmsd.LogicalResourceName()
-	serviceDiscoveryResource := &gocf.ServiceDiscoveryService{
-		NamespaceID: cmsd.namespaceID.String(),
-		Name:        cmsd.serviceName.String(),
-		HealthCheckCustomConfig: &gocf.ServiceDiscoveryServiceHealthCheckCustomConfig{
-			FailureThreshold: gocf.Integer(1),
+	serviceDiscoveryResource := &gofservicediscovery.Service{
+		NamespaceId: cmsd.namespaceID,
+		Name:        cmsd.serviceName,
+		HealthCheckCustomConfig: &gofservicediscovery.Service_HealthCheckCustomConfig{
+			FailureThreshold: 1,
 		},
 	}
-	if cmsd.Description != nil {
-		serviceDiscoveryResource.Description = cmsd.Description.String()
+	if cmsd.Description != "" {
+		serviceDiscoveryResource.Description = cmsd.Description
 	}
-	template.AddResource(serviceDiscoveryResourceName, serviceDiscoveryResource)
+	template.Resources[serviceDiscoveryResourceName] = serviceDiscoveryResource
 
 	// Then for each template decorator, apply it
 	for _, eachAttributeSet := range cmsd.servicePublishers {
 		resourceName := sparta.CloudFormationResourceName("CloudMapRes", fmt.Sprintf("%v", eachAttributeSet))
-		resource := &gocf.ServiceDiscoveryInstance{
+		resource := &gofservicediscovery.Instance{
 			InstanceAttributes: eachAttributeSet,
-			ServiceID:          gocf.Ref(serviceDiscoveryResourceName).String(),
-			//InstanceID:         gocf.String(eachLookupName),
+			ServiceId:          gof.Ref(serviceDiscoveryResourceName),
+			//InstanceID:         gof.String(eachLookupName),
 		}
-		template.AddResource(resourceName, resource)
+		template.Resources[resourceName] = resource
 	}
 	return nil
 }
 
 func (cmsd *CloudMapServiceDecorator) publish(lookupName string,
 	resourceName string,
-	resource gocf.ResourceProperties,
-	userAttributes map[string]interface{}) error {
+	resource gof.Resource,
+	userAttributes map[string]interface{},
+	logger *zerolog.Logger) error {
 
 	_, exists := cmsd.servicePublishers[lookupName]
 	if exists {
@@ -104,11 +109,15 @@ func (cmsd *CloudMapServiceDecorator) publish(lookupName string,
 	}
 
 	attributes := make(map[string]interface{})
-	attributes["Ref"] = gocf.Ref(resourceName)
-	attributes["Type"] = resource.CfnResourceType()
-	for _, eachAttribute := range resource.CfnResourceAttributes() {
-		attributes[eachAttribute] = gocf.GetAtt(resourceName, eachAttribute)
+	attributes["Ref"] = gof.Ref(resourceName)
+	attributes["Type"] = resource.AWSCloudFormationType()
+	outputs, outputsErr := spartaCF.ResourceOutputs(resourceName, resource, logger)
+	if outputsErr == nil {
+		for _, eachAttribute := range outputs {
+			attributes[eachAttribute] = gof.GetAtt(resourceName, eachAttribute)
+		}
 	}
+
 	for eachKey, eachValue := range userAttributes {
 		attributes[eachKey] = eachValue
 	}
@@ -118,29 +127,33 @@ func (cmsd *CloudMapServiceDecorator) publish(lookupName string,
 }
 
 // PublishResource publishes the known outputs and attributes for the
-// given ResourceProperties instance
+// given Resource instance
 func (cmsd *CloudMapServiceDecorator) PublishResource(lookupName string,
 	resourceName string,
-	resource gocf.ResourceProperties,
-	addditionalProperties map[string]interface{}) error {
+	resource gof.Resource,
+	addditionalProperties map[string]interface{},
+	logger *zerolog.Logger) error {
 
 	return cmsd.publish(lookupName,
 		resourceName,
 		resource,
-		addditionalProperties)
+		addditionalProperties,
+		logger)
 }
 
 //PublishLambda publishes the known outputs for the given sparta
 //AWS Lambda function
 func (cmsd *CloudMapServiceDecorator) PublishLambda(lookupName string,
 	lambdaInfo *sparta.LambdaAWSInfo,
-	additionalAttributes map[string]interface{}) error {
-	lambdaEntry := &gocf.LambdaFunction{}
+	additionalAttributes map[string]interface{},
+	logger *zerolog.Logger) error {
+	lambdaEntry := &goflambda.Function{}
 
 	return cmsd.publish(lookupName,
 		lambdaInfo.LogicalResourceName(),
 		lambdaEntry,
-		additionalAttributes)
+		additionalAttributes,
+		logger)
 }
 
 // EnableDiscoverySupport enables the IAM privs for the CloudMap ServiceID
@@ -155,10 +168,10 @@ func (cmsd *CloudMapServiceDecorator) EnableDiscoverySupport(lambdaInfo *sparta.
 	}
 	lambdaEnvVars := lambdaOptions.Environment
 	if lambdaEnvVars == nil {
-		lambdaOptions.Environment = make(map[string]*gocf.StringExpr)
+		lambdaOptions.Environment = make(map[string]string)
 	}
-	lambdaOptions.Environment[EnvVarCloudMapNamespaceID] = cmsd.namespaceID.String()
-	lambdaOptions.Environment[EnvVarCloudMapServiceID] = gocf.Ref(cmsd.LogicalResourceName()).String()
+	lambdaOptions.Environment[EnvVarCloudMapNamespaceID] = cmsd.namespaceID
+	lambdaOptions.Environment[EnvVarCloudMapServiceID] = gof.Ref(cmsd.LogicalResourceName())
 
 	// Ref: https://docs.aws.amazon.com/IAM/latest/UserGuide/list_awscloudmap.html
 	// arn:aws:servicediscovery:<region>:<account-id>:<resource-type>/<resource_name>.

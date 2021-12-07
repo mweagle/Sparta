@@ -20,7 +20,7 @@ We'll start with an empty lambda function and build up the needed functionality.
 
 ```go
 import (
-  spartaSES "github.com/mweagle/Sparta/aws/ses"
+  spartaSES "github.com/mweagle/Sparta/v3/aws/ses"
 )
 func echoSESEvent(ctx context.Context, sesEvent spartaSES.Event) (*spartaSES.Event, error) {
   logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*zerolog.Logger)

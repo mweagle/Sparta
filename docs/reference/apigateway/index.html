@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2255,7 +2255,7 @@ pre {
 					
 <p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaAPIGateway &#34;github.com/mweagle/Sparta/aws/apigateway&#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&#34;Hello world structured log message&#34;) } // Return a message, together with the incoming input.</p>
+import ( awsLambdaEvents &#34;github.com/aws/aws-lambda-go/events&#34; spartaAPIGateway &#34;github.com/mweagle/Sparta/v3/aws/apigateway&#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger) if loggerOk { logger.Info(&#34;Hello world structured log message&#34;) } // Return a message, together with the incoming input.</p>
 					
 				
 			
@@ -2351,7 +2351,7 @@ Define the Lambda Function This lambda handler is a bit more complicated than th
 <p>Sparta supports provisioning an S3-backed static website as part of provisioning. We&rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Lambda Definition We&rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIGateway &#34;github.com/mweagle/Sparta/aws/apigateway&#34; spartaAWSEvents &#34;github.com/mweagle/Sparta/aws/events&#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</p>
+import ( spartaAPIGateway &#34;github.com/mweagle/Sparta/v3/aws/apigateway&#34; spartaAWSEvents &#34;github.com/mweagle/Sparta/v3/aws/events&#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</p>
 					
 				
 			
@@ -2389,7 +2389,7 @@ import ( spartaAPIGateway &#34;github.com/mweagle/Sparta/aws/apigateway&#34; spa
 <p>AWS Lambda supports multiple <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html">function signatures</a>. Some supported signatures include structured types, which are JSON un/marshalable structs that are automatically managed.</p>
 <p>To simplify handling API Gateway requests, Sparta exposes the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope">APIGatewayEnvelope</a> type. This type provides an embeddable struct type whose fields and JSON serialization match up with the <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">Velocity Template</a> that&rsquo;s applied to the incoming API Gateway request.</p>
 <p>Embed the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope">APIGatewayEnvelope</a> type in your own lambda&rsquo;s request type as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> FeedbackBody <span style="color:#00f">struct</span> {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> FeedbackBody <span style="color:#00f">struct</span> {
   Language <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;lang&#34;`</span>
   Comment  <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;comment&#34;`</span>
 }
@@ -2399,14 +2399,14 @@ import ( spartaAPIGateway &#34;github.com/mweagle/Sparta/aws/apigateway&#34; spa
   Body FeedbackBody <span style="color:#a31515">`json:&#34;body&#34;`</span>
 }
 </code></pre></div><p>Then accept your custom type in your lambda function as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
   language := apiGatewayRequest.Body.Language
   ...
 }
 </code></pre></div><h2 id="response-types">Response Types</h2>
 <p>The API Gateway <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/mappings.html">response mappings</a> must make
 assumptions about the shape of the Lambda response. The default <em>application/json</em> mapping template is:</p>
-<pre><code class="language-nohighlight" data-lang="nohighlight">$input.json('$.body')
+<pre tabindex="0"><code class="language-nohighlight" data-lang="nohighlight">$input.json('$.body')
 ## Ok, parse the incoming map of headers
 ## and for each one, set the override header in the context.
 ## Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html#context-variable-reference
@@ -2422,7 +2422,7 @@ assumptions about the shape of the Lambda response. The default <em>application/
 #end##
 </code></pre>
 <p>This template assumes that your response type has the following JSON shape:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-json" data-lang="json">{
   &#34;code&#34; : <span style="">int</span>,
   &#34;body&#34; : {<span style="">...</span>},
   &#34;headers&#34;: {<span style="">...</span>}
@@ -2436,7 +2436,7 @@ is a utility function to produce a canonical version of this response shape. Not
 <p>API Gateway supports returning custom HTTP headers whose values are extracted from your response. To return custom HTTP
 headers using the default VTL mappings, provide them as the optional third <code>map[string]string</code> argument to
 <a href="https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewResponse">NewResponse</a> as in:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> helloWorld(ctx context.Context,
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> helloWorld(ctx context.Context,
   gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, <span style="color:#2b91af">error</span>) {
 
   logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*zerolog.Logger)
@@ -3874,19 +3874,19 @@ headers using the default VTL mappings, provide them as the optional third <code
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926010"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926010"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926010"></script>
-    <script src="/js/jquery.sticky.js?1610926010"></script>
-    <script src="/js/featherlight.min.js?1610926010"></script>
-    <script src="/js/highlight.pack.js?1610926010"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926010"></script>
-    <script src="/js/learn.js?1610926010"></script>
-    <script src="/js/hugo-learn.js?1610926010"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926010"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

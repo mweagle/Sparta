@@ -14,8 +14,8 @@ We'll start by creating a very simple lambda function:
 
 ```go
 import (
-  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
-  spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+  spartaAPIGateway "github.com/mweagle/Sparta/v3/aws/apigateway"
+  spartaAWSEvents "github.com/mweagle/Sparta/v3/aws/events"
 )
 type helloWorldResponse struct {
   Message string

@@ -19,7 +19,7 @@ The first step is to create an instance of the `CloudMapServiceDecorator` type t
 
 ```go
 import (
-  spartaDecorators "github.com/mweagle/Sparta/decorator"
+  spartaDecorators "github.com/mweagle/Sparta/v3/decorator"
 )
 
 func main() {

@@ -36,7 +36,7 @@ To register the metric publisher, call the `RegisterLambdaUtilizationMetricPubli
 point in your `main()` call graph. For example:
 
 ```go
-import spartaCloudWatch "github.com/mweagle/Sparta/aws/cloudwatch"
+import spartaCloudWatch "github.com/mweagle/Sparta/v3/aws/cloudwatch"
 func main() {
   ...
   spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{

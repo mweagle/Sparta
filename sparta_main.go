@@ -194,7 +194,8 @@ func (ops *optionsProvisionStruct) parseParams() error {
 
 	// Tags, including user defined
 	ops.stackTags = map[string]string{
-		SpartaTagBuildIDKey: StampedBuildID,
+		SpartaTagBuildIDKey:       StampedBuildID,
+		SpartaTagSpartaVersionKey: SpartaVersion,
 	}
 	for _, eachPair := range ops.StackTags {
 		pairVals := splitter(eachPair)

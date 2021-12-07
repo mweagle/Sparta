@@ -1,9 +1,11 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -58,7 +60,8 @@ func Describe(serviceName string,
 	var cloudFormationTemplate bytes.Buffer
 	multiWriter := io.MultiWriter(templateFile, &cloudFormationTemplate)
 
-	buildErr := Build(true,
+	buildErr := Build(context.Background(),
+		true,
 		serviceName,
 		serviceDescription,
 		lambdaAWSInfos,
@@ -83,7 +86,7 @@ func Describe(serviceName string,
 		return buildErr
 	}
 
-	tmpl, err := template.New("description").Parse(_escFSMustString(false, "/resources/describe/template.html"))
+	tmpl, err := template.New("description").Parse(embeddedMustString("resources/describe/template.html"))
 	if err != nil {
 		return errors.New(err.Error())
 	}

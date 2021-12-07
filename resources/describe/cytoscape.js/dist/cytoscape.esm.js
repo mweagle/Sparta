@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2020, The Cytoscape Consortium.
+ * Copyright (c) 2016-2021, The Cytoscape Consortium.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the “Software”), to deal in
@@ -904,12 +904,12 @@ var defaults = function defaults(_defaults) {
     return filledOpts;
   };
 };
-var removeFromArray = function removeFromArray(arr, ele, manyCopies) {
-  for (var i = arr.length; i >= 0; i--) {
+var removeFromArray = function removeFromArray(arr, ele, oneCopy) {
+  for (var i = arr.length - 1; i >= 0; i--) {
     if (arr[i] === ele) {
       arr.splice(i, 1);
 
-      if (!manyCopies) {
+      if (oneCopy) {
         break;
       }
     }
@@ -1729,6 +1729,7 @@ var elesfn$3 = {
           gScore[wid] = tempScore;
           fScore[wid] = tempScore + heuristic(w);
           cameFrom[wid] = cMin;
+          cameFromEdge[wid] = e;
         }
       } // End of neighbors update
 
@@ -2564,12 +2565,6 @@ var assignBoundingBox = function assignBoundingBox(bb1, bb2) {
   bb1.y2 = bb2.y2;
   bb1.w = bb1.x2 - bb1.x1;
   bb1.h = bb1.y2 - bb1.y1;
-};
-var assignShiftToBoundingBox = function assignShiftToBoundingBox(bb, delta) {
-  bb.x1 += delta.x;
-  bb.x2 += delta.x;
-  bb.y1 += delta.y;
-  bb.y2 += delta.y;
 };
 var boundingBoxesIntersect = function boundingBoxesIntersect(bb1, bb2) {
   // case: one bb to right of other
@@ -8776,7 +8771,7 @@ var beforePositionSet = function beforePositionSet(eles, newPos, silent) {
         ele.children().shift(delta, silent);
       }
 
-      ele.shiftCachedBoundingBox(delta);
+      ele.dirtyBoundingBoxCache();
     }
   }
 };
@@ -8814,6 +8809,9 @@ fn$2 = elesfn$j = {
     allowGetting: false,
     beforeSet: function beforeSet(eles, newPos) {
       beforePositionSet(eles, newPos, true);
+    },
+    onSet: function onSet(eles) {
+      eles.dirtyCompoundBoundsCache();
     }
   })),
   positions: function positions(pos, silent) {
@@ -9048,6 +9046,7 @@ elesfn$k.renderedBoundingBox = function (options) {
 };
 
 elesfn$k.dirtyCompoundBoundsCache = function () {
+  var silent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
   var cy = this.cy();
 
   if (!cy.styleEnabled() || !cy.hasCompoundNodes()) {
@@ -9059,7 +9058,10 @@ elesfn$k.dirtyCompoundBoundsCache = function () {
       var _p = ele._private;
       _p.compoundBoundsClean = false;
       _p.bbCache = null;
-      ele.emitAndNotify('bounds');
+
+      if (!silent) {
+        ele.emitAndNotify('bounds');
+      }
     }
   });
   return this;
@@ -9204,7 +9206,7 @@ elesfn$k.updateCompoundBounds = function () {
     var ele = this[i];
     var _p = ele._private;
 
-    if (!_p.compoundBoundsClean) {
+    if (!_p.compoundBoundsClean || force) {
       update(ele);
 
       if (!cy.batching()) {
@@ -9765,47 +9767,11 @@ var cachedBoundingBoxImpl = function cachedBoundingBoxImpl(ele, opts) {
 
     bb = boundingBoxImpl(ele, defBbOpts);
     _p.bbCache = bb;
-    _p.bbCacheShift.x = _p.bbCacheShift.y = 0;
     _p.bbCachePosKey = currPosKey;
   } else {
     bb = _p.bbCache;
-  }
+  } // not using def opts => need to build up bb from combination of sub bbs
 
-  if (!needRecalc && (_p.bbCacheShift.x !== 0 || _p.bbCacheShift.y !== 0)) {
-    var shift = assignShiftToBoundingBox;
-    var delta = _p.bbCacheShift;
-
-    var safeShift = function safeShift(bb, delta) {
-      if (bb != null) {
-        shift(bb, delta);
-      }
-    };
-
-    shift(bb, delta);
-    var bodyBounds = _p.bodyBounds,
-        overlayBounds = _p.overlayBounds,
-        labelBounds = _p.labelBounds,
-        arrowBounds = _p.arrowBounds;
-    safeShift(bodyBounds, delta);
-    safeShift(overlayBounds, delta);
-
-    if (arrowBounds != null) {
-      safeShift(arrowBounds.source, delta);
-      safeShift(arrowBounds.target, delta);
-      safeShift(arrowBounds['mid-source'], delta);
-      safeShift(arrowBounds['mid-target'], delta);
-    }
-
-    if (labelBounds != null) {
-      safeShift(labelBounds.main, delta);
-      safeShift(labelBounds.all, delta);
-      safeShift(labelBounds.source, delta);
-      safeShift(labelBounds.target, delta);
-    }
-  } // always reset the shift, because we either applied the shift or cleared it by doing a fresh recalc
-
-
-  _p.bbCacheShift.x = _p.bbCacheShift.y = 0; // not using def opts => need to build up bb from combination of sub bbs
 
   if (!usingDefOpts) {
     var isNode = ele.isNode();
@@ -9889,7 +9855,7 @@ elesfn$k.boundingBox = function (options) {
       }
     }
 
-    this.updateCompoundBounds();
+    this.updateCompoundBounds(!options.useCache);
 
     for (var _i = 0; _i < eles.length; _i++) {
       var _ele = eles[_i];
@@ -9910,7 +9876,6 @@ elesfn$k.dirtyBoundingBoxCache = function () {
   for (var i = 0; i < this.length; i++) {
     var _p = this[i]._private;
     _p.bbCache = null;
-    _p.bbCacheShift.x = _p.bbCacheShift.y = 0;
     _p.bbCachePosKey = null;
     _p.bodyBounds = null;
     _p.overlayBounds = null;
@@ -9929,22 +9894,6 @@ elesfn$k.dirtyBoundingBoxCache = function () {
 
   this.emitAndNotify('bounds');
   return this;
-};
-
-elesfn$k.shiftCachedBoundingBox = function (delta) {
-  for (var i = 0; i < this.length; i++) {
-    var ele = this[i];
-    var _p = ele._private;
-    var bb = _p.bbCache;
-
-    if (bb != null) {
-      _p.bbCacheShift.x += delta.x;
-      _p.bbCacheShift.y += delta.y;
-    }
-  }
-
-  this.emitAndNotify('bounds');
-  return this;
 }; // private helper to get bounding box for custom node positions
 // - good for perf in certain cases but currently requires dirtying the rendered style
 // - would be better to not modify the nodes but the nodes are read directly everywhere in the renderer...
@@ -9955,11 +9904,13 @@ elesfn$k.boundingBoxAt = function (fn) {
   var nodes = this.nodes();
   var cy = this.cy();
   var hasCompoundNodes = cy.hasCompoundNodes();
+  var parents = cy.collection();
 
   if (hasCompoundNodes) {
-    nodes = nodes.filter(function (node) {
-      return !node.isParent();
+    parents = nodes.filter(function (node) {
+      return node.isParent();
     });
+    nodes = nodes.not(parents);
   }
 
   if (plainObject(fn)) {
@@ -9982,13 +9933,22 @@ elesfn$k.boundingBoxAt = function (fn) {
   nodes.forEach(storeOldPos).silentPositions(fn);
 
   if (hasCompoundNodes) {
-    this.updateCompoundBounds(true); // force update b/c we're inside a batch cycle
+    parents.dirtyCompoundBoundsCache();
+    parents.dirtyBoundingBoxCache();
+    parents.updateCompoundBounds(true); // force update b/c we're inside a batch cycle
   }
 
   var bb = copyBoundingBox(this.boundingBox({
     useCache: false
   }));
   nodes.silentPositions(getOldPos);
+
+  if (hasCompoundNodes) {
+    parents.dirtyCompoundBoundsCache();
+    parents.dirtyBoundingBoxCache();
+    parents.updateCompoundBounds(true); // force update b/c we're inside a batch cycle
+  }
+
   cy.endBatch();
   return bb;
 };
@@ -11337,7 +11297,9 @@ var elesfn$q = {
   },
   // using standard layout options, apply position function (w/ or w/o animation)
   layoutPositions: function layoutPositions(layout, options, fn) {
-    var nodes = this.nodes();
+    var nodes = this.nodes().filter(function (n) {
+      return !n.isParent();
+    });
     var cy = this.cy();
     var layoutEles = options.eles; // nodes & edges
 
@@ -14946,7 +14908,11 @@ styfn.applyParsedProperty = function (ele, parsedProp) {
     var fromVal = getVal(origProp);
     var toVal = getVal(prop);
     self.checkTriggers(ele, prop.name, fromVal, toVal);
-  }; // edge sanity checks to prevent the client from making serious mistakes
+  };
+
+  if (prop && prop.name.substr(0, 3) === 'pie') {
+    warn('The pie style properties are deprecated.  Create charts using background images instead.');
+  } // edge sanity checks to prevent the client from making serious mistakes
 
 
   if (parsedProp.name === 'curve-style' && ele.isEdge() && ( // loops must be bundled beziers
@@ -16059,6 +16025,10 @@ var styfn$6 = {};
       enums: ['none', 'node'],
       multiple: true
     },
+    bgContainment: {
+      enums: ['inside', 'over'],
+      multiple: true
+    },
     color: {
       color: true
     },
@@ -16071,6 +16041,10 @@ var styfn$6 = {};
     },
     bool: {
       enums: ['yes', 'no']
+    },
+    bools: {
+      enums: ['yes', 'no'],
+      multiple: true
     },
     lineStyle: {
       enums: ['solid', 'dotted', 'dashed']
@@ -16573,6 +16547,12 @@ var styfn$6 = {};
     name: 'background-image-opacity',
     type: t.zeroOneNumbers
   }, {
+    name: 'background-image-containment',
+    type: t.bgContainment
+  }, {
+    name: 'background-image-smoothing',
+    type: t.bools
+  }, {
     name: 'background-position-x',
     type: t.bgPos
   }, {
@@ -17006,6 +16986,8 @@ styfn$6.getDefaultProperties = function () {
     'background-image': 'none',
     'background-image-crossorigin': 'anonymous',
     'background-image-opacity': 1,
+    'background-image-containment': 'inside',
+    'background-image-smoothing': 'yes',
     'background-position-x': '50%',
     'background-position-y': '50%',
     'background-offset-x': 0,
@@ -17799,6 +17781,10 @@ var corefn$7 = {
     }
 
     return _p.style;
+  },
+  // e.g. cy.data() changed => recalc ele mappers
+  updateStyle: function updateStyle() {
+    this.mutableElements().updateStyle(); // just send to all eles
   }
 };
 
@@ -18387,13 +18373,15 @@ var fn$6 = {
     settingEvent: 'data',
     settingTriggersEvent: true,
     triggerFnName: 'trigger',
-    allowGetting: true
+    allowGetting: true,
+    updateStyle: true
   }),
   removeData: define$3.removeData({
     field: 'data',
     event: 'data',
     triggerFnName: 'trigger',
-    triggerEvent: true
+    triggerEvent: true,
+    updateStyle: true
   }),
   scratch: define$3.data({
     field: 'scratch',
@@ -18403,13 +18391,15 @@ var fn$6 = {
     settingEvent: 'scratch',
     settingTriggersEvent: true,
     triggerFnName: 'trigger',
-    allowGetting: true
+    allowGetting: true,
+    updateStyle: true
   }),
   removeScratch: define$3.removeData({
     field: 'scratch',
     event: 'scratch',
     triggerFnName: 'trigger',
-    triggerEvent: true
+    triggerEvent: true,
+    updateStyle: true
   })
 }; // aliases
 
@@ -18475,7 +18465,7 @@ var Core = function Core(opts) {
     // list of listeners
     aniEles: new Collection(this),
     // elements being animated
-    data: {},
+    data: options.data || {},
     // data for the core
     scratch: {},
     // scratch object for core
@@ -18722,6 +18712,12 @@ extend(corefn$9, {
 
           for (var i = 0; i < jsons.length; i++) {
             var json = jsons[i];
+
+            if (!json.data.id) {
+              warn('cy.json() cannot handle elements without an ID attribute');
+              continue;
+            }
+
             var id = '' + json.data.id; // id must be string
 
             var ele = cy.getElementById(id);
@@ -19160,6 +19156,11 @@ BreadthFirstLayout.prototype.run = function () {
       }
 
       var bf = getInfo(neighbor);
+
+      if (bf == null) {
+        continue;
+      }
+
       var index = bf.index;
       var depth = bf.depth; // unassigned neighbours shouldn't affect the ordering
 
@@ -19263,7 +19264,7 @@ BreadthFirstLayout.prototype.run = function () {
     }
   };
 
-  nodes.layoutPositions(this, options, getPosition);
+  eles.nodes().layoutPositions(this, options, getPosition);
   return this; // chaining
 };
 
@@ -19380,7 +19381,7 @@ CircleLayout.prototype.run = function () {
     return pos;
   };
 
-  nodes.layoutPositions(this, options, getPos);
+  eles.nodes().layoutPositions(this, options, getPos);
   return this; // chaining
 };
 
@@ -19588,7 +19589,7 @@ ConcentricLayout.prototype.run = function () {
   } // position the nodes
 
 
-  nodes.layoutPositions(this, options, function (ele) {
+  eles.nodes().layoutPositions(this, options, function (ele) {
     var id = ele.id();
     return pos[id];
   });
@@ -20870,7 +20871,7 @@ GridLayout.prototype.run = function () {
   });
 
   if (bb.h === 0 || bb.w === 0) {
-    nodes.layoutPositions(this, options, function (ele) {
+    eles.nodes().layoutPositions(this, options, function (ele) {
       return {
         x: bb.x1,
         y: bb.y1
@@ -21224,7 +21225,6 @@ RandomLayout.prototype.run = function () {
   var options = this.options;
   var cy = options.cy;
   var eles = options.eles;
-  var nodes = eles.nodes().not(':parent');
   var bb = makeBoundingBox(options.boundingBox ? options.boundingBox : {
     x1: 0,
     y1: 0,
@@ -21239,7 +21239,7 @@ RandomLayout.prototype.run = function () {
     };
   };
 
-  nodes.layoutPositions(this, options, getPos);
+  eles.nodes().layoutPositions(this, options, getPos);
   return this; // chaining
 };
 
@@ -21752,14 +21752,17 @@ BRp$1.findNearestElements = function (x, y, interactiveElementsOnly, isTouch) {
       return;
     }
 
-    var rstyle = _p.rstyle;
-    var lx = preprop(rstyle, 'labelX', prefix);
-    var ly = preprop(rstyle, 'labelY', prefix);
+    var lx = preprop(_p.rscratch, 'labelX', prefix);
+    var ly = preprop(_p.rscratch, 'labelY', prefix);
     var theta = preprop(_p.rscratch, 'labelAngle', prefix);
-    var lx1 = bb.x1 - th;
-    var lx2 = bb.x2 + th;
-    var ly1 = bb.y1 - th;
-    var ly2 = bb.y2 + th;
+    var ox = ele.pstyle(prefixDash + 'text-margin-x').pfValue;
+    var oy = ele.pstyle(prefixDash + 'text-margin-y').pfValue;
+    var lx1 = bb.x1 - th - ox; // (-ox, -oy) as bb already includes margin
+
+    var lx2 = bb.x2 + th - ox; // and rotation is about (lx, ly)
+
+    var ly1 = bb.y1 - th - oy;
+    var ly2 = bb.y2 + th - oy;
 
     if (theta) {
       var cos = Math.cos(theta);
@@ -21778,7 +21781,8 @@ BRp$1.findNearestElements = function (x, y, interactiveElementsOnly, isTouch) {
       var px1y2 = rotate(lx1, ly2);
       var px2y1 = rotate(lx2, ly1);
       var px2y2 = rotate(lx2, ly2);
-      var points = [px1y1.x, px1y1.y, px2y1.x, px2y1.y, px2y2.x, px2y2.y, px1y2.x, px1y2.y];
+      var points = [// with the margin added after the rotation is applied
+      px1y1.x + ox, px1y1.y + oy, px2y1.x + ox, px2y1.y + oy, px2y2.x + ox, px2y2.y + oy, px1y2.x + ox, px1y2.y + oy];
 
       if (pointInsidePolygonPoints(x, y, points)) {
         addEle(ele);
@@ -23275,6 +23279,7 @@ BRp$6.recalculateNodeLabelProjection = function (node) {
   rs.labelY = textY;
   rstyle.labelX = textX;
   rstyle.labelY = textY;
+  this.calculateLabelAngles(node);
   this.applyLabelDimensions(node);
 };
 
@@ -24750,6 +24755,7 @@ BRp$c.load = function () {
         }
 
         cy.panBy(deltaP);
+        cy.emit('dragpan');
         r.hoverData.dragged = true;
       } // Needs reproject due to pan changing viewport
 
@@ -25134,6 +25140,7 @@ BRp$c.load = function () {
           y: rpos[1]
         }
       });
+      cy.emit(e.type === 'gesturechange' ? 'pinchzoom' : 'scrollzoom');
     }
   }; // Functions to help with whether mouse wheel should trigger zooming
   // --
@@ -25661,6 +25668,7 @@ BRp$c.load = function () {
           pan: pan2,
           cancelOnFailedZoom: true
         });
+        cy.emit('pinchzoom');
         distance1 = distance2;
         f1x1 = f1x2;
         f1y1 = f1y2;
@@ -25816,12 +25824,14 @@ BRp$c.load = function () {
                 x: disp[0] * zoom,
                 y: disp[1] * zoom
               });
+              cy.emit('dragpan');
             } else if (isOverThresholdDrag) {
               r.swipePanning = true;
               cy.panBy({
                 x: dx * zoom,
                 y: dy * zoom
               });
+              cy.emit('dragpan');
 
               if (start) {
                 start.unactivate();
@@ -29016,6 +29026,7 @@ CRp$3.drawInscribedImage = function (context, img, node, index, nodeOpacity) {
   var clip = getIndexedStyle(node, 'background-clip', 'value', index);
   var shouldClip = clip === 'node';
   var imgOpacity = getIndexedStyle(node, 'background-image-opacity', 'value', index) * nodeOpacity;
+  var smooth = getIndexedStyle(node, 'background-image-smoothing', 'value', index);
   var imgW = img.width || img.cachedW;
   var imgH = img.height || img.cachedH; // workaround for broken browsers like ie
 
@@ -29109,6 +29120,16 @@ CRp$3.drawInscribedImage = function (context, img, node, index, nodeOpacity) {
 
   var gAlpha = context.globalAlpha;
   context.globalAlpha = imgOpacity;
+  var smoothingEnabled = r.getImgSmoothing(context);
+  var isSmoothingSwitched = false;
+
+  if (smooth === 'no' && smoothingEnabled) {
+    r.setImgSmoothing(context, false);
+    isSmoothingSwitched = true;
+  } else if (smooth === 'yes' && !smoothingEnabled) {
+    r.setImgSmoothing(context, true);
+    isSmoothingSwitched = true;
+  }
 
   if (repeat === 'no-repeat') {
     if (shouldClip) {
@@ -29137,6 +29158,10 @@ CRp$3.drawInscribedImage = function (context, img, node, index, nodeOpacity) {
   }
 
   context.globalAlpha = gAlpha;
+
+  if (isSmoothingSwitched) {
+    r.setImgSmoothing(context, smoothingEnabled);
+  }
 };
 
 var CRp$4 = {};
@@ -29648,10 +29673,18 @@ CRp$5.drawNode = function (context, node, shiftToOriginWithBb) {
 
   var drawImages = function drawImages() {
     var nodeOpacity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : eleOpacity;
+    var inside = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var prevBging = _p.backgrounding;
     var totalCompleted = 0;
 
     for (var _i = 0; _i < image.length; _i++) {
+      var bgContainment = node.cy().style().getIndexedStyle(node, 'background-image-containment', 'value', _i);
+
+      if (inside && bgContainment === 'over' || !inside && bgContainment === 'inside') {
+        totalCompleted++;
+        continue;
+      }
+
       if (urlDefined[_i] && image[_i].complete && !image[_i].error) {
         totalCompleted++;
         r.drawInscribedImage(context, image[_i], node, _i, nodeOpacity);
@@ -29768,21 +29801,23 @@ CRp$5.drawNode = function (context, node, shiftToOriginWithBb) {
     context.translate(gx, gy);
     setupShapeColor(ghostOpacity * bgOpacity);
     drawShape();
-    drawImages(effGhostOpacity);
-    drawPie(darkness !== 0 || borderWidth !== 0);
-    darken(effGhostOpacity);
+    drawImages(effGhostOpacity, true);
     setupBorderColor(ghostOpacity * borderOpacity);
     drawBorder();
+    drawPie(darkness !== 0 || borderWidth !== 0);
+    drawImages(effGhostOpacity, false);
+    darken(effGhostOpacity);
     context.translate(-gx, -gy);
   }
 
   setupShapeColor();
   drawShape();
-  drawImages();
-  drawPie(darkness !== 0 || borderWidth !== 0);
-  darken();
+  drawImages(eleOpacity, true);
   setupBorderColor();
   drawBorder();
+  drawPie(darkness !== 0 || borderWidth !== 0);
+  drawImages(eleOpacity, false);
+  darken();
 
   if (usePaths) {
     context.translate(-pos.x, -pos.y);
@@ -31276,7 +31311,7 @@ function setExtension(type, name, registrant) {
   var ext = registrant;
 
   var overrideErr = function overrideErr(field) {
-    error('Can not register `' + name + '` for `' + type + '` since `' + field + '` already exists in the prototype and can not be overridden');
+    warn('Can not register `' + name + '` for `' + type + '` since `' + field + '` already exists in the prototype and can not be overridden');
   };
 
   if (type === 'core') {
@@ -31598,7 +31633,7 @@ sheetfn.appendToStyle = function (style) {
   return style;
 };
 
-var version = "3.17.1";
+var version = "3.19.1";
 
 var cytoscape = function cytoscape(options) {
   // if no options specified, use default

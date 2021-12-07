@@ -1,13 +1,17 @@
+//go:build !lambdabinary
 // +build !lambdabinary
 
 package sparta
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"context"
+
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+
 	broadcast "github.com/dustin/go-broadcast"
 	tcell "github.com/gdamore/tcell/v2"
-	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaAWS "github.com/mweagle/Sparta/v3/aws"
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog"
 )
@@ -24,7 +28,8 @@ const (
 
 // ExploreWithInputFilter allows the caller to provide additional filters
 // for the source files that will be used as inputs
-func ExploreWithInputFilter(serviceName string,
+func ExploreWithInputFilter(ctx context.Context,
+	serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api APIGateway,
@@ -49,14 +54,17 @@ func ExploreWithInputFilter(serviceName string,
 	logger = &newLogger
 
 	// Great - everybody get's an aws session
-	awsSession := spartaAWS.NewSession(logger)
+	awsConfig, awsConfigErr := spartaAWS.NewConfig(ctx, logger)
+	if awsConfigErr != nil {
+		return awsConfigErr
+	}
 	// Go get the stack and put the ARNs in the list of things. For that
 	// we need to get the stack resources...
-	cfSvc := cloudformation.New(awsSession)
-	input := &cloudformation.DescribeStackResourcesInput{
-		StackName: aws.String(serviceName),
+	cfSvc := awsv2CF.NewFromConfig(awsConfig)
+	input := &awsv2CF.DescribeStackResourcesInput{
+		StackName: awsv2.String(serviceName),
 	}
-	stackResourceOutputs, stackResourceOutputsErr := cfSvc.DescribeStackResources(input)
+	stackResourceOutputs, stackResourceOutputsErr := cfSvc.DescribeStackResources(ctx, input)
 	if stackResourceOutputsErr != nil {
 		return stackResourceOutputsErr
 	}
@@ -72,21 +80,23 @@ func ExploreWithInputFilter(serviceName string,
 
 	// Setup the rest of them...
 	focusTargets := []tview.Primitive{}
-	dropdown, selectorFocusable := newFunctionSelector(awsSession,
+	dropdown, selectorFocusable := newFunctionSelector(awsConfig,
 		stackResourceOutputs.StackResources,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
 		channelMap[broadcasterFunctionSelect],
 		logger)
-	eventDropdown, eventFocusable := newEventInputSelector(awsSession,
+	eventDropdown, eventFocusable := newEventInputSelector(ctx,
+		awsConfig,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
 		inputExtensions,
 		channelMap[broadcasterFunctionSelect],
 		logger)
-	outputView, outputViewFocusable := newCloudWatchLogTailView(awsSession,
+	outputView, outputViewFocusable := newCloudWatchLogTailView(ctx,
+		awsConfig,
 		application,
 		lambdaAWSInfos,
 		settingsMap,
@@ -160,7 +170,8 @@ func Explore(serviceName string,
 	linkerFlags string,
 	logger *zerolog.Logger) error {
 
-	return ExploreWithInputFilter(serviceName,
+	return ExploreWithInputFilter(context.Background(),
+		serviceName,
 		serviceDescription,
 		lambdaAWSInfos,
 		api,

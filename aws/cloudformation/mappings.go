@@ -1,9 +1,5 @@
 package cloudformation
 
-import (
-	gocf "github.com/mweagle/go-cloudformation"
-)
-
 // Constants for https://docs.aws.amazon.com/general/latest/gr/rande.html
 
 const (
@@ -16,7 +12,7 @@ const (
 )
 
 // APIGatewayMapping is the mapping for APIGateway settings
-var APIGatewayMapping = &gocf.Mapping{
+var APIGatewayMapping = map[string]interface{}{
 	"us-east-2": map[string]string{
 		Endpoint:     "apigateway.us-east-2.amazonaws.com",
 		Protocol:     "HTTPS",

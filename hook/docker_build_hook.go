@@ -3,10 +3,9 @@ package hook
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	spartaDocker "github.com/mweagle/Sparta/docker"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaDocker "github.com/mweagle/Sparta/v3/docker"
 	"github.com/rs/zerolog"
 )
 
@@ -17,9 +16,9 @@ func BuildDockerImageHook(dockerFilePath string,
 	dockerTags map[string]string) sparta.WorkflowHookHandler {
 	dockerBuild := func(ctx context.Context,
 		serviceName string,
-		S3Bucket gocf.Stringable,
+		S3Bucket string,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 

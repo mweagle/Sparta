@@ -1,5 +1,17 @@
 # Change Notes
 
+## 🚨 v3.0.0 - The Paydown Edition 🚨
+
+This is a _BREAKING RELEASE_ with significant breaking changes noted below.
+
+- :warning: **BREAKING**
+  - All CloudFormation moved to [go-formation](https://github.com/awslabs/goformation)
+  - All AWS API access moved to [AWS SDK V2](https://github.com/aws/aws-sdk-go-v2)
+    - Changed all [AWS Session](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html) references to [AWS V2 Config](https://aws.github.io/aws-sdk-go-v2/docs/configuring-sdk/) references.
+  - Pulled `go` _context_ variable through async operations.
+- :checkered_flag: **CHANGES**
+  - Added `NewTaskState` to _aws/step_ namespace to enable the new AWS Step Functions Task integrations. See the [blog post](https://aws.amazon.com/blogs/aws/now-aws-step-functions-supports-200-aws-services-to-enable-easier-workflow-automation/) for more information and _aws/step/task_test.go_ for an example.
+
 ## 🚨 v2.0.0 - The Breaking Edition 🚨
 
 This is a _BREAKING RELEASE_ with many breaking changes noted below.
@@ -354,7 +366,7 @@ This is a _BREAKING RELEASE_ with many breaking changes noted below.
 
       ```go
         import (
-          "github.com/mweagle/Sparta/validator"
+          "github.com/mweagle/Sparta/v3/validator"
         )
         workflowHooks := &sparta.WorkflowHooks{
           Validators: []sparta.ServiceValidationHookHandler{
@@ -519,7 +531,7 @@ This is a _BREAKING RELEASE_ with many breaking changes noted below.
     - Usage:
 
       ```go
-        import spartaCloudWatch "github.com/mweagle/Sparta/aws/cloudwatch"
+        import spartaCloudWatch "github.com/mweagle/Sparta/v3/aws/cloudwatch"
         func main() {
           ...
           spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{
@@ -544,7 +556,7 @@ This is a _BREAKING RELEASE_ with many breaking changes noted below.
       package main
 
       import (
-        spartaMage "github.com/mweagle/Sparta/magefile"
+        spartaMage "github.com/mweagle/Sparta/v3/magefile"
       )
 
       // Provision the service
@@ -1460,7 +1472,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
 
   - Added new [CloudWatch Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html.html#cfn-lambda-function-functionname) for lambda execution
   - Removed all NodeJS shim `dependencies` from _./resources/provision/package.json_
-  - Added utility CloudFormation script _./aws/cloudformation/cli/describe.go_ which produces a JSON serialization of a [DescribeStacksOutput](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#DescribeStacksOutput) struct for build-time discovery of cluster-scoped resources.
+  - Added utility CloudFormation script _./aws/cloudformation/cli/describe.go_ which produces a JSON serialization of a [DescribeStacksOutput](https://godoc.org/github.com/aws/aws-sdk-go-v2/service/cloudformation#DescribeStacksOutput) struct for build-time discovery of cluster-scoped resources.
   - Relaxed constraint that an API GW resource is bound to single Sparta lambda function. You can now register per-HTTP method name lambda functions for the same API GW resource.
   - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
 
@@ -1682,7 +1694,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - N/A
 - :checkered_flag: **CHANGES**
   - Add [S3 Object Expiration](http://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-set-lifecycle-configuration-intro.html) warning message if the target bucket doesn't specify one.
-  - Replace internal CloudFormation polling loop with [WaitUntilStackCreateComplete](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#CloudFormation.WaitUntilStackCreateComplete) and [WaitUntilStackUpdateComplete](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#CloudFormation.WaitUntilStackUpdateComplete)
+  - Replace internal CloudFormation polling loop with [WaitUntilStackCreateComplete](https://godoc.org/github.com/aws/aws-sdk-go-v2/service/cloudformation#CloudFormation.WaitUntilStackCreateComplete) and [WaitUntilStackUpdateComplete](https://godoc.org/github.com/aws/aws-sdk-go-v2/service/cloudformation#CloudFormation.WaitUntilStackUpdateComplete)
 
 ## v0.1.4
 

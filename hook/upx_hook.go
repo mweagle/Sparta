@@ -7,11 +7,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	gocf "github.com/mweagle/go-cloudformation"
-
-	"github.com/aws/aws-sdk-go/aws/session"
-	sparta "github.com/mweagle/Sparta"
-	"github.com/mweagle/Sparta/system"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	sparta "github.com/mweagle/Sparta/v3"
+	"github.com/mweagle/Sparta/v3/system"
 	"github.com/rs/zerolog"
 )
 
@@ -19,7 +17,7 @@ import (
 // UPX image to do the compression.
 const UPXDockerFile = `
 FROM alpine:edge
-RUN apk add --no-cache upx=3.96-r0
+RUN apk add --no-cache upx=3.96-r1
 ENTRYPOINT [ "/usr/bin/upx" ]
 `
 
@@ -28,9 +26,9 @@ ENTRYPOINT [ "/usr/bin/upx" ]
 func PostBuildUPXCompressHook(dockerImageName string) sparta.WorkflowHookHandler {
 	upxHook := func(ctx context.Context,
 		serviceName string,
-		S3Bucket gocf.Stringable,
+		S3Bucket string,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 		logger.Info().

@@ -6,8 +6,7 @@ import (
 	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 )
 
@@ -37,7 +36,7 @@ func (reactorFunc CodeCommitReactorFunc) ReactorName() string {
 
 // NewCodeCommitReactor returns an SNS reactor lambda function
 func NewCodeCommitReactor(reactor CodeCommitReactor,
-	repositoryName gocf.Stringable,
+	repositoryName string,
 	branches []string,
 	events []string,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
@@ -57,7 +56,7 @@ func NewCodeCommitReactor(reactor CodeCommitReactor,
 		BasePermission: sparta.BasePermission{
 			SourceArn: repositoryName,
 		},
-		RepositoryName: repositoryName.String(),
+		RepositoryName: repositoryName,
 		Branches:       branches,
 		Events:         events,
 	})

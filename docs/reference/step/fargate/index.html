@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Fargate :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2242,7 +2242,7 @@ pre {
         
 
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Teaching people to do serverless is hard. It&#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&#39;s not about doing technology</p>&mdash; Paul Johnston - @home / needing a new hobby (@PaulDJohnston) <a href="https://twitter.com/PaulDJohnston/status/1073347546553217024?ref_src=twsrc%5Etfw">December 13, 2018</a></blockquote>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Teaching people to do serverless is hard. It&#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&#39;s not about doing technology</p>&mdash; Paul Johnston - containing his snark (@PaulDJohnston) <a href="https://twitter.com/PaulDJohnston/status/1073347546553217024?ref_src=twsrc%5Etfw">December 13, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <p>While Serverless and FaaS are often used interchangeably, there are types of
@@ -2272,7 +2272,7 @@ for the most up-to-date version of code samples.</p>
 <p>The first step is to provide an opportunity for our application to behave
 differently when run as a Fargate task. To do this we add a new
 application subcommand option that augments the standard <code>Main</code> behavior:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Add a hook to do something
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Add a hook to do something
 </span><span style="color:#008000"></span>fargateTask := &amp;cobra.Command{
   Use:   <span style="color:#a31515">&#34;fargateTask&#34;</span>,
   Short: <span style="color:#a31515">&#34;Sample Fargate task&#34;</span>,
@@ -2290,7 +2290,7 @@ application subcommand option that augments the standard <code>Main</code> behav
 file. Note that the file uses <code>go</code> <a href="https://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">build tags</a>
 so that the new <strong>fargateTask</strong> subcommand is only available when the
 build target includes the <em>lambdaBinary</em> flag:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build lambdabinary
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// +build lambdabinary
 </span><span style="color:#008000"></span>
 <span style="color:#00f">package</span> bootstrap
 </code></pre></div><p>We can now package our Task-aware executable and deploy it to the cloud.</p>
@@ -2298,7 +2298,7 @@ build target includes the <em>lambdaBinary</em> flag:</p>
 <p>The first step is to create a version of your application that
 can support a Fargate task. This is done in the <code>ecrImageBuilderDecorator</code>
 function which delegates the compiling and image creation to Sparta:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Always build the image
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Always build the image
 </span><span style="color:#008000"></span>buildErr := spartaDocker.BuildDockerImage(serviceName,
   <span style="color:#a31515">&#34;&#34;</span>,
   dockerTags,
@@ -2306,7 +2306,7 @@ function which delegates the compiling and image creation to Sparta:</p>
 </code></pre></div><p>The second empty argument above is an optional <em>Dockerfile</em> path. The sample
 project uses the default <em>Dockerfile</em> filename and defines that at the root
 of the repository. The full <em>Dockerfile</em> is:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-docker" data-lang="docker"><span style="color:#00f">FROM</span><span style="color:#a31515"> alpine:3.8</span><span style="">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-docker" data-lang="docker"><span style="color:#00f">FROM</span><span style="color:#a31515"> alpine:3.8</span><span style="">
 </span><span style=""></span><span style="color:#00f">RUN</span> apk update &amp;&amp; apk add ca-certificates &amp;&amp; rm -rf /var/cache/apk/*<span style="">
 </span><span style="">
 </span><span style=""></span><span style="color:#008000"># Sparta provides the SPARTA_DOCKER_BINARY argument to the builder</span><span style="">
@@ -2321,7 +2321,7 @@ value.</p>
 <p>The <code>CMD</code> instruction includes our previously registered <strong>fargateTask</strong>
 subcommand name to invoke the Task-appropriate codepath at runtime.</p>
 <p>The log output includes the docker build info:</p>
-<pre><code>INFO[0002] Calling WorkflowHook
+<pre tabindex="0"><code>INFO[0002] Calling WorkflowHook
   ServiceDecoratorHook=github.com/mweagle/SpartaStepServicefull/bootstrap.ecrImageBuilderDecorator.func1
   WorkflowHookContext=&quot;map[]&quot;
 INFO[0002] Docker version 18.09.0, build 4d60db4
@@ -2353,7 +2353,7 @@ INFO[0005] Successfully tagged
 Container Registry. The push will return either the ECR URL
 which will be used as Fargate Task <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions.html#cfn-ecs-taskdefinition-containerdefinition-image">image</a>
 property or an error:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Push the image to ECR &amp; store the URL s.t. we can properly annotate
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Push the image to ECR &amp; store the URL s.t. we can properly annotate
 </span><span style="color:#008000">// the CloudFormation template
 </span><span style="color:#008000"></span>ecrURLPush, pushImageErr := spartaDocker.PushDockerImageToECR(buildTag,
   ecrRepositoryName,
@@ -2361,11 +2361,11 @@ property or an error:</p>
   logger)
 </code></pre></div><p>The ECR push URL is stored in the <code>context</code> variable so that a downstream
 Fargate cluster builder knows the image to use:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">context[contextKeyImageURL] = ecrURLPush
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">context[contextKeyImageURL] = ecrURLPush
 </code></pre></div><h2 id="state-machine">State Machine</h2>
 <p>The Step Function definition indirectly references the Fargate
 Task via task specific <a href="https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ecs.html">parameters</a>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">fargateParams := spartaStep.FargateTaskParameters{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">fargateParams := spartaStep.FargateTaskParameters{
   LaunchType:     <span style="color:#a31515">&#34;FARGATE&#34;</span>,
   Cluster:        gocf.Ref(resourceNames.ECSCluster).String(),
   TaskDefinition: gocf.Ref(resourceNames.ECSTaskDefinition).String(),
@@ -2387,7 +2387,7 @@ by the <code>fargateClusterDecorator</code> decorator function.</p>
 task. This is encapsulated in the <code>fargateClusterDecorator</code> which creates
 the required set of CloudFormation resources. The set of CloudFormation
 resource names is represented in the <code>stackResourceNames</code> struct:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> stackResourceNames <span style="color:#00f">struct</span> {
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> stackResourceNames <span style="color:#00f">struct</span> {
   StepFunction              <span style="color:#2b91af">string</span>
   SNSTopic                  <span style="color:#2b91af">string</span>
   ECSCluster                <span style="color:#2b91af">string</span>
@@ -2407,7 +2407,7 @@ resource names is represented in the <code>stackResourceNames</code> struct:</p>
 is of particular interest and is where the inline created <strong>ECR_URL</strong> is used to
 define a FARGATE task.</p>
 <h3 id="ecs-task-definition">ECS Task Definition</h3>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">imageURL, _ := context[contextKeyImageURL].(<span style="color:#2b91af">string</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">imageURL, _ := context[contextKeyImageURL].(<span style="color:#2b91af">string</span>)
 <span style="color:#00f">if</span> imageURL == <span style="color:#a31515">&#34;&#34;</span> {
   <span style="color:#00f">return</span> errors.Errorf(<span style="color:#a31515">&#34;Failed to get image URL from context with key %s&#34;</span>,
     contextKeyImageURL)
@@ -2443,7 +2443,7 @@ define a FARGATE task.</p>
 </code></pre></div><h2 id="configuration">Configuration</h2>
 <p>The final step is to provide the three decorators to the
 <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHooks</a> structure:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">workflowHooks := &amp;sparta.WorkflowHooks{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">workflowHooks := &amp;sparta.WorkflowHooks{
   ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
     ecrImageBuilderDecorator(<span style="color:#a31515">&#34;spartadocker&#34;</span>),
     <span style="color:#008000">// Then build the state machine
@@ -2454,9 +2454,9 @@ define a FARGATE task.</p>
 }
 </code></pre></div><h2 id="provisioning">Provisioning</h2>
 <p>The provisioning workflow for this service is the same as a Lambda-based one:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-shell" data-lang="shell">$ go run main.provision --s3Bucket $MY_S3_BUCKET
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-shell" data-lang="shell">$ go run main.provision --s3Bucket $MY_S3_BUCKET
 </code></pre></div><p>Output:</p>
-<pre><code>INFO[0000] ════════════════════════════════════════════════
+<pre tabindex="0"><code>INFO[0000] ════════════════════════════════════════════════
 INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.8.0
 INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 597d3ba
 INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
@@ -3895,19 +3895,19 @@ and SNS rather than Lambda functions:</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });

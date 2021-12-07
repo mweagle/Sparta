@@ -1,3 +1,4 @@
+//go:build !linux && !lambdabinary
 // +build !linux,!lambdabinary
 
 package cloudformation

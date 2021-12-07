@@ -6,8 +6,7 @@ import (
 	_ "net/http/pprof" // include pprop
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/rs/zerolog"
 )
 
@@ -28,7 +27,7 @@ func ExampleS3Reactor() {
 	}
 	// Create the *sparta.LambdaAWSInfo wrapper
 	lambdaFn, lambdaFnErr := NewS3Reactor(S3ReactorFunc(inlineReactor),
-		gocf.String("MY-S3-BUCKET-TO-REACT"),
+		"MY-S3-BUCKET-TO-REACT",
 		nil)
 	fmt.Printf("LambdaFn: %#v, LambdaFnErr: %#v", lambdaFn, lambdaFnErr)
 }
@@ -46,7 +45,7 @@ func ExampleSNSReactor() {
 	}
 	// Create the *sparta.LambdaAWSInfo wrapper
 	lambdaFn, lambdaFnErr := NewSNSReactor(SNSReactorFunc(inlineReactor),
-		gocf.String("MY-SNS-TOPIC"),
+		"MY-SNS-TOPIC",
 		nil)
 	fmt.Printf("LambdaFn: %#v, LambdaFnErr: %#v", lambdaFn, lambdaFnErr)
 }

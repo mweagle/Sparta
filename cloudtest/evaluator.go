@@ -7,10 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudwatch"
-	"github.com/aws/aws-sdk-go/service/lambda"
-	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatch/logs"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CW "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	awsv2CWTypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	awsv2Lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
+	spartaCWLogs "github.com/mweagle/Sparta/v3/aws/cloudwatch/logs"
 	"github.com/pkg/errors"
 )
 
@@ -21,7 +22,7 @@ type timedNOPEvaluator struct {
 	duration time.Duration
 }
 
-func (tne *timedNOPEvaluator) Evaluate(t CloudTest, output *lambda.GetFunctionOutput) error {
+func (tne *timedNOPEvaluator) Evaluate(t CloudTest, output *awsv2Lambda.GetFunctionOutput) error {
 	time.Sleep(tne.duration)
 	t.Logf("NOP success after artificial delay of %s for function: %s",
 		tne.duration.String(),
@@ -44,7 +45,7 @@ type lambdaLogOutputEvaluator struct {
 	matcher  *regexp.Regexp
 }
 
-func (lloe *lambdaLogOutputEvaluator) Evaluate(t CloudTest, output *lambda.GetFunctionOutput) error {
+func (lloe *lambdaLogOutputEvaluator) Evaluate(t CloudTest, output *awsv2Lambda.GetFunctionOutput) error {
 	// Start reading the logfiles as soon as we're initialized...
 	lambdaParts := strings.Split(*output.Configuration.FunctionArn, ":")
 	logGroupName := fmt.Sprintf("/aws/lambda/%s", lambdaParts[len(lambdaParts)-1])
@@ -53,7 +54,7 @@ func (lloe *lambdaLogOutputEvaluator) Evaluate(t CloudTest, output *lambda.GetFu
 	doneChan := make(chan bool)
 	messages := spartaCWLogs.TailWithContext(context.Background(),
 		doneChan,
-		t.Session(),
+		t.Config(),
 		logGroupName,
 		"",
 		t.ZeroLog())
@@ -91,10 +92,10 @@ func NewLogOutputEvaluator(matcher *regexp.Regexp) CloudEvaluator {
 
 // MetricEvaluator returns whether the evaluatoin should continue or an error
 // occurred.
-type MetricEvaluator func(map[MetricName][]*float64) (bool, error)
+type MetricEvaluator func(map[MetricName][]float64) (bool, error)
 
 // MetricName is tha alias type for the reserved Lambda invocation metrics
-// defined at https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html
+// defined at https://docs.awsv2.amazon.com/lambda/latest/dg/monitoring-metrics.html
 type MetricName string
 
 const (
@@ -166,12 +167,12 @@ var IsSuccess = func(values map[MetricName][]*float64) (bool, error) {
 
 type lambdaInvocationMetricEvaluator struct {
 	initTime        time.Time
-	queries         []*cloudwatch.MetricDataQuery
+	queries         []awsv2CWTypes.MetricDataQuery
 	metricEvaluator MetricEvaluator
 }
 
 func (lime *lambdaInvocationMetricEvaluator) Evaluate(t CloudTest,
-	output *lambda.GetFunctionOutput) error {
+	output *awsv2Lambda.GetFunctionOutput) error {
 	// Just sit there and see if the thing successfully executed...so this is a
 	// cloudwatch metric query?
 	for _, eachQuery := range lime.queries {
@@ -179,15 +180,15 @@ func (lime *lambdaInvocationMetricEvaluator) Evaluate(t CloudTest,
 			eachDimension.Value = output.Configuration.FunctionName
 		}
 	}
-	cwService := cloudwatch.New(t.Session())
+	cwService := awsv2CW.NewFromConfig(t.Config())
 	tickerDuration := metricPeriod * time.Second
 	ticker := time.NewTicker(tickerDuration)
 
 	// Poller duraction
 	offsetDuration, _ := time.ParseDuration(fmt.Sprintf("%ds", metricPeriod))
-	getMetricParams := &cloudwatch.GetMetricDataInput{
-		StartTime:         aws.Time(lime.initTime),
-		EndTime:           aws.Time(lime.initTime),
+	getMetricParams := &awsv2CW.GetMetricDataInput{
+		StartTime:         awsv2.Time(lime.initTime),
+		EndTime:           awsv2.Time(lime.initTime),
 		MetricDataQueries: lime.queries,
 	}
 	breakTest := false
@@ -200,15 +201,15 @@ func (lime *lambdaInvocationMetricEvaluator) Evaluate(t CloudTest,
 			ticker.Stop()
 			return errors.Errorf("Deadline exceeded for test")
 		case <-ticker.C:
-			getMetricParams.EndTime = aws.Time(getMetricParams.StartTime.Add(offsetDuration))
+			getMetricParams.EndTime = awsv2.Time(getMetricParams.StartTime.Add(offsetDuration))
 			//t.Logf("getMetricParams: #%v", getMetricParams)
-			getMetricOutput, getMetricOutputErr := cwService.GetMetricData(getMetricParams)
+			getMetricOutput, getMetricOutputErr := cwService.GetMetricData(context.Background(), getMetricParams)
 			if getMetricOutputErr != nil {
 				return getMetricOutputErr
 			}
 
 			// For each response, create a map of ID to Values
-			metricOutput := map[MetricName][]*float64{}
+			metricOutput := map[MetricName][]float64{}
 			for _, eachResult := range getMetricOutput.MetricDataResults {
 				name, nameExists := mapIDToMetricName[*eachResult.Id]
 				if !nameExists {
@@ -234,21 +235,21 @@ func (lime *lambdaInvocationMetricEvaluator) Evaluate(t CloudTest,
 	return nil
 }
 
-// NewLambdaFunctionMetricQuery returns a cloudwatch.MetricDataQuery
+// NewLambdaFunctionMetricQuery returns a awsv2CW.MetricDataQuery
 // that will be lazily completed in the Evaluation function
-func NewLambdaFunctionMetricQuery(invocationMetricName MetricName) *cloudwatch.MetricDataQuery {
-	return &cloudwatch.MetricDataQuery{
-		Id: aws.String(strings.ToLower(string(invocationMetricName))),
-		MetricStat: &cloudwatch.MetricStat{
-			Period: aws.Int64(30),
-			Stat:   aws.String(cloudwatch.StatisticSum),
-			Unit:   aws.String(cloudwatch.StandardUnitCount),
-			Metric: &cloudwatch.Metric{
-				Namespace:  aws.String("AWS/Lambda"),
-				MetricName: aws.String(string(invocationMetricName)),
-				Dimensions: []*cloudwatch.Dimension{
+func NewLambdaFunctionMetricQuery(invocationMetricName MetricName) *awsv2CWTypes.MetricDataQuery {
+	return &awsv2CWTypes.MetricDataQuery{
+		Id: awsv2.String(strings.ToLower(string(invocationMetricName))),
+		MetricStat: &awsv2CWTypes.MetricStat{
+			Period: awsv2.Int32(30),
+			Stat:   awsv2.String(string(awsv2CWTypes.StatisticSum)),
+			Unit:   awsv2CWTypes.StandardUnitCount,
+			Metric: &awsv2CWTypes.Metric{
+				Namespace:  awsv2.String("AWS/Lambda"),
+				MetricName: awsv2.String(string(invocationMetricName)),
+				Dimensions: []awsv2CWTypes.Dimension{
 					{
-						Name:  aws.String("FunctionName"),
+						Name:  awsv2.String("FunctionName"),
 						Value: nil,
 					},
 				},
@@ -259,8 +260,8 @@ func NewLambdaFunctionMetricQuery(invocationMetricName MetricName) *cloudwatch.M
 
 // DefaultLambdaFunctionMetricQueries is the standard set of queries
 // to issue to determine in a Lambda successfully executed
-func DefaultLambdaFunctionMetricQueries() []*cloudwatch.MetricDataQuery {
-	return []*cloudwatch.MetricDataQuery{
+func DefaultLambdaFunctionMetricQueries() []*awsv2CWTypes.MetricDataQuery {
+	return []*awsv2CWTypes.MetricDataQuery{
 		NewLambdaFunctionMetricQuery(MetricNameInvocations),
 		NewLambdaFunctionMetricQuery(MetricNameErrors),
 		NewLambdaFunctionMetricQuery(MetricNameDeadLetterErrors),
@@ -268,10 +269,10 @@ func DefaultLambdaFunctionMetricQueries() []*cloudwatch.MetricDataQuery {
 }
 
 // NewLambdaInvocationMetricEvaluator needs a list of
-// cloudwatch.MetricDataQuery results that
+// awsv2CW.MetricDataQuery results that
 // need the FunctionName. Then the evaluation will take a map
 // of metrics to values.
-func NewLambdaInvocationMetricEvaluator(queries []*cloudwatch.MetricDataQuery,
+func NewLambdaInvocationMetricEvaluator(queries []awsv2CWTypes.MetricDataQuery,
 	metricEvaluator MetricEvaluator) CloudEvaluator {
 	nowTime := time.Now()
 

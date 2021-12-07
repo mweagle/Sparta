@@ -19,8 +19,8 @@ import (
 	"context"
 
 	awsLambdaGo "github.com/aws/aws-lambda-go/events"
-	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	sparta "github.com/mweagle/Sparta/v3"
+	spartaCF "github.com/mweagle/Sparta/v3/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/rs/zerolog"
 )

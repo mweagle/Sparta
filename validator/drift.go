@@ -6,11 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	sparta "github.com/mweagle/Sparta"
-	gocf "github.com/mweagle/go-cloudformation"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	awsv2CF "github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	awsv2CFTypes "github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
+
+	gof "github.com/awslabs/goformation/v5/cloudformation"
+	goflambda "github.com/awslabs/goformation/v5/cloudformation/lambda"
+	sparta "github.com/mweagle/Sparta/v3"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
@@ -22,17 +24,19 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 
 	driftDetector := func(ctx context.Context,
 		serviceName string,
-		template *gocf.Template,
-		lambdaFunctionCode *gocf.LambdaFunctionCode,
+		template *gof.Template,
+		lambdaFunctionCode *goflambda.Function_Code,
 		buildID string,
-		awsSession *session.Session,
+		awsConfig awsv2.Config,
 		noop bool,
 		logger *zerolog.Logger) (context.Context, error) {
 		// Create a cloudformation service.
-		cfSvc := cloudformation.New(awsSession)
-		detectStackDrift, detectStackDriftErr := cfSvc.DetectStackDrift(&cloudformation.DetectStackDriftInput{
-			StackName: aws.String(serviceName),
-		})
+		cfSvc := awsv2CF.NewFromConfig(awsConfig)
+		detectStackDrift, detectStackDriftErr := cfSvc.DetectStackDrift(ctx,
+			&awsv2CF.DetectStackDriftInput{
+				StackName: awsv2.String(serviceName),
+			})
+
 		if detectStackDriftErr != nil {
 			// If it doesn't exist, then no worries...
 			if strings.Contains(detectStackDriftErr.Error(), "does not exist") {
@@ -42,26 +46,26 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 		}
 
 		// Poll until it's done...
-		describeDriftDetectionStatus := &cloudformation.DescribeStackDriftDetectionStatusInput{
+		describeDriftDetectionStatus := &awsv2CF.DescribeStackDriftDetectionStatusInput{
 			StackDriftDetectionId: detectStackDrift.StackDriftDetectionId,
 		}
 		detectionComplete := false
 
 		// Put a limit on the detection
 		for i := 0; i <= 30 && !detectionComplete; i++ {
-			driftStatus, driftStatusErr := cfSvc.DescribeStackDriftDetectionStatus(describeDriftDetectionStatus)
+			driftStatus, driftStatusErr := cfSvc.DescribeStackDriftDetectionStatus(ctx, describeDriftDetectionStatus)
 			if driftStatusErr != nil {
 				logger.Warn().
 					Err(driftStatusErr).
 					Msg("Failed to check Stack Drift")
 			}
 			if driftStatus != nil {
-				switch *driftStatus.DetectionStatus {
+				switch driftStatus.DetectionStatus {
 				case "DETECTION_COMPLETE":
 					detectionComplete = true
 				default:
 					logger.Info().
-						Str("Status", *driftStatus.DetectionStatus).
+						Str("Status", *driftStatus.DetectionStatusReason).
 						Msg("Waiting for drift detection to complete")
 
 					time.Sleep(11 * time.Second)
@@ -77,24 +81,16 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 			if !templateResExists {
 				return ""
 			}
-			metadata := templateRes.Metadata
-			if len(metadata) <= 0 {
-				metadata = make(map[string]interface{})
+			typedRes, typedResOk := templateRes.(*goflambda.Function)
+			funcName := fmt.Sprintf("ResourceID: %s", logicalResourceID)
+			if typedResOk && typedRes.AWSCloudFormationMetadata != nil {
+				funcName = fmt.Sprintf("%#v", typedRes.AWSCloudFormationMetadata["golangFunc"])
 			}
-			golangFunc, golangFuncExists := metadata["golangFunc"]
-			if !golangFuncExists {
-				return ""
-			}
-			switch typedFunc := golangFunc.(type) {
-			case string:
-				return typedFunc
-			default:
-				return fmt.Sprintf("%#v", typedFunc)
-			}
+			return funcName
 		}
 
 		// Log the drifts
-		logDrifts := func(stackResourceDrifts []*cloudformation.StackResourceDrift) {
+		logDrifts := func(stackResourceDrifts []awsv2CFTypes.StackResourceDrift) {
 			for _, eachDrift := range stackResourceDrifts {
 				if len(eachDrift.PropertyDifferences) != 0 {
 					for _, eachDiff := range eachDrift.PropertyDifferences {
@@ -109,7 +105,7 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 							Str("Resource", *eachDrift.LogicalResourceId).
 							Str("Actual", *eachDiff.ActualValue).
 							Str("Expected", *eachDiff.ExpectedValue).
-							Str("Relation", *eachDiff.DifferenceType).
+							Interface("Relation", eachDiff.DifferenceType).
 							Str("PropertyPath", *eachDiff.PropertyPath).
 							Str("LambdaFuncName", golangFuncName(*eachDrift.LogicalResourceId)).
 							Msg("Stack drift detected")
@@ -119,16 +115,16 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 		}
 
 		// Utility function to fetch all the drifts
-		stackResourceDrifts := make([]*cloudformation.StackResourceDrift, 0)
-		input := &cloudformation.DescribeStackResourceDriftsInput{
-			MaxResults: aws.Int64(100),
-			StackName:  aws.String(serviceName),
+		stackResourceDrifts := make([]awsv2CFTypes.StackResourceDrift, 0)
+		input := &awsv2CF.DescribeStackResourceDriftsInput{
+			MaxResults: awsv2.Int32(100),
+			StackName:  awsv2.String(serviceName),
 		}
 		// There can't be more than 200 resources in the template
-		// https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html
+		// https://docs.awsv2.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html
 		loopCounter := 0
 		for {
-			driftResults, driftResultsErr := cfSvc.DescribeStackResourceDrifts(input)
+			driftResults, driftResultsErr := cfSvc.DescribeStackResourceDrifts(ctx, input)
 			if driftResultsErr != nil {
 				return ctx, errors.Wrapf(driftResultsErr, "attempting to describe stack drift")
 			}
@@ -143,9 +139,9 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 				return ctx, errors.Errorf("Exceeded maximum number of Stack resource drifts: %d", len(stackResourceDrifts))
 			}
 
-			input = &cloudformation.DescribeStackResourceDriftsInput{
-				MaxResults: aws.Int64(100),
-				StackName:  aws.String(serviceName),
+			input = &awsv2CF.DescribeStackResourceDriftsInput{
+				MaxResults: awsv2.Int32(100),
+				StackName:  awsv2.String(serviceName),
 				NextToken:  driftResults.NextToken,
 			}
 		}

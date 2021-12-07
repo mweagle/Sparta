@@ -2,14 +2,12 @@ package step
 
 import (
 	"math/rand"
-
-	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // SageMakerTag represents a tag for a SageMaker task
 type SageMakerTag struct {
-	Key   string          `json:",omitempty"`
-	Value gocf.Stringable `json:",omitempty"`
+	Key   string `json:",omitempty"`
+	Value string `json:",omitempty"`
 }
 
 // SageMakerTrainingJobParameters are the parameters for a SageMaker Training
@@ -20,9 +18,9 @@ type SageMakerTrainingJobParameters struct {
 	InputDataConfig        []interface{}          `json:",omitempty"`
 	OutputDataConfig       map[string]interface{} `json:",omitempty"`
 	ResourceConfig         map[string]interface{} `json:",omitempty"`
-	RoleArn                gocf.Stringable        `json:",omitempty"`
+	RoleArn                string                 `json:",omitempty"`
 	StoppingCondition      interface{}            `json:",omitempty"`
-	Tags                   []SageMakerTag         `json:",omitempty"`
+	Tags                   string                 `json:",omitempty"`
 	TrainingJobName        string                 `json:",omitempty"`
 	VpcConfig              map[string]interface{} `json:",omitempty"`
 }

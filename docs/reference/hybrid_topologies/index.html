@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.79.0" />
+    <meta name="generator" content="Hugo 0.89.2" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
@@ -12,22 +12,22 @@
     <title>Hybrid Topologies :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1610926009" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1610926009" rel="stylesheet">
-    <link href="/css/hybrid.css?1610926009" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1610926009" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1610926009" rel="stylesheet">
-    <link href="/css/auto-complete.css?1610926009" rel="stylesheet">
-    <link href="/css/theme.css?1610926009" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1610926009" rel="stylesheet">
+    <link href="/css/nucleus.css?1638858292" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1638858292" rel="stylesheet">
+    <link href="/css/hybrid.css?1638858292" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1638858292" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1638858292" rel="stylesheet">
+    <link href="/css/auto-complete.css?1638858292" rel="stylesheet">
+    <link href="/css/theme.css?1638858292" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1638858292" rel="stylesheet">
     
-    <link href="/css/theme-sparta.css?1610926009" rel="stylesheet">
+    <link href="/css/theme-sparta.css?1638858292" rel="stylesheet">
     
     
 
-    <script src="/js/jquery-3.3.1.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
-    <link href="/css/vs.css?1610926009" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
+    <link href="/css/vs.css?1638858292" rel="stylesheet">
     <script>hljs.initHighlightingOnLoad();</script>
 
     <style>
@@ -65,14 +65,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1610926009"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1610926009"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1638858292"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1638858292"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1610926009"></script>
+<script type="text/javascript" src="/js/search.js?1638858292"></script>
 
     
   </div>
@@ -2130,8 +2130,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/242d51ec">242d51ec</a><p/>
-  Date: 2021-01-17T15:26:49-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dfc7f559">dfc7f559</a><p/>
+  Date: 2021-12-06T22:24:52-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2255,7 +2255,7 @@ pre {
 <p>Deploying your application to a mixed topology is accomplished by combining existing Sparta features. There is no &ldquo;make mixed&rdquo; command line option.</p>
 <h2 id="add-custom-command-line-option">Add Custom Command Line Option</h2>
 <p>The first step is to add a <a href="/reference/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode. The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Custom command to startup a simple HelloWorld HTTP server
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go"><span style="color:#008000">// Custom command to startup a simple HelloWorld HTTP server
 </span><span style="color:#008000"></span>httpServerCommand := &amp;cobra.Command{
   Use:   <span style="color:#a31515">&#34;httpServer&#34;</span>,
   Short: <span style="color:#a31515">&#34;Sample HelloWorld HTTP server&#34;</span>,
@@ -2269,7 +2269,7 @@ sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)
 </code></pre></div><p>Our command doesn&rsquo;t accept any additional flags. If your command needs additional user flags, consider adding a <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> call to validate they are properly set.</p>
 <h2 id="create-cloudinit-userdata">Create CloudInit Userdata</h2>
 <p>The next step is to write a <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html">user-data</a> script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash"><span style="color:#00f">#!/bin/bash -xe
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash"><span style="color:#00f">#!/bin/bash -xe
 </span><span style="color:#00f"></span><span style="color:#008000">#!/bin/bash -xe</span>
 SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{.SpartaBinaryName}}
 
@@ -2341,11 +2341,11 @@ service supervisor restart || service supervisor start
 <h3 id="notes">Notes</h3>
 <p>The script is using <a href="https://golang.org/pkg/text/template/">text/template</a> markup to expand properties known at build time. Because this content will be parsed by <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression">ConvertToTemplateExpression</a> (next section), it&rsquo;s also possible to use <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html">Fn::Join</a> compatible JSON serializations (single line only) to reference properties that are known only during CloudFormation provision time.</p>
 <p>For example, if we were also provisioning a PostgreSQL instance and needed to dynamically discover the endpoint address, a shell script variable could be assigned via:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">POSTGRES_ADDRESS={ <span style="color:#a31515">&#34;Fn::GetAtt&#34;</span> : [ <span style="color:#a31515">&#34;{{ .DBInstanceResourceName }}&#34;</span> , <span style="color:#a31515">&#34;Endpoint.Address&#34;</span> ] }
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">POSTGRES_ADDRESS={ <span style="color:#a31515">&#34;Fn::GetAtt&#34;</span> : [ <span style="color:#a31515">&#34;{{ .DBInstanceResourceName }}&#34;</span> , <span style="color:#a31515">&#34;Endpoint.Address&#34;</span> ] }
 </code></pre></div><p>This expression combines both a build-time variable (<code>DBInstanceResourceName</code>: the CloudFormation resource name) and a provision time one (<code>Endpoint.Address</code>: dynamically assigned by the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">RDS Resource</a>).</p>
 <h2 id="decorate-toplogy">Decorate Toplogy</h2>
 <p>The final step is to use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> to tie everything together. A decorator can annotate the CloudFormation template with any supported <a href="https://github.com/crewjam/go-cloudformation">go-cloudformation</a> resource. For this example, we&rsquo;ll create a single AutoScalingGroup and EC2 instance that&rsquo;s bootstrapped with our custom <em>userdata.sh</em> script.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">
 <span style="color:#008000">// The CloudFormation template decorator that inserts all the other
 </span><span style="color:#008000">// AWS components we need to support this deployment...
 </span><span style="color:#008000"></span><span style="color:#00f">func</span> lambdaDecorator(customResourceAMILookupName <span style="color:#2b91af">string</span>) sparta.TemplateDecorator {
@@ -2481,7 +2481,7 @@ service supervisor restart || service supervisor start
 <ul>
 <li><strong>Security Groups</strong> - The decorator adds an ingress rule so that the endpoint is publicly accessible:</li>
 </ul>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">    gocf.EC2SecurityGroupRule{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">    gocf.EC2SecurityGroupRule{
           CidrIp:     gocf.String(<span style="color:#a31515">&#34;0.0.0.0/0&#34;</span>),
           IpProtocol: gocf.String(<span style="color:#a31515">&#34;tcp&#34;</span>),
           FromPort:   gocf.Integer(HTTPServerPort),
@@ -2490,7 +2490,7 @@ service supervisor restart || service supervisor start
 </code></pre></div><ul>
 <li><strong>IAM Role</strong> - In order to download the S3 archive, the EC2 IAM Policy includes a custom privilege:</li>
 </ul>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">      statements = append(statements, spartaIAM.PolicyStatement{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">      statements = append(statements, spartaIAM.PolicyStatement{
       Effect:   <span style="color:#a31515">&#34;Allow&#34;</span>,
       Action:   []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>},
       Resource: gocf.String(fmt.Sprintf(<span style="color:#a31515">&#34;arn:aws:s3:::%s/%s&#34;</span>, S3Bucket, S3Key)),
@@ -2498,7 +2498,7 @@ service supervisor restart || service supervisor start
 </code></pre></div><ul>
 <li><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:</li>
 </ul>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">    <span style="color:#008000">// Now setup the properties map, expand the userdata, and attach it...
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">    <span style="color:#008000">// Now setup the properties map, expand the userdata, and attach it...
 </span><span style="color:#008000"></span>    userDataProps := <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
       <span style="color:#a31515">&#34;S3Bucket&#34;</span>:    S3Bucket,
       <span style="color:#a31515">&#34;S3Key&#34;</span>:       S3Key,
@@ -2517,14 +2517,14 @@ service supervisor restart || service supervisor start
 </code></pre></div><ul>
 <li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/reference/application/custom_flags">custom flag</a> (not shown above):</li>
 </ul>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// And add the SSHKeyName option to the provision step
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">  <span style="color:#008000">// And add the SSHKeyName option to the provision step
 </span><span style="color:#008000"></span>  sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
     <span style="color:#a31515">&#34;key&#34;</span>,
     <span style="color:#a31515">&#34;k&#34;</span>,
     <span style="color:#a31515">&#34;&#34;</span>,
     <span style="color:#a31515">&#34;SSH Key Name to use for EC2 instances&#34;</span>)
 </code></pre></div><p>This value is used as an input to the AutoScalingLaunchConfiguration value:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-go" data-lang="go">    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
       <span style="color:#008000">// ...
 </span><span style="color:#008000"></span>      KeyName:            gocf.String(SSHKeyName),
       <span style="color:#008000">// ...
@@ -2532,7 +2532,7 @@ service supervisor restart || service supervisor start
 </code></pre></div><h1 id="result">Result</h1>
 <p>Deploying your Go application using a mixed topology enables your &ldquo;Lambda&rdquo; endpoint to be addressable via AWS Lambda and standard HTTP.</p>
 <h2 id="http-access">HTTP Access</h2>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-bash" data-lang="bash">
 $ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
 *   Trying 52.26.146.138...
 * Connected to ec2-52-26-146-138.us-west-2.compute.amazonaws.com (52.26.146.138) port 9999 (<span style="color:#008000">#0)</span>
@@ -3973,19 +3973,19 @@ Hello world from SpartaOmega!
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.min.js?1610926009"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1610926009"></script>
-    <script src="/js/jquery.sticky.js?1610926009"></script>
-    <script src="/js/featherlight.min.js?1610926009"></script>
-    <script src="/js/highlight.pack.js?1610926009"></script>
+    <script src="/js/clipboard.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.min.js?1638858292"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1638858292"></script>
+    <script src="/js/jquery.sticky.js?1638858292"></script>
+    <script src="/js/featherlight.min.js?1638858292"></script>
+    <script src="/js/highlight.pack.js?1638858292"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1610926009"></script>
-    <script src="/js/learn.js?1610926009"></script>
-    <script src="/js/hugo-learn.js?1610926009"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1638858292"></script>
+    <script src="/js/learn.js?1638858292"></script>
+    <script src="/js/hugo-learn.js?1638858292"></script>
     
         
-            <script src="/mermaid/mermaid.js?1610926009"></script>
+            <script src="/mermaid/mermaid.js?1638858292"></script>
         
         <script>
             mermaid.initialize({ startOnLoad: true });
